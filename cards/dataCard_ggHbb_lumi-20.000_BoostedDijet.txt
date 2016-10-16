@@ -1,0 +1,15 @@
+imax 1 number of channels
+jmax 4 number of processes minus 1
+kmax * number of nuisance parameters
+------------------------------------------------------------
+observation 9433231.094
+------------------------------------------------------------
+shapes * * dataCard_ggHbb_lumi-20.000_BoostedDijet.root $PROCESS $PROCESS_$SYSTEMATIC
+------------------------------------------------------------
+bin	BoostedDijet	BoostedDijet	BoostedDijet	BoostedDijet	BoostedDijet
+process	BoostedDijet_ggHbb	BoostedDijet_QCD	BoostedDijet_W	BoostedDijet_DY	BoostedDijet_SingleTop
+process	0	1	2	3	4
+rate	1014.393	9327469.578	70755.967	29985.157	5020.391
+------------------------------------------------------------
+lumi	lnN	1.300	1.000	1.000	1.000	1.000
+bkgErr	lnN	1.000	1.500	1.500	1.500	1.500
