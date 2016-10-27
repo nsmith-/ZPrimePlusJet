@@ -38,17 +38,17 @@ parser.add_option('--train', action='store_true', dest='train', default=False, h
 
 def main():
 
-	DataDir = '/uscmst1b_scratch/lpc1/3DayLifetime/ntran/fromCris/VectorDiJet1Jetv2/'
+	DataDir = '/eos/uscms/store/user/lpchbb/VectorDiJet1Jetv4/'
 	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/localData/Backgrounds/Backgrounds_13TEV/TTBAR/";
 	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/andrewBkg/";
 	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/rawData-v3/";
-	OutDir = 'sklim-v0-Oct10'
+	OutDir = DataDir+'sklim-v0-Oct27'
 
 	tags = [];
-	# tags.append( ['QCD',0] );
-	# tags.append( ['W',0] );
-	# tags.append( ['DY',0] );
-	tags.append( ['VectorDiJet',0] );
+	tags.append( ['QCD',0] );
+	tags.append( ['W',0] );
+	tags.append( ['DY',0] );
+	#tags.append( ['VectorDiJet',0] );
 	# tags.append( ['VectorDiJet1Jet_M50',50] );
 	# tags.append( ['VectorDiJet1Jet_M75',75] );
 	# tags.append( ['VectorDiJet1Jet_M100',100] );
@@ -57,9 +57,13 @@ def main():
 	# tags.append( ['VectorDiJet1Jet_M200',200] );
 	# tags.append( ['VectorDiJet1Jet_M250',250] );
 	# tags.append( ['VectorDiJet1Jet_M300',300] );
-	# tags.append( ['TT.roo',0] );
-	# tags.append( ['T.roo',0] );
-	# tags.append( ['JetHTsilver',0] );
+	tags.append( ['VBFHToBB_M125_13TeV_amcatnlo_pythia8',0] );
+	tags.append( ['ST_tW_antitop_5f_inclusiveDecays_13TeV',0] );
+	tags.append( ['ST_tW_top_5f_inclusiveDecays_13TeV',0]);
+	tags.append( ['TTbar_madgraphMLM',0])
+	
+	#tags.append( ['JetHTsilver',0] );
+
 
 	# make a tmp dir
 	#####
@@ -110,10 +114,11 @@ def sklimAdd(fn,odir,mass=0):
 	ofile.cd();
 	otree = tree.CloneTree(0);
 	otree.SetName("otree");
+	'''
 	otree.SetBranchStatus("*Puppijet0_e2*",0);
 	otree.SetBranchStatus("*Puppijet0_e3*",0);
 	otree.SetBranchStatus("*Puppijet0_e4*",0);
-
+	'''
 	# otree.SetBranchStatus("bst8_PUPPIjet0_pt",1);
 	nent = tree.GetEntriesFast();
 
@@ -151,7 +156,7 @@ def sklimAdd(fn,odir,mass=0):
 		tree.GetEntry(i);
 		# print tree.HT, tree.mT2, tree.alphaT, tree.dRazor, tree.mRazor, tree.sumJetMass
 
-		if tree.AK8Puppijet0_pt > 500 or tree.CA15Puppijet0_pt > 500:
+		if tree.AK8Puppijet0_pt > 500 :
 			# throw out NaN values...
 			# print tree.HT, tree.mT2, tree.alphaT, tree.dRazor, tree.mRazor, tree.sumJetMass
 
