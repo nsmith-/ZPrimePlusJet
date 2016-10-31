@@ -1,0 +1,24 @@
+imax 1
+jmax 2
+kmax *
+---------------
+shapes *   * simple-shapes-RooDataHist.root w_$CHANNEL:$PROCESS_$CHANNEL
+shapes wqq * simple-shapes-Hist.root $PROCESS_$CHANNEL $PROCESS_$CHANNEL_$SYSTEMATIC
+shapes zqq * simple-shapes-Hist.root $PROCESS_$CHANNEL $PROCESS_$CHANNEL_$SYSTEMATIC
+---------------
+bin          cat0
+observation -1
+------------------------------
+bin          cat0       cat0	cat0
+process      wqq        zqq	bkg
+process      0		1   	2
+rate         -1       	-1   	3416
+--------------------------------
+lumi    lnN  1.05       1.05	-
+bgnorm  lnN  -          -	1.5
+sigma1  flatParam  
+a0      flatParam  1000.  1.0 [0.    ,50000.]
+a1      flatParam -0.001  1.0 [-0.99 ,0.99]
+a2      flatParam -0.0001 1.0 [-0.001,0.001]
+scale   shape -      1.0      -
+

@@ -1,0 +1,33 @@
+Combination of card_1D_PF_cat1.txt  card_1D_PF_cat2.txt
+imax 4 number of bins
+jmax 2 number of processes minus 1
+kmax * number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *              fail_cat1  simple-shapes-RooDataHist.root w_fail_cat1:$PROCESS_fail_cat1 w_fail_cat1:$PROCESS_fail_cat1_$SYSTEMATIC
+shapes *              pass_cat1  simple-shapes-RooDataHist.root w_pass_cat1:$PROCESS_pass_cat1 w_pass_cat1:$PROCESS_pass_cat1_$SYSTEMATIC
+shapes *              fail_cat2  simple-shapes-RooDataHist.root w_fail_cat2:$PROCESS_fail_cat2 w_fail_cat2:$PROCESS_fail_cat2_$SYSTEMATIC
+shapes *              pass_cat2  simple-shapes-RooDataHist.root w_pass_cat2:$PROCESS_pass_cat2 w_pass_cat2:$PROCESS_pass_cat2_$SYSTEMATIC
+----------------------------------------------------------------------------------------------------------------------------------
+bin          pass_cat1  fail_cat1  pass_cat2  fail_cat2
+observation  -1.0           -1.0           -1.0           -1.0         
+----------------------------------------------------------------------------------------------------------------------------------
+bin                               pass_cat1  pass_cat1  pass_cat1  fail_cat1  fail_cat1  fail_cat1  pass_cat2  pass_cat2  pass_cat2  fail_cat2  fail_cat2  fail_cat2
+process                           zqq            wqq            qcd            zqq            wqq            qcd            zqq            wqq            qcd            zqq            wqq            qcd          
+process                           -1              0              1             -1              0              1             -1               0             1             -1              0              1            
+rate                              -1             -1             2000.0000      -1             -1             87347.0000     -1             -1             2000.0000      -1             -1             87347.0000   
+----------------------------------------------------------------------------------------------------------------------------------
+lumi                    lnN       1.05           1.05           -              1.05           1.05           -              1.05           1.05           -              1.05           1.05           -            
+scale                   shape     1.0            1.0            -              1.0            1.0            -              1.0            1.0            -              1.0            1.0            -            
+smear                   shape     -              1.0            -              1.0            1.0            -              -              1.0            -              1.0            1.0            -            
+veff                    lnN       0.8            0.8            -              1.012          1.012          -              0.8            0.8            -              1.012          1.012          - a1            param  -0.001 1.0 [-0.99 ,0.99]
+a0            param  1.0 1.0 [0. ,10.]
+a2            param  -0.00001 1.0 [-0.001,0.001]
+p1            param  0.0000 1.0 [-0.005,0.005]
+r1            param  0.0000 1.0 [-0.1,0.1]
+sigma1        param  50.0 10.0 [20. ,80.]
+qcdpass1      rateParam pass_cat1 qcd 1 
+qcdfail1      rateParam fail_cat1 qcd 1 
+qcdpass2      rateParam pass_cat2 qcd 1
+qcdfail2      rateParam fail_cat2 qcd 1
+#qcdpass2      rateParam pass_cat2 @0*@1/(@2+@0) qcdpass1,qcdfail2,qcdfail1 
+

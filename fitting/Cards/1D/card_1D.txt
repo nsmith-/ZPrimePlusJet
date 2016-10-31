@@ -1,0 +1,30 @@
+imax 1
+jmax 2
+kmax *
+---------------
+shapes * * simple-shapes-RooDataHist.root w_$CHANNEL:$PROCESS_$CHANNEL w_$CHANNEL:$PROCESS_$CHANNEL_$SYSTEMATIC
+---------------
+bin          cat0
+observation -1
+------------------------------
+bin          cat0       cat0		cat0
+process      wqq_pass   zqq_pass	qcd_pass
+process      0		2   	1
+rate         -1       	-1   	5000
+--------------------------------
+lumi    lnN   1.05       1.05	-
+bgnorm  lnN   -          -	2.0
+scale   shape 1          1       -
+smear   shape 1          1       -
+sigma1  param      64.4744     18.7487
+a0      param      0.707483    0.130441
+a1      param      0.00320657  0.00100393
+a2      param      -2.8394e-05 4.40981e-06 
+qcdpass rateParam cat0 qcd
+#sigma1  flatParam  64.4    1.0 [20.   ,80.]
+#a0      flatParam  1.0     1.0 [0.    ,10.]
+#a1      flatParam -0.001   1.0 [-0.99 ,0.99]
+#a2      flatParam -0.00001 1.0 [-0.001,0.001]
+
+
+
