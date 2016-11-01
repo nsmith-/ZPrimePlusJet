@@ -46,7 +46,7 @@ def main(options,args):
                'VBFHbb': ROOT.kBlue-10,
                'Diboson': ROOT.kOrange,
                'SingleTop': ROOT.kViolet+1,
-               'DY':  ROOT.kGreen+1,
+               'DY':  ROOT.kCyan+1,
                'W':  ROOT.kTeal-1,
                'TTbar':  ROOT.kGray,
                'QCD': ROOT.kBlue+1
@@ -69,6 +69,7 @@ def main(options,args):
     print "Backgrounds..."
     bkgSamples = {}
     bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
+    bkgSamples['DY'] = sampleContainer(tfiles['DY'], 1, lumi)
     bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
     bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
     bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
@@ -98,7 +99,6 @@ def main(options,args):
 
 ##----##----##----##----##----##----##
 if __name__ == '__main__':
-
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option("--lumi", dest="lumi", default = 30,help="luminosity", metavar="lumi")

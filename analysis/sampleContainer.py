@@ -21,8 +21,8 @@ class sampleContainer:
         self._lumi = lumi
 
         # define histograms
-        self.h_n_ak4             = ROOT.TH1F("h_n_ak4","; AK4 n_{jets};", 10, 0, 10)
-        self.h_n_ak4_dR0p8       = ROOT.TH1F("h_n_ak4_dR0p8","; AK4 n_{jets} #Delta R > 0.8;", 10, 0, 10)
+        self.h_n_ak4             = ROOT.TH1F("h_n_ak4","; AK4 n_{jets};", 20, 0, 20)
+        self.h_n_ak4_dR0p8       = ROOT.TH1F("h_n_ak4_dR0p8","; AK4 n_{jets} #Delta R > 0.8;", 20, 0, 20)
         
         self.h_pt_ak8            = ROOT.TH1F("h_pt_ak8","; AK8 p_{T} [GeV];", 100, 300, 3000)
         self.h_pt_ak8_dbtagCut   = ROOT.TH1F("h_pt_ak8_dbtagCut","; AK8 p_{T} [GeV];", 100, 300, 3000)
