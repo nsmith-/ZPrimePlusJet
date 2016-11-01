@@ -591,7 +591,7 @@ def makeCanvasComparison(hs,legname,name,pdir="plots",lumi=30):
     c.SaveAs(pdir+"/"+name+"_log.pdf")		
 
     
-def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30):
+def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04
     leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
@@ -653,11 +653,15 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lum
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.C")
 
+    if ofile is not None:
+        ofile.cd()
+        c.Write('c'+outname)
+
     return c
     
 def	makeCanvas2D( TFMap, name, pdir='plots' ):
 
-	c1 = ROOT.TCanvas("c1","c1",1000,800);
+	c1 = ROOT.TCanvas("c1","c1",1000,800)
 	TFMap.Draw("colz");
 	c1.SetRightMargin(0.15);
 	c1.SaveAs(pdir+"/"+name+".pdf");

@@ -23,6 +23,7 @@ def main(options,args):
     
     legname = {'ggHbb': 'ggH(b#bar{b})',
                'VBFHbb':'VBF H(b#bar{b})',
+               'ZHbb':'ZH(b#bar{b})',
                'Diboson': 'VV(4q)',
                'SingleTop': 'single-t',
                'DY': 'Z+jets',
@@ -34,6 +35,7 @@ def main(options,args):
         
     tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_ext.root'],
                'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8.root'],
+               'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8.root'],
                'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo.root',idir+'/ZZTo4Q_13TeV_amcatnlo.root'],
                'SingleTop': [idir+'/SingleTop.root'],
                'DY':  [idir+'/DY.root'],
@@ -43,10 +45,11 @@ def main(options,args):
                }
 
     color = {'ggHbb': ROOT.kRed,
-               'VBFHbb': ROOT.kBlue-10,
+               'VBFHbb': ROOT.kBlue-9,
+               'ZHbb': ROOT.kMagenta-9,
                'Diboson': ROOT.kOrange,
                'SingleTop': ROOT.kViolet+1,
-               'DY':  ROOT.kCyan+1,
+               'DY':  ROOT.kCyan,
                'W':  ROOT.kTeal-1,
                'TTbar':  ROOT.kGray,
                'QCD': ROOT.kBlue+1
@@ -54,6 +57,7 @@ def main(options,args):
 
     style = {'ggHbb': 2,
                'VBFHbb': 3,
+               'ZHbb':4,
                'Diboson': 1,
                'SingleTop': 1,
                'DY': 1,
@@ -66,6 +70,7 @@ def main(options,args):
     sigSamples = {}
     sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi * 48.85 * 5.824E-01) 
     sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi * 3.782E+00 * 5.824E-01)
+    sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi * 8.839E-01 * 5.824E-01)
     print "Backgrounds..."
     bkgSamples = {}
     bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
@@ -74,12 +79,13 @@ def main(options,args):
     bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
     bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
     # this 100 scale factor...just makes the QCD run faster, to use all the QCD, make the SF = 1
-    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi) 
+    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 1, lumi) 
 
 
-    ofile = ROOT.TFile.Open(odir+'/Plots.root','recreate')
+    ofile = ROOT.TFile.Open(odir+'/PlotsGGH.root','recreate')
 
     plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
+    canvases = []
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
@@ -87,14 +93,8 @@ def main(options,args):
         hb = {}
         for process, s in bkgSamples.iteritems():
             hb[process] = getattr(s,plot)
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi)
-        ofile.cd()
-        for process, h in hs.iteritems():
-            h.Write()
-        for process, h in hb.iteritems():
-            h.Write()
-        
-        c.Write()
+        c = makeCanvasComparisonStack(hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+        canvases.append(c)
 
 
 ##----##----##----##----##----##----##
