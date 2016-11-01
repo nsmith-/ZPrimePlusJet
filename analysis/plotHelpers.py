@@ -29,7 +29,7 @@ def getRatio(hist, reference):
 def makeCanvas(hists,normalize=False,odir = "plots"):
 
 	color = [1,2,4,6,7,8,3,4,1,1,7,8]
-	style = [2,2,2,2,2,2,2,2,2,1,1,1]
+	style = [1,2,2,2,1,2,2,2,2,1,1,1]
 	options = ["hist",
 			   "histsames",
 			   "histsames",
@@ -68,132 +68,136 @@ def makeCanvas(hists,normalize=False,odir = "plots"):
 
 def makeCanvasDataMC(hd,hmcs,legname,name,pdir="plots",nodata=False):
 	
-	color = [2,4,6,7,8,3,5]
-	for h in range(len(hmcs)): 
-		hmcs[h].SetFillStyle(1001);
-		hmcs[h].SetLineColor(1);
-		hmcs[h].SetFillColor(color[h])
+    color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
+    style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
+    for h in range(len(hmcs)): 
+        hmcs[h].SetFillStyle(1001)
+        hmcs[h].SetLineStyle(style[h])
+        hmcs[h].SetLineColor(color[h])
+        hmcs[h].SetFillColor(color[h])
 
-	hstack = ROOT.THStack("hstack","hstack");
-	for h in hmcs: hstack.Add(h);
-	fullmc = hstack.GetStack().Last();
+    hstack = ROOT.THStack("hstack","hstack");
+    for h in hmcs: hstack.Add(h);
+    fullmc = hstack.GetStack().Last();
 
-	# normalize MC to data
-	scalefactor = hd.Integral()/fullmc.Integral();
-	print "data/mc scale factor = ", scalefactor
-	for i in range(len(hmcs)): hmcs[i].Scale( scalefactor );
+    # normalize MC to data
+    scalefactor = hd.Integral()/fullmc.Integral();
+    print "data/mc scale factor = ", scalefactor
+    for i in range(len(hmcs)): hmcs[i].Scale( scalefactor );
 
-	xtitle = hmcs[0].GetXaxis().GetTitle();
-	ytitle = hmcs[0].GetYaxis().GetTitle();
-	hstack2 = ROOT.THStack("hstack2",";"+xtitle+";"+ytitle+";");
-	for h in hmcs: hstack2.Add(h);
+    xtitle = hmcs[0].GetXaxis().GetTitle();
+    ytitle = hmcs[0].GetYaxis().GetTitle();
+    hstack2 = ROOT.THStack("hstack2",";"+xtitle+";"+ytitle+";");
+    for h in hmcs: hstack2.Add(h);
 
-	maxval = 1.5*max(hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum());
-	# print maxval;
-	leg = ROOT.TLegend(0.6,0.7,0.9,0.9);
-	leg.SetFillStyle(0);
-	leg.SetBorderSize(0);
-	leg.SetTextSize(0.035);
-	leg.AddEntry(hd,"data","pe");
-	for i in range(len(hmcs)):
-		leg.AddEntry(hmcs[i],legname[i],"f")
-	# print hstack2.GetStack().Last().Integral(), hstack.GetStack().Last().Integral(),hd.Integral()
-	# print hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum())
+    maxval = 1.5*max(hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum());
+    # print maxval;
+    leg = ROOT.TLegend(0.6,0.7,0.9,0.9);
+    leg.SetFillStyle(0);
+    leg.SetBorderSize(0);
+    leg.SetTextSize(0.035);
+    leg.AddEntry(hd,"data","pe");
+    for i in range(len(hmcs)):
+        leg.AddEntry(hmcs[i],legname[i],"f")
+    # print hstack2.GetStack().Last().Integral(), hstack.GetStack().Last().Integral(),hd.Integral()
+    # print hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum())
 
-	tag1 = ROOT.TLatex(0.7,0.95,"0.46 fb^{-1} (13 TeV)")
-	tag1.SetNDC();
-	tag1.SetTextSize(0.035);
-	tag2 = ROOT.TLatex(0.17,0.95,"CMS preliminary")
-	tag2.SetNDC();
-	tag2.SetTextSize(0.035);
+    tag1 = ROOT.TLatex(0.7,0.95,"30 fb^{-1} (13 TeV)")
+    tag1.SetNDC();
+    tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045);
+    tag2 = ROOT.TLatex(0.17,0.95,"CMS Preliminary")
+    tag2.SetNDC();
+    tag2.SetTextSize(0.045);
 
-	c = ROOT.TCanvas("c"+name,"c"+name,1000,800);
-	p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31);
-	p2.SetTopMargin(0);
-	p2.SetBottomMargin(0.3);
-	p2.SetLeftMargin(0.15)
-	p2.SetRightMargin(0.03)
-	p2.SetFillStyle(0);
-	p2.Draw();
-	p1 = ROOT.TPad("pad1","pad1",0,0.31,1,1);
-	p1.SetBottomMargin(0);
-	p1.SetLeftMargin(p2.GetLeftMargin())
-	p1.SetRightMargin(p2.GetRightMargin())
-	p1.Draw();
-	p1.cd();
+    c = ROOT.TCanvas("c"+name,"c"+name,1000,800);
+    p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31);
+    p2.SetTopMargin(0);
+    p2.SetBottomMargin(0.3);
+    p2.SetLeftMargin(0.15)
+    p2.SetRightMargin(0.03)
+    p2.SetFillStyle(0);
+    p2.Draw();
+    p1 = ROOT.TPad("pad1","pad1",0,0.31,1,1);
+    p1.SetBottomMargin(0);
+    p1.SetLeftMargin(p2.GetLeftMargin())
+    p1.SetRightMargin(p2.GetRightMargin())
+    p1.Draw();
+    p1.cd();
 
-	mainframe = hmcs[0].Clone('mainframe')
-	mainframe.Reset('ICE')
-	mainframe.GetXaxis().SetTitleFont(43)
-	mainframe.GetXaxis().SetLabelFont(43)
-	mainframe.GetYaxis().SetTitleFont(43)
-	mainframe.GetYaxis().SetLabelFont(43)
-	mainframe.GetYaxis().SetTitle('Events')
-	mainframe.GetYaxis().SetLabelSize(22)
-	mainframe.GetYaxis().SetTitleSize(26)
-	mainframe.GetYaxis().SetTitleOffset(2.0)
-	mainframe.GetXaxis().SetTitle('')
-	mainframe.GetXaxis().SetLabelSize(0)
-	mainframe.GetXaxis().SetTitleSize(0)
-	mainframe.GetXaxis().SetTitleOffset(1.5)
-	mainframe.GetYaxis().SetNoExponent()
-	mainframe.Draw()
+    mainframe = hmcs[0].Clone('mainframe')
+    mainframe.Reset('ICE')
+    mainframe.GetXaxis().SetTitleFont(43)
+    mainframe.GetXaxis().SetLabelFont(43)
+    mainframe.GetYaxis().SetTitleFont(43)
+    mainframe.GetYaxis().SetLabelFont(43)
+    mainframe.GetYaxis().SetTitle('Events')
+    mainframe.GetYaxis().SetLabelSize(22)
+    mainframe.GetYaxis().SetTitleSize(26)
+    mainframe.GetYaxis().SetTitleOffset(2.0)
+    mainframe.GetXaxis().SetTitle('')
+    mainframe.GetXaxis().SetLabelSize(0)
+    mainframe.GetXaxis().SetTitleSize(0)
+    mainframe.GetXaxis().SetTitleOffset(1.5)
+    mainframe.GetYaxis().SetNoExponent()
+    mainframe.Draw()
 
-	if nodata:
-		hstack.SetMaximum(maxval);
-		hstack.Draw("hist");
-	else:
-		hstack2.SetMaximum(maxval);
-		hstack2.Draw("hist");
-		hd.Draw("pesames");
-	# ROOT.gPad.Update();
-	# hstack2.GetXaxis.SetTitle( hmcs[0].GetXaxis().GetTitle() );
-	# hstack2.GetYaxis.SetTitle( hmcs[0].GetYaxis().GetTitle() );	
-	leg.Draw();
-	tag1.Draw();
-	tag2.Draw();
+    if nodata:
+        hstack.SetMaximum(maxval);
+        hstack.Draw("hist");
+    else:
+        hstack2.SetMaximum(maxval);
+        hstack2.Draw("hist");
+        hd.Draw("pesames");
+    # ROOT.gPad.Update();
+    # hstack2.GetXaxis.SetTitle( hmcs[0].GetXaxis().GetTitle() );
+    # hstack2.GetYaxis.SetTitle( hmcs[0].GetYaxis().GetTitle() );	
+    leg.Draw();
+    tag1.Draw();
+    tag2.Draw();
 
-	p2.cd()
-	ratioframe = mainframe.Clone('ratioframe')
-	ratioframe.Reset('ICE')
-	ratioframe.GetYaxis().SetRangeUser(0.50,1.50)
-	ratioframe.GetYaxis().SetTitle('Data/MC')
-	ratioframe.GetXaxis().SetTitle(hmcs[0].GetXaxis().GetTitle())
-	ratioframe.GetXaxis().SetLabelSize(22)
-	ratioframe.GetXaxis().SetTitleSize(26)
-	ratioframe.GetYaxis().SetNdivisions(5)
-	ratioframe.GetYaxis().SetNoExponent()
-	ratioframe.GetYaxis().SetTitleOffset(mainframe.GetYaxis().GetTitleOffset())
-	ratioframe.GetXaxis().SetTitleOffset(3.0)
-	ratioframe.Draw()
+    p2.cd()
+    ratioframe = mainframe.Clone('ratioframe')
+    ratioframe.Reset('ICE')
+    ratioframe.GetYaxis().SetRangeUser(0.50,1.50)
+    ratioframe.GetYaxis().SetTitle('Data/MC')
+    ratioframe.GetXaxis().SetTitle(hmcs[0].GetXaxis().GetTitle())
+    ratioframe.GetXaxis().SetLabelSize(22)
+    ratioframe.GetXaxis().SetTitleSize(26)
+    ratioframe.GetYaxis().SetNdivisions(5)
+    ratioframe.GetYaxis().SetNoExponent()
+    ratioframe.GetYaxis().SetTitleOffset(mainframe.GetYaxis().GetTitleOffset())
+    ratioframe.GetXaxis().SetTitleOffset(3.0)
+    ratioframe.Draw()
 
-	## Calculate Ratios
-	ratios = []
-	ratios.append(getRatio(hd, fullmc))
-	ratios[0].SetMinimum(0)
-	ratios[0].SetMaximum(2)
-	ratioframe.GetYaxis().SetRangeUser(0,2)
+    ## Calculate Ratios
+    ratios = []
+    ratios.append(getRatio(hd, fullmc))
+    ratios[0].SetMinimum(0)
+    ratios[0].SetMaximum(2)
+    ratioframe.GetYaxis().SetRangeUser(0,2)
 
-	line = ROOT.TLine(ratios[0].GetXaxis().GetXmin(), 1.0,
-					  ratios[0].GetXaxis().GetXmax(), 1.0)
-	line.SetLineColor(ROOT.kGray)
-	line.SetLineStyle(2)
-	line.Draw()
+    line = ROOT.TLine(ratios[0].GetXaxis().GetXmin(), 1.0,
+                      ratios[0].GetXaxis().GetXmax(), 1.0)
+    line.SetLineColor(ROOT.kGray)
+    line.SetLineStyle(2)
+    line.Draw()
 
-	ratios[0].Draw("P same")
-	
-	c.cd()
-	c.Modified()
-	c.Update()        
-	c.SaveAs(pdir+"/"+name+".pdf");
-	c.SaveAs(pdir+"/"+name+".png");
+    ratios[0].Draw("P same")
 
-	ROOT.gPad.SetLogy();
-	hstack.SetMinimum(0.1);
-	c.SaveAs(pdir+"/"+name+"_log.pdf")
-	c.SaveAs(pdir+"/"+name+"_log.png")
+    c.cd()
+    c.Modified()
+    c.Update()        
+    c.SaveAs(pdir+"/"+name+".pdf")
+    c.SaveAs(pdir+"/"+name+".png")
 
-	c.Close()
+    p1.cd()
+    ROOT.gPad.SetLogy()
+    hstack.SetMinimum(0.1)
+    c.SaveAs(pdir+"/"+name+"_log.pdf")
+    c.SaveAs(pdir+"/"+name+"_log.png")
+
+    c.Close()
 
 ##################################################################################################
 def makeCanvasDataMC_wpred(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
@@ -331,11 +335,11 @@ def makeCanvasDataMC_MONEY(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 
 	# build total stack
 	hTotSM = hd.Clone();
-	for i in range(hd.GetNbinsX()):
-		hTotSM.SetBinContent(i+1, gpred.GetY()[i]+hmcs[0].GetBinContent(i+1)+hmcs[1].GetBinContent(i+1) );
-		# FinalErrorsVis = 0; 
-		# FinalErrorsVis += gpred.GetY()[i]*gpred.GetY()[i];		
-		# hTotSM.SetBinContent(i+1, gpred.GetY()[i]+hmcs[0].GetBinContent(i+1)+hmcs[1].GetBinContent(i+1)  );
+	## for i in range(hd.GetNbinsX()):
+	## 	hTotSM.SetBinContent(i+1, gpred.GetY()[i]+hmcs[0].GetBinContent(i+1)+hmcs[1].GetBinContent(i+1) );
+	## 	# FinalErrorsVis = 0; 
+	## 	# FinalErrorsVis += gpred.GetY()[i]*gpred.GetY()[i];		
+	## 	# hTotSM.SetBinContent(i+1, gpred.GetY()[i]+hmcs[0].GetBinContent(i+1)+hmcs[1].GetBinContent(i+1)  );
 	hTotSM.SetLineColor(ROOT.kGreen+2);
 	hTotSM.SetLineWidth(2);
 	hTotSM.GetYaxis().SetTitle("Events");
@@ -411,15 +415,15 @@ def makeCanvasDataMC_MONEY(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 			hdOvPred.SetBinContent( i+1, 0. );		
 			hdOvPred.SetBinError( i+1, 0. );		
 
-		one_x.append( hd.GetXaxis().GetBinCenter(i+1) );		
-		one_ex.append(  hd.GetXaxis().GetBinWidth(i+1) );
-		if gpred.GetY()[i] > 0:
-			one_y.append( 1. );
-			errmc  = gpred.GetEY()[i]/gpred.GetY()[i];
-			one_ey.append( errmc );
-		else:
-			one_y.append( 0 );
-			one_ey.append( 0 );
+	## 	one_x.append( hd.GetXaxis().GetBinCenter(i+1) );		
+	## 	one_ex.append(  hd.GetXaxis().GetBinWidth(i+1) );
+	## 	if gpred.GetY()[i] > 0:
+	## 		one_y.append( 1. );
+	## 		errmc  = gpred.GetEY()[i]/gpred.GetY()[i];
+	## 		one_ey.append( errmc );
+	## 	else:
+	## 		one_y.append( 0 );
+	## 		one_ey.append( 0 );
 
 	hdOvPred.GetXaxis().SetTitle("jet mass (GeV)"); 
 	hdOvPred.GetXaxis().SetTitleSize(0.14);
@@ -428,11 +432,11 @@ def makeCanvasDataMC_MONEY(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 	hdOvPred.GetYaxis().SetTitleOffset(0.42);	
 	hdOvPred.Draw('pe');	
 
-	grrat = ROOT.TGraphErrors(len(one_x),array.array('d',one_x),array.array('d',one_y),array.array('d',one_ex),array.array('d',one_ey) );
-	grrat.SetLineColor(2);
-	grrat.SetFillColor(2);
-	grrat.SetFillStyle(3001);
-	grrat.Draw('2');
+	## grrat = ROOT.TGraphErrors(len(one_x),array.array('d',one_x),array.array('d',one_y),array.array('d',one_ex),array.array('d',one_ey) );
+	## grrat.SetLineColor(2);
+	## grrat.SetFillColor(2);
+	## grrat.SetFillStyle(3001);
+	## grrat.Draw('2');
 	c.SaveAs(pdir+"/"+name+".pdf");
 	#---------------------------------------------------------------
 	#---------------------------------------------------------------
@@ -486,28 +490,29 @@ def makeCanvasDataMC_MONEY(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 			hdOvPred.SetBinContent( i+1, 0. );		
 			hdOvPred.SetBinError( i+1, 0. );		
 
-		one_x.append( hd.GetXaxis().GetBinCenter(i+1) );		
-		one_ex.append(  hd.GetXaxis().GetBinWidth(i+1) );
-		if gpred.GetY()[i] > 0:
-			one_y.append( 1. );
-			errmc  = gpred.GetEY()[i]/gpred.GetY()[i];
-			one_ey.append( errmc );
-		else:
-			one_y.append( 0 );
-			one_ey.append( 0 );
+	## 	one_x.append( hd.GetXaxis().GetBinCenter(i+1) );		
+	## 	one_ex.append(  hd.GetXaxis().GetBinWidth(i+1) );
+	## 	if gpred.GetY()[i] > 0:
+	## 		one_y.append( 1. );
+	## 		errmc  = gpred.GetEY()[i]/gpred.GetY()[i];
+	## 		one_ey.append( errmc );
+	## 	else:
+	## 		one_y.append( 0 );
+	## 		one_ey.append( 0 );
 
 	hdOvPred.GetXaxis().SetTitle("jet mass (GeV)"); 
 	hdOvPred.GetXaxis().SetTitleSize(0.14);
 	hdOvPred.GetYaxis().SetTitle("Data/MC"); 
 	hdOvPred.GetYaxis().SetTitleSize(0.14); 
 	hdOvPred.GetYaxis().SetTitleOffset(0.42);	
-	hdOvPred.Draw('pe');	
+	hdOvPred.Draw('pe');
+	
 
-	grrat = ROOT.TGraphErrors(len(one_x),array.array('d',one_x),array.array('d',one_y),array.array('d',one_ex),array.array('d',one_ey) );
-	grrat.SetLineColor(2);
-	grrat.SetFillColor(2);
-	grrat.SetFillStyle(3001);
-	grrat.Draw('2');
+	## grrat = ROOT.TGraphErrors(len(one_x),array.array('d',one_x),array.array('d',one_y),array.array('d',one_ex),array.array('d',one_ey) );
+	## grrat.SetLineColor(2);
+	## grrat.SetFillColor(2);
+	## grrat.SetFillStyle(3001);
+	## grrat.Draw('2');
 	c2.SaveAs(pdir+"/"+name+"_log.pdf");
 
 ##################################################################################################
@@ -546,36 +551,110 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 	tag2.Draw();
 	c.SaveAs(pdir+"/"+name+"_log.pdf")	
 
-def makeCanvasComparison(hs,legname,name,pdir="plots"):
+def makeCanvasComparison(hs,legname,name,pdir="plots",lumi=30):
 
-	color = [2,4,6,7,8,3,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
-	style = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
-	
-	leg = ROOT.TLegend(0.6,0.7,0.9,0.9);
-	leg.SetFillStyle(0);
-	leg.SetBorderSize(0);
-	leg.SetTextSize(0.035);
+    color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
+    style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
 
-	maxval = -99;
-	for h in range(len(hs)): 
-		hs[h].SetLineColor(color[h]);
-		hs[h].SetLineStyle(style[h]);
-		hs[h].SetLineWidth(2);
-		hs[h].SetFillStyle(0);
-		# hs[h].Scale(1./hs[h].Integral());
-		if hs[h].GetMaximum() > maxval: maxval = hs[h].GetMaximum();
-		leg.AddEntry(hs[h],legname[h],"l");
+    leg = ROOT.TLegend(0.55,0.65,0.9,0.9)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
 
-	c = ROOT.TCanvas("c"+name,"c"+name,1000,800);
-	hs[0].SetMaximum(1.5*maxval);
-	hs[0].Draw("hist");
-	for h in range(1,len(hs)): hs[h].Draw("histsames"); 
-	leg.Draw();
-	c.SaveAs(pdir+"/"+name+".pdf");	
-	ROOT.gPad.SetLogy();
-	hs[0].SetMinimum(1e-3);	
-	c.SaveAs(pdir+"/"+name+"_log.pdf")		
+    maxval = -99
+    for h in range(len(hs)): 
+        hs[h].SetLineColor(color[h])
+        hs[h].SetLineStyle(style[h])
+        hs[h].SetLineWidth(2)
+        hs[h].SetFillStyle(0)
+        # hs[h].Scale(1./hs[h].Integral())
+        if hs[h].GetMaximum() > maxval: maxval = hs[h].GetMaximum()
+        leg.AddEntry(hs[h],legname[h],"l")
 
+    c = ROOT.TCanvas("c"+name,"c"+name,1000,800)
+    hs[0].SetMaximum(1.5*maxval)
+    hs[0].Draw("hist")
+    for h in range(1,len(hs)): hs[h].Draw("histsames")
+    leg.Draw()
+    c.SaveAs(pdir+"/"+name+".pdf")
+    ROOT.gPad.SetLogy()
+    hs[0].GetXaxis().SetRangeUser(0,400)
+    hs[0].SetMinimum(1e-1); tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = ROOT.TLatex(0.1,0.92,"CMS")
+    tag2.SetNDC(); tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.2,0.92,"Simulation Preliminary")
+    tag3.SetNDC(); tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055); tag3.SetTextSize(0.045); tag1.Draw(); tag2.Draw(); tag3.Draw()
+
+    c.SaveAs(pdir+"/"+name+"_log.pdf")		
+
+    
+def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30):
+    
+    leg = ROOT.TLegend(0.65,0.58,0.88,0.88)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+
+    maxval = -99
+
+    hstack = ROOT.THStack("hstack","hstack")
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+        hstack.Add(h)
+        h.SetFillColor(color[name])
+        h.SetLineColor(color[name])
+        h.SetLineStyle(1)
+        h.SetLineWidth(1)
+        h.SetFillStyle(1001)
+        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
+    fullmc = hstack.GetStack().Last()
+    
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
+        h.SetLineColor(color[name])
+        h.SetLineStyle(style[name])
+        h.SetLineWidth(2)
+        h.SetFillStyle(0)
+        
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+        leg.AddEntry(h,legname[name],"f")
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+        leg.AddEntry(h,legname[name],"l")
+
+    c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+    hstack.Draw('hist')
+    hstack.SetMaximum(1.5*maxval)
+    hstack.GetYaxis().SetTitle('Events')
+    hstack.GetXaxis().SetTitle(fullmc.GetXaxis().GetTitle())
+    hstack.Draw('hist')
+    for name, h in hs.iteritems(): h.Draw("histsame")
+    leg.Draw()
+    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".C")
+    ROOT.gPad.SetLogy()
+    hstack.SetMinimum(1e-1)
+    tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.C")
+
+    return c
+    
 def	makeCanvas2D( TFMap, name, pdir='plots' ):
 
 	c1 = ROOT.TCanvas("c1","c1",1000,800);
