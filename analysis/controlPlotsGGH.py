@@ -101,7 +101,7 @@ def main(options,args):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option("--lumi", dest="lumi", default = 30,help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 
