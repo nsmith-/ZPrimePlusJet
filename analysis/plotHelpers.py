@@ -609,7 +609,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lum
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
-        h.SetLineColor(color[name])
+        h.SetLineColor(1)
         h.SetLineStyle(1)
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
