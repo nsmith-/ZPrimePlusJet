@@ -38,17 +38,20 @@ parser.add_option('--train', action='store_true', dest='train', default=False, h
 
 def main():
 
-	DataDir = '/eos/uscms/store/user/lpchbb/VectorDiJet1Jetv4/'
+	DataDir = '/uscmst1b_scratch/lpc1/3DayLifetime/ntran/DAZSLE16/VectorDiJet1Jetv4'
 	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/localData/Backgrounds/Backgrounds_13TEV/TTBAR/";
 	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/andrewBkg/";
 	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/rawData-v3/";
-	OutDir = DataDir+'sklim-v0-Oct27'
+	OutDir = 'sklim-v0-Nov2'
 
 	tags = [];
 	tags.append( ['QCD',0] );
-	tags.append( ['W',0] );
+	tags.append( ['W.root',0] );
 	tags.append( ['DY',0] );
-	#tags.append( ['VectorDiJet',0] );
+	tags.append( ['ST_tW_antitop_5f_inclusiveDecays_13TeV',0] );
+	tags.append( ['ST_tW_top_5f_inclusiveDecays_13TeV',0]);
+	tags.append( ['TTbar_madgraphMLM',0])
+	tags.append( ['VectorDiJet',0] );
 	# tags.append( ['VectorDiJet1Jet_M50',50] );
 	# tags.append( ['VectorDiJet1Jet_M75',75] );
 	# tags.append( ['VectorDiJet1Jet_M100',100] );
@@ -57,12 +60,11 @@ def main():
 	# tags.append( ['VectorDiJet1Jet_M200',200] );
 	# tags.append( ['VectorDiJet1Jet_M250',250] );
 	# tags.append( ['VectorDiJet1Jet_M300',300] );
-	tags.append( ['VBFHToBB_M125_13TeV_amcatnlo_pythia8',0] );
-	tags.append( ['ST_tW_antitop_5f_inclusiveDecays_13TeV',0] );
-	tags.append( ['ST_tW_top_5f_inclusiveDecays_13TeV',0]);
-	tags.append( ['TTbar_madgraphMLM',0])
+	# tags.append( ['VBFHToBB_M125_13TeV_amcatnlo_pythia8',0] );
 	
-	#tags.append( ['JetHTsilver',0] );
+	tags.append( ['JetHTRun2016B',0] );
+	tags.append( ['JetHTRun2016C',0] );
+	tags.append( ['JetHTRun2016D',0] );
 
 
 	# make a tmp dir
@@ -114,11 +116,12 @@ def sklimAdd(fn,odir,mass=0):
 	ofile.cd();
 	otree = tree.CloneTree(0);
 	otree.SetName("otree");
-	'''
+	
 	otree.SetBranchStatus("*Puppijet0_e2*",0);
 	otree.SetBranchStatus("*Puppijet0_e3*",0);
 	otree.SetBranchStatus("*Puppijet0_e4*",0);
-	'''
+	otree.SetBranchStatus("CA15Puppi*",0);	
+	
 	# otree.SetBranchStatus("bst8_PUPPIjet0_pt",1);
 	nent = tree.GetEntriesFast();
 

@@ -11,7 +11,7 @@ import array
 #########################################################################################################
 class sampleContainer:
 
-    def __init__( self , fn, sf = 1, lumi = 1 ):
+    def __init__( self , fn, sf = 1, lumi = 1, fillCA15=False ):
 
         self._fn = fn
         self._tf = ROOT.TFile.Open(self._fn[0])
@@ -81,13 +81,6 @@ class sampleContainer:
 
             jdb_8 = self._tt.AK8CHSjet0_doublecsv
             
-            jmsd_15 = self._tt.CA15Puppijet0_msd
-            jpt_15  = self._tt.CA15Puppijet0_pt
-            if jmsd_15 <= 0: jmsd_15 = 0.01
-            rhP_15  = math.log(jmsd_15*jmsd_15/jpt_15)   
-            jt21_15 = self._tt.CA15Puppijet0_tau21               
-            jt21P_15 = jt21_15 + 0.075*rhP_15
-
             n_4 = self._tt.nAK4Puppijets
             n_dR0p8_4 = self._tt.nAK4PuppijetsdR08
             
@@ -102,21 +95,33 @@ class sampleContainer:
                 self.h_n_ak4.Fill( n_4, weight )
                 self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
 
-            if self._tt.CA15Puppijet0_pt > 500: 
-                self.h_pt_ca15.Fill( jpt_15, weight )				
-                self.h_msd_ca15.Fill( jmsd_15, weight )
-                self.h_t21_ca15.Fill(jt21_15, weight )			
-                self.h_t21ddt_ca15.Fill(jt21P_15, weight )			
-                self.h_rhop_v_t21_ca15.Fill( rhP_15, jt21_15, weight )
-
             if self._tt.AK8Puppijet0_pt > 500 and jt21P_8 < 0.4:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
-            if self._tt.CA15Puppijet0_pt > 500 and jt21P_15 < 0.4:
-                self.h_msd_ca15_t21ddtCut.Fill( jmsd_15, weight )
 
             if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9:
                 self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
                 self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
+
+            ##### CA15 info
+            if not fillCA15: continue;
+
+            jmsd_15 = self._tt.CA15Puppijet0_msd
+            jpt_15  = self._tt.CA15Puppijet0_pt
+            if jmsd_15 <= 0: jmsd_15 = 0.01
+            rhP_15  = math.log(jmsd_15*jmsd_15/jpt_15)   
+            jt21_15 = self._tt.CA15Puppijet0_tau21               
+            jt21P_15 = jt21_15 + 0.075*rhP_15
+
+            if self._tt.CA15Puppijet0_pt > 500: 
+                self.h_pt_ca15.Fill( jpt_15, weight )               
+                self.h_msd_ca15.Fill( jmsd_15, weight )
+                self.h_t21_ca15.Fill(jt21_15, weight )          
+                self.h_t21ddt_ca15.Fill(jt21P_15, weight )          
+                self.h_rhop_v_t21_ca15.Fill( rhP_15, jt21_15, weight )
+
+            if self._tt.CA15Puppijet0_pt > 500 and jt21P_15 < 0.4:
+                self.h_msd_ca15_t21ddtCut.Fill( jmsd_15, weight )
+            #####
 
         print "\n"
         self.h_rhop_v_t21_ak8_Px = self.h_rhop_v_t21_ak8.ProfileX()
