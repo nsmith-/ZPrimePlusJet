@@ -551,33 +551,32 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 	tag2.Draw();
 	c.SaveAs(pdir+"/"+name+"_log.pdf")	
 
-def makeCanvasComparison(hs,legname,color,name,pdir="plots",lumi=30):
+def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=None):
     #color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
     #style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
-    leg_y = 0.88 - len(legname.keys())*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+    leg = ROOT.TLegend(0.55,0.65,0.9,0.9)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
-    leg.SetTextFont(42)
 
     maxval = -99
     for iname, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[iname])
-        #h.SetLineStyle(style[name])
+        h.SetLineStyle(style[iname])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
-	if h.GetMaximum() > maxval: maxval = h.GetMaximum()
-	leg.AddEntry(h,legname[iname],"l")
-	
+        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
+        leg.AddEntry(h,legname[iname],"l")
+
     c = ROOT.TCanvas("c"+name,"c"+name,1000,800)
     i=0
-    for process, s in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):	
-	 i+=1
-         if i==1:		
-		hs[process].SetMaximum(1.5*maxval) 
-		hs[process].Draw("hist")
-	 else : hs[process].Draw("histsame")
+    for process, s in hs.iteritems():
+    #sorted(hs.iteritems(),key=lambda (k,v): v.Integral()): 
+         i+=1
+         if i==1:
+                hs[process].SetMaximum(1.5*maxval)
+                hs[process].Draw("hist")
+         else : hs[process].Draw("histsame")
     leg.Draw()
     c.SaveAs(pdir+"/"+name+".pdf")
     ROOT.gPad.SetLogy()
@@ -592,7 +591,13 @@ def makeCanvasComparison(hs,legname,color,name,pdir="plots",lumi=30):
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.055); tag3.SetTextSize(0.045); tag1.Draw(); tag2.Draw(); tag3.Draw()
 
-    c.SaveAs(pdir+"/"+name+"_log.pdf")		
+    c.SaveAs(pdir+"/"+name+"_log.pdf")
+    if ofile is not None:
+        ofile.cd()
+        c.Write('c'+name)
+
+
+    return c
 
     
 def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
@@ -772,8 +777,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
-    c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".C")
+    #c.SaveAs(pdir+"/"+outname+".pdf")
+    #c.SaveAs(pdir+"/"+outname+".C")
     ROOT.gPad.SetLogy()
     hstack.SetMinimum(1e-1)
     hd.Draw('pesames');
