@@ -772,11 +772,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
+    hd.Draw('pesames');
     c.SaveAs(pdir+"/"+outname+".pdf")
     c.SaveAs(pdir+"/"+outname+".C")
     ROOT.gPad.SetLogy()
     hstack.SetMinimum(1e-1)
-    hd.Draw('pesames');
     tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)

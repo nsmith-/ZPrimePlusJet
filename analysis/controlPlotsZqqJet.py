@@ -81,7 +81,7 @@ def main(options,args):
     ofile = ROOT.TFile.Open(odir+'/PlotsGGH.root','recreate')
 
     # plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
-    plots = ['h_pt_ak8','h_msd_ak8']
+    plots = ['h_pt_ak8','h_msd_ak8','h_n2b1sd_ak8','h_n2b1sdddt_ak8','h_t21_ak8','h_t21ddt_ak8']
     canvases = []
     for plot in plots:
         hs = {}

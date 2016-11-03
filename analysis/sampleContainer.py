@@ -37,6 +37,8 @@ class sampleContainer:
         self.h_t21ddt_ak8        = ROOT.TH1F("h_t21ddt_ak8","; AK8 #tau_{21};", 25, 0, 1.5)
         self.h_rhop_v_t21_ak8    = ROOT.TH2F("h_rhop_v_t21_ak8","; AK8 rho^{DDT}; AK8 <#tau_{21}>",15,-5,10,25,0,1.5)
         self.h_t32_ak8           = ROOT.TH1F("h_t32_ak8","; AK8 #tau_{32};", 25, 0, 1.5)
+        self.h_n2b1sd_ak8        = ROOT.TH1F("h_n2b1sd_ak8","; AK8 N_{2}^{1}(SD);", 25, 0, 0.5)
+        self.h_n2b1sdddt_ak8     = ROOT.TH1F("h_n2b1sdddt_ak8","; AK8 N_{2}^{1}(SD);", 25, 0, 1)
 
         self.h_pt_ca15            = ROOT.TH1F("h_pt_ca15","; CA15 p{T} [GeV];", 100, 300, 3000)
         self.h_msd_ca15           = ROOT.TH1F("h_msd_ca15","; CA15 m_{SD}^{PUPPI} [GeV];", 60, 0, 600)
@@ -77,10 +79,15 @@ class sampleContainer:
             jmsd_8 = self._tt.AK8Puppijet0_msd
             jpt_8  = self._tt.AK8Puppijet0_pt
             if jmsd_8 <= 0: jmsd_8 = 0.01
+            rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
             rhP_8 = math.log(jmsd_8*jmsd_8/jpt_8)
             jt21_8 = self._tt.AK8Puppijet0_tau21
             jt32_8 = self._tt.AK8Puppijet0_tau32
             jt21P_8 = jt21_8 + 0.063*rhP_8
+            jtN2b1sd_8 = self._tt.AK8Puppijet0_N2sdb1
+            n2slope = 0.025;
+            jtN2b1sdddt_8 = jtN2b1sd_8 + (9.00067e-05)*jpt_8 + n2slope*rh_8;
+            if rh_8 < -3: jtN2b1sdddt_8 = jtN2b1sd_8 + (9.00067e-05)*jpt_8;
 
             # jdb_8 = self._tt.AK8CHSjet0_doublecsv
             
@@ -95,6 +102,8 @@ class sampleContainer:
                 self.h_t32_ak8.Fill( jt32_8, weight )		
                 self.h_t21ddt_ak8.Fill( jt21P_8, weight )										
                 self.h_rhop_v_t21_ak8.Fill( rhP_8, jt21_8, weight )
+                self.h_n2b1sd_ak8.Fill(jtN2b1sd_8,weight);
+                self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight);
                 # self.h_n_ak4.Fill( n_4, weight )
                 # self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
 
