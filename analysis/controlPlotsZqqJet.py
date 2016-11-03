@@ -27,7 +27,8 @@ def main(options,args):
                'DY': 'Z+jets',
                'W': 'W+jets',
                'TTbar': 't#bar{t}+jets',        
-               'QCD': 'QCD'
+               'QCD': 'QCD',
+               'data': 'data'
                }
 
     tfiles = {'Zp100': [idir+'/VectorDiJet1Jet_M100.root'],
@@ -36,7 +37,8 @@ def main(options,args):
                'DY':  [idir+'/DY.root'],
                'W':  [idir+'/W.root'],
                'TTbar':  [idir+'/TTbar_madgraphMLM.root'],
-               'QCD': [idir+'/QCD.root']
+               'QCD': [idir+'/QCD.root'],
+               'data': [idir+'/JetHTRun2016.root']
                }
 
     color = {'Zp100': ROOT.kRed,
@@ -45,7 +47,8 @@ def main(options,args):
                'DY':  ROOT.kCyan,
                'W':  ROOT.kTeal-1,
                'TTbar':  ROOT.kGray,
-               'QCD': ROOT.kBlue+1
+               'QCD': ROOT.kBlue+1,
+               'data': ROOT.kBlack
                }
 
     style = {'Zp100': 2,
@@ -54,7 +57,8 @@ def main(options,args):
                'DY': 1,
                'W': 1,
                'TTbar': 1,
-               'QCD': 1
+               'QCD': 1,
+               'data': 1
                }
 
         
@@ -71,6 +75,8 @@ def main(options,args):
     # this 100 scale factor...just makes the QCD run faster, to use all the QCD, make the SF = 1
     bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi) 
 
+    isData = True;
+    dataSample = sampleContainer(tfiles['data'],10,lumi,isData)
 
     ofile = ROOT.TFile.Open(odir+'/PlotsGGH.root','recreate')
 
@@ -84,7 +90,8 @@ def main(options,args):
         hb = {}
         for process, s in bkgSamples.iteritems():
             hb[process] = getattr(s,plot)
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+        hd = getattr(dataSample,plot)
+        c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)
 
 
