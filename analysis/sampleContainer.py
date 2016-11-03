@@ -11,7 +11,7 @@ import array
 #########################################################################################################
 class sampleContainer:
 
-    def __init__( self , fn, sf = 1, lumi = 1, fillCA15=False ):
+    def __init__( self , fn, sf = 1, lumi = 1, isData = False, fillCA15=False ):
 
         self._fn = fn
         self._tf = ROOT.TFile.Open(self._fn[0])
@@ -19,6 +19,9 @@ class sampleContainer:
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
         self._lumi = lumi
+        if isData:
+            self._lumi = 1
+        self._fillCA15 = fillCA15;
 
         # define histograms
         self.h_n_ak4             = ROOT.TH1F("h_n_ak4","; AK4 n_{jets};", 20, 0, 20)
@@ -79,31 +82,31 @@ class sampleContainer:
             jt32_8 = self._tt.AK8Puppijet0_tau32
             jt21P_8 = jt21_8 + 0.063*rhP_8
 
-            jdb_8 = self._tt.AK8CHSjet0_doublecsv
+            # jdb_8 = self._tt.AK8CHSjet0_doublecsv
             
-            n_4 = self._tt.nAK4Puppijets
-            n_dR0p8_4 = self._tt.nAK4PuppijetsdR08
+            # n_4 = self._tt.nAK4Puppijets
+            # n_dR0p8_4 = self._tt.nAK4PuppijetsdR08
             
             if self._tt.AK8Puppijet0_pt > 500: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
                 self.h_msd_ak8.Fill( jmsd_8, weight )
-                self.h_dbtag_ak8.Fill( jdb_8, weight )
+                # self.h_dbtag_ak8.Fill( jdb_8, weight )
                 self.h_t21_ak8.Fill( jt21_8, weight )		
                 self.h_t32_ak8.Fill( jt32_8, weight )		
                 self.h_t21ddt_ak8.Fill( jt21P_8, weight )										
                 self.h_rhop_v_t21_ak8.Fill( rhP_8, jt21_8, weight )
-                self.h_n_ak4.Fill( n_4, weight )
-                self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
+                # self.h_n_ak4.Fill( n_4, weight )
+                # self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
 
             if self._tt.AK8Puppijet0_pt > 500 and jt21P_8 < 0.4:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
 
-            if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9:
-                self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
-                self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
+            # if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9:
+            #     self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
+            #     self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
 
             ##### CA15 info
-            if not fillCA15: continue;
+            if not self._fillCA15: continue;
 
             jmsd_15 = self._tt.CA15Puppijet0_msd
             jpt_15  = self._tt.CA15Puppijet0_pt

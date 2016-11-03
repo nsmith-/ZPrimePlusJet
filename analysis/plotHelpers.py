@@ -662,6 +662,144 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lum
         c.Write('c'+outname)
 
     return c
+
+def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+    leg_y = 0.88 - len(legname.keys())*0.04
+    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+
+    maxval = -99
+
+    hstack = ROOT.THStack("hstack","hstack")
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+        hstack.Add(h)
+        h.SetFillColor(color[name])
+        h.SetLineColor(1)
+        h.SetLineStyle(1)
+        h.SetLineWidth(1)
+        h.SetFillStyle(1001)
+        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
+    fullmc = hstack.GetStack().Last()
+    
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
+        h.SetLineColor(color[name])
+        h.SetLineStyle(style[name])
+        h.SetLineWidth(2)
+        h.SetFillStyle(0)
+        
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+        leg.AddEntry(h,legname[name],"f")
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+        leg.AddEntry(h,legname[name],"l")
+
+    c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+    hstack.Draw('hist')
+    hstack.SetMaximum(1.5*maxval)
+    hstack.GetYaxis().SetTitle('Events')
+    hstack.GetXaxis().SetTitle(fullmc.GetXaxis().GetTitle())
+    hstack.Draw('hist')
+    for name, h in hs.iteritems(): h.Draw("histsame")
+    leg.Draw()
+    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".C")
+    ROOT.gPad.SetLogy()
+    hstack.SetMinimum(1e-1)
+    tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.C")
+
+    if ofile is not None:
+        ofile.cd()
+        c.Write('c'+outname)
+
+    return c    
+
+def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+    leg_y = 0.88 - len(legname.keys())*0.04
+    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+
+    maxval = -99
+
+    hstack = ROOT.THStack("hstack","hstack")
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+        hstack.Add(h)
+        h.SetFillColor(color[name])
+        h.SetLineColor(1)
+        h.SetLineStyle(1)
+        h.SetLineWidth(1)
+        h.SetFillStyle(1001)
+        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
+    fullmc = hstack.GetStack().Last()
+    
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
+        h.SetLineColor(color[name])
+        h.SetLineStyle(style[name])
+        h.SetLineWidth(2)
+        h.SetFillStyle(0)
+        
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+        leg.AddEntry(h,legname[name],"f")
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+        leg.AddEntry(h,legname[name],"l")
+    leg.AddEntry(hd,legname['data'],"pe");
+    
+    c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+    hstack.Draw('hist')
+    hstack.SetMaximum(1.5*maxval)
+    hstack.GetYaxis().SetTitle('Events')
+    hstack.GetXaxis().SetTitle(fullmc.GetXaxis().GetTitle())
+    hstack.Draw('hist')
+    for name, h in hs.iteritems(): h.Draw("histsame")
+    leg.Draw()
+    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".C")
+    ROOT.gPad.SetLogy()
+    hstack.SetMinimum(1e-1)
+    hd.Draw('pesames');
+    tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.C")
+
+    if ofile is not None:
+        ofile.cd()
+        c.Write('c'+outname)
+
+    return c        
     
 def	makeCanvas2D( TFMap, name, pdir='plots' ):
 
