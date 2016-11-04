@@ -52,7 +52,7 @@ def main(options,args):
                'VBFHbb': ROOT.kBlue-10,
 		'ZHbb': ROOT.kAzure+1,
                'Diboson': ROOT.kOrange,
-               'SingleTop': ROOT.kViolet+1,
+               'SingleTop': ROOT.kRed-2,
                'DY':  ROOT.kGreen+1,
                'W':  ROOT.kTeal-1,
                'TTbar':  ROOT.kGray,
@@ -94,8 +94,10 @@ def main(options,args):
 
 
     canvases = []
-
-    plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut']
+    if isData: 
+	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
+    else:	
+    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut']
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
