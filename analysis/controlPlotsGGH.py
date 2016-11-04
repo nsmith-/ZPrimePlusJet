@@ -19,7 +19,7 @@ def main(options,args):
     idir = options.idir
     odir = options.odir
     lumi = options.lumi
-    onlySig = options.onlySig
+    isData = options.isData
 
     
     legname = {'ggHbb': 'ggH(b#bar{b})',
@@ -36,7 +36,7 @@ def main(options,args):
                }
 
         
-    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_ext.root'],
+    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8.root'],
                'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8.root'],
 		'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8.root'],
                'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo.root',idir+'/ZZTo4Q_13TeV_amcatnlo.root'],
@@ -45,7 +45,7 @@ def main(options,args):
                'W':  [idir+'/W.root'],
                'TTbar':  [idir+'/TTbar_madgraphMLM.root'],
                'QCD': [idir+'/QCD.root'],
-		  'data': [idir+'/JetHT.root']
+	'data': [idir+'/JetHT.root']
                }
 
     color = {'ggHbb': ROOT.kRed,
@@ -95,7 +95,7 @@ def main(options,args):
 
     canvases = []
 
-    plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
+    plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut']
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
@@ -103,8 +103,11 @@ def main(options,args):
         hb = {}
         for process, s in bkgSamples.iteritems():
             hb[process] = getattr(s,plot)
-	hd = getattr(dataSample,plot)
-        c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+	if isData:
+		hd = getattr(dataSample,plot)
+        	c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+        else:
+		c = makeCanvasComparisonStack(hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
 	canvases.append(c)	
 
 
@@ -116,7 +119,7 @@ if __name__ == '__main__':
     parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
-    parser.add_option('-s','--onlySig', dest='onlySig', default =False,help='signal comparison', metavar='onlySig')
+    parser.add_option('-s','--isData', dest='isData', default =True,help='signal comparison', metavar='isData')
 
     (options, args) = parser.parse_args()
 

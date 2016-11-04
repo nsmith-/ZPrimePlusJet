@@ -755,7 +755,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
-    fullmc = hstack.GetStack().Last()
+    allMC=hstack.GetStack().Last().Clone()	
     
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])
@@ -770,10 +770,32 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     leg.AddEntry(hd,legname['data'],"pe");
     
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+
+    c.SetFillStyle(4000)
+    c.SetFrameFillStyle(1000)
+    c.SetFrameFillColor(0)
+
+    oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
+    oben.SetBottomMargin(0)
+    oben.SetFillStyle(4000)
+    oben.SetFrameFillStyle(1000)
+    oben.SetFrameFillColor(0)
+    unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
+    unten.SetTopMargin(0.)
+    unten.SetBottomMargin(0.35)
+    unten.SetFillStyle(4000)
+    unten.SetFrameFillStyle(1000)
+    unten.SetFrameFillColor(0)
+
+    oben.Draw()
+    unten.Draw()
+    oben.cd()
+
+    fullmc = hstack.GetStack().Last()
     hstack.Draw('hist')
     hstack.SetMaximum(1.5*maxval)
     hstack.GetYaxis().SetTitle('Events')
-    hstack.GetXaxis().SetTitle(fullmc.GetXaxis().GetTitle())
+    hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
@@ -796,6 +818,27 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+
+    unten.cd()
+    ratio= getRatio(hd,allMC)
+    ksScore = hd.KolmogorovTest( allMC )
+    chiScore = hd.Chi2Test( allMC , "UWCHI2/NDF")
+    print ksScore
+    print chiScore
+    ratio.SetStats(0)
+    ratio.GetYaxis().SetRangeUser(0,3)	
+    ratio.GetYaxis().SetTitle("Data/Simulation")
+    ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+                      ratio.GetXaxis().GetXmax(), 1.0)
+    line.SetLineColor(ROOT.kGray)
+    line.SetLineStyle(2)
+    line.Draw()
+
+    #ratioError = ROOT.TGraphErrors(error)
+    #ratioError.SetFillColor(ROOT.kGray+3)
+    #ratioError.SetFillStyle(3013)
+    ratio.Draw("E1 SAME")	
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.C")
