@@ -18,7 +18,10 @@ class sampleContainer:
         self._tt = ROOT.TChain('otree')
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
-        self._lumi = lumi
+	self._NEv= self._tf.Get('NEvents')
+        self._lumi = lumi/self._NEv.GetBinContent(1)
+	print lumi 
+	print self._NEv.GetBinContent(1)
         if isData:
             self._lumi = 1
         self._fillCA15 = fillCA15;
@@ -75,8 +78,8 @@ class sampleContainer:
 
 
             puweight = self._tt.puWeight
-            fbweight = self._tt.scale1fb * self._lumi
-            weight = puweight+fbweight*self._sf
+            fbweight = self._lumi #self._tt.scale1fb * self._lumi
+            weight = puweight*fbweight*self._sf
 
             jmsd_8 = self._tt.AK8Puppijet0_msd
             jpt_8  = self._tt.AK8Puppijet0_pt
@@ -91,33 +94,33 @@ class sampleContainer:
             jtN2b1sdddt_8 = jtN2b1sd_8 + (9.00067e-05)*jpt_8 + n2slope*rh_8;
             if rh_8 < -3: jtN2b1sdddt_8 = jtN2b1sd_8 + (9.00067e-05)*jpt_8;
 
-            # jdb_8 = self._tt.AK8CHSjet0_doublecsv
+            jdb_8 = self._tt.AK8CHSjet0_doublecsv
             
-            # n_4 = self._tt.nAK4Puppijets
-            # n_dR0p8_4 = self._tt.nAK4PuppijetsdR08
+            n_4 = self._tt.nAK4Puppijets
+            n_dR0p8_4 = self._tt.nAK4PuppijetsdR08
             
             if self._tt.AK8Puppijet0_pt > 500: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
                 self.h_msd_ak8.Fill( jmsd_8, weight )
-                # self.h_dbtag_ak8.Fill( jdb_8, weight )
+                self.h_dbtag_ak8.Fill( jdb_8, weight )
                 self.h_t21_ak8.Fill( jt21_8, weight )		
                 self.h_t32_ak8.Fill( jt32_8, weight )		
                 self.h_t21ddt_ak8.Fill( jt21P_8, weight )										
                 self.h_rhop_v_t21_ak8.Fill( rhP_8, jt21_8, weight )
                 self.h_n2b1sd_ak8.Fill(jtN2b1sd_8,weight);
                 self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight);
-                # self.h_n_ak4.Fill( n_4, weight )
-                # self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
+                self.h_n_ak4.Fill( n_4, weight )
+                self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
 
             if self._tt.AK8Puppijet0_pt > 500 and jt21P_8 < 0.4:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
 	
-	    if self._tt.AK8Puppijet0_pt > 500 and self._tt.AK8Puppijet0_N2sdb1 < 0.45 :
+	    if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.45 :
                 self.h_msd_ak8_N2Cut.Fill( jmsd_8, weight )
 
-            # if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9:
-            #     self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
-            #     self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
+            if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9:
+                self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
+                self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
 
             ##### CA15 info
             if not self._fillCA15: continue;

@@ -27,7 +27,7 @@ def main(options,args):
 		'Phibb': ' Phi(125)(b#bar{b})'}
 
         
-    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_ext.root'],
+    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8.root'],
 		'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8.root'],
                'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8.root'],
 		'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8.root'],
@@ -35,17 +35,17 @@ def main(options,args):
                }
 
     color = {'ggHbb': ROOT.kRed,
-	      'ggHbbp': ROOT.kRed+4,
-               'VBFHbb': ROOT.kBlue-10,
+	      'ggHbbp': ROOT.kBlue+2,
+               'VBFHbb': ROOT.kAzure+3,
 		'ZHbb': ROOT.kAzure+1,
-		'Phibb':ROOT.kBlue+2
+		'Phibb':ROOT.kRed-2
                }
 
     style = {'ggHbb': 2,
-	     'ggHbbp': 2,
-               'VBFHbb': 3,
-		'ZHbb': 4,
-		'Phibb':1
+	     'ggHbbp': 1,
+             'VBFHbb': 2,
+	     'ZHbb': 1,
+	     'Phibb':2
                }
         
     print "Signals... "
@@ -55,19 +55,19 @@ def main(options,args):
     sigSamples['ggHbbp']  = sampleContainer(tfiles['ggHbbp']  , 1, lumi* 48.85 * 0.5824)
     sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi* 3.782 * 0.5824) 
     sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi * 0.6072 * 0.5824) 	
-    sigSamples['Phibb'] = sampleContainer(tfiles['Phibb'], 1, lumi * 48.85 * 0.5824)   
+    sigSamples['Phibb'] = sampleContainer(tfiles['Phibb'], 1, lumi * 48.85 * 0.5824 *0.001)   
 
 
     ofile = ROOT.TFile.Open(odir+'/Plots.root','recreate')
 
 
 
-    plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut']
+    plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut']
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
             hs[process] = getattr(s,plot)
-        c = makeCanvasComparison(hs,legname,color,plot.replace('h_','signalcomparison_'),odir,lumi)
+        c = makeCanvasComparison(hs,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi)
 
         ofile.cd()
         for process, h in hs.iteritems():
