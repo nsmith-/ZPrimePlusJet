@@ -51,11 +51,11 @@ def main(options,args):
     print "Signals... "
     sigSamples = {}
     print(tfiles['ggHbb'])
-    sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi * 48.85 * 0.5824) 
-    sigSamples['ggHbbp']  = sampleContainer(tfiles['ggHbbp']  , 1, lumi* 48.85 * 0.5824)
-    sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi* 3.782 * 0.5824) 
-    sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi * 0.6072 * 0.5824) 	
-    sigSamples['Phibb'] = sampleContainer(tfiles['Phibb'], 1, lumi * 48.85 * 0.5824 *0.001)   
+    sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi ) 
+    sigSamples['ggHbbp']  = sampleContainer(tfiles['ggHbbp']  , 1, lumi)
+    sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi) 
+    sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi ) 	
+    sigSamples['Phibb'] = sampleContainer(tfiles['Phibb'], 1, lumi )   
 
 
     ofile = ROOT.TFile.Open(odir+'/Plots.root','recreate')

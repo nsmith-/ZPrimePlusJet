@@ -18,8 +18,7 @@ class sampleContainer:
         self._tt = ROOT.TChain('otree')
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
-	self._NEv= self._tf.Get('NEvents')
-        self._lumi = lumi/self._NEv.GetBinContent(1)
+        self._lumi = lumi
 	print lumi 
 	print self._NEv.GetBinContent(1)
         if isData:
@@ -78,7 +77,7 @@ class sampleContainer:
 
 
             puweight = self._tt.puWeight
-            fbweight = self._lumi #self._tt.scale1fb * self._lumi
+            fbweight = self._tt.scale1fb * self._lumi
             weight = puweight*fbweight*self._sf
 
             jmsd_8 = self._tt.AK8Puppijet0_msd
