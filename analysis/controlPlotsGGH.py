@@ -94,7 +94,7 @@ def main(options,args):
     bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
     bkgSamples['DY']  = sampleContainer(tfiles['DY'], 1, lumi)
     # this 100 scale factor...just makes the QCD run faster, to use all the QCD, make the SF = 1
-    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 1, lumi) 
+    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi) 
 	
     if isData:	
 	dataSample = sampleContainer(tfiles['data'],1,lumi,isData)
@@ -107,7 +107,7 @@ def main(options,args):
     if isData: 
 	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
     else:	
-    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4_dR0p8','h_isolationCA15']
+    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8']
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
