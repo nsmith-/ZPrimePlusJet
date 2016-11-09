@@ -36,16 +36,25 @@ def main(options,args):
                }
 
         
-    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8.root'],
-               'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8.root'],
-		'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8.root'],
-               'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo.root',idir+'/ZZTo4Q_13TeV_amcatnlo.root'],
-               'SingleTop': [idir+'/SingleTop.root'],
-               'DY':  [idir+'/DY.root'],
-               'W':  [idir+'/W.root'],
-               'TTbar':  [idir+'/TTbar_madgraphMLM.root'],
-               'QCD': [idir+'/QCD.root'],
-	'data': [idir+'/JetHT.root']
+    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root '],
+               'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root '],
+		'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root '],
+               'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root ',idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root '],
+               'DY': [idir+'/DY_1000pb_weighted.root '],
+               'SingleTop':  [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
+		       idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
+		       idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
+		       idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
+               'W':  [idir+'/WJets_1000pb_weighted.root '],
+               'TTbar':  [idir+'/TTbar_madgraphMLM_1000pb_weighted.root '],
+               'QCD': [idir+'/QCD_HT200to300_1000pb_weighted.root',
+			idir+'/QCD_HT300to500_1000pb_weighted.root',
+			idir+'/QCD_HT500to700_1000pb_weighted.root',
+			idir+'/QCD_HT700to1000_1000pb_weighted.root',
+			idir+'/QCD_HT1000to1500_1000pb_weighted.root',
+			idir+'/QCD_HT2000toInf_1000pb_weighted.root',
+			idir+'/QCD_HT1500to2000_1000pb_weighted.root'],
+	     'data': [idir+'/JetHT.root ']
                }
 
     color = {'ggHbb': ROOT.kRed,
@@ -74,30 +83,31 @@ def main(options,args):
         
     print "Signals... "
     sigSamples = {}
-    sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi * 48.85 * 0.5824) 
-    sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi * 3.782 * 0.5824) 
-    sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi * 0.6072 * 0.5824) 	
+    sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi) 
+    sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi ) 
+    sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi ) 	
     print "Backgrounds..."
     bkgSamples = {}
     bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
     bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
     bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
     bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
+    bkgSamples['DY']  = sampleContainer(tfiles['DY'], 1, lumi)
     # this 100 scale factor...just makes the QCD run faster, to use all the QCD, make the SF = 1
-    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi) 
+    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 1, lumi) 
 	
-    isData = True;
-    dataSample = sampleContainer(tfiles['data'],10,lumi,isData)
+    if isData:	
+	dataSample = sampleContainer(tfiles['data'],1,lumi,isData)
 
 
-    ofile = ROOT.TFile.Open(odir+'/Plots.root','recreate')
+    ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
 
 
     canvases = []
     if isData: 
 	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
     else:	
-    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut']
+    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4_dR0p8','h_isolationCA15']
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
@@ -109,7 +119,7 @@ def main(options,args):
 		hd = getattr(dataSample,plot)
         	c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         else:
-		c = makeCanvasComparisonStack(hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+		c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
 	canvases.append(c)	
 
 
@@ -121,7 +131,7 @@ if __name__ == '__main__':
     parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
-    parser.add_option('-s','--isData', dest='isData', default =True,help='signal comparison', metavar='isData')
+    parser.add_option('-s','--isData', dest='isData', default =False,help='signal comparison', metavar='isData')
 
     (options, args) = parser.parse_args()
 

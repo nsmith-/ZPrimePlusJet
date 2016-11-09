@@ -2,6 +2,7 @@ import ROOT
 from ROOT import TFile, TTree, TChain, gPad, gDirectory, TVirtualFitter
 import math
 import sys
+from math import sqrt
 import time
 import array
 
@@ -24,6 +25,19 @@ def getRatio(hist, reference):
 			ratio.SetBinError(xbin, 0.0)
 
 	return ratio
+
+
+def getSoverRootB(hs, hallMC, iBin):
+  bb=0.
+  ss=0.
+  for i in range(iBin, hallMC.GetNbinsX()):
+      bb+=hallMC.GetBinContent(i)
+      ss+=hs.GetBinContent(i)
+  if bb > 0 :
+    return ss/sqrt(bb)
+  else:
+    return 0.
+
 
 
 def makeCanvas(hists,normalize=False,odir = "plots"):
@@ -600,7 +614,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     return c
 
     
-def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04
     leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
@@ -619,31 +633,55 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lum
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
-    fullmc = hstack.GetStack().Last()
+
+    allMC=hstack.GetStack().Last().Clone()	
+
+    ratio = hs[nameS].Clone("%s_ratio"%hs[nameS].GetName())
+    ratio.SetDirectory(0)
+    for i in range(0, allMC.GetNbinsX()):
+        SoverB=0
+        SoverB= getSoverRootB(hs[nameS],allMC,i)
+        ratio.SetBinContent(i,SoverB)
+
     
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
+	h.Scale(1000)
         
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"f")
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"l")
 
+
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+    oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
+    oben.SetBottomMargin(0)
+    oben.SetFillStyle(4000)
+    oben.SetFrameFillStyle(1000)
+    oben.SetFrameFillColor(0)
+    unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
+    unten.SetTopMargin(0.)
+    unten.SetBottomMargin(0.35)
+    unten.SetFillStyle(4000)
+    unten.SetFrameFillStyle(1000)
+    unten.SetFrameFillColor(0)
+
+    oben.Draw()
+    unten.Draw()
+    oben.cd()
+
     hstack.Draw('hist')
     hstack.SetMaximum(1.5*maxval)
     hstack.GetYaxis().SetTitle('Events')
-    hstack.GetXaxis().SetTitle(fullmc.GetXaxis().GetTitle())
+    hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
-    c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".C")
-    ROOT.gPad.SetLogy()
-    hstack.SetMinimum(1e-1)
+    
     tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
@@ -658,6 +696,37 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lum
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+
+    unten.cd()
+    unten.SetLogy()	
+    ratio.SetStats(0)
+    ratio.SetLineColor(hs[nameS].GetLineColor())
+    ratio.GetYaxis().SetRangeUser(0.001,1)
+    ratio.GetYaxis().SetTitle("S/#sqrt{B}")
+    ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+    ratio.GetXaxis().SetTitleSize(0.1)
+    ratio.GetXaxis().SetTitleOffset(1.2)
+    ratio.GetYaxis().SetTitleOffset(.6)
+    ratio.GetYaxis().SetTitleSize(0.1)
+    ratio.GetXaxis().SetLabelSize(0.075)
+
+    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+                      ratio.GetXaxis().GetXmax(), 1.0)
+    line.SetLineColor(ROOT.kGray)
+    line.SetLineStyle(2)
+    line.Draw()
+
+    ratio.Draw("HIST")
+    line.Draw("same")
+
+
+    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".C")
+		
+	
+    #ROOT.gPad.SetLogy()
+    oben.SetLogy()	
+    hstack.SetMinimum(1e-1)	
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.C")
@@ -668,73 +737,6 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lum
 
     return c
 
-def makeCanvasComparisonStack(hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
-    leg_y = 0.88 - len(legname.keys())*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
-    leg.SetFillStyle(0)
-    leg.SetBorderSize(0)
-    leg.SetTextSize(0.035)
-    leg.SetTextFont(42)
-
-    maxval = -99
-
-    hstack = ROOT.THStack("hstack","hstack")
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
-        hstack.Add(h)
-        h.SetFillColor(color[name])
-        h.SetLineColor(1)
-        h.SetLineStyle(1)
-        h.SetLineWidth(1)
-        h.SetFillStyle(1001)
-        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
-    fullmc = hstack.GetStack().Last()
-    
-    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
-        h.SetLineColor(color[name])
-        h.SetLineStyle(style[name])
-        h.SetLineWidth(2)
-        h.SetFillStyle(0)
-        
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"f")
-    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"l")
-
-    c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
-    hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
-    hstack.GetYaxis().SetTitle('Events')
-    hstack.GetXaxis().SetTitle(fullmc.GetXaxis().GetTitle())
-    hstack.Draw('hist')
-    for name, h in hs.iteritems(): h.Draw("histsame")
-    leg.Draw()
-    c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".C")
-    ROOT.gPad.SetLogy()
-    hstack.SetMinimum(1e-1)
-    tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
-    tag1.SetNDC(); tag1.SetTextFont(42)
-    tag1.SetTextSize(0.045)
-    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
-    tag2.SetNDC()
-    tag2.SetTextFont(62)
-    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
-    tag3.SetNDC()
-    tag3.SetTextFont(52)
-    tag2.SetTextSize(0.055)
-    tag3.SetTextSize(0.045)
-    tag1.Draw()
-    tag2.Draw()
-    tag3.Draw()
-
-    c.SaveAs(pdir+"/"+outname+"_log.pdf")
-    c.SaveAs(pdir+"/"+outname+"_log.C")
-
-    if ofile is not None:
-        ofile.cd()
-        c.Write('c'+outname)
-
-    return c    
 
 def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04

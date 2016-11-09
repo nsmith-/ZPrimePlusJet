@@ -20,14 +20,19 @@ class sampleContainer:
         self._sf = sf
         self._lumi = lumi
 	print lumi 
-	print self._NEv.GetBinContent(1)
+	#print self._NEv.GetBinContent(1)
         if isData:
             self._lumi = 1
         self._fillCA15 = fillCA15;
 
         # define histograms
         self.h_n_ak4             = ROOT.TH1F("h_n_ak4","; AK4 n_{jets};", 20, 0, 20)
+	self.h_n_ak4_fwd             = ROOT.TH1F("h_n_ak4fwd","; AK4 n_{jets} fwd;", 20, 0, 20)
+	self.h_n_ak4L             = ROOT.TH1F("h_n_ak4L","; AK4 n_{jets} CSV>CSVL;", 20, 0, 20)
+	self.h_n_ak4M             = ROOT.TH1F("h_n_ak4M","; AK4 n_{jets} CSV>CSVM;", 20, 0, 20)
+	self.h_n_ak4T             = ROOT.TH1F("h_n_ak4T","; AK4 n_{jets} CSV>CSVT;", 20, 0, 20)
         self.h_n_ak4_dR0p8       = ROOT.TH1F("h_n_ak4_dR0p8","; AK4 n_{jets} #Delta R > 0.8;", 20, 0, 20)
+	self.h_isolationCA15     = ROOT.TH1F("h_isolationCA15","; AK8/CA15 p_{T} ;", 50, 0.5, 1.5) 
         
         self.h_pt_ak8            = ROOT.TH1F("h_pt_ak8","; AK8 p_{T} [GeV];", 100, 300, 3000)
         self.h_pt_ak8_dbtagCut   = ROOT.TH1F("h_pt_ak8_dbtagCut","; AK8 p_{T} [GeV];", 100, 300, 3000)
@@ -50,6 +55,11 @@ class sampleContainer:
         self.h_t21ddt_ca15        = ROOT.TH1F("h_t21ddt_ca15","; CA15 #tau_{21};", 25, 0, 1.5)
         self.h_rhop_v_t21_ca15    = ROOT.TH2F("h_rhop_v_t21_ca15","; CA15 rho^{DDT}; CA15 <#tau_{21}>",15,-5,10,25,0,1.5)
 	self.h_msd_ak8_N2Cut.Sumw2()
+	self.h_n_ak4_fwd.Sumw2();    
+ 	self.h_n_ak4L.Sumw2();       
+ 	self.h_n_ak4M.Sumw2();
+ 	self.h_n_ak4T.Sumw2();       
+	self.h_isolationCA15.Sumw2();
 
         self.h_pt_ak8.Sumw2(); self.h_msd_ak8.Sumw2(); self.h_t21_ak8.Sumw2()
         self.h_pt_ca15.Sumw2(); self.h_msd_ca15.Sumw2(); self.h_t21_ca15.Sumw2()
@@ -98,7 +108,7 @@ class sampleContainer:
             n_4 = self._tt.nAK4Puppijets
             n_dR0p8_4 = self._tt.nAK4PuppijetsdR08
             
-            if self._tt.AK8Puppijet0_pt > 500: 
+            if self._tt.AK8Puppijet0_pt > 500 and self._tt.AK8Puppijet0_msd >50: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
                 self.h_msd_ak8.Fill( jmsd_8, weight )
                 self.h_dbtag_ak8.Fill( jdb_8, weight )
@@ -110,14 +120,20 @@ class sampleContainer:
                 self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight);
                 self.h_n_ak4.Fill( n_4, weight )
                 self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
+		self.h_n_ak4_fwd.Fill( self._tt.nAK4Puppijetsfwd  , weight )
+		self.h_n_ak4L.Fill(    self._tt.nAK4PuppijetsLdR08, weight )
+		self.h_n_ak4M.Fill(    self._tt.nAK4PuppijetsMdR08    , weight )
+		self.h_n_ak4T.Fill(    self._tt.nAK4PuppijetsTdR08 , weight )     
+		self.h_isolationCA15.Fill(    self._tt.AK8Puppijet0_ratioCA15_04 , weight )
+	
 
-            if self._tt.AK8Puppijet0_pt > 500 and jt21P_8 < 0.4:
+            if self._tt.AK8Puppijet0_pt > 500 and jt21P_8 < 0.4 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
 	
-	    if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.45 :
+	    if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.45 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_N2Cut.Fill( jmsd_8, weight )
 
-            if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9:
+            if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
                 self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
 
