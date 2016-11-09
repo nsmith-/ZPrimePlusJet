@@ -99,9 +99,10 @@ class sampleContainer:
             jt32_8 = self._tt.AK8Puppijet0_tau32
             jt21P_8 = jt21_8 + 0.063*rhP_8
             jtN2b1sd_8 = self._tt.AK8Puppijet0_N2sdb1
-            n2slope = 0.025;
-            jtN2b1sdddt_8 = jtN2b1sd_8 + (9.00067e-05)*jpt_8 + n2slope*rh_8;
-            if rh_8 < -3: jtN2b1sdddt_8 = jtN2b1sd_8 + (9.00067e-05)*jpt_8;
+	    n2slope = 0.025;
+            if rh_8 < -3.5: n2slope = 0;
+            jtN2b1sdddt_8 = jtN2b1sd_8 - (9.00067e-05)*jpt_8 - (0.0778)*(rh_8) - 0.0265*rh_8*rh_8 - 0.0024*rh_8*rh_8*rh_8;
+
 
             jdb_8 = self._tt.AK8CHSjet0_doublecsv
             
@@ -114,7 +115,7 @@ class sampleContainer:
                 self.h_dbtag_ak8.Fill( jdb_8, weight )
                 self.h_t21_ak8.Fill( jt21_8, weight )		
                 self.h_t32_ak8.Fill( jt32_8, weight )		
-                self.h_t21ddt_ak8.Fill( jt21P_8, weight )										
+                self.h_t21ddt_ak8.Fill( jt21P_8, weight )									
                 self.h_rhop_v_t21_ak8.Fill( rhP_8, jt21_8, weight )
                 self.h_n2b1sd_ak8.Fill(jtN2b1sd_8,weight);
                 self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight);
@@ -130,7 +131,7 @@ class sampleContainer:
             if self._tt.AK8Puppijet0_pt > 500 and jt21P_8 < 0.4 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
 	
-	    if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.45 and self._tt.AK8Puppijet0_msd >50:
+	    if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.2 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_N2Cut.Fill( jmsd_8, weight )
 
             if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9 and self._tt.AK8Puppijet0_msd >50:
