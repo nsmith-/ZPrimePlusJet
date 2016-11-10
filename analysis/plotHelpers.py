@@ -565,7 +565,7 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 	tag2.Draw();
 	c.SaveAs(pdir+"/"+name+"_log.pdf")	
 
-def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=None):
+def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=None,unitnorm=False):
     #color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
     #style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
     leg = ROOT.TLegend(0.55,0.65,0.9,0.9)
@@ -588,9 +588,12 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     #sorted(hs.iteritems(),key=lambda (k,v): v.Integral()): 
          i+=1
          if i==1:
-                hs[process].SetMaximum(1.5*maxval)
-                hs[process].Draw("hist")
-         else : hs[process].Draw("histsame")
+                #hs[process].SetMaximum(1.5*maxval)
+	 	if unitnorm : hs[process].DrawNormalized("hist")
+                else: hs[process].Draw("hist")
+         else : 	
+		if unitnorm : hs[process].DrawNormalized("histsame")
+		else: hs[process].Draw("histsame")
     leg.Draw()
     c.SaveAs(pdir+"/"+name+".pdf")
     ROOT.gPad.SetLogy()

@@ -47,6 +47,7 @@ class sampleContainer:
         self.h_t32_ak8           = ROOT.TH1F("h_t32_ak8","; AK8 #tau_{32};", 25, 0, 1.5)
         self.h_n2b1sd_ak8        = ROOT.TH1F("h_n2b1sd_ak8","; AK8 N_{2}^{1}(SD);", 25, 0, 0.5)
         self.h_n2b1sdddt_ak8     = ROOT.TH1F("h_n2b1sdddt_ak8","; AK8 N_{2}^{1}(SD);", 25, 0, 1)
+	self.h_msd_ak8_topR      = ROOT.TH1F("h_msd_ak8_topR","; AK8 m_{SD}^{PUPPI} [GeV];", 60, 0, 600)
 
         self.h_pt_ca15            = ROOT.TH1F("h_pt_ca15","; CA15 p{T} [GeV];", 100, 300, 3000)
         self.h_msd_ca15           = ROOT.TH1F("h_msd_ca15","; CA15 m_{SD}^{PUPPI} [GeV];", 60, 0, 600)
@@ -60,6 +61,7 @@ class sampleContainer:
  	self.h_n_ak4M.Sumw2();
  	self.h_n_ak4T.Sumw2();       
 	self.h_isolationCA15.Sumw2();
+	self.h_msd_ak8_topR.Sumw2();
 
         self.h_pt_ak8.Sumw2(); self.h_msd_ak8.Sumw2(); self.h_t21_ak8.Sumw2()
         self.h_pt_ca15.Sumw2(); self.h_msd_ca15.Sumw2(); self.h_t21_ca15.Sumw2()
@@ -133,6 +135,10 @@ class sampleContainer:
 	
 	    if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.2 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_N2Cut.Fill( jmsd_8, weight )
+
+	    if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >50 and self._tt.pfmet < 100 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsMdR08 < 3:
+		self.h_msd_ak8_topR.Fill( jmsd_8, weight )
+
 
             if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
