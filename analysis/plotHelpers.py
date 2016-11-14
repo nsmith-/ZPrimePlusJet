@@ -616,6 +616,23 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 
     return c
 
+def customSort(dictValue):
+    (k, v) = dictValue
+    if 'DY' in k:
+        return 0
+    elif 'W' in k:
+        return -1
+    elif 'Diboson' in k or 'VV' in k:
+        return -2
+    elif 'TTbar' in k:
+        return -3
+    elif 'ST' in k or 'SingleTop' in k:
+        return -4
+    elif 'QCD' in k:
+        return -5
+    else:
+        return -v.Integral() #negative integral
+        
     
 def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04
@@ -628,7 +645,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     maxval = -99
 
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+    for name, h in reversed(sorted(hb.iteritems(),key=customSort)):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -647,16 +664,16 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         ratio.SetBinContent(i,SoverB)
 
     
-    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
+    for name, h in reversed(sorted(hs.iteritems(),key=customSort)):
         h.SetLineColor(color[name])
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
 	h.Scale(1000)
         
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+    for name, h in sorted(hb.iteritems(),key=customSort):
         leg.AddEntry(h,legname[name],"f")
-    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+    for name, h in sorted(hs.iteritems(),key=customSort):
         leg.AddEntry(h,legname[name],"l")
 
 
@@ -752,7 +769,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     maxval = -99
 
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+    for name, h in reversed(sorted(hb.iteritems(),key=lambda (k,v): -v.Integral())):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -762,7 +779,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
     allMC=hstack.GetStack().Last().Clone()	
     
-    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
+    for name, h in reversed(sorted(hs.iteritems(),key=lambda (k,v): -v.Integral())):
         h.SetLineColor(color[name])
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
