@@ -18,29 +18,32 @@ from string import *
 from rgsutil import *
 from time import sleep
 from ROOT import *
+from optparse import OptionParser
 # ---------------------------------------------------------------------
 
-yvar = 'nAK4PuppijetsTdR08'
-xvar = 'pfmet'
-lumi = 1.0
-def plotData():
 
-    msize = 0.15 # marker size
 
-    varDict = {'nAK4PuppijetsdR08': ['AK4 n_{jet}, #Delta R>0.8', 12, 0, 12],
-               'nAK4Puppijets': ['AK4 n_{jet}', 12, 0, 12],
-               'nAK4PuppijetsLdR08': ['AK4 n_{L b-tag}, #Delta R>0.8',6, 0, 6],
-               'nAK4PuppijetsMdR08':  ['AK4 n_{M b-tag}, #Delta R>0.8', 6, 0, 6],
-               'nAK4PuppijetsTdR08':  ['AK4 n_{T b-tag}, #Delta R>0.8', 6, 0, 6],    
-               'nAK4PuppijetsbtagL':  ['AK4 n_{L b-tag}', 6, 0, 6],                 
-               'nAK4PuppijetsbtagM':  ['AK4 n_{M b-tag}', 6, 0, 6],                     
-               'nAK4PuppijetsbtagT':  ['AK4 n_{T b-tag}', 6, 0, 6],                     
-               'AK8CHSjet0_doublecsv':  ['AK8 double b-tag', 50, -1, 1],          
-               'AK8Puppijet0_tau32':  ['AK8 #tau_{32}', 50, 0, 1.5],        
-               'AK8Puppijet0_tau21':  ['AK8 #tau_{21}', 50, 0, 1.5],   
-               'pfmet':  ['PF E_{T}^{miss}', 50, 0, 1000],
+varDict = {'nAK4PuppijetsdR08': ['AK4 n_{jet}, #Delta R>0.8', 12, 0, 12],
+            'nAK4Puppijets': ['AK4 n_{jet}', 12, 0, 12],
+            'nAK4PuppijetsLdR08': ['AK4 n_{L b-tag}, #Delta R>0.8',6, 0, 6],
+            'nAK4PuppijetsMdR08':  ['AK4 n_{M b-tag}, #Delta R>0.8', 6, 0, 6],
+            'nAK4PuppijetsTdR08':  ['AK4 n_{T b-tag}, #Delta R>0.8', 6, 0, 6],    
+            'nAK4PuppijetsbtagL':  ['AK4 n_{L b-tag}', 6, 0, 6],                 
+            'nAK4PuppijetsbtagM':  ['AK4 n_{M b-tag}', 6, 0, 6],                     
+            'nAK4PuppijetsbtagT':  ['AK4 n_{T b-tag}', 6, 0, 6],                     
+            'AK8CHSjet0_doublecsv':  ['AK8 double b-tag', 50, -1, 1],          
+            'AK8Puppijet0_tau32':  ['AK8 #tau_{32}', 50, 0, 1.5],        
+            'AK8Puppijet0_tau21':  ['AK8 #tau_{21}', 50, 0, 1.5],    
+            'AK8Puppijet0_tau21DDT':  ['AK8 #tau_{21}^{DDT}', 50, 0, 1.5],   
+            'pfmet':  ['PF E_{T}^{miss}', 50, 0, 1000],
         }
 
+def plotData(options, args):
+    xvar = options.xvar
+    yvar = options.yvar
+    lumi = options.lumi
+
+    msize = 0.15 # marker size
 
     xlabel = varDict[xvar][0]
     xbins =   varDict[xvar][1]
@@ -52,35 +55,41 @@ def plotData():
     ymin  =  varDict[yvar][2]
     ymax  =  varDict[yvar][3]
     
-    cmass = TCanvas("fig_%s_%s"%(xvar,yvar), "t#bar{t}+jets/ggH(b#bar{b})",
+    cmass = TCanvas("fig_%s_%s"%(xvar,yvar), "fig_%s_%s"%(xvar,yvar),
                     10, 10, 500, 500)
     cmass.SetTopMargin(0.1)
     cmass.SetLeftMargin(0.15)
     
     # -- background
+    if 'TTbar' in options.bkgfilename:
+        bkgColor = kBlue-10
+    else:
+        bkgColor = kGray
     hb = mkhist2("hb",
                  xlabel,
                  ylabel,
                  xbins, xmin, xmax,
                  ybins, ymin, ymax,
-                 color=kBlue-10)
-    hb.SetFillColor(kBlue-10)
-    hb.SetLineColor(kBlue-10)
+                 color=bkgColor)
+    hb.SetFillColor(bkgColor)
+    hb.SetLineColor(bkgColor)
     hb.Sumw2()
     hb.SetMarkerSize(msize)
     hb.GetYaxis().SetTitleOffset(1.20)
     
-    bntuple = Ntuple('TTbar_madgraphMLM_1000pb_weighted.root', 'otree')
+    bntuple = Ntuple(options.bkgfilename, 'otree')
     btotal  = 0.0
     total   = 0
     for ii, event in enumerate(bntuple):
+        if total >= options.numrows:
+            break
         btotal += event.scale1fb
         total  += 1
         hb.Fill(getattr(event,xvar), getattr(event,yvar), event.scale1fb)
-        if total % 100 == 0:
-            cmass.cd()
-            hb.Draw('box')
-            cmass.Update()
+        #if total % 100 == 0:
+        #    cmass.cd()
+        #    hb.Draw('box')
+        #    cmass.Update()
     
     # -- signal
     hs = mkhist2("hs",
@@ -96,32 +105,41 @@ def plotData():
     hs.SetMarkerSize(msize)
     hs.GetYaxis().SetTitleOffset(1.20)
     
-    sntuple = Ntuple('GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root', 'otree')
+    sntuple = Ntuple(options.sigfilename, 'otree')
     stotal  = 0.0
     total   = 0
     for event in sntuple:
+        if total >= options.numrows:
+            break
         stotal += event.scale1fb
         total  += 1
         hs.Fill(getattr(event,xvar), getattr(event,yvar), event.scale1fb)
-        if total % 100 == 0:
-            cmass.cd()
-            hs.Draw('box')
-            cmass.Update()
+        #if total % 100 == 0:
+        #    cmass.cd()
+        #    hs.Draw('box')
+        #    cmass.Update()
 
     cmass.cd()
-    hs.Scale(10.) #multiply signal x10
+    #hs.Scale(10.) #multiply signal x10
+    hs.Scale(options.multFactor) #multiply signal by a factor
     hb.Draw('boxl')
     hs.Draw('boxl same')    
     cmass.Update()
     return (cmass, hs, hb)
 # ---------------------------------------------------------------------
-def main():
+def main(options, args):
     print "="*80
     print "\t=== Example 1 - Obtain Best One-Sided Cuts ==="
     print "="*80
 
-    resultsfilename = "rgs_train2d.root"
+    xvar = options.xvar
+    yvar = options.yvar
+    lumi = options.lumi
+    
+    #resultsfilename = "rgs_train2d.root"
+    resultsfilename = options.resultsfilename
     treename = "RGS"
+    
     print "\n\topen RGS file: %s"  % resultsfilename
     ntuple = Ntuple(resultsfilename, treename)
     
@@ -141,7 +159,7 @@ def main():
     # python directory).
     setStyle()
 
-    cmass, hs, hb = plotData()
+    cmass, hs, hb = plotData(options,args)
 
     
     # Create a 2-D histogram for ROC plot
@@ -182,6 +200,9 @@ def main():
         fs = cuts.fraction_s  #  signal fraction
         b  = cuts.count_b     #  background count
         s  = cuts.count_s     #  signal count
+        
+        #if row % 100 == 0:
+        #    print "ntuple", row
                 
         #  Plot fs vs fb
         hist.Fill(fb, fs)
@@ -254,7 +275,7 @@ def main():
     xcut = array('d')
     ycut = array('d')
 
-    lessThanList = ['nAK4PuppijetsdR08','nAK4PuppijetsTdR08','nAK4PuppijetsMdR08','nAK4PuppijetsLdR08','AK8Puppijet0_tau21','pfmet','nAK4PuppijetsbtagT','nAK4Puppijets','nAK4PuppijetsbtagM','nAK4PuppijetsbtagL']
+    lessThanList = ['nAK4PuppijetsdR08','nAK4PuppijetsTdR08','nAK4PuppijetsMdR08','nAK4PuppijetsLdR08','AK8Puppijet0_tau21','AK8Puppijet0_tau21DDT','pfmet','nAK4PuppijetsbtagT','nAK4Puppijets','nAK4PuppijetsbtagM','nAK4PuppijetsbtagL']
     greaterThanList = ['AK8Puppijet0_tau32','AK8CHSjet0_doublecsv']
     if xvar in lessThanList and yvar in lessThanList:
         xcut.append(bestcuts[xvar])
@@ -290,7 +311,10 @@ def main():
         ycut.append(bestcuts[yvar])
         
     hcut = TGraph(3, xcut, ycut)
-
+    hcut.SetLineWidth(403)
+    hcut.SetFillColor(kBlack)
+    hcut.SetFillStyle(3005)
+    
     cmass.cd()
     hcut.Draw('same')
 
@@ -300,29 +324,46 @@ def main():
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
     leg.SetTextFont(42)
-    leg.AddEntry(hb.GetName(),'t#bar{t}+jets','f')
-    leg.AddEntry(hs.GetName(),'ggH(b#bar{b}) #times 10','f')
+    if 'TTbar' in options.bkgfilename:
+        leg.AddEntry(hb.GetName(),'t#bar{t}+jets','f')
+    elif 'QCD' in options.bkgfilename:
+        leg.AddEntry(hb.GetName(),'QCD','f')
+    leg.AddEntry(hs.GetName(),'ggH(b#bar{b}) #times %i'%options.multFactor,'f')
     leg.Draw()
 
-    tag4 = TLatex(0.22,0.85,"#epsilon_{B}* = %.2f, #epsilon_{S}* = %.2f"%(bestFraction_b,bestFraction_s))
-    tag5 = TLatex(0.22,0.80,"S/#sqrt{B} = %.2f"%(bestSoverSqrtB))
-    tag4.SetTextSize(0.035); tag5.SetTextSize(0.035)
-    tag4.SetNDC(); tag5.SetNDC()
-    tag4.SetTextFont(42); tag5.SetTextFont(42)
+
+    xCompare = '<'
+    yCompare = '<'
+    if xvar in greaterThanList:
+        xCompare = '>'        
+    if yvar in greaterThanList:
+        yCompare = '>'
+        
+
+    #xLabel = 0.2
+    #yLabel = 0.8
+    xLabel = 0.55
+    yLabel = 0.50
+    tag6 = TLatex(xLabel,yLabel,"#splitline{%s %s %.2f}{%s %s %.2f}"%(varDict[xvar][0],xCompare,bestcuts[xvar], varDict[yvar][0],yCompare,bestcuts[yvar]))
+    tag4 = TLatex(xLabel,yLabel-0.06,"#epsilon_{B}* = %.3f, #epsilon_{S}* = %.3f"%(bestFraction_b,bestFraction_s))
+    tag5 = TLatex(xLabel,yLabel-0.11,"S/#sqrt{B} = %.3f"%(bestSoverSqrtB))
+    tag4.SetTextSize(0.035); tag5.SetTextSize(0.035); tag6.SetTextSize(0.035)
+    tag4.SetNDC(); tag5.SetNDC(); tag6.SetNDC()
+    tag4.SetTextFont(42); tag5.SetTextFont(42); tag6.SetTextFont(42)
 
     
     tag1 = TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.04)
-    tag2 = TLatex(0.1,0.92,"CMS")
+    tag2 = TLatex(0.15,0.92,"CMS")
     tag2.SetNDC(); tag2.SetTextFont(62)
-    tag3 = TLatex(0.2,0.92,"Simulation Preliminary")
+    tag3 = TLatex(0.25,0.92,"Simulation Preliminary")
     tag3.SetNDC(); tag3.SetTextFont(52)
-    tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); 
+    tag2.SetTextSize(0.045); tag3.SetTextSize(0.04); 
     
     for c in [cmass, croc]:
         c.cd()
-        tag1.Draw(); tag2.Draw(); tag3.Draw(); tag4.Draw(); tag5.Draw()
+        tag1.Draw(); tag2.Draw(); tag3.Draw(); tag4.Draw(); tag5.Draw(); tag6.Draw()
         
     croc.SaveAs(".pdf")    
     croc.SaveAs(".C")    
@@ -331,9 +372,23 @@ def main():
     
     #sleep(5)
 # ---------------------------------------------------------------------
-try:
-    main()
-except KeyboardInterrupt:
-    print "bye!"
+
+if __name__ == '__main__':
+    gROOT.SetBatch(True)
+    parser = OptionParser()
+    parser.add_option('-r','--results', dest='resultsfilename', default = 'rgs_train.root',help='results file name', metavar='resultsfilename')
+    parser.add_option("--lumi", dest="lumi", default = 1,type=float,help="luminosity", metavar="lumi")
+    parser.add_option('-s','--signal', dest='sigfilename', default = 'GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root',help='signal file name', metavar='sigfilename')
+    parser.add_option('-b','--background', dest='bkgfilename', default = 'TTbar_madgraphMLM_1000pb_weighted.root',help='background file name', metavar='bkgfilename')
+    parser.add_option('-x','--xvar', dest='xvar', default = 'pfmet',help='x variable name', metavar='xvar')
+    parser.add_option('-y','--yvar', dest='yvar', default = 'nAK4PuppijetsTdR08',help='y variable name', metavar='yvar')
+    parser.add_option('-m',"--mult", dest="multFactor", default = 10,type=float,help="multiplicative factor", metavar="multFactor")
+    parser.add_option('-n',"--numrows", dest="numrows", default = -1,type=int,help="max number of rows (events)", metavar="numrows")
+    
+    (options, args) = parser.parse_args()
+    try:
+        main(options, args)
+    except KeyboardInterrupt:
+        print "bye!"
 
 
