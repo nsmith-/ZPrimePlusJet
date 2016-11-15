@@ -13,10 +13,11 @@ nbinsrho = 10
 edgesrho = array.array('d',[-6,-5.5,-5,-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1])
 
 def main(options,args):
+    
     idir = options.idir
     odir = options.odir
     lumi = options.lumi
-    sf = 1;
+    sf = 100;
 
     tf = ROOT.TFile("/uscms_data/d2/ntran/physics/dijets/DAZSLE/go3/ZPrimePlusJet/sklimming/sklim-v0-Nov2/QCD.root");
     tt = tf.Get("otree");
@@ -24,12 +25,14 @@ def main(options,args):
 
     nbinsN2 = 10
     edgesN2 = array.array('d',[-0.05,0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45])
-    h2s_n2Vrho_inc = ROOT.TH2F("h2s_n2Vrho_inc","; #rho; N2", nbinsrho, edgesrho, nbinsN2, edgesN2)
+    #h2s_n2Vrho_inc = ROOT.TH2F("h2s_n2Vrho_inc","; #rho; N2", nbinsrho, edgesrho, nbinsN2, edgesN2)
+    h2s_n2Vrho_inc = ROOT.TH2F("h2s_n2Vrho_inc","; #rho; N2", 14, -6, -1, 20, 0, 0.5)
 
     for i in range(int(tt.GetEntries())):
 
         if i % sf != 0: continue;
         tt.GetEntry(i)
+        if i > 500000: break;
 
         if(i % (1 * nent/100) == 0):
             sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
@@ -43,6 +46,7 @@ def main(options,args):
         if jmsd_8 <= 0: jmsd_8 = 0.01
 
         if jmsd_8 < 30.: continue;
+        if jpt_8 < 500 or jpt_8 > 600: continue;
 
         rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
         jtN2b1sd_8 = tt.AK8Puppijet0_N2sdb1
@@ -54,9 +58,9 @@ def main(options,args):
     ptbinsLo = [500,600,700,800];
     ptbinsHi = [600,700,800,900];
     h_rho = ROOT.TH1F("h_rho","; #rho; N", 50, -10, 0);
-    h2_rhoVpt_fail = ROOT.TH2F("h2_rhoVpt_fail","; #rho; pT", 10, -6, -1, 8, 500, 900);
-    h2_rhoVpt_pass = ROOT.TH2F("h2_rhoVpt_pass","; #rho; pT", 10, -6, -1, 8, 500, 900);
-    h2_rhoVpt_pafa = ROOT.TH2F("h2_rhoVpt_pafa","; #rho; pT", 10, -6, -1, 8, 500, 900);
+    h2_rhoVpt_fail = ROOT.TH2F("h2_rhoVpt_fail","; #rho; pT", 14, -6, -1, 8, 500, 900);
+    h2_rhoVpt_pass = ROOT.TH2F("h2_rhoVpt_pass","; #rho; pT", 14, -6, -1, 8, 500, 900);
+    h2_rhoVpt_pafa = ROOT.TH2F("h2_rhoVpt_pafa","; #rho; pT", 14, -6, -1, 8, 500, 900);
     h_jtN2b1sd = ROOT.TH1F("h_jtN2b1sd","; N2; N", 25, -0.2, 0.6);
     h_jtN2b1sdddt = ROOT.TH1F("h_jtN2b1sdddt","; N2DDT; N", 25, -0.2, 0.6);
     h_rhos = [];
@@ -70,8 +74,10 @@ def main(options,args):
         h_rhos_fail.append( ROOT.TH1F("h_rhos_fail"+str(j),"; #rho; N", 50, -10, 0) );
         h_rhos_pass.append( ROOT.TH1F("h_rhos_pass"+str(j),"; #rho; N", 50, -10, 0) );
         h_rhos_pafa.append( ROOT.TH1F("h_rhos_pafa"+str(j),"; #rho; N", 50, -10, 0) );
-        h2s_n2Vrho.append( ROOT.TH2F("h2s_n2Vrho"+str(j),"; #rho; N2", nbinsrho,edgesrho, nbinsN2, edgesN2) );
-        h2s_n2ddtVrho.append( ROOT.TH2F("h2s_n2ddtVrho"+str(j),"; #rho; N2DDT", nbinsrho,edgesrho, nbinsN2, edgesN2) );
+        # h2s_n2Vrho.append( ROOT.TH2F("h2s_n2Vrho"+str(j),"; #rho; N2", nbinsrho,edgesrho,nbinsN2,edgesN2) );
+        # h2s_n2ddtVrho.append( ROOT.TH2F("h2s_n2ddtVrho"+str(j),"; #rho; N2DDT", nbinsrho,edgesrho, nbinsN2, edgesN2) );
+        h2s_n2Vrho.append( ROOT.TH2F("h2s_n2Vrho"+str(j),"; #rho; N2", 14, -6, -1, 20, 0, 0.5) );
+        h2s_n2ddtVrho.append( ROOT.TH2F("h2s_n2ddtVrho"+str(j),"; #rho; N2DDT", 14, -6, -1, 30, -0.25, 0.5) );
 
     for i in range(int(tt.GetEntries())):
 
@@ -103,12 +109,13 @@ def main(options,args):
         #jtN2b1sdddt_8 = jtN2b1sd_8 - (9.00067e-05)*jpt_8 - (0.0778)*(rh_8) - 0.0265*rh_8*rh_8 - 0.0024*rh_8*rh_8*rh_8;
 
         jtN2b1sdddt_8 = 0 
-        if rh_8 < edgesrho[0]: jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[0]
-        if rh_8 > edgesrho[10]: jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[11]
-
-        for i in range(0,len(quantile)):
-            if rh_8 > edgesrho[i] and rh_8 < edgesrho[i+1]:
-                jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[i]
+        # if rh_8 < edgesrho[0]: jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[0]
+        # if rh_8 > edgesrho[10]: jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[11]
+        # for i in range(0,len(quantile)):
+        #     if rh_8 > edgesrho[i] and rh_8 < edgesrho[i+1]:
+        #         jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[i]
+        rho_index = h2s_n2ddtVrho[0].GetXaxis().FindBin(rh_8) - 1;
+        jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[rho_index]
         
         h_rho.Fill(rh_8);
         h_jtN2b1sd.Fill(jtN2b1sd_8);
@@ -147,9 +154,9 @@ def main(options,args):
     makeCanvases(h_rhos_pafa);
     for h2 in h2s_n2Vrho: makeCanvasViolin(h2);
     for h2 in h2s_n2ddtVrho: makeCanvasViolin(h2);
-    q = []
-    for h2 in h2s_n2Vrho: q = makeProfile(h2);
-    for h2 in h2s_n2ddtVrho: q =makeProfile(h2);
+    # q = []
+    # for h2 in h2s_n2Vrho: q = makeProfile(h2);
+    # for h2 in h2s_n2ddtVrho: q = makeProfile(h2);
     makeCanvas2D(h2_rhoVpt_pafa);
 
 def makeCanvas(h):
@@ -161,8 +168,30 @@ def makeCanvas(h):
 
 def makeCanvasViolin(h):
 
+    h1 = {}
+    q5 = []
+    bins = []
+
+    nbinsx = h.GetXaxis().GetNbins();
+    for i in range(nbinsx):
+        h1[i] = h.ProjectionY("From %s to %s+1"%(str(i),str(i)), i, i+1);
+
+        probSum = array.array('d', [0.05])
+        q = array.array('d', [0.0]*len(probSum))
+        h1[i].GetQuantiles(len(probSum), q, probSum)
+        q5.append(q[0])
+
+    hprof = ROOT.TH1F("hv_N2sdb1",";#rho = log(m^{2}/p_{T}^{2});N_{2}^{DDT}",nbinsrho,edgesrho)
+    numpy.round(q5,3)
+
+    for i in range(0,11):
+        hprof.SetBinContent(i,q5[i])
+
     c = ROOT.TCanvas("c","c",1000,800);
     h.Draw('VIOLIN');
+    hprof.SetMarkerColor(ROOT.kBlue)
+    hprof.SetMarkerStyle(20)
+    hprof.Draw("psames");    
     c.SaveAs("plots/"+h.GetName()+".pdf");
     c.SaveAs("plots/"+h.GetName()+".png");
 
@@ -198,7 +227,8 @@ def makeProfile(h2):
     q5 = []
     bins = []
 
-    for i in range(0,11):
+    nbinsx = h2.GetXaxis().GetNbins();
+    for i in range(nbinsx):
         h1[i] = h2.ProjectionY("From %s to %s+1"%(str(i),str(i)), i, i+1);
 
         probSum = array.array('d', [0.05])
