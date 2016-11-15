@@ -6,6 +6,7 @@ from math import sqrt
 import time
 import array
 
+
 def getRatio(hist, reference):
 	ratio = hist.Clone("%s_ratio"%hist.GetName())
 	ratio.SetDirectory(0)
@@ -37,6 +38,24 @@ def getSoverRootB(hs, hallMC, iBin):
     return ss/sqrt(bb)
   else:
     return 0.
+
+
+def customSort(dictValue):
+    (k, v) = dictValue
+    if 'DY' in k:
+        return 0
+    elif 'W' in k:
+        return -1
+    elif 'Diboson' in k or 'VV' in k:
+        return -2
+    elif 'TTbar' in k:
+        return -3
+    elif 'ST' in k or 'SingleTop' in k:
+        return -4
+    elif 'QCD' in k:
+        return -5
+    else:
+        return -v.Integral() #negative integral
 
 
 
@@ -582,6 +601,12 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
         leg.AddEntry(h,legname[iname],"l")
 
+
+    print "======== signal contribution =========="
+    for iname, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
+        print iname+":        %.4f "%(h.Integral())
+
+
     c = ROOT.TCanvas("c"+name,"c"+name,1000,800)
     i=0
     for process, s in hs.iteritems():
@@ -595,11 +620,9 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 		if unitnorm : hs[process].DrawNormalized("histsame")
 		else: hs[process].Draw("histsame")
     leg.Draw()
-    c.SaveAs(pdir+"/"+name+".pdf")
-    ROOT.gPad.SetLogy()
     #hs[0].GetXaxis().SetRangeUser(0,400)
     #hs[0].SetMinimum(1e-1); i
-    tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
+    tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
     tag2 = ROOT.TLatex(0.1,0.92,"CMS")
@@ -607,6 +630,8 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     tag3 = ROOT.TLatex(0.2,0.92,"Simulation Preliminary")
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.055); tag3.SetTextSize(0.045); tag1.Draw(); tag2.Draw(); tag3.Draw()
+    c.SaveAs(pdir+"/"+name+".pdf")
+    ROOT.gPad.SetLogy()
 
     c.SaveAs(pdir+"/"+name+"_log.pdf")
     if ofile is not None:
@@ -616,23 +641,6 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 
     return c
 
-def customSort(dictValue):
-    (k, v) = dictValue
-    if 'DY' in k:
-        return 0
-    elif 'W' in k:
-        return -1
-    elif 'Diboson' in k or 'VV' in k:
-        return -2
-    elif 'TTbar' in k:
-        return -3
-    elif 'ST' in k or 'SingleTop' in k:
-        return -4
-    elif 'QCD' in k:
-        return -5
-    else:
-        return -v.Integral() #negative integral
-        
     
 def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04
@@ -643,18 +651,23 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     leg.SetTextFont(42)
 
     maxval = -99
-
+    nevt=[]
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in reversed(sorted(hb.iteritems(),key=customSort)):
+    for name, h in (sorted(hb.iteritems(),key=customSort)):
+    #for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral(),reverse=True):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
         h.SetLineStyle(1)
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
+	nevt.append(h.Integral())
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
 
     allMC=hstack.GetStack().Last().Clone()	
+    
+    ntotal=allMC.Integral()
+    nsig=hs[nameS].Integral()
 
     ratio = hs[nameS].Clone("%s_ratio"%hs[nameS].GetName())
     ratio.SetDirectory(0)
@@ -664,16 +677,16 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         ratio.SetBinContent(i,SoverB)
 
     
-    for name, h in reversed(sorted(hs.iteritems(),key=customSort)):
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
-	h.Scale(1000)
+	#h.Scale(1000)
         
-    for name, h in sorted(hb.iteritems(),key=customSort):
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"f")
-    for name, h in sorted(hs.iteritems(),key=customSort):
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"l")
 
 
@@ -702,7 +715,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
     
-    tag1 = ROOT.TLatex(0.67,0.92,"%.0f fb^{-1} (13 TeV)"%lumi)
+    tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
     tag2 = ROOT.TLatex(0.15,0.92,"CMS")
@@ -751,6 +764,14 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.C")
 
+    i=0
+    print "========== Background composition ==========="
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+	print name+":        %.2f            frac : %.3f"%(h.Integral(),nevt[i]/ntotal*100.)
+	i=1+i
+    print "ggH:        %.2f             : %.3f "%(nsig,nsig/ntotal*100.)
+    
+
     if ofile is not None:
         ofile.cd()
         c.Write('c'+outname)
@@ -769,7 +790,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     maxval = -99
 
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in reversed(sorted(hb.iteritems(),key=lambda (k,v): -v.Integral())):
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -779,7 +800,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
     allMC=hstack.GetStack().Last().Clone()	
     
-    for name, h in reversed(sorted(hs.iteritems(),key=lambda (k,v): -v.Integral())):
+    for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)

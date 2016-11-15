@@ -62,7 +62,7 @@ def main(options,args):
 		'ZHbb': ROOT.kAzure+1,
                'Diboson': ROOT.kOrange,
                'SingleTop': ROOT.kRed-2,
-               'DY':  ROOT.kGreen+1,
+               'DY':  ROOT.kRed,
                'W':  ROOT.kTeal-1,
                'TTbar':  ROOT.kGray,
                'QCD': ROOT.kBlue+1,
@@ -88,13 +88,12 @@ def main(options,args):
     sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi ) 	
     print "Backgrounds..."
     bkgSamples = {}
-    bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
-    bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
-    bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
+    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi)
     bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
+    bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
+    bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
+    bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
     bkgSamples['DY']  = sampleContainer(tfiles['DY'], 1, lumi)
-    # this 100 scale factor...just makes the QCD run faster, to use all the QCD, make the SF = 1
-    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi) 
 	
     if isData:	
 	dataSample = sampleContainer(tfiles['data'],1,lumi,isData)
@@ -105,9 +104,9 @@ def main(options,args):
 
     canvases = []
     if isData: 
-	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8']
+	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8']
     else:	
-    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR']
+    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2','h_msd_ak8_topR3','h_msd_ak8_topR4','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5','h_msd_ak8_topR6']
     for plot in plots:
         hs = {}
 	hall={}
@@ -135,7 +134,7 @@ if __name__ == '__main__':
     parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
-    parser.add_option('-s','--isData', dest='isData', default =False,help='signal comparison', metavar='isData')
+    parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
 
     (options, args) = parser.parse_args()
 
