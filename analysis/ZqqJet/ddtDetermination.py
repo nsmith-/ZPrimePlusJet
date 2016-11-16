@@ -215,7 +215,7 @@ def makeCanvasViolin(h):
 
 	nbinsx = h.GetXaxis().GetNbins();
 	for i in range(nbinsx):
-		h1[i] = h.ProjectionY("From %s to %s+1"%(str(i),str(i)), i, i+1);
+		h1[i] = h.ProjectionY("From %s to %s+1"%(str(i),str(i)), i+1, i+1);
 
 		probSum = array.array('d', [0.05])
 		q = array.array('d', [0.0]*len(probSum))
