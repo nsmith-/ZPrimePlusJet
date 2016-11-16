@@ -9,8 +9,6 @@ import time
 import array
 import numpy
 ##############################################################################
-# nbinsrho = 10
-# edgesrho = array.array('d',[-6,-5.5,-5,-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1])
 
 def main(options,args):
     
@@ -19,18 +17,23 @@ def main(options,args):
     lumi = options.lumi
     sf = 5;
 
-    tf = ROOT.TFile("/uscms_data/d2/ntran/physics/dijets/DAZSLE/go3/ZPrimePlusJet/sklimming/sklim-v0-Nov2/QCD.root");
+    #tf = ROOT.TFile("/uscms_data/d2/ntran/physics/dijets/DAZSLE/go3/ZPrimePlusJet/sklimming/sklim-v0-Nov2/QCD.root");
+    tf = ROOT.TFile("/eos/uscms/store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/QCD.root");
     tt = tf.Get("otree");
     nent = int(tt.GetEntries())
 
-    # nbinsN2 = 10
-    # edgesN2 = array.array('d',[-0.05,0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45])
-    #h2s_n2Vrho_inc = ROOT.TH2F("h2s_n2Vrho_inc","; #rho; N2", nbinsrho, edgesrho, nbinsN2, edgesN2)
-    h2s_n2Vrho_inc = ROOT.TH2F("h2s_n2Vrho_inc","; #rho; N2", 18, -6.0, -1.5, 50, 0, 0.5)
+    # n2Vrho in ptbins
+    ptbinsLo = [500,600,700,800];
+    ptbinsHi = [600,700,800,900];
+
+    h2s_n2Vrhos = []
+    quantiles = []
+    for j,pt in enumerate(ptbinsLo):
+        h2s_n2Vrhos.append(ROOT.TH2F("h2s_n2Vrhos"+str(j),"; #rho; N2", 18, -6.0, -1.5, 50, 0, 0.5))
 
     for i in range(int(tt.GetEntries())):
 
-        if i % sf != 0: continue;
+        #if i % sf != 0: continue;
         tt.GetEntry(i)
         # if i > 500000: break;
 
@@ -44,27 +47,31 @@ def main(options,args):
         jmsd_8 = tt.AK8Puppijet0_msd
         jpt_8  = tt.AK8Puppijet0_pt
         if jmsd_8 <= 0: jmsd_8 = 0.01
-
         if jmsd_8 < 30.: continue;
-        if jpt_8 < 500 or jpt_8 > 600: continue;
-
         rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
         jtN2b1sd_8 = tt.AK8Puppijet0_N2sdb1
 
-        h2s_n2Vrho_inc.Fill(rh_8,jtN2b1sd_8);
-    
-    quantile = makeProfile(h2s_n2Vrho_inc);
+        #if jpt_8 < 500 or jpt_8 > 600: continue;
 
-    ptbinsLo = [500,600,700,800];
-    ptbinsHi = [600,700,800,900];
+        rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
+        jtN2b1sd_8 = tt.AK8Puppijet0_N2sdb1
+        for j,pt in enumerate(ptbinsLo):
+            if jpt_8 > ptbinsLo[j] and jpt_8 < ptbinsHi[j]:
+                h2s_n2Vrhos[j].Fill(rh_8,jtN2b1sd_8);
+    
+    #quantile = makeProfile(h2s_n2Vrho_inc);
+    for j,pt in enumerate(ptbinsLo):
+        quantiles.append(makeProfile(h2s_n2Vrhos[j],str(j)));
+    print quantiles
+
     h_rho = ROOT.TH1F("h_rho","; #rho; N", 50, -10, 0);
     h2_rhoVpt_fail = ROOT.TH2F("h2_rhoVpt_fail","; #rho; pT", 18, -6.0, -1.5, 8, 500, 900);
     h2_rhoVpt_pass = ROOT.TH2F("h2_rhoVpt_pass","; #rho; pT", 18, -6.0, -1.5, 8, 500, 900);
     h2_rhoVpt_pafa = ROOT.TH2F("h2_rhoVpt_pafa","; #rho; pT", 18, -6.0, -1.5, 8, 500, 900);
     h2_rhoVpt_pafa_v2 = ROOT.TH2F("h2_rhoVpt_pafa_v2","; #rho; pT", 18, -6.0, -1.5, 8, 500, 900);
-
     h_jtN2b1sd = ROOT.TH1F("h_jtN2b1sd","; N2; N", 25, -0.2, 0.6);
     h_jtN2b1sdddt = ROOT.TH1F("h_jtN2b1sdddt","; N2DDT; N", 25, -0.2, 0.6);
+
     h_rhos = [];
     h_rhos_fail = [];
     h_rhos_pass = [];
@@ -74,6 +81,7 @@ def main(options,args):
     h2s_n2Vrho = [];
     h2s_n2ddtVrho = [];
     h2s_n2ddtVrho_v2 = [];
+
     for j,pt in enumerate(ptbinsLo):
         h_rhos.append( ROOT.TH1F("h_rho"+str(j),"; #rho; N", 50, -10, 0) );
         h_rhos_fail.append( ROOT.TH1F("h_rhos_fail"+str(j),"; #rho; N", 50, -10, 0) );
@@ -81,8 +89,6 @@ def main(options,args):
         h_rhos_pass.append( ROOT.TH1F("h_rhos_pass"+str(j),"; #rho; N", 50, -10, 0) );
         h_rhos_pafa.append( ROOT.TH1F("h_rhos_pafa"+str(j),"; #rho; N", 50, -10, 0) );
         h_rhos_pafa_v2.append( ROOT.TH1F("h_rhos_pafa_v2"+str(j),"; #rho; N", 50, -10, 0) );
-        # h2s_n2Vrho.append( ROOT.TH2F("h2s_n2Vrho"+str(j),"; #rho; N2", nbinsrho,edgesrho,nbinsN2,edgesN2) );
-        # h2s_n2ddtVrho.append( ROOT.TH2F("h2s_n2ddtVrho"+str(j),"; #rho; N2DDT", nbinsrho,edgesrho, nbinsN2, edgesN2) );
         h2s_n2Vrho.append( ROOT.TH2F("h2s_n2Vrho"+str(j),"; #rho; N2", 18, -6.0, -1.5, 50, -0.25, 0.5) );
         h2s_n2ddtVrho.append( ROOT.TH2F("h2s_n2ddtVrho"+str(j),"; #rho; N2DDT", 18, -6.0, -1.5, 50, -0.25, 0.5) );
         h2s_n2ddtVrho_v2.append( ROOT.TH2F("h2s_n2ddtVrho_v2"+str(j),"; #rho; N2DDT", 18, -6.0, -1.5, 50, -0.25, 0.5) );
@@ -117,15 +123,12 @@ def main(options,args):
         #jtN2b1sdddt_8 = jtN2b1sd_8 - (9.00067e-05)*jpt_8 - (0.0778)*(rh_8) - 0.0265*rh_8*rh_8 - 0.0024*rh_8*rh_8*rh_8;
 
         jtN2b1sdddt_8 = 0 
-        # if rh_8 < edgesrho[0]: jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[0]
-        # if rh_8 > edgesrho[10]: jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[11]
-        # for i in range(0,len(quantile)):
-        #     if rh_8 > edgesrho[i] and rh_8 < edgesrho[i+1]:
-        #         jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[i]
         rho_index = h2s_n2ddtVrho[0].GetXaxis().FindBin(rh_8) - 1;
         if rh_8 > h2s_n2ddtVrho[0].GetXaxis().GetBinUpEdge( h2s_n2ddtVrho[0].GetXaxis().GetNbins() ): rho_index = h2s_n2ddtVrho[0].GetXaxis().GetNbins()-1;
         if rh_8 < h2s_n2ddtVrho[0].GetXaxis().GetBinLowEdge( 1 ): rho_index = 0;
-        jtN2b1sdddt_8 = jtN2b1sd_8 - quantile[rho_index] + (9.00067e-05)*(jpt_8-500.);
+        for j,pt in enumerate(ptbinsLo):
+            if jpt_8 > ptbinsLo[j] and jpt_8 < ptbinsHi[j]:
+                jtN2b1sdddt_8 = jtN2b1sd_8 - quantiles[j][rho_index]; #+ (9.00067e-05)*(jpt_8-500.);
         
         # rhofunc = -2.42531e-06 - 1.47639e-01*rh_8 - 3.27902e-02*rh_8*rh_8 - 2.43034e-03*rh_8*rh_8*rh_8; 
         rhofunc = -2.72547e-02 - 1.34663e-01*rh_8 - 2.40669e-02*rh_8*rh_8 - 1.44548e-03*rh_8*rh_8*rh_8 ; 
@@ -186,11 +189,7 @@ def main(options,args):
     for h2 in h2s_n2Vrho: makeCanvasViolin(h2);
     for h2 in h2s_n2ddtVrho: makeCanvasViolin(h2);
     for h2 in h2s_n2ddtVrho_v2: makeCanvasViolin(h2);
-    # q = []
-    # for h2 in h2s_n2Vrho: q = makeProfile(h2);
-    # for h2 in h2s_n2ddtVrho: q = makeProfile(h2);
     makeCanvas2D(h2_rhoVpt_pafa);
-    # makeCanvas2D(h2_rhoVpt_pafa_v2);
 
 
 def makeCanvas(h):
@@ -209,7 +208,6 @@ def makeCanvasViolin(h):
     nbinsx = h.GetXaxis().GetNbins();
     for i in range(nbinsx):
         h1[i] = h.ProjectionY("From %s to %s+1"%(str(i),str(i)), i, i+1);
-
         probSum = array.array('d', [0.05])
         q = array.array('d', [0.0]*len(probSum))
         h1[i].GetQuantiles(len(probSum), q, probSum)
@@ -257,7 +255,7 @@ def makeCanvases(hs):
     c.SaveAs("plots/"+hs[0].GetName()+"s.pdf");
     c.SaveAs("plots/"+hs[0].GetName()+"s.png");
 
-def makeProfile(h2):
+def makeProfile(h2,ptbin):
 
     h1 = {}
     q5 = []
@@ -320,8 +318,8 @@ def makeProfile(h2):
     c.SaveAs("plots/"+h2.GetName()+"_5eff.pdf");
     c.SaveAs("plots/"+h2.GetName()+"_5eff.png");
 
-    fout = ROOT.TFile("n2ddt.root","RECREATE");
-    hprof.SetName("h_n2ddt_transformation");
+    fout = ROOT.TFile("n2ddt_%s.root"%ptbin,"RECREATE");
+    hprof.SetName("h_n2ddt_transformation_%s"%ptbin);
     hprof.Write();
     fout.Close();
 
