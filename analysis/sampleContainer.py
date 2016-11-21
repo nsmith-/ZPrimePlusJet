@@ -27,12 +27,12 @@ class sampleContainer:
 
         # define histograms
         self.h_n_ak4             = ROOT.TH1F("h_n_ak4","; AK4 n_{jets};", 20, 0, 20)
-        self.h_n_ak4_fwd             = ROOT.TH1F("h_n_ak4fwd","; AK4 n_{jets} fwd;", 20, 0, 20)
-        self.h_n_ak4L             = ROOT.TH1F("h_n_ak4L","; AK4 n_{jets} CSV>CSVL;", 20, 0, 20)
-        self.h_n_ak4M             = ROOT.TH1F("h_n_ak4M","; AK4 n_{jets} CSV>CSVM;", 20, 0, 20)
-        self.h_n_ak4T             = ROOT.TH1F("h_n_ak4T","; AK4 n_{jets} CSV>CSVT;", 20, 0, 20)
-        self.h_n_ak4_dR0p8       = ROOT.TH1F("h_n_ak4_dR0p8","; AK4 n_{jets} #Delta R > 0.8;", 20, 0, 20)
-        self.h_isolationCA15     = ROOT.TH1F("h_isolationCA15","; AK8/CA15 p_{T} Ratio ;", 50, 0.5, 1.5) 
+        self.h_n_ak4_fwd             = ROOT.TH1F("h_n_ak4fwd","; AK4 n_{jets}, 2.5<|#eta|<4.5;", 20, 0, 20)
+        self.h_n_ak4L             = ROOT.TH1F("h_n_ak4L","; AK4 n_{L b-tags}, #DeltaR > 0.8;", 20, 0, 20)
+        self.h_n_ak4M             = ROOT.TH1F("h_n_ak4M","; AK4 n_{M b-tags}, #DeltaR > 0.8;", 20, 0, 20)
+        self.h_n_ak4T             = ROOT.TH1F("h_n_ak4T","; AK4 n_{T b-tags}, #DeltaR > 0.8;", 20, 0, 20)
+        self.h_n_ak4_dR0p8       = ROOT.TH1F("h_n_ak4_dR0p8","; AK4 n_{jets}, #DeltaR > 0.8;", 20, 0, 20)
+        self.h_isolationCA15     = ROOT.TH1F("h_isolationCA15","; AK8/CA15 p_{T} ratio ;", 50, 0.5, 1.5) 
         self.h_met = ROOT.TH1F("h_met","; E_{T}^{miss} [GeV] ;", 50, 0, 500)
 
         self.h_pt_ak8            = ROOT.TH1F("h_pt_ak8","; AK8 p_{T} [GeV];", 50, 300, 2100)
@@ -104,7 +104,8 @@ class sampleContainer:
             puweight = self._tt.puWeight
             fbweight = self._tt.scale1fb * self._lumi
             weight = puweight*fbweight*self._sf
-            print weight
+            #print "pu weight", self._tt.puWeight
+            #print "scale1fb", self._tt.scale1fb 
 
             jmsd_8 = self._tt.AK8Puppijet0_msd
             jpt_8  = self._tt.AK8Puppijet0_pt
@@ -135,7 +136,7 @@ class sampleContainer:
                 self.h_t21ddt_ak8.Fill( jt21P_8, weight )									
                 self.h_rhop_v_t21_ak8.Fill( rhP_8, jt21_8, weight )
                 self.h_n2b1sd_ak8.Fill(jtN2b1sd_8,weight);
-                self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight);
+                self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight)
                 self.h_n_ak4.Fill( (n_4-self._tt.nAK4Puppijetsfwd), weight )
                 self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
             self.h_n_ak4_fwd.Fill( self._tt.nAK4Puppijetsfwd  , weight )
@@ -153,17 +154,17 @@ class sampleContainer:
             if self._tt.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0.2 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_N2Cut.Fill( jmsd_8, weight )
 
-            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >50 and self._tt.pfmet < 180 and (self._tt.nAK4PuppijetsdR08-self._tt.nAK4Puppijetsfwd) <5 and self._tt.nAK4PuppijetsTdR08 < 3:
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >50 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3:
                 self.h_msd_ak8_topR1.Fill( jmsd_8, weight )
-            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >50 and self._tt.pfmet < 180 and (self._tt.nAK4PuppijetsdR08-self._tt.nAK4Puppijetsfwd) <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9 :
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >50 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9 :
                 self.h_msd_ak8_topR2.Fill( jmsd_8, weight )
-            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and (self._tt.nAK4PuppijetsdR08-self._tt.nAK4Puppijetsfwd) <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4 :
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4 :
                 self.h_msd_ak8_topR3.Fill( jmsd_8, weight )
             if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40  and  jdb_8 > 0.9  and jt21P_8 < 0.4 and jt32_8 > 0.7:
                 self.h_msd_ak8_topR4.Fill( jmsd_8, weight )
-            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and (self._tt.nAK4PuppijetsdR08-self._tt.nAK4Puppijetsfwd) <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.55 :
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.55 :
                 self.h_msd_ak8_topR5.Fill( jmsd_8, weight )
-            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and (self._tt.nAK4PuppijetsdR08-self._tt.nAK4Puppijetsfwd) <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.95  and jt21P_8 < 0.55 :
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.95  and jt21P_8 < 0.55 :
                 self.h_msd_ak8_topR6.Fill( jmsd_8, weight )
 
             if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9 and self._tt.AK8Puppijet0_msd >50:
