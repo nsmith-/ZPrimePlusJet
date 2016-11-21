@@ -767,9 +767,10 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     i=0
     print "========== Background composition ==========="
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
-	print name+":        %.2f            frac : %.3f"%(h.Integral(),nevt[i]/ntotal*100.)
-	i=1+i
-    print "ggH:        %.2f             : %.3f "%(nsig,nsig/ntotal*100.)
+        if ntotal>0:        
+            print name+":        %.2f            frac : %.3f"%(h.Integral(),nevt[i]/ntotal*100.)
+            i+=1
+            print "ggH:        %.2f             : %.3f "%(nsig,nsig/ntotal*100.)
     
 
     if ofile is not None:

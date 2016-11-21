@@ -24,106 +24,113 @@ def main(options,args):
     
     legname = {'ggHbb': 'ggH(b#bar{b})',
                'VBFHbb':'VBF H(b#bar{b})',
-	       'ZHbb': ' ZH(b#bar{b})',
+               'ZHbb': 'ZH(b#bar{b})',
+	           'WHbb': 'WH(b#bar{b})',
                'Diboson': 'VV(4q)',
                'SingleTop': 'single-t',
                'DY': 'Z+jets',
                'W': 'W+jets',
                'TTbar': 't#bar{t}+jets',        
                'QCD': 'QCD',
-		'data': 'data'
-
+		       'data': 'data'
                }
 
         
-    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root '],
-               'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root '],
-		'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root '],
-               'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root ',idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root '],
-               'DY': [idir+'/DY_1000pb_weighted.root '],
-               'SingleTop':  [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
-		       idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
-		       idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
-		       idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
-               'W':  [idir+'/WJets_1000pb_weighted.root '],
-               'TTbar':  [idir+'/TTbar_madgraphMLM_1000pb_weighted.root '],
-               'QCD': [idir+'/QCD_HT200to300_1000pb_weighted.root',
-			idir+'/QCD_HT300to500_1000pb_weighted.root',
-			idir+'/QCD_HT500to700_1000pb_weighted.root',
-			idir+'/QCD_HT700to1000_1000pb_weighted.root',
-			idir+'/QCD_HT1000to1500_1000pb_weighted.root',
-			idir+'/QCD_HT2000toInf_1000pb_weighted.root',
-			idir+'/QCD_HT1500to2000_1000pb_weighted.root'],
-	     'data': [idir+'/JetHT.root ']
-               }
+    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
+              'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'WHbb': [idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root',idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root'],
+              'DY': [idir+'/DY_1000pb_weighted.root '],
+              'SingleTop':  [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
+		                     idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
+		                     idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
+		                     idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
+              'W':  [idir+'/WJets_1000pb_weighted.root'],
+              'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'],
+              'QCD': [idir+'/QCD_HT200to300_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_1000pb_weighted.root',
+                      idir+'/QCD_HT500to700_1000pb_weighted.root',
+                      idir+'/QCD_HT700to1000_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_1000pb_weighted.root',
+                      idir+'/QCD_HT2000toInf_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_1000pb_weighted.root'],
+              'data': [idir+'/JetHT.root ']
+            }
 
     color = {'ggHbb': ROOT.kRed,
-               'VBFHbb': ROOT.kBlue-10,
-		'ZHbb': ROOT.kAzure+1,
-               'Diboson': ROOT.kOrange,
-               'SingleTop': ROOT.kRed-2,
-               'DY':  ROOT.kRed,
-               'W':  ROOT.kTeal-1,
-               'TTbar':  ROOT.kGray,
-               'QCD': ROOT.kBlue+1,
-		'data':ROOT.kBlack
-               }
+             'VBFHbb': ROOT.kBlue-10,
+		     'ZHbb': ROOT.kAzure+1,
+		     'WHbb': ROOT.kTeal+1,
+             'Diboson': ROOT.kOrange,
+             'SingleTop': ROOT.kRed-2,
+             'DY':  ROOT.kRed,
+             'W':  ROOT.kTeal-1,
+             'TTbar':  ROOT.kGray,
+             'QCD': ROOT.kBlue+1,
+		     'data':ROOT.kBlack
+            }
 
     style = {'ggHbb': 2,
-               'VBFHbb': 3,
-		'ZHbb': 4,
-               'Diboson': 1,
-               'SingleTop': 1,
-               'DY': 1,
-               'W': 1,
-               'TTbar': 1,
-               'QCD': 1,
-	  'data': 1  
-               }
+             'VBFHbb': 3,
+		     'ZHbb': 4,
+		     'WHbb': 4,
+             'Diboson': 1,
+             'SingleTop': 1,
+             'DY': 1,
+             'W': 1,
+             'TTbar': 1,
+             'QCD': 1,
+             'data': 1  
+            }
         
     print "Signals... "
     sigSamples = {}
     sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi) 
     sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi ) 
     sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi ) 	
+    sigSamples['WHbb'] = sampleContainer(tfiles['WHbb'], 1, lumi ) 	
     print "Backgrounds..."
     bkgSamples = {}
-    bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi)
+    #bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi)
     bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
-    bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
-    bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
-    bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
-    bkgSamples['DY']  = sampleContainer(tfiles['DY'], 1, lumi)
+    #bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
+    #bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
+    #bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
+    #bkgSamples['DY']  = sampleContainer(tfiles['DY'], 1, lumi)
 	
-    if isData:	
-	dataSample = sampleContainer(tfiles['data'],1,lumi,isData)
+    if isData:
+        dataSample = sampleContainer(tfiles['data'],1,lumi,isData)
 
 
     ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
 
 
     canvases = []
-    if isData: 
-	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8']
+    if isData:
+        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8']
     else:	
-    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2','h_msd_ak8_topR3','h_msd_ak8_topR4','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5','h_msd_ak8_topR6']
+    	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut',
+                 'h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T',
+                 'h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2',
+                 'h_msd_ak8_topR3','h_msd_ak8_topR4','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5','h_msd_ak8_topR6']
     for plot in plots:
         hs = {}
-	hall={}
+        hb = {}
+        hall={}
         for process, s in sigSamples.iteritems():
             hs[process] = getattr(s,plot)
-	    hall[process] = getattr(s,plot)
-        hb = {}
+            hall[process] = getattr(s,plot)
         for process, s in bkgSamples.iteritems():
             hb[process] = getattr(s,plot)
-	    hall[process] = getattr(s,plot)
-	if isData:
-		hd = getattr(dataSample,plot)
-        	c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+            hall[process] = getattr(s,plot)
+        if isData:
+            hd = getattr(dataSample,plot)
+            c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         else:
-		c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
-		c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
-	canvases.append(c)	
+            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
+            c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
+        canvases.append(c)	
 
 
 ##----##----##----##----##----##----##
