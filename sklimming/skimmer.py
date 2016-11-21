@@ -141,25 +141,25 @@ def sklimAdd(fn,odir,mass=0):
 	# otree.SetBranchStatus("bst8_PUPPIjet0_pt",1);
 	nent = tree.GetEntriesFast();
 
-	# fto = ROOT.TFile("test"+str(mass)+".root","RECREATE");
-	# finfo = ROOT.TFile("signalInfo/dijet_pt.root");
+	fto = ROOT.TFile("test"+str(mass)+".root","RECREATE");
+	finfo = ROOT.TFile("signalInfo/dijet_pt.root");
 	# # h_rw = ROOT.TH1F();
-	# h_rw = None
-	# if 'VectorDiJet' in fn and mass > 0: 	
-	# 	hname = "med_"+str(mass)+"_0.1_proc_800";
-	# 	if '75' in fn: hname = "med_"+str(mass)+"_0.1_proc_801";
-	# 	hinfo = finfo.Get(hname)
-	# 	hinfo.Scale(100*1000.);
-	# 	hinfo_nbins = hinfo.GetNbinsX();
-	# 	hinfo_xlo = hinfo.GetXaxis().GetBinLowEdge(1);
-	# 	hinfo_xhi = hinfo.GetXaxis().GetBinUpEdge(hinfo_nbins);
-	# 	htmp = ROOT.TH1F("htmp","htmp",hinfo_nbins,hinfo_xlo,hinfo_xhi)
-	# 	for i in range(nent):
-	# 		tree.GetEntry(i);
-	# 		htmp.Fill(tree.genVPt,tree.scale1fb) # 10. is the cross-section
+	h_rw = None
+	if 'VectorDiJet' in fn and mass > 0: 	
+	 	hname = "med_"+str(mass)+"_0.1_proc_800";
+	 	if '75' in fn: hname = "med_"+str(mass)+"_0.1_proc_801";
+	 	hinfo = finfo.Get(hname)
+	 	hinfo.Scale(100*1000.); # 100. for coupling, 1000. for conversion to pb is the cross-section
+	 	hinfo_nbins = hinfo.GetNbinsX();
+	 	hinfo_xlo = hinfo.GetXaxis().GetBinLowEdge(1);
+	 	hinfo_xhi = hinfo.GetXaxis().GetBinUpEdge(hinfo_nbins);
+	 	htmp = ROOT.TH1F("htmp","htmp",hinfo_nbins,hinfo_xlo,hinfo_xhi)
+	 	for i in range(nent):
+	 		tree.GetEntry(i);
+	 		htmp.Fill(tree.genVPt,tree.scale1fb) 
 		
-	# 	h_rw = ROOT.TH1F( hinfo.Clone() );
-	# 	h_rw.Divide(htmp);
+	 	h_rw = ROOT.TH1F( hinfo.Clone() );
+	 	h_rw.Divide(htmp);
 
 	newscale1fb = array( 'f', [ 0. ] ); #rewriting this guy
 	# newkfactor  = array( 'f', [ 0. ] ); #rewriting this guy
@@ -189,8 +189,8 @@ def sklimAdd(fn,odir,mass=0):
 			# MHTOvHT[0] = tree.MHT/math.sqrt(tree.HT);
 			# print tree.genVPt ,tree.scale1fb,h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
 			
-			# if 'VectorDiJet' in fn and mass > 0: newscale1fb[0] = tree.scale1fb*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
-			# else: newscale1fb[0] = tree.scale1fb
+			if 'VectorDiJet' in fn and mass > 0: newscale1fb[0] = tree.scale1fb*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
+			else: newscale1fb[0] = tree.scale1fb
 			#newscale1fb[0]= NEvents.GetBinContent(1)	
 			# if 'VectorDiJet' in fn and mass > 0: newkfactor[0] = tree.kfactorNLO;
 			# else: newkfactor[0] = tree.kfactor;
