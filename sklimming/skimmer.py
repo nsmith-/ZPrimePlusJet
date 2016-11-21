@@ -38,34 +38,38 @@ parser.add_option('--train', action='store_true', dest='train', default=False, h
 
 def main():
 
-	DataDir = '/uscmst1b_scratch/lpc1/3DayLifetime/ntran/DAZSLE16/VectorDiJet1Jetv4'
-	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/localData/Backgrounds/Backgrounds_13TEV/TTBAR/";
-	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/andrewBkg/";
-	# DataDir = "/Users/ntran/Documents/Research/Ext/DissectingJetsPlusMET/sampleProcessing/DissectingJetsPlusMET/rawData-v3/";
-	OutDir = 'sklim-v0-Nov2'
+	#DataDir = '/uscmst1b_scratch/lpc1/3DayLifetime/ntran/DAZSLE16/VectorDiJet1Jetv4'
+	DataDir = '/eos/uscms/store/user/lpchbb/hadd-zprime-v11.05/'
+	OutDir = '/eos/uscms/store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/'
 
 	tags = [];
-	tags.append( ['QCD',0] );
-	tags.append( ['W.root',0] );
+	tags.append( ['WW',0] );
+	tags.append( ['WJets.root',0] );
 	tags.append( ['DY',0] );
-	tags.append( ['ST_tW_antitop_5f_inclusiveDecays_13TeV',0] );
-	tags.append( ['ST_tW_top_5f_inclusiveDecays_13TeV',0]);
-	tags.append( ['TTbar_madgraphMLM',0])
+	tags.append( ['ST',0])
+	tags.append( ['VectorDiJet',0] );
+	tags.append( ['VBFHToBB_',0] );
+        tags.append( ['GluGlu',0] );
+        tags.append( ['DM',0] );
+   	tags.append( ['ZZ',0] ); 
+        tags.append( ['ZH',0] );
+	tags.append( ['WH',0] );
+	tags.append( ['ttH',0] );
+	tags.append( ['WZ',0] );
+	tags.append( ['TT',0] );
+        tags.append( ['QCD',0] );
+	#tags.append( ['QCD_HT300to500',0] );
+	
+	#tags.append( ['QCD_HT500to700',0] );
+	#tags.append( ['QCD_HT700to1000',0] );
 
-	tags.append( ['VectorDiJet1Jet_M50',50] );
-	tags.append( ['VectorDiJet1Jet_M75',75] );
-	tags.append( ['VectorDiJet1Jet_M100',100] );
-	tags.append( ['VectorDiJet1Jet_M125',125] );
-	tags.append( ['VectorDiJet1Jet_M150',150] );
-	tags.append( ['VectorDiJet1Jet_M200',200] );
-	tags.append( ['VectorDiJet1Jet_M250',250] );
-	tags.append( ['VectorDiJet1Jet_M300',300] );
-	# tags.append( ['VBFHToBB_M125_13TeV_amcatnlo_pythia8',0] );
 	
 	tags.append( ['JetHTRun2016B',0] );
 	tags.append( ['JetHTRun2016C',0] );
 	tags.append( ['JetHTRun2016D',0] );
-
+	tags.append( ['JetHTRun2016E',0] );
+	tags.append( ['JetHTRun2016F',0] );   
+	tags.append( ['JetHTRun2016G',0] );
 
 	# make a tmp dir
 	#####
@@ -114,6 +118,18 @@ def sklimAdd(fn,odir,mass=0):
 
 	ofile = ROOT.TFile(odir+'/'+basename,'RECREATE');
 	ofile.cd();
+	f1.cd()	
+	obj = ROOT.TObject
+        for key in ROOT.gDirectory.GetListOfKeys():
+            f1.cd()
+            obj = key.ReadObj()
+            print obj.GetName()
+            if obj.GetName() == 'Events':
+                continue
+            ofile.cd()
+            print key.GetName()
+            obj.Write(key.GetName())
+	
 	otree = tree.CloneTree(0);
 	otree.SetName("otree");
 	
@@ -122,29 +138,33 @@ def sklimAdd(fn,odir,mass=0):
 	otree.SetBranchStatus("*Puppijet0_e4*",0);
 	otree.SetBranchStatus("CA15Puppi*",0);	
 	
-	
-	# signal reweighting, can clean it up nicer...
+	# otree.SetBranchStatus("bst8_PUPPIjet0_pt",1);
 	nent = tree.GetEntriesFast();
-	finfo = ROOT.TFile("signalXS/sig_vectordijet_xspt.root");
-	h_rw = None
-	if 'VectorDiJet1Jet' in fn and mass > 0: 	
-		hname = "med_"+str(mass)+"_0.1_proc_800";
-		if '75' in fn: hname = "med_"+str(mass)+"_0.1_proc_801";
-		hinfo = finfo.Get(hname)
-		hinfo.Scale(100*1000.); # 100. for coupling, 1000. for conversion to pb is the cross-section
-		hinfo_nbins = hinfo.GetNbinsX();
-		hinfo_xlo = hinfo.GetXaxis().GetBinLowEdge(1);
-		hinfo_xhi = hinfo.GetXaxis().GetBinUpEdge(hinfo_nbins);
-		htmp = ROOT.TH1F("htmp","htmp",hinfo_nbins,hinfo_xlo,hinfo_xhi)
-		for i in range(nent):
-			tree.GetEntry(i);
-			htmp.Fill(tree.genVPt,tree.scale1fb) 
+
+	# fto = ROOT.TFile("test"+str(mass)+".root","RECREATE");
+	# finfo = ROOT.TFile("signalInfo/dijet_pt.root");
+	# # h_rw = ROOT.TH1F();
+	# h_rw = None
+	# if 'VectorDiJet' in fn and mass > 0: 	
+	# 	hname = "med_"+str(mass)+"_0.1_proc_800";
+	# 	if '75' in fn: hname = "med_"+str(mass)+"_0.1_proc_801";
+	# 	hinfo = finfo.Get(hname)
+	# 	hinfo.Scale(100*1000.);
+	# 	hinfo_nbins = hinfo.GetNbinsX();
+	# 	hinfo_xlo = hinfo.GetXaxis().GetBinLowEdge(1);
+	# 	hinfo_xhi = hinfo.GetXaxis().GetBinUpEdge(hinfo_nbins);
+	# 	htmp = ROOT.TH1F("htmp","htmp",hinfo_nbins,hinfo_xlo,hinfo_xhi)
+	# 	for i in range(nent):
+	# 		tree.GetEntry(i);
+	# 		htmp.Fill(tree.genVPt,tree.scale1fb) # 10. is the cross-section
 		
-		h_rw = ROOT.TH1F( hinfo.Clone() );
-		h_rw.Divide(htmp);
+	# 	h_rw = ROOT.TH1F( hinfo.Clone() );
+	# 	h_rw.Divide(htmp);
 
 	newscale1fb = array( 'f', [ 0. ] ); #rewriting this guy
+	# newkfactor  = array( 'f', [ 0. ] ); #rewriting this guy
 	tree.SetBranchAddress("scale1fb",newscale1fb)
+	# tree.SetBranchAddress("kfactor",newkfactor)
 
 	for i in range(nent):
 
@@ -156,10 +176,30 @@ def sklimAdd(fn,odir,mass=0):
 		# print tree.HT, tree.mT2, tree.alphaT, tree.dRazor, tree.mRazor, tree.sumJetMass
 
 		if tree.AK8Puppijet0_pt > 500 :
+			# throw out NaN values...
+			# print tree.HT, tree.mT2, tree.alphaT, tree.dRazor, tree.mRazor, tree.sumJetMass
+
+			# curalphaT = tree.alphaT;
+			# curdRazor = tree.dRazor;
+			# if math.isnan(curalphaT) or math.isnan(curdRazor): continue;
+			# # print tree.HT, tree.mT2, tree.alphaT, tree.dRazor, tree.mRazor, tree.sumJetMass
+			# if int(tree.HT) % 2 == modval: continue;
+			# # print int(tree.HT)
+			# lheWeight[0] = float(weight);
+			# MHTOvHT[0] = tree.MHT/math.sqrt(tree.HT);
+			# print tree.genVPt ,tree.scale1fb,h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
 			
-			if 'VectorDiJet1Jet' in fn and mass > 0: newscale1fb[0] = tree.scale1fb*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
-			else: newscale1fb[0] = tree.scale1fb
+			# if 'VectorDiJet' in fn and mass > 0: newscale1fb[0] = tree.scale1fb*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
+			# else: newscale1fb[0] = tree.scale1fb
+			#newscale1fb[0]= NEvents.GetBinContent(1)	
+			# if 'VectorDiJet' in fn and mass > 0: newkfactor[0] = tree.kfactorNLO;
+			# else: newkfactor[0] = tree.kfactor;
 			
+			# print tree.kfactorNLO, tree.kfactor;
+			# print tree.scale1fb
+			# print h_rw.FindBin(tree.genVPt)
+			# print h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) );
+
 			otree.Fill();   
 
 	# fto.cd();
