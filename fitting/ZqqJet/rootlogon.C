@@ -14,7 +14,7 @@
     }      
   }
   // gSystem->Load("/afs/cern.ch/user/p/pharris/pharris/public/bacon/prod/CMSSW_7_1_20/lib/slc6_amd64_gcc481/libHiggsAnalysisCombinedLimit.so");
-  gSystem->Load("/uscms_data/d2/ntran/physics/dijets/DAZSLE/CMSSW_7_4_7/lib/slc6_amd64_gcc481/libHiggsAnalysisCombinedLimit.so");
+  gSystem->Load("/uscms_data/d2/ntran/physics/dijets/DAZSLE/CMSSW_7_4_7/lib/slc6_amd64_gcc491/libHiggsAnalysisCombinedLimit.so");
   //gSystem->Load("RooParametricHist_cxx.so");
 
 }
