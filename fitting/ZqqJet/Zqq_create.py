@@ -10,7 +10,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
 	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
 
-	sklimpath="/eos/uscms/store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
+	sklimpath="root://cmsxrootd.fnal.gov//store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
 	infile = TFile(sklimpath+filename+".root")
 	tree= infile.Get("otree")
 
@@ -61,10 +61,11 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 
 	    jtN2b1sdddt_8 = jtN2b1sd_8 - trans_h2ddt.GetBinContent(cur_rho_index,cur_pt_index);
 
-	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.AK8Puppijet0_isTightVJet ==1:
-		    if tree.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 > 0:
-			    h_pass_ak8.Fill( jmsd_8, jpt_8, weight )
+	    # Lepton, photon veto and tight jets
+	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1:
 		    if tree.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0:
+			    h_pass_ak8.Fill( jmsd_8, jpt_8, weight )
+		    if tree.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 > 0:
 			    h_fail_ak8.Fill( jmsd_8, jpt_8, weight )
 
 	return h_pass_ak8,h_fail_ak8
@@ -76,19 +77,19 @@ outfile=TFile("hist_1DZqq.root", "recreate");
 lumi =12891.
 SF_tau21 =1
 
-f_h2ddt = TFile("../analysis/ZqqJet/h3_n2ddt.root");
+f_h2ddt = TFile("../../analysis/ZqqJet/h3_n2ddt.root");
 trans_h2ddt = f_h2ddt.Get("h2ddt");
 trans_h2ddt.SetDirectory(0)
 f_h2ddt.Close()
 
 data_obs_pass, data_obs_fail = createHist(trans_h2ddt,'data_obs','JetHTICHEP',1,1,0)
 qcd_pass, qcd_fail = createHist(trans_h2ddt,'qcd','QCD',1,12.89,0)
-tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM',1,12.89,0)
-wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets',1,12.89,0)
-zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY',1,12.89,0)
+tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM_1000pb_weighted',1,12.89,0)
+wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets_1000pb_weighted',1,12.89,0)
+zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted.root',1,12.89,0)
 
 for m in mass:
-	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s'%(m),1,12.89,m)
+	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,12.89,m)
 	outfile.cd()
 	hs_pass.Write()
 	hs_fail.Write()
