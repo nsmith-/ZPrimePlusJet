@@ -29,14 +29,17 @@ class dazsleRhalphabetBuilder:
 
 		self._outputName = "base.root";
 
-		self._mass_nbins = 75;
-		self._mass_lo    = 0;
-		self._mass_hi    = 500;
+		# self._mass_nbins = 68;
+		# self._mass_lo    = 28;
+		# self._mass_hi    = 240;
+		self._mass_nbins = hpass[0].GetXaxis().GetNbins();
+		self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
+		self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
 
 		#polynomial order for fit
-		self._poly_lNP = 1;
+		self._poly_lNP = 2;
 		self._poly_lNR = 2;
-		self._poly_lNRP = -1;
+		self._poly_lNRP =2;
 
 		self._nptbins = hpass[0].GetYaxis().GetNbins();
 		self._pt_lo = hpass[0].GetYaxis().GetBinLowEdge( 1 );
@@ -47,7 +50,7 @@ class dazsleRhalphabetBuilder:
 		self._lMSD.setBins(self._mass_nbins)		
 		self._lPt     = r.RooRealVar("pt","pt",500,3000);
 		self._lPt.setBins(self._nptbins)
-		self._lRho    = r.RooFormulaVar("rho","log(x*x/pt)",r.RooArgList(self._lMSD,self._lPt))
+		self._lRho    = r.RooFormulaVar("rho","log(x*x/pt/pt)",r.RooArgList(self._lMSD,self._lPt))
 
 		self._lEff    = r.RooRealVar("veff"      ,"veff"      ,0.5 ,0.,1.0)
 		self._lEffQCD = r.RooRealVar("qcdeff"    ,"qcdeff"   ,0.01,0.,10.)
@@ -80,7 +83,7 @@ class dazsleRhalphabetBuilder:
 			pPt = self._hpass[0].GetYaxis().GetBinLowEdge(ipt)+self._hpass[0].GetYaxis().GetBinWidth(ipt)*0.3;
 			
 			#Make the ralphabet fit for a specific pt bin
-			lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[2]],pPt,"cat"+str(ipt))
+			lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],pPt,"cat"+str(ipt))
 			
 			# #Get signals and SM backgrounds
 			lPHists=[pHists[0],pHists[1],pHists[2]]
@@ -93,12 +96,15 @@ class dazsleRhalphabetBuilder:
 			
 	def makeRhalph(self,iHs,iPt,iCat):
 		
+		print "---- [makeRhalph]"	
+
 		lName ="qcd";
 		lUnity = r.RooConstVar("unity","unity",1.);
+		lZero  = r.RooConstVar("lZero","lZero",0.);
 
 		#Fix the pt (top) and teh qcd eff
 		self._lPt.setVal(iPt)
-		self._lEffQCD.setVal(0.02)
+		self._lEffQCD.setVal(0.05)
 		self._lEffQCD.setConstant(False)
 
 		polyArray = []
@@ -111,7 +117,7 @@ class dazsleRhalphabetBuilder:
 		for i0 in range(1,self._mass_nbins+1):
 
 			self._lMSD.setVal(iHs[0].GetXaxis().GetBinCenter(i0)) 
-			lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lRho.getVal(),lUnity,polyArray)
+			lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polyArray)
 			pSum = 0
 			for i1 in range(0,len(iHs)):
 				pSum = pSum + iHs[i1].GetBinContent(i0) if i1 == 0 else pSum - iHs[i1].GetBinContent(i0); # subtract W/Z from data
@@ -158,31 +164,38 @@ class dazsleRhalphabetBuilder:
 		lWFail.writeToFile("ralpha"+self._outputName,False)
 		return [lPass,lFail]
 
-	def buildRooPolyArray(self,iPt,iRho,iQCD,iVars):
+	def buildRooPolyArray(self,iPt,iRho,iQCD,iZero,iVars):
 		
-		lPt  = r.RooConstVar("Var_Pt_" +str(iPt)+"_"+str(iRho), "Var_Pt_" +str(iPt)+"_"+str(iRho),(iPt-500))
-		lRho = r.RooConstVar("Var_Rho_"+str(iPt)+"_"+str(iRho), "Var_Rho_"+str(iPt)+"_"+str(iRho),(iRho-2.5))
+		print "---- [buildRooPolyArray]"	
+		print len(iVars);
+
+		lPt  = r.RooConstVar("Var_Pt_" +str(iPt)+"_"+str(iRho), "Var_Pt_" +str(iPt)+"_"+str(iRho),(iPt))
+		lRho = r.RooConstVar("Var_Rho_"+str(iPt)+"_"+str(iRho), "Var_Rho_"+str(iPt)+"_"+str(iRho),(iRho))
 		lRhoArray = r.RooArgList()
 		lNCount=0
 		for pRVar in range(0,self._poly_lNR):
 			lTmpArray = r.RooArgList()
-			lTmpArray.add(iQCD)
+			if pRVar == 0: lTmpArray.add(iQCD);
+			else: lTmpArray.add(iZero);
+
 			pNP = self._poly_lNP if pRVar < self._poly_lNRP else 0
 			for pVar in range(0,pNP):
 				lTmpArray.add(iVars[lNCount])
-				lNCount=lNCount+1
 				print "----",iVars[lNCount].GetName()
-			pLabel="Var_Pol_Bin_"+str(iPt)+"_"+str(iRho)+"_"+str(pRVar)
+				lNCount=lNCount+1
+			pLabel="Var_Pol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))+"_"+str(pRVar)
 			pPol = r.RooPolyVar(pLabel,pLabel,lPt,lTmpArray)
 			lRhoArray.add(pPol);
 			self._allVars.append(pPol)
-		lLabel="Var_RhoPol_Bin_"+str(iPt)+"_"+str(iRho)
+
+		lLabel="Var_RhoPol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))
 		lRhoPol = r.RooPolyVar(lLabel,lLabel,lRho,lRhoArray)
 		self._allVars.extend([lPt,lRho,lRhoPol])
 		return lRhoPol
 
 	def buildPolynomialArray(self, iVars,iNVar0,iNVar1,iNVar01,iLabel0,iLabel1,iXMin0,iXMax0):
 
+		print "---- [buildPolynomialArray]"
 		for i0 in range(0,iNVar1):
 			for i1 in range(0,iNVar0):
 				pVar    = iLabel0+iLabel1+str(i0)+str(i1)
@@ -193,6 +206,7 @@ class dazsleRhalphabetBuilder:
 				if i1 == 0: 
 					pVar = iLabel1+str(i0)
 				pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin,pXMax)
+				print pVar
 				iVars.append(pRooVar)	    
 
 	def workspaceInputs(self, iHP,iHF,iBin,iPt):
@@ -329,12 +343,15 @@ def loadHistograms(f,pseudo):
 	lHP4 = f.Get("tqq_pass")
 	lHF4 = f.Get("tqq_fail")
 	if pseudo:
-		lHP0 = lHP3.Clone("data_obs_pass")
-		lHF0 = lHF3.Clone("data_obs_fail")
+		lHP0 = lHP3.Clone("qcd_pass")
+		lHF0 = lHF3.Clone("qcd_fail")
 		lHP0.Add(lHP1)
 		lHF0.Add(lHF1)
 		lHP0.Add(lHP2)
 		lHF0.Add(lHF2)
+		lHP0.Add(lHP4)
+		lHF0.Add(lHF4)
+
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])
 	hpass.extend([lHP3,lHP4])
@@ -349,10 +366,11 @@ def loadHistograms(f,pseudo):
 	for lH in (hpass+hfail):
 		lH.SetDirectory(0)	
 
-	print "lengths = ", len(hpass), len(hfail)
-	print hpass;
-	print hfail;
-	return (hpass,hfail);
+	# print "lengths = ", len(hpass), len(hfail)
+	# print hpass;
+	# print hfail;
+	# return (hpass,hfail);
+	return (hfail,hpass);
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
