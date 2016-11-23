@@ -10,13 +10,12 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
 	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
 
-	sklimpath="root://cmsxrootd.fnal.gov//store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
-	infile = TFile()
-	infile.Open(sklimpath+filename+".root")
+	sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
+	infile=ROOT.TFile(sklimpath+filename+".root")	
+	print(sklimpath+filename+".root")
 	tree= infile.Get("otree")
-
         nent = tree.GetEntries();
-        finfo = ROOT.TFile("../sklimming/signalXS/sig_vectordijet_xspt.root");
+        finfo = ROOT.TFile("../../sklimming/signalXS/sig_vectordijet_xspt.root");
         h_rw = None
         if 'VectorDiJet1Jet' in filename and mass > 0:
                 hname = "med_"+str(mass)+"_0.1_proc_800";
@@ -79,6 +78,7 @@ lumi =12891.
 SF_tau21 =1
 
 f_h2ddt = TFile("../../analysis/ZqqJet/h3_n2ddt.root");
+print("Opened file ... ")
 trans_h2ddt = f_h2ddt.Get("h2ddt");
 trans_h2ddt.SetDirectory(0)
 f_h2ddt.Close()
@@ -94,7 +94,7 @@ for m in mass:
 	outfile.cd()
 	hs_pass.Write()
 	hs_fail.Write()
-	
+print("Building pass/fail")	
 outfile.cd()
 qcd_pass.Write()
 qcd_fail.Write()
