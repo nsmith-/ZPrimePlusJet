@@ -87,7 +87,7 @@ data_obs_pass, data_obs_fail = createHist(trans_h2ddt,'data_obs','JetHTICHEP',1,
 qcd_pass, qcd_fail = createHist(trans_h2ddt,'qcd','QCD',1,12.89,0)
 tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM_1000pb_weighted',1,12.89,0)
 wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets_1000pb_weighted',1,12.89,0)
-zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted.root',1,12.89,0)
+zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted',1,12.89,0)
 
 for m in mass:
 	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,12.89,m)
