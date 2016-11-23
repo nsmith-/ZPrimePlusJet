@@ -11,7 +11,8 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
 
 	sklimpath="root://cmsxrootd.fnal.gov//store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
-	infile = TFile(sklimpath+filename+".root")
+	infile = TFile()
+	infile.Open(sklimpath+filename+".root")
 	tree= infile.Get("otree")
 
         nent = tree.GetEntries();
