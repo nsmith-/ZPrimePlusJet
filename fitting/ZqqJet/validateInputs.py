@@ -32,8 +32,8 @@ def main(options,args):
 
 	# wp.Print();
 	# wf.Print();
-	wpr.Print();
-	# wfr.Print();
+	# wpr.Print();
+	wfr.Print();
 
 	rrv   = wp.var("x"); 
 	dh_w_p  = wp.data("wqq_pass_cat1");

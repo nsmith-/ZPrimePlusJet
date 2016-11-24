@@ -369,8 +369,8 @@ def loadHistograms(f,pseudo):
 	# print "lengths = ", len(hpass), len(hfail)
 	# print hpass;
 	# print hfail;
-	# return (hpass,hfail);
-	return (hfail,hpass);
+	return (hpass,hfail);
+	# return (hfail,hpass);
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
