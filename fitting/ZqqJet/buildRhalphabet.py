@@ -29,12 +29,14 @@ class dazsleRhalphabetBuilder:
 
 		self._outputName = "base.root";
 
-		# self._mass_nbins = 68;
-		# self._mass_lo    = 28;
-		# self._mass_hi    = 240;
-		self._mass_nbins = hpass[0].GetXaxis().GetNbins();
-		self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
-		self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
+		self._mass_nbins = 36;
+		self._mass_lo    = 2*(500/75.);
+		self._mass_hi    = 38*(500/75.);
+		# self._mass_nbins = hpass[0].GetXaxis().GetNbins();
+		# self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
+		# self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
+
+		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
 		#polynomial order for fit
 		self._poly_lNP = 2;
@@ -48,7 +50,7 @@ class dazsleRhalphabetBuilder:
 		# define RooRealVars
 		self._lMSD    = r.RooRealVar("x","x",self._mass_lo,self._mass_hi)
 		self._lMSD.setBins(self._mass_nbins)		
-		self._lPt     = r.RooRealVar("pt","pt",500,3000);
+		self._lPt     = r.RooRealVar("pt","pt",self._pt_lo,self._pt_hi);
 		self._lPt.setBins(self._nptbins)
 		self._lRho    = r.RooFormulaVar("rho","log(x*x/pt/pt)",r.RooArgList(self._lMSD,self._lPt))
 
@@ -68,6 +70,7 @@ class dazsleRhalphabetBuilder:
 
 		print "number of pt bins = ", self._nptbins;
 		for ipt in range(1,self._nptbins+1):
+		# for ipt in range(1,2):
 			print "------- pT bin number ",ipt		
 			
 			# 1d histograms in each pT bin (in the order... data, w, z, qcd, top, signals)
@@ -93,6 +96,10 @@ class dazsleRhalphabetBuilder:
 			# #Write to file
 			self.makeWorkspace(self._outputName,[pDatas[0]],lPHists,self._allVars,"pass_cat"+str(ipt),True)
 			self.makeWorkspace(self._outputName,[pDatas[1]],lFHists,self._allVars,"fail_cat"+str(ipt),True)
+
+		for ipt in range(1,self._nptbins+1):
+			for imass in range(1,self._mass_nbins):
+				print "qcd_fail_cat%i_Bin%i flatParam" % (ipt,imass);
 			
 	def makeRhalph(self,iHs,iPt,iCat):
 		
@@ -131,10 +138,12 @@ class dazsleRhalphabetBuilder:
 			lArg = r.RooArgList(pFail,lPass,self._lEffQCD)
 			pPass = r.RooFormulaVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),"@0*max(@1,0)*@2",lArg)
 			
+			# print pPass.GetName();
+
 			#If the number of events in the failing is small remove the bin from being free in the fit
 			if pSum < 4:
 				pFail.setConstant(True)
-				pPass = r.RooRealVar   (lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),0,0,0)
+				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),0,0,0)
 				pPass.setConstant(True)
 
 			#Add bins to the array
@@ -166,8 +175,8 @@ class dazsleRhalphabetBuilder:
 
 	def buildRooPolyArray(self,iPt,iRho,iQCD,iZero,iVars):
 		
-		print "---- [buildRooPolyArray]"	
-		print len(iVars);
+		# print "---- [buildRooPolyArray]"	
+		# print len(iVars);
 
 		lPt  = r.RooConstVar("Var_Pt_" +str(iPt)+"_"+str(iRho), "Var_Pt_" +str(iPt)+"_"+str(iRho),(iPt))
 		lRho = r.RooConstVar("Var_Rho_"+str(iPt)+"_"+str(iRho), "Var_Rho_"+str(iPt)+"_"+str(iRho),(iRho))
@@ -181,7 +190,7 @@ class dazsleRhalphabetBuilder:
 			pNP = self._poly_lNP if pRVar < self._poly_lNRP else 0
 			for pVar in range(0,pNP):
 				lTmpArray.add(iVars[lNCount])
-				print "----",iVars[lNCount].GetName()
+				# print "----",iVars[lNCount].GetName()
 				lNCount=lNCount+1
 			pLabel="Var_Pol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))+"_"+str(pRVar)
 			pPol = r.RooPolyVar(pLabel,pLabel,lPt,lTmpArray)
@@ -286,9 +295,7 @@ class dazsleRhalphabetBuilder:
 	def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
 		
 		lW = r.RooWorkspace("w_"+str(iCat))
-		for pData in iDatas:
-			getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
-		
+
 		for pFunc in iFuncs:
 			getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
 			# if iShift and pFunc.GetName().find("qq") > -1:
@@ -298,6 +305,9 @@ class dazsleRhalphabetBuilder:
 			# 	getattr(lW,'import')(pFDown,r.RooFit.RecycleConflictNodes())
 			# 	getattr(lW,'import')(pSFUp,  r.RooFit.RecycleConflictNodes())
 			# 	getattr(lW,'import')(pSFDown,r.RooFit.RecycleConflictNodes())
+
+		for pData in iDatas:
+			getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
 		
 		if iCat.find("pass_cat1") == -1:
 			lW.writeToFile(iOutput,False)
