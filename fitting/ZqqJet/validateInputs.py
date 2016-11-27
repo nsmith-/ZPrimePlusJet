@@ -18,6 +18,10 @@ from tools import *
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
+	if not os.path.isdir("plots"): os.mkdir( "plots" );
+	if not os.path.isdir("plots/hinputs"): os.mkdir( "plots/hinputs" );
+	if not os.path.isdir("plots/mlfit"): os.mkdir( "plots/mlfit" );
+
 	# plot input histos
 	do2DHistInputs("hist_1DZqq.root");
 
