@@ -23,23 +23,26 @@ def main(options,args):
 	if not os.path.isdir("plots/mlfit"): os.mkdir( "plots/mlfit" );
 
 	# plot input histos
-	do2DHistInputs("hist_1DZqq.root");
+	do2DHistInputs("hist_1DZqq-rhoRestricted.root");
 
 	# Load the input histograms
 	f = r.TFile("base.root");
 	fr  = r.TFile("ralphabase.root");
 
-	wp = f.Get("w_pass_cat1");
-	wf = f.Get("w_fail_cat1");
-	wpr = fr.Get("w_pass_cat1");
-	wfr = fr.Get("w_fail_cat1");
+	wp = f.Get("w_pass_cat5");
+	wf = f.Get("w_fail_cat5");
+	wpr = fr.Get("w_pass_cat5");
+	wfr = fr.Get("w_fail_cat5");
+
+	print "---------";
+	print "qcd_fail_cat5_Bin1 = ", r.RooRealVar( wfr.var("qcd_fail_cat5_Bin1") ).getVal()
 
 	# wp.Print();
 	# wf.Print();
 	wpr.Print();
 	wfr.Print();
 
-	for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
+	# for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
 
 ###############################################################
 
@@ -130,6 +133,17 @@ def do2DHistInputs(fn):
 	h2s.append( tf.Get("zqq100_fail") );
 	h2s.append( tf.Get("zqq200_pass") );
 	h2s.append( tf.Get("zqq200_fail") );
+
+	tot_pass = h2s[0].Clone("tot_pass");
+	tot_fail = h2s[1].Clone("tot_fail");
+	tot_pass.Add(h2s[2]);
+	tot_pass.Add(h2s[4]);
+	tot_pass.Add(h2s[6]);
+	tot_fail.Add(h2s[3]);
+	tot_fail.Add(h2s[5]);
+	tot_fail.Add(h2s[7]);
+	h2s.append(tot_pass);
+	h2s.append(tot_fail);
 
 	for h2 in h2s:
 		for ipt in range(h2.GetNbinsY()):

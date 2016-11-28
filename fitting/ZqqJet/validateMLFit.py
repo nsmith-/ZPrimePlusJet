@@ -38,12 +38,14 @@ def plotCategory(fml,fd,index,fittype):
 		histograms_fail.append( fml.Get("shapes_"+fitdir+"/ch%i_fail_cat%i/%s" % (index,index,ish)) );
 		histograms_pass.append( fml.Get("shapes_"+fitdir+"/ch%i_pass_cat%i/%s" % (index,index,ish)) );
 		
-		rags_fail = fml.Get("norm_"+fitdir);
-		rrv_fail = r.RooRealVar(rags_fail.find("ch%i_fail_cat%i/%s" % (index,index,ish)));
+		rags = fml.Get("norm_"+fitdir);
+		rags.Print();
+
+		rrv_fail = r.RooRealVar(rags.find("ch%i_fail_cat%i/%s" % (index,index,ish)));
 		curnorm_fail = rrv_fail.getVal();
-		rags_pass = fml.Get("norm_"+fitdir);
-		rrv_pass = r.RooRealVar(rags_pass.find("ch%i_pass_cat%i/%s" % (index,index,ish)));
+		rrv_pass = r.RooRealVar(rags.find("ch%i_pass_cat%i/%s" % (index,index,ish)));
 		curnorm_pass = rrv_pass.getVal();
+		
 		histograms_fail[i].Scale(curnorm_fail/histograms_fail[i].Integral());
 		histograms_pass[i].Scale(curnorm_pass/histograms_pass[i].Integral());
 
@@ -79,6 +81,7 @@ def makeMLFitCanvas(bkgs, data, leg, tag):
 	l.SetTextSize(0.035);
 	for i in range(len(leg)):
 		l.AddEntry(bkgs[i],leg[i],"l");
+	l.AddEntry(htot,"total bkg","l")
 	if data != None: l.AddEntry(data,"data","pe");
 
 	c = r.TCanvas("c","c",1000,800);

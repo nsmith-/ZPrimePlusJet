@@ -51,6 +51,9 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	    if jmsd_8 <= 0: jmsd_8 = 0.01
 
 	    rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
+
+	    if rh_8 < -6 or rh_8 > -1.5: continue;
+
 	    jtN2b1sd_8 = tree.AK8Puppijet0_N2sdb1
 	    cur_rho_index = trans_h2ddt.GetXaxis().FindBin(rh_8);
 	    cur_pt_index  = trans_h2ddt.GetYaxis().FindBin(jpt_8);
@@ -72,7 +75,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 
 mass=[50,75,100,125,150,200,250,300]#,400,500]
 
-outfile=TFile("hist_1DZqq.root", "recreate");
+outfile=TFile("hist_1DZqq-rhoRestricted.root", "recreate");
 
 lumi =12891.
 SF_tau21 =1
