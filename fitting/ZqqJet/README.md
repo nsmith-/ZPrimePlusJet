@@ -8,8 +8,11 @@ _N.B. We are running combine in CMSSW\_7\_4\_7_
 `python buildRhalphabet.py -b --pseudo`
 3. Validate the input histograms and workspaces
 `python validateInputs.py -b`
-4. Run MLFit
+4. Make cards
+`python makeCards.py`
+5. Run MLFit
 `combine -M MaxLikelihoodFit tmpCard.txt --saveWithUncertainties --saveShapes -v 2 --rMin -50 --rMax 50`
-5. Validate the outputs
-`python validateMLFit.py -b`
+6. Validate the outputs
+`python validateMLFit.py -b --fit prefit`
+`python validateMLFit.py -b --fit fit_b`
 
