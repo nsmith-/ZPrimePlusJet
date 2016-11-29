@@ -31,6 +31,10 @@ def main(options,args):
                'DY': 'Z+jets',
                'W': 'W+jets',
                'TTbar': 't#bar{t}+jets',        
+               'TTbar1Mu': 't#bar{t}+jets, 1#mu',  
+               'TTbar1Ele': 't#bar{t}+jets, 1e',        
+               'TTbar1Tau': 't#bar{t}+jets, 1#tau',        
+               'TTbar0Lep': 't#bar{t}+jets, 0l',        
                'QCD': 'QCD',
 		       'data': 'data'
                }
@@ -66,7 +70,11 @@ def main(options,args):
              'SingleTop': ROOT.kRed-2,
              'DY':  ROOT.kRed,
              'W':  ROOT.kTeal-1,
-             'TTbar':  ROOT.kGray,
+             #'TTbar':  ROOT.kGray,
+             'TTbar1Mu':  ROOT.kViolet,
+             'TTbar1Ele':  ROOT.kSpring,
+             'TTbar1Tau':  ROOT.kOrange+2,
+             'TTbar0Lep':  ROOT.kGray,
              'QCD': ROOT.kBlue+1,
 		     'data':ROOT.kBlack
             }
@@ -79,7 +87,11 @@ def main(options,args):
              'SingleTop': 1,
              'DY': 1,
              'W': 1,
-             'TTbar': 1,
+             #'TTbar': 1,
+             'TTbar1Mu': 1,
+             'TTbar1Ele': 1,
+             'TTbar1Tau': 1,
+             'TTbar0Lep': 1,
              'QCD': 1,
              'data': 1  
             }
@@ -93,7 +105,11 @@ def main(options,args):
     print "Backgrounds..."
     bkgSamples = {}
     #bkgSamples['QCD'] = sampleContainer(tfiles['QCD'], 100, lumi)
-    bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi)
+    #bkgSamples['TTbar']  = sampleContainer(tfiles['TTbar'], 1, lumi, False, False)
+    bkgSamples['TTbar1Mu']  = sampleContainer(tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+    bkgSamples['TTbar1Ele']  = sampleContainer(tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+    bkgSamples['TTbar1Tau']  = sampleContainer(tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+    bkgSamples['TTbar0Lep']  = sampleContainer(tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
     #bkgSamples['SingleTop'] = sampleContainer(tfiles['SingleTop'], 1, lumi)
     #bkgSamples['Diboson'] = sampleContainer(tfiles['Diboson'], 1, lumi)
     #bkgSamples['W']  = sampleContainer(tfiles['W'], 1, lumi)
@@ -113,7 +129,7 @@ def main(options,args):
     	plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut',
                  'h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd','h_n_ak4L','h_n_ak4M','h_n_ak4T',
                  'h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2',
-                 'h_msd_ak8_topR3','h_msd_ak8_topR4','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5','h_msd_ak8_topR6']
+                 'h_msd_ak8_topR3','h_msd_ak8_muCR3','h_msd_ak8_topR4','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5','h_msd_ak8_topR6','h_msd_ak8_topR7']
     for plot in plots:
         hs = {}
         hb = {}
