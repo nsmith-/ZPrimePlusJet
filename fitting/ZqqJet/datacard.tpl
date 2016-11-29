@@ -20,8 +20,12 @@ veff    lnN   0.8	0.8 	0.8     -   -        1.012	  1.012	     1.012	- -
 znorm   lnN   -		1.2 	1.2     -   -        -		  1.2	     1.2	- -
 -------------------------------
 qcdeff  flatParam
-p1      flatParam
-r0      flatParam
-r1      flatParam
-pr11     flatParam
-pr12     flatParam
+p0r0  flatParam
+p1r0  flatParam
+p2r0  flatParam
+p0r1  flatParam
+p1r1  flatParam
+p2r1  flatParam
+p0r2  flatParam
+p1r2  flatParam
+p2r2  flatParam

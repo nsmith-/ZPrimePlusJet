@@ -26,7 +26,7 @@ def main(options,args):
 
 def plotCategory(fml,fd,index,fittype):
 
-	shapes = ['wqq','zqq','tqq','qcd']
+	shapes = ['wqq','zqq','tqq','qcd','zqq100']
 	cats   = ['pass','fail']
 
 	histograms_fail = [];
@@ -46,8 +46,9 @@ def plotCategory(fml,fd,index,fittype):
 		rrv_pass = r.RooRealVar(rags.find("ch%i_pass_cat%i/%s" % (index,index,ish)));
 		curnorm_pass = rrv_pass.getVal();
 		
-		histograms_fail[i].Scale(curnorm_fail/histograms_fail[i].Integral());
-		histograms_pass[i].Scale(curnorm_pass/histograms_pass[i].Integral());
+		print ish, curnorm_fail, curnorm_pass, index
+		if curnorm_fail > 0.: histograms_fail[i].Scale(curnorm_fail/histograms_fail[i].Integral());
+		if curnorm_pass > 0.: histograms_pass[i].Scale(curnorm_pass/histograms_pass[i].Integral());
 
 	wp = fd.Get("w_pass_cat%i" % (index));
 	wf = fd.Get("w_fail_cat%i" % (index));
@@ -58,35 +59,39 @@ def plotCategory(fml,fd,index,fittype):
 	data_fail = rdhf.createHistogram("data_fail_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
 	data_pass = rdhp.createHistogram("data_pass_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
 
-	makeMLFitCanvas(histograms_fail, data_fail, shapes, "fail_cat"+str(index)+"_"+fittype);
-	makeMLFitCanvas(histograms_pass, data_pass, shapes, "pass_cat"+str(index)+"_"+fittype);
+	makeMLFitCanvas(histograms_fail[0:4], data_fail, histograms_fail[4], shapes, "fail_cat"+str(index)+"_"+fittype);
+	makeMLFitCanvas(histograms_pass[0:4], data_pass, histograms_pass[4], shapes, "pass_cat"+str(index)+"_"+fittype);
 
 ###############################################################
 
-def makeMLFitCanvas(bkgs, data, leg, tag):
+def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 
 	htot = bkgs[0].Clone("htot");
 	for ih in range(1,len(bkgs)): htot.Add(bkgs[ih]);
-	for ih in range(len(bkgs)): print bkgs[ih].GetNbinsX(), bkgs[ih].GetBinLowEdge(1), bkgs[ih].GetBinLowEdge( bkgs[ih].GetNbinsX() ) + bkgs[ih].GetBinWidth( bkgs[ih].GetNbinsX() );
+	# for ih in range(len(bkgs)): print bkgs[ih].GetNbinsX(), bkgs[ih].GetBinLowEdge(1), bkgs[ih].GetBinLowEdge( bkgs[ih].GetNbinsX() ) + bkgs[ih].GetBinWidth( bkgs[ih].GetNbinsX() );
 		
 
 	htot.SetLineColor(r.kBlack);
 	colors = [r.kRed, r.kBlue, r.kMagenta, r.kGreen+1, r.kCyan + 1]
 	for i,b in enumerate(bkgs): b.SetLineColor(colors[i]);
+	hsig.SetLineColor(r.kBlack);
+	hsig.SetLineStyle(2);
 
 	l = r.TLegend(0.75,0.6,0.9,0.85);
 	l.SetFillStyle(0);
 	l.SetBorderSize(0);
 	l.SetTextFont(42);
 	l.SetTextSize(0.035);
-	for i in range(len(leg)):
+	for i in range(len(bkgs)):
 		l.AddEntry(bkgs[i],leg[i],"l");
 	l.AddEntry(htot,"total bkg","l")
+	l.AddEntry(hsig,leg[len(leg)-1],"l")
 	if data != None: l.AddEntry(data,"data","pe");
 
 	c = r.TCanvas("c","c",1000,800);
 	htot.Draw('hist');
 	for b in bkgs: b.Draw('histsames');
+	hsig.Draw('histsames');
 	if data != None: data.Draw('pesames');
 	l.Draw();
 	c.SaveAs("plots/mlfit/mlfit_"+tag+".pdf")

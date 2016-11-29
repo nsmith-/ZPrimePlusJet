@@ -39,10 +39,10 @@ def main(options,args):
 
 	# wp.Print();
 	# wf.Print();
-	wpr.Print();
-	wfr.Print();
+	# wpr.Print();
+	# wfr.Print();
 
-	# for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
+	for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
 
 ###############################################################
 
@@ -59,11 +59,15 @@ def drawCategory(f,fr,catname):
 	dh_t_p  = wp.data("tqq_pass_"+catname);
 	ph_q_p  = wpr.pdf("qcd_pass_"+catname);
 	dh_d_p  = wp.data("data_obs_pass_"+catname);
+	dh_z100_p  = wp.data("zqq100_pass_"+catname);
+	dh_z200_p  = wp.data("zqq200_pass_"+catname);
 	dh_w_f  = wf.data("wqq_fail_"+catname);
 	dh_z_f  = wf.data("zqq_fail_"+catname);
 	dh_t_f  = wf.data("tqq_fail_"+catname);
 	ph_q_f  = wfr.pdf("qcd_fail_"+catname);
 	dh_d_f  = wf.data("data_obs_fail_"+catname);
+	dh_z100_f  = wf.data("zqq100_fail_"+catname);
+	dh_z200_f  = wf.data("zqq200_fail_"+catname);
 
  	frame_p = rrv.frame();
   	dh_w_p.plotOn(frame_p, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kRed));
@@ -72,6 +76,8 @@ def drawCategory(f,fr,catname):
 	ph_q_p.plotOn(frame_p, r.RooFit.LineColor(r.kBlue), r.RooFit.LineWidth(10 ));
 	dh_d_p.plotOn(frame_p, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kBlack));
 	ph_q_f.plotOn(frame_p, r.RooFit.LineColor(r.kRed));
+	dh_z100_p.plotOn(frame_p, r.RooFit.LineColor(r.kBlack), r.RooFit.LineStyle(2));
+	dh_z200_p.plotOn(frame_p, r.RooFit.LineColor(r.kRed), r.RooFit.LineStyle(2));
 
  	frame_f = rrv.frame();
   	dh_w_f.plotOn(frame_f, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kRed));
@@ -79,6 +85,8 @@ def drawCategory(f,fr,catname):
 	dh_t_f.plotOn(frame_f, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kBlue));
 	ph_q_f.plotOn(frame_f, r.RooFit.LineColor(r.kRed));
 	dh_d_f.plotOn(frame_f, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kBlack));
+	dh_z100_f.plotOn(frame_f, r.RooFit.LineColor(r.kBlack), r.RooFit.LineStyle(2));
+	dh_z200_f.plotOn(frame_f, r.RooFit.LineColor(r.kRed), r.RooFit.LineStyle(2));
 
   	cp = r.TCanvas("cp","cp",1000,800);
   	frame_p.Draw();
