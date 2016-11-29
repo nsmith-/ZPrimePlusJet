@@ -11,7 +11,7 @@ import array
 #########################################################################################################
 class sampleContainer:
 
-    def __init__( self , fn, sf = 1, lumi = 1, isData = False, fillCA15=False ):
+    def __init__( self , fn, sf = 1, lumi = 1, isData = False, fillCA15=False, cutFormula='1'):
 
         self._fn = fn
         self._tf = ROOT.TFile.Open(self._fn[0])
@@ -19,6 +19,7 @@ class sampleContainer:
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
         self._lumi = lumi
+        self._cutFormula = ROOT.TTreeFormula("cutFormula",cutFormula,self._tt)
         #print lumi 
         #print self._NEv.GetBinContent(1)
         if isData:
@@ -52,9 +53,11 @@ class sampleContainer:
         self.h_msd_ak8_topR1      = ROOT.TH1F("h_msd_ak8_topR1","; AK8 m_{SD}^{PUPPI} [GeV];", 35,50,400)
         self.h_msd_ak8_topR2      = ROOT.TH1F("h_msd_ak8_topR2","; AK8 m_{SD}^{PUPPI} [GeV];", 35,50,400)
         self.h_msd_ak8_topR3      = ROOT.TH1F("h_msd_ak8_topR3","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400)
+        self.h_msd_ak8_muCR3      = ROOT.TH1F("h_msd_ak8_muCR3","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400)
         self.h_msd_ak8_topR4      = ROOT.TH1F("h_msd_ak8_topR4","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400)
         self.h_msd_ak8_topR5      = ROOT.TH1F("h_msd_ak8_topR5","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400)
         self.h_msd_ak8_topR6      = ROOT.TH1F("h_msd_ak8_topR6","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400)
+        self.h_msd_ak8_topR7      = ROOT.TH1F("h_msd_ak8_topR7","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400)
 
         self.h_pt_ca15            = ROOT.TH1F("h_pt_ca15","; CA15 p{T} [GeV];", 100, 300, 3000)
         self.h_msd_ca15           = ROOT.TH1F("h_msd_ca15","; CA15 m_{SD}^{PUPPI} [GeV];", 35,50,400)
@@ -72,9 +75,11 @@ class sampleContainer:
         self.h_msd_ak8_topR1.Sumw2()
         self.h_msd_ak8_topR2.Sumw2()
         self.h_msd_ak8_topR3.Sumw2()
+        self.h_msd_ak8_muCR3.Sumw2()
         self.h_msd_ak8_topR4.Sumw2()
         self.h_msd_ak8_topR5.Sumw2()
         self.h_msd_ak8_topR6.Sumw2()
+        self.h_msd_ak8_topR7.Sumw2()
 
         self.h_pt_ak8.Sumw2(); self.h_msd_ak8.Sumw2(); self.h_t21_ak8.Sumw2()
         self.h_pt_ca15.Sumw2(); self.h_msd_ca15.Sumw2(); self.h_t21_ca15.Sumw2()
@@ -91,9 +96,20 @@ class sampleContainer:
         # looping
         nent = self._tt.GetEntries()
         print nent
+
+        self._tt.SetNotify(self._cutFormula)
         for i in range(self._tt.GetEntries()):
             if i % self._sf != 0: continue
-                        
+
+            #self._tt.LoadEntry(i)
+            self._tt.LoadTree(i)
+            selected = False
+            for j in range(self._cutFormula.GetNdata()):
+                if (self._cutFormula.EvalInstance(j)):
+                    selected = True
+                    break
+            if not selected: continue 
+            
             self._tt.GetEntry(i)
             
             if(i % (1 * nent/100) == 0):
@@ -158,14 +174,18 @@ class sampleContainer:
                 self.h_msd_ak8_topR1.Fill( jmsd_8, weight )
             if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >50 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9 :
                 self.h_msd_ak8_topR2.Fill( jmsd_8, weight )
-            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4 :
-                self.h_msd_ak8_topR3.Fill( jmsd_8, weight )
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4 and self._tt.nmuLoose==0 and self._tt.neleLoose==0 and self._tt.nphoLoose==0 and self._tt.ntau==0:
+                self.h_msd_ak8_topR3.Fill( jmsd_8, weight )                
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4 and self._tt.nmuLoose>=1 and self._tt.neleLoose==0 and self._tt.nphoLoose==0 and self._tt.ntau==0:
+                self.h_msd_ak8_muCR3.Fill( jmsd_8, weight )
             if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40  and  jdb_8 > 0.9  and jt21P_8 < 0.4 and jt32_8 > 0.7:
                 self.h_msd_ak8_topR4.Fill( jmsd_8, weight )
             if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.55 :
                 self.h_msd_ak8_topR5.Fill( jmsd_8, weight )
             if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.95  and jt21P_8 < 0.55 :
                 self.h_msd_ak8_topR6.Fill( jmsd_8, weight )
+            if self._tt.AK8Puppijet0_pt > 500  and self._tt.AK8Puppijet0_msd >40 and self._tt.AK8Puppijet1_pt < 300 and self._tt.pfmet < 180 and self._tt.nAK4PuppijetsdR08 <5 and self._tt.nAK4PuppijetsTdR08 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4 and self._tt.nmuLoose==0 and self._tt.neleLoose==0 and self._tt.nphoLoose==0 and self._tt.ntau==0:
+                self.h_msd_ak8_topR7.Fill( jmsd_8, weight )            
 
             if self._tt.AK8Puppijet0_pt > 500 and jdb_8 > 0.9 and self._tt.AK8Puppijet0_msd >50:
                 self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
