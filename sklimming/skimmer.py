@@ -5,6 +5,7 @@ import math
 from array import array
 import sys
 import time
+from optparse import OptionParser
 
 import ROOT
 
@@ -35,7 +36,7 @@ def main(options,args):
     #OutDir = '/eos/uscms/store/user/jduarte1/zprimebits-v11.051/sklim-v0-Nov18/'
     DataDir = options.idir
     OutDir = options.odir
-    
+
     tags = []
     tags.append( ['WW',0] )
     tags.append( ['WJets.root',0] )
@@ -65,12 +66,12 @@ def main(options,args):
     tags.append( ['JetHTRun2016G',0] )
 
     tags = []
-    tags.append( ['GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_all',0] )
+    tags.append( ['GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8',0] )
     tags.append( ['GluGluHToBB_M125_13TeV_powheg_herwigpp',0] )
     tags.append( ['GluGluHToBB_M125_13TeV_powheg_pythia8',0] )
     tags.append( ['TTJets_13TeV',0] )
     tags.append( ['VBFHToBB_M125_13TeV_amcatnlo_pythia8',0] )
-    tags.append( ['VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all',0] )
+    tags.append( ['VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix',0] )
     tags.append( ['WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8',0] )
     tags.append( ['WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8',0] )
     tags.append( ['ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8',0] )
@@ -147,7 +148,7 @@ def sklimAdd(fn,odir,mass=0):
     nent = tree.GetEntriesFast()
 
     fto = ROOT.TFile("test"+str(mass)+".root","RECREATE")
-    finfo = ROOT.TFile("signalInfo/dijet_pt.root")
+    finfo = ROOT.TFile("signalXS/sig_vectordijet_xspt.root")
     # # h_rw = ROOT.TH1F()
     h_rw = None
     if 'VectorDiJet' in fn and mass > 0: 	
@@ -247,4 +248,4 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
-	main(options,args)
+    main(options,args)
