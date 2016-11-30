@@ -23,21 +23,24 @@ def main(options,args):
 	if not os.path.isdir("plots/mlfit"): os.mkdir( "plots/mlfit" );
 
 	# plot input histos
-	do2DHistInputs("hist_1DZqq.root");
+	do2DHistInputs("hist_1DZqq-rhoRestricted.root");
 
 	# Load the input histograms
 	f = r.TFile("base.root");
 	fr  = r.TFile("ralphabase.root");
 
-	wp = f.Get("w_pass_cat1");
-	wf = f.Get("w_fail_cat1");
-	wpr = fr.Get("w_pass_cat1");
-	wfr = fr.Get("w_fail_cat1");
+	wp = f.Get("w_pass_cat5");
+	wf = f.Get("w_fail_cat5");
+	wpr = fr.Get("w_pass_cat5");
+	wfr = fr.Get("w_fail_cat5");
+
+	print "---------";
+	print "qcd_fail_cat5_Bin1 = ", r.RooRealVar( wfr.var("qcd_fail_cat5_Bin1") ).getVal()
 
 	# wp.Print();
 	# wf.Print();
-	wpr.Print();
-	wfr.Print();
+	# wpr.Print();
+	# wfr.Print();
 
 	for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
 
@@ -56,11 +59,15 @@ def drawCategory(f,fr,catname):
 	dh_t_p  = wp.data("tqq_pass_"+catname);
 	ph_q_p  = wpr.pdf("qcd_pass_"+catname);
 	dh_d_p  = wp.data("data_obs_pass_"+catname);
+	dh_z100_p  = wp.data("zqq100_pass_"+catname);
+	dh_z200_p  = wp.data("zqq200_pass_"+catname);
 	dh_w_f  = wf.data("wqq_fail_"+catname);
 	dh_z_f  = wf.data("zqq_fail_"+catname);
 	dh_t_f  = wf.data("tqq_fail_"+catname);
 	ph_q_f  = wfr.pdf("qcd_fail_"+catname);
 	dh_d_f  = wf.data("data_obs_fail_"+catname);
+	dh_z100_f  = wf.data("zqq100_fail_"+catname);
+	dh_z200_f  = wf.data("zqq200_fail_"+catname);
 
  	frame_p = rrv.frame();
   	dh_w_p.plotOn(frame_p, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kRed));
@@ -69,6 +76,8 @@ def drawCategory(f,fr,catname):
 	ph_q_p.plotOn(frame_p, r.RooFit.LineColor(r.kBlue), r.RooFit.LineWidth(10 ));
 	dh_d_p.plotOn(frame_p, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kBlack));
 	ph_q_f.plotOn(frame_p, r.RooFit.LineColor(r.kRed));
+	dh_z100_p.plotOn(frame_p, r.RooFit.LineColor(r.kBlack), r.RooFit.LineStyle(2));
+	dh_z200_p.plotOn(frame_p, r.RooFit.LineColor(r.kRed), r.RooFit.LineStyle(2));
 
  	frame_f = rrv.frame();
   	dh_w_f.plotOn(frame_f, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kRed));
@@ -76,6 +85,8 @@ def drawCategory(f,fr,catname):
 	dh_t_f.plotOn(frame_f, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kBlue));
 	ph_q_f.plotOn(frame_f, r.RooFit.LineColor(r.kRed));
 	dh_d_f.plotOn(frame_f, r.RooFit.DrawOption("pe"), r.RooFit.MarkerColor(r.kBlack));
+	dh_z100_f.plotOn(frame_f, r.RooFit.LineColor(r.kBlack), r.RooFit.LineStyle(2));
+	dh_z200_f.plotOn(frame_f, r.RooFit.LineColor(r.kRed), r.RooFit.LineStyle(2));
 
   	cp = r.TCanvas("cp","cp",1000,800);
   	frame_p.Draw();
@@ -130,6 +141,17 @@ def do2DHistInputs(fn):
 	h2s.append( tf.Get("zqq100_fail") );
 	h2s.append( tf.Get("zqq200_pass") );
 	h2s.append( tf.Get("zqq200_fail") );
+
+	tot_pass = h2s[0].Clone("tot_pass");
+	tot_fail = h2s[1].Clone("tot_fail");
+	tot_pass.Add(h2s[2]);
+	tot_pass.Add(h2s[4]);
+	tot_pass.Add(h2s[6]);
+	tot_fail.Add(h2s[3]);
+	tot_fail.Add(h2s[5]);
+	tot_fail.Add(h2s[7]);
+	h2s.append(tot_pass);
+	h2s.append(tot_fail);
 
 	for h2 in h2s:
 		for ipt in range(h2.GetNbinsY()):

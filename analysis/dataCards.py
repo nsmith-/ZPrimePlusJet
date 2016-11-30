@@ -59,18 +59,24 @@ def writeDataCard(box,txtfileName,sigs,bkgs,histoDict,options):
     txtfile.close()
     
 def main(options, args):
-    treeName = 'Events'
-    cutString = '%f*scale1fb*(AK8Puppijet0_tau21 + 0.063*log(AK8Puppijet0_msd*AK8Puppijet0_msd/AK8Puppijet0_pt) > 0.6 && AK8Puppijet0_pt > 500)'%(options.lumi)
+    treeName = 'otree'
+    signalTreeName = 'Events'
+    sigXsec = 0.65/1.458163e-02
+
+    cutString = '%f*scale1fb*( AK8Puppijet0_pt > 500 && AK8CHSjet0_doublecsv > 0.90 && nmuLoose == 0 && neleLoose == 0) '%(options.lumi)
+    
+    cutStringSignal = '%f*scale1fb*%f*( AK8Puppijet0_pt > 500 && AK8CHSjet0_doublecsv > 0.90 && nmuLoose == 0 && neleLoose == 0)'%(sigXsec,options.lumi)
+    
     varToProject = 'AK8Puppijet0_msd'
     minVar = 0
     maxVar = 600
     nBins = 60            
     box = 'BoostedDijet'
-    sigs = ['ggHbb']
-    bkgs = ['QCD','W','DY','SingleTop']
+    sigs = ['Phibb125']
+    bkgs = ['QCD','W','DY','TTbar','ST']
 
     tfileName = {}
-    tfileName['ggHbb']= options.idir+'/VectorDiJet1Jet_M125.root'
+    tfileName['Phibb125']= options.idir+'/DMSpin0_ggPhibb1j_125.root'
     for bkg in bkgs:
         tfileName[bkg]= options.idir+'/'+bkg+'.root'
     tfile = {}
@@ -87,9 +93,9 @@ def main(options, args):
     for sig in sigs:
         print 'making histogram for signal: %s'%sig
         tfile[sig] = rt.TFile.Open(tfileName[sig])
-        tree[sig] = tfile[sig].Get(treeName)
+        tree[sig] = tfile[sig].Get(signalTreeName)
         histoDict[sig] = rt.TH1D(box+'_'+sig,box+'_'+sig,nBins,minVar,maxVar)
-        tree[sig].Project(histoDict[sig].GetName(),varToProject,cutString)
+        tree[sig].Project(histoDict[sig].GetName(),varToProject,cutStringSignal)
 
 
     histoDict['data_obs'] = rt.TH1D('data_obs','data_obs',nBins,minVar,maxVar)
@@ -116,7 +122,7 @@ def main(options, args):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option('--lumi', dest='lumi', default = 20,help='lumi in 1/fb ', metavar='lumi')
+    parser.add_option('--lumi', dest='lumi', type=float, default = 20,help='lumi in 1/fb ', metavar='lumi')
     parser.add_option('-i','--idir', dest='idir', default = '../data',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = '../cards',help='directory to write cards', metavar='odir')
     

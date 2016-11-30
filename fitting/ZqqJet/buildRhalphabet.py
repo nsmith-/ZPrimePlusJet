@@ -32,16 +32,13 @@ class dazsleRhalphabetBuilder:
 		self._mass_nbins = 36;
 		self._mass_lo    = 2*(500/75.);
 		self._mass_hi    = 38*(500/75.);
-		# self._mass_nbins = hpass[0].GetXaxis().GetNbins();
-		# self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
-		# self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
 
 		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
 		#polynomial order for fit
-		self._poly_lNP = 2;
+		self._poly_lNP = 2; # 1 means linear, 2 means quadratic
 		self._poly_lNR = 2;
-		self._poly_lNRP =2;
+		# self._poly_lNRP =2;
 
 		self._nptbins = hpass[0].GetYaxis().GetNbins();
 		self._pt_lo = hpass[0].GetYaxis().GetBinLowEdge( 1 );
@@ -115,8 +112,9 @@ class dazsleRhalphabetBuilder:
 		self._lEffQCD.setConstant(False)
 
 		polyArray = []
-		self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,self._poly_lNRP,"p","r",-0.1,0.1)
-		
+		self.buildPolynomialArray(polyArray,self._poly_lNR,self._poly_lNP,"r","p",-0.1,0.1)
+		print polyArray;
+
 		#Now build the function
 		lPassBins = r.RooArgList()
 		lFailBins = r.RooArgList()
@@ -138,6 +136,7 @@ class dazsleRhalphabetBuilder:
 			lArg = r.RooArgList(pFail,lPass,self._lEffQCD)
 			pPass = r.RooFormulaVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),"@0*max(@1,0)*@2",lArg)
 			
+			print pPass.Print();
 			# print pPass.GetName();
 
 			#If the number of events in the failing is small remove the bin from being free in the fit
@@ -176,24 +175,20 @@ class dazsleRhalphabetBuilder:
 	def buildRooPolyArray(self,iPt,iRho,iQCD,iZero,iVars):
 		
 		# print "---- [buildRooPolyArray]"	
-		# print len(iVars);
 
 		lPt  = r.RooConstVar("Var_Pt_" +str(iPt)+"_"+str(iRho), "Var_Pt_" +str(iPt)+"_"+str(iRho),(iPt))
 		lRho = r.RooConstVar("Var_Rho_"+str(iPt)+"_"+str(iRho), "Var_Rho_"+str(iPt)+"_"+str(iRho),(iRho))
 		lRhoArray = r.RooArgList()
 		lNCount=0
-		for pRVar in range(0,self._poly_lNR):
+		for pRVar in range(0,self._poly_lNR+1):
 			lTmpArray = r.RooArgList()
-			if pRVar == 0: lTmpArray.add(iQCD);
-			else: lTmpArray.add(iZero);
-
-			pNP = self._poly_lNP if pRVar < self._poly_lNRP else 0
-			for pVar in range(0,pNP):
-				lTmpArray.add(iVars[lNCount])
-				# print "----",iVars[lNCount].GetName()
+			for pVar in range(0,self._poly_lNP+1):
+				if lNCount == 0: lTmpArray.add(iQCD); # for the very first constant (e.g. p0r0), just set that to 1
+				else: lTmpArray.add(iVars[lNCount])
 				lNCount=lNCount+1
 			pLabel="Var_Pol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))+"_"+str(pRVar)
 			pPol = r.RooPolyVar(pLabel,pLabel,lPt,lTmpArray)
+			print pPol.Print()
 			lRhoArray.add(pPol);
 			self._allVars.append(pPol)
 
@@ -202,21 +197,22 @@ class dazsleRhalphabetBuilder:
 		self._allVars.extend([lPt,lRho,lRhoPol])
 		return lRhoPol
 
-	def buildPolynomialArray(self, iVars,iNVar0,iNVar1,iNVar01,iLabel0,iLabel1,iXMin0,iXMax0):
+	def buildPolynomialArray(self, iVars,iNVar0,iNVar1,iLabel0,iLabel1,iXMin0,iXMax0):
 
 		print "---- [buildPolynomialArray]"
-		for i0 in range(0,iNVar1):
-			for i1 in range(0,iNVar0):
-				pVar    = iLabel0+iLabel1+str(i0)+str(i1)
+		## form of polynomial
+		## (p0r0 + p1r0 * pT + p2r0 * pT^2 + ...) + 
+		## (p0r1 + p1r1 * pT + p2r1 * pT^2 + ...) * rho + 
+		## (p0r2 + p1r2 * pT + p2r2 * pT^2 + ...) * rho^2 + ...
+		
+		for i0 in range(iNVar0+1):
+			for i1 in range(iNVar1+1):
+				pVar = iLabel1+str(i1)+iLabel0+str(i0);		
 				pXMin = iXMin0
 				pXMax = iXMax0
-				if i0 == 0: 
-					pVar = iLabel0+str(i1)
-				if i1 == 0: 
-					pVar = iLabel1+str(i0)
 				pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin,pXMax)
 				print pVar
-				iVars.append(pRooVar)	    
+				iVars.append(pRooVar)	
 
 	def workspaceInputs(self, iHP,iHF,iBin,iPt):
 		
@@ -275,21 +271,28 @@ class dazsleRhalphabetBuilder:
 		lFHists = [] 
 		lVars=[50,75,100,125,150,200,250,300]
 		for i0 in range(0,len(lVars)):
-			lPHists.append(iHP[i0+4])
-			lFHists.append(iHF[i0+4])
-		lPHist = hist(lVars,lPHists)
-		lFHist = hist(lVars,lFHists)
-		masses=[50,60,75,90,100,112,125,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290]
-		for i0 in range(0,len(masses)):
-			pHP   = lPHist.morph(masses[i0])
-			pHF   = lFHist.morph(masses[i0])
-			for i1 in range(0,len(lVars)):
-				if lVars[i1] == masses[i0]:
-					pHP=iHP[i1+3]
-					pHF=iHF[i1+3]
-			lSig = self.rooTheHistFunc([pHP,pHF],"zqq"+str(masses[i0]),iBin)
+			# lPHists.append(iHP[i0+4])
+			# lFHists.append(iHF[i0+4])
+			lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"zqq"+str(lVars[i0]),iBin)
 			lPSigs.append(lSig[4])
 			lFSigs.append(lSig[5])
+		# lPHist = hist(lVars,lPHists)
+		# lFHist = hist(lVars,lFHists)
+		# masses=[50,60,75,90,100,112,125,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290]
+		# for i0 in range(0,len(masses)):
+		# 	pHP   = lPHist.morph(masses[i0])
+		# 	pHF   = lFHist.morph(masses[i0])
+		# 	for i1 in range(0,len(lVars)):
+		# 		if lVars[i1] == masses[i0]:
+		# 			pHP=iHP[i1+3]
+		# 			pHF=iHF[i1+3]
+		# 	lSig = self.rooTheHistFunc([pHP,pHF],"zqq"+str(masses[i0]),iBin)
+		# 	lPSigs.append(lSig[4])
+		# 	lFSigs.append(lSig[5])
+
+		# 	lSig[4].Print();
+		# 	lSig[5].Print();
+
 		return (lPSigs,lFSigs)		
 
 	def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
@@ -330,7 +333,7 @@ def main(options,args):
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile("hist_1DZqq.root");
+	f = r.TFile("hist_1DZqq-rhoRestricted.root");
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
@@ -368,7 +371,7 @@ def loadHistograms(f,pseudo):
 	hfail.extend([lHF3,lHF4])
 
 	#signals
-	masses=[50,75,125,100,150,200,250,300]
+	masses=[50,75,100,125,150,200,250,300]
 	for mass in masses:
 		hpass.append(f.Get("zqq"+str(mass)+"_pass"))
 		hfail.append(f.Get("zqq"+str(mass)+"_fail"))
