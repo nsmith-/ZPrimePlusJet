@@ -7,10 +7,10 @@ from ROOT import *
 import sys
 
 def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
-	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
-	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
+	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,1,500,1000)
+	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,1,500,1000)
 
-	sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
+	sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/sklim-Nov7/"
 	infile=ROOT.TFile(sklimpath+filename+".root")	
 	print(sklimpath+filename+".root")
 	tree= infile.Get("otree")
@@ -53,6 +53,12 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 
 	    rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
 	    jtN2b1sd_8 = tree.AK8Puppijet0_N2sdb1
+
+            rhP_8 = math.log(jmsd_8*jmsd_8/jpt_8)
+            jt21_8 = tree.AK8Puppijet0_tau21
+            jt21P_8 = jt21_8 + 0.063*rhP_8
+	
+
 	    cur_rho_index = trans_h2ddt.GetXaxis().FindBin(rh_8);
 	    cur_pt_index  = trans_h2ddt.GetYaxis().FindBin(jpt_8);
 	    if rh_8 > trans_h2ddt.GetXaxis().GetBinUpEdge( trans_h2ddt.GetXaxis().GetNbins() ): cur_rho_index = trans_h2ddt.GetXaxis().GetNbins();
@@ -64,7 +70,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	    jdb_8 = tree.AK8CHSjet0_doublecsv
 
 	    # Lepton, photon veto and tight jets
-	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1 and jtN2b1sdddt_8 < 0.2  and tree.AK8Puppijet0_msd >40 and tree.pfmet < 180 and tree.nAK4PuppijetsdR08 <5 and tree.nAK4PuppijetsTdR08 < 3 :
+	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1 and jt21P_8 < 0.4  and tree.AK8Puppijet0_msd >40 and tree.pfmet < 180 and tree.nAK4PuppijetsdR08 <5 and tree.nAK4PuppijetsTdR08 < 3 :
 		    if tree.AK8Puppijet0_pt > 500 and jdb_8 >0.9:
 			    h_pass_ak8.Fill( jmsd_8, jpt_8, weight )
 		    if tree.AK8Puppijet0_pt > 500 and jdb_8 <0.9:
@@ -75,7 +81,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 
 outfile=TFile("hist_1DZbb.root", "recreate");
 
-lumi =12891.
+lumi =30000.
 SF_tau21 =1
 
 f_h2ddt = TFile("../../analysis/ZqqJet/h3_n2ddt.root");
