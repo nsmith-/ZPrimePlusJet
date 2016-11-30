@@ -37,33 +37,28 @@ def main(options,args):
     DataDir = options.idir
     OutDir = options.odir
 
-    tags = []
-    tags.append( ['WW',0] )
-    tags.append( ['WJets.root',0] )
-    tags.append( ['DY',0] )
-    tags.append( ['ST',0])
-    tags.append( ['VectorDiJet',0] )
-    tags.append( ['VBFHToBB_',0] )
-    tags.append( ['GluGlu',0] )
-    tags.append( ['DM',0] )
-    tags.append( ['ZZ',0] ) 
-    tags.append( ['ZH',0] )
-    tags.append( ['WH',0] )
-    tags.append( ['ttH',0] )
-    tags.append( ['WZ',0] )
-    tags.append( ['TT',0] )
-    tags.append( ['QCD',0] )
-    #tags.append( ['QCD_HT300to500',0] )
-    #tags.append( ['QCD_HT500to700',0] )
-    #tags.append( ['QCD_HT700to1000',0] )
-
-
-    tags.append( ['JetHTRun2016B',0] )
-    tags.append( ['JetHTRun2016C',0] )
-    tags.append( ['JetHTRun2016D',0] )
-    tags.append( ['JetHTRun2016E',0] )
-    tags.append( ['JetHTRun2016F',0] )   
-    tags.append( ['JetHTRun2016G',0] )
+    ## tags = []
+    ## tags.append( ['WW',0] )
+    ## tags.append( ['WJets.root',0] )
+    ## tags.append( ['DY',0] )
+    ## tags.append( ['ST',0])
+    ## tags.append( ['VectorDiJet',0] )
+    ## tags.append( ['VBFHToBB_',0] )
+    ## tags.append( ['GluGlu',0] )
+    ## tags.append( ['DM',0] )
+    ## tags.append( ['ZZ',0] ) 
+    ## tags.append( ['ZH',0] )
+    ## tags.append( ['WH',0] )
+    ## tags.append( ['ttH',0] )
+    ## tags.append( ['WZ',0] )
+    ## tags.append( ['TT',0] )
+    ## tags.append( ['QCD',0] )
+    ## tags.append( ['JetHTRun2016B',0] )
+    ## tags.append( ['JetHTRun2016C',0] )
+    ## tags.append( ['JetHTRun2016D',0] )
+    ## tags.append( ['JetHTRun2016E',0] )
+    ## tags.append( ['JetHTRun2016F',0] )   
+    ## tags.append( ['JetHTRun2016G',0] )
 
     tags = []
     tags.append( ['GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8',0] )
@@ -77,6 +72,13 @@ def main(options,args):
     tags.append( ['ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8',0] )
     tags.append( ['ttHTobb_M125_13TeV_powheg_pythia8',0] )
     tags.append( ['ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8',0] )
+    
+    tags.append( ['SingleMuonRun2016B',0] )
+    tags.append( ['SingleMuonRun2016C',0] )
+    tags.append( ['SingleMuonRun2016D',0] )
+    tags.append( ['SingleMuonRun2016E',0] )
+    tags.append( ['SingleMuonRun2016F',0] )   
+    tags.append( ['SingleMuonRun2016G',0] )
 
     # make a tmp dir
     #####

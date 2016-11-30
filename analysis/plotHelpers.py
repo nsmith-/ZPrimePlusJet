@@ -653,8 +653,8 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     maxval = -99
     nevt=[]
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in (sorted(hb.iteritems(),key=customSort)):
-    #for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral(),reverse=True):
+    #for name, h in (sorted(hb.iteritems(),key=customSort)):
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -871,14 +871,16 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     print ksScore
     print chiScore
     ratio.SetStats(0)
-    ratio.GetYaxis().SetRangeUser(0,3)	
+    ratio.GetYaxis().SetRangeUser(0,3.5)	
+    ratio.GetYaxis().SetNdivisions(504)
     ratio.GetYaxis().SetTitle("Data/Simulation")
-    ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
-    ratio.GetXaxis().SetTitleSize(0.1)
-    ratio.GetXaxis().SetTitleOffset(1.2)
-    ratio.GetYaxis().SetTitleOffset(.6)	
-    ratio.GetYaxis().SetTitleSize(0.1)
-    ratio.GetXaxis().SetLabelSize(0.075)
+    ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())    
+    ratio.GetXaxis().SetTitleSize(0.14)
+    ratio.GetXaxis().SetTitleOffset(1.0)
+    ratio.GetYaxis().SetTitleOffset(0.5)
+    ratio.GetYaxis().SetLabelSize(0.12)
+    ratio.GetYaxis().SetTitleSize(0.14)
+    ratio.GetXaxis().SetLabelSize(0.12)
 	
     line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
                       ratio.GetXaxis().GetXmax(), 1.0)
@@ -887,13 +889,15 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     line.Draw()
     tKsChi = ROOT.TLatex()
     tKsChi.SetNDC()
+    tKsChi.SetTextFont(42)
+    tKsChi.SetTextSize(0.09)
 
     #ratioError = ROOT.TGraphErrors(error)
     #ratioError.SetFillColor(ROOT.kGray+3)
     #ratioError.SetFillStyle(3013)
     ratio.Draw("E1 ")	
     line.Draw("same")	
-    tKsChi.DrawLatex(0.17,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{dof} = %.2f}"%(chiScore))
+    tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
 
     c.SaveAs(pdir+"/"+outname+".pdf")
     c.SaveAs(pdir+"/"+outname+".C")
