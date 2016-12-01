@@ -79,7 +79,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	return h_pass_ak8,h_fail_ak8
 
 
-mass=[50,75,100,125,150,200,250,300,400,500]
+mass=[50,75,100,125,150,250,300,400,500]
 
 outfile=TFile("hist_1DPbb.root", "recreate");
 
@@ -105,6 +105,7 @@ for m in mass:
 	hs_fail.Write()
 
 print("Building pass/fail")	
+outfile.cd()
 qcd_pass.Write()
 qcd_fail.Write()
 data_obs_pass.Write()
