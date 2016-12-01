@@ -38,7 +38,7 @@ class dazsleRhalphabetBuilder:
 		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
 		#polynomial order for fit
-		self._poly_lNP = 1; #1 = linear ; 2 is quadratic
+		self._poly_lNP = 2; #1 = linear ; 2 is quadratic
 		self._poly_lNR = 2;
 		#self._poly_lNRP =1;
 
@@ -277,9 +277,9 @@ class dazsleRhalphabetBuilder:
 		lFSigs  = []
 		lPHists = [] 
 		lFHists = [] 
-		lVars=[50,75,100,125,150,250,300,400,500]
+		lVars=[125] #50,75,100,125,150,200,250,300]
 		for i0 in range(0,len(lVars)):
-			lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"pqq"+str(lVars[i0]),iBin)
+			lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"hqq"+str(lVars[i0]),iBin)
 			lPSigs.append(lSig[4])
 			lFSigs.append(lSig[5])
 		return (lPSigs,lFSigs)		
@@ -322,7 +322,7 @@ def main(options,args):
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile("hist_1DPbb.root");
+	f = r.TFile("hist_1DZbb.root");
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
@@ -360,10 +360,10 @@ def loadHistograms(f,pseudo):
 	hfail.extend([lHF3,lHF4])
 
 	#signals
-	masses=[50,75,125,100,150,250,300,400,500]
+	masses=[125]#50,75,125,100,150,200,250,300]
 	for mass in masses:
-		hpass.append(f.Get("pqq"+str(mass)+"_pass"))
-		hfail.append(f.Get("pqq"+str(mass)+"_fail"))
+		hpass.append(f.Get("hqq"+str(mass)+"_pass"))
+		hfail.append(f.Get("hqq"+str(mass)+"_fail"))
 
 	for lH in (hpass+hfail):
 		lH.SetDirectory(0)	
