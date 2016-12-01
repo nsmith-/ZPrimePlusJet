@@ -7,8 +7,8 @@ from ROOT import *
 import sys
 
 def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
-	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,1,500,1000)
-	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,1,500,1000)
+	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
+	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
 
 	sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/sklim-Nov7/"
 	infile=ROOT.TFile(sklimpath+filename+".root")	
@@ -81,7 +81,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 
 outfile=TFile("hist_1DZbb.root", "recreate");
 
-lumi =30000.
+lumi =30.
 SF_tau21 =1
 
 f_h2ddt = TFile("../../analysis/ZqqJet/h3_n2ddt.root");
@@ -91,15 +91,15 @@ trans_h2ddt.SetDirectory(0)
 f_h2ddt.Close()
 
 data_obs_pass, data_obs_fail = createHist(trans_h2ddt,'data_obs','JetHTICHEP',1,1,0)
-qcd_pass, qcd_fail = createHist(trans_h2ddt,'qcd','QCD',1,12.89,0)
-tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM_1000pb_weighted',1,12.89,0)
-wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets_1000pb_weighted',1,12.89,0)
-zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted',1,12.89,0)
-hs_pass, hs_fail = createHist(trans_h2ddt,'hqq125','GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted',1,12.89,0)
+qcd_pass, qcd_fail = createHist(trans_h2ddt,'qcd','QCD',1,lumi,0)
+tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM_1000pb_weighted',1,lumi,0)
+wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets_1000pb_weighted',1,lumi,0)
+zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted',1,lumi,0)
+hs_pass, hs_fail = createHist(trans_h2ddt,'hqq125','GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
 
 '''
 for m in mass:
-	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,12.89,m)
+	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,lumi,m)
 	outfile.cd()
 	hs_pass.Write()
 	hs_fail.Write()
