@@ -18,15 +18,39 @@ from tools import *
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
-	fml = r.TFile("mlfit.root");
+	mass = options.mass;
+
+	fml = r.TFile("mlfit_asym_zqq%s.root" % mass);
 	fd  = r.TFile("base.root");
-	for i in range(5): plotCategory(fml, fd, i+1, options.fit);
+	
+	histograms_pass_all = [];
+	histograms_fail_all = [];
+
+	histograms_pass_summed = None;
+	histograms_fail_summed = None;
+
+	for i in range(5): 
+		(tmppass,tmpfail) = plotCategory(fml, fd, i+1, options.fit, options.mass);
+		histograms_pass_all.append(tmppass);
+		histograms_fail_all.append(tmpfail);
+		if i == 0:
+			histograms_pass_summed = tmppass;
+			histograms_fail_summed = tmpfail;
+
+	for i in range(1,len(histograms_pass_all)): 
+		for j in range(len(histograms_pass_all[i])):
+			tmppass[j].Add( histograms_pass_all[i][j] );
+			tmpfail[j].Add( histograms_fail_all[i][j] );
+
+	shapes = ['wqq','zqq','tqq','qcd','zqq'+mass]
+	makeMLFitCanvas(histograms_pass_summed[0:4], histograms_pass_summed[5], histograms_pass_summed[4], shapes, "pass_allcats_"+options.fit+"_"+mass);
+	makeMLFitCanvas(histograms_fail_summed[0:4], histograms_fail_summed[5], histograms_fail_summed[4], shapes, "fail_allcats_"+options.fit+"_"+mass);
 
 ###############################################################
 
-def plotCategory(fml,fd,index,fittype):
+def plotCategory(fml,fd,index,fittype,mass):
 
-	shapes = ['wqq','zqq','tqq','qcd','zqq100']
+	shapes = ['wqq','zqq','tqq','qcd','zqq'+mass]
 	cats   = ['pass','fail']
 
 	histograms_fail = [];
@@ -59,8 +83,13 @@ def plotCategory(fml,fd,index,fittype):
 	data_fail = rdhf.createHistogram("data_fail_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
 	data_pass = rdhp.createHistogram("data_pass_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
 
-	makeMLFitCanvas(histograms_fail[0:4], data_fail, histograms_fail[4], shapes, "fail_cat"+str(index)+"_"+fittype);
-	makeMLFitCanvas(histograms_pass[0:4], data_pass, histograms_pass[4], shapes, "pass_cat"+str(index)+"_"+fittype);
+	histograms_fail.append(data_fail);
+	histograms_pass.append(data_pass);
+
+	makeMLFitCanvas(histograms_fail[0:4], data_fail, histograms_fail[4], shapes, "fail_cat"+str(index)+"_"+fittype+"_"+mass);
+	makeMLFitCanvas(histograms_pass[0:4], data_pass, histograms_pass[4], shapes, "pass_cat"+str(index)+"_"+fittype+"_"+mass);
+
+	return (histograms_pass,histograms_fail)
 
 ###############################################################
 
@@ -89,7 +118,9 @@ def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 	if data != None: l.AddEntry(data,"data","pe");
 
 	c = r.TCanvas("c","c",1000,800);
-	htot.Draw('hist');
+	htot.SetFillStyle(3001);
+	htot.SetFillColor(1);
+	htot.Draw('e2');
 	for b in bkgs: b.Draw('histsames');
 	hsig.Draw('histsames');
 	if data != None: data.Draw('pesames');
@@ -109,6 +140,7 @@ if __name__ == '__main__':
 	parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
 	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
 	parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
+	parser.add_option('--mass', dest='mass', default = '100',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
 
 	(options, args) = parser.parse_args()
