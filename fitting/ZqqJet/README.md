@@ -10,8 +10,11 @@ _N.B. We are running combine in CMSSW\_7\_4\_7_
 `python validateInputs.py -b`
 4. Make cards
 `python makeCards.py`
+`cd cards`
+`combineCards.py card_rhalphabet_cat1.txt card_rhalphabet_cat2.txt card_rhalphabet_cat3.txt card_rhalphabet_cat4.txt card_rhalphabet_cat5.txt > ../cards_all.txt`
 5. Run MLFit
-`combine -M MaxLikelihoodFit tmpCard.txt --saveWithUncertainties --saveShapes -v 2 --rMin -50 --rMax 50`
+`cd ..`
+`combine -M MaxLikelihoodFit cards_all.txt --saveWithUncertainties --saveShapes -v 2 --rMin -50 --rMax 50`
 6. Validate the outputs
 `python validateMLFit.py -b --fit prefit`
 `python validateMLFit.py -b --fit fit_b`
