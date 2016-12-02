@@ -70,7 +70,7 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
 	    jdb_8 = tree.AK8CHSjet0_doublecsv
 
 	    # Lepton, photon veto and tight jets
-	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1 and jt21P_8 < 0.4  and tree.AK8Puppijet0_msd >40 and tree.pfmet < 180 and tree.nAK4PuppijetsdR08 <5 and tree.nAK4PuppijetsTdR08 < 3 :
+	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1 and jt21P_8 < 0.5  and tree.AK8Puppijet0_msd >40 and tree.pfmet < 180 and tree.nAK4PuppijetsdR08 <5 and tree.nAK4PuppijetsTdR08 < 3 :
 		    if tree.AK8Puppijet0_pt > 500 and jdb_8 >0.9:
 			    h_pass_ak8.Fill( jmsd_8, jpt_8, weight )
 		    if tree.AK8Puppijet0_pt > 500 and jdb_8 <0.9:
@@ -96,6 +96,13 @@ tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM_1000pb_weig
 wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets_1000pb_weighted',1,lumi,0)
 zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted',1,lumi,0)
 hs_pass, hs_fail = createHist(trans_h2ddt,'hqq125','GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
+hs1_pass, hs1_fail = createHist(trans_h2ddt,'tthqq125','ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
+hs2_pass, hs2_fail = createHist(trans_h2ddt,'vbfhqq125','VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted',1,lumi,0)
+hs3_pass, hs3_fail = createHist(trans_h2ddt,'zhqq125','ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
+hs4_pass, hs4_fail = createHist(trans_h2ddt,'wmhqq125','WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
+hs5_pass, hs5_fail = createHist(trans_h2ddt,'wphqq125','WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
+
+
 
 '''
 for m in mass:
@@ -108,6 +115,16 @@ print("Building pass/fail")
 outfile.cd()
 hs_pass.Write()
 hs_fail.Write()
+hs1_pass.Write()
+hs1_fail.Write()
+hs2_pass.Write()
+hs2_fail.Write()
+hs3_pass.Write()
+hs3_fail.Write()
+hs4_pass.Write()
+hs4_fail.Write()
+hs5_pass.Write()
+hs5_fail.Write()
 qcd_pass.Write()
 qcd_fail.Write()
 data_obs_pass.Write()

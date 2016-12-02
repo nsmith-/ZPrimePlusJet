@@ -280,8 +280,26 @@ class dazsleRhalphabetBuilder:
 		lVars=[125] #50,75,100,125,150,200,250,300]
 		for i0 in range(0,len(lVars)):
 			lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"hqq"+str(lVars[i0]),iBin)
+			lSig1 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"wmhqq"+str(lVars[i0]),iBin)
+			lSig2 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"wphqq"+str(lVars[i0]),iBin)
+			lSig3 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"zhqq"+str(lVars[i0]),iBin)
+			lSig4 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"vbfhqq"+str(lVars[i0]),iBin)	
+			lSig5 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"tthqq"+str(lVars[i0]),iBin)
+		
+			
 			lPSigs.append(lSig[4])
 			lFSigs.append(lSig[5])
+			lPSigs.append(lSig1[4])
+                        lFSigs.append(lSig1[5])
+			lPSigs.append(lSig2[4])
+                        lFSigs.append(lSig2[5])
+			lPSigs.append(lSig3[4])
+                        lFSigs.append(lSig3[5])
+                        lPSigs.append(lSig4[4])
+                        lFSigs.append(lSig4[5])
+                        lPSigs.append(lSig5[4])
+                        lFSigs.append(lSig5[5])
+			
 		return (lPSigs,lFSigs)		
 
 	def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
@@ -364,6 +382,16 @@ def loadHistograms(f,pseudo):
 	for mass in masses:
 		hpass.append(f.Get("hqq"+str(mass)+"_pass"))
 		hfail.append(f.Get("hqq"+str(mass)+"_fail"))
+		hpass.append(f.Get("zhqq"+str(mass)+"_pass"))
+                hfail.append(f.Get("zhqq"+str(mass)+"_fail"))
+		hpass.append(f.Get("wmhqq"+str(mass)+"_pass"))
+                hfail.append(f.Get("wmhqq"+str(mass)+"_fail"))
+		hpass.append(f.Get("wphqq"+str(mass)+"_pass"))
+                hfail.append(f.Get("wphqq"+str(mass)+"_fail"))
+                hpass.append(f.Get("vbfhqq"+str(mass)+"_pass"))
+                hfail.append(f.Get("vbfhqq"+str(mass)+"_fail"))
+                hpass.append(f.Get("tthqq"+str(mass)+"_pass"))
+                hfail.append(f.Get("tthqq"+str(mass)+"_fail"))
 
 	for lH in (hpass+hfail):
 		lH.SetDirectory(0)	
