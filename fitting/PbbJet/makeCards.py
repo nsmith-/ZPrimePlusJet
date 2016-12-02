@@ -19,7 +19,7 @@ from tools import *
 def main(options,args):
 	
 	dctpl = open("datacardPbb.tpl");
-	numberOfMassBins = 39;
+	numberOfMassBins = 69;
 	masses=[50,75,125,100,150,250,300,400,500]
 
 	linel = [];

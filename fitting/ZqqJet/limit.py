@@ -2,16 +2,8 @@
 import ROOT as r,sys,math,array,os
 from optparse import OptionParser
 
-import tdrstyle
-tdrstyle.setTDRStyle()
-
-def parser():
-    parser = OptionParser()
-    parser.add_option('--mass'   ,action='store',type='int',dest='mass'   ,default=50, help='mass')
-    parser.add_option('--toys'   ,action='store',type='int',dest='toys'   ,default=100,help='mass')
-    parser.add_option('--sig'    ,action='store',type='int',dest='sig'    ,default=10 ,help='sig')
-    (options,args) = parser.parse_args()
-    return options
+sys.path.insert(0, '../.')
+from tools import *
 
 def end():
     if __name__ == '__main__':
@@ -126,12 +118,13 @@ def bias(base,alt,ntoys,mu,iLabel):
     
 def limit(base):
     os.system('combine -M Asymptotic %s  ' % base)
-    os.system('mv higgsCombineTest.Asymptotic.mH120.123456.root limits.root')
+    os.system('mv higgsCombineTest.Asymptotic.mH120.root limits.root')
+    #os.system('mv higgsCombineTest.Asymptotic.mH120.123456.root limits.root')
 
 def plotmass(base,mass):
     os.system('combine -M MaxLikelihoodFit %s --saveWithUncertainties --saveShapes' % base)
     os.system('cp ../plot.py .')
-    os.system('cp ../tdrstyle.py .')
+    #os.system('cp ../tdrstyle.py .')
     os.system('python plot.py --mass %s' % str(mass))
 
 def setup(iLabel,mass,iBase,iRalph):
@@ -165,13 +158,23 @@ def generate(mass,toys):
         os.system('bsub -q 8nh -o out.%%J %s' % (os.path.abspath(sub_file.name)))
 
 if __name__ == "__main__":
-    options = parser()
+    parser = OptionParser()
+    parser.add_option('--mass'   ,action='store',type='int',dest='mass'   ,default=50, help='mass')
+    parser.add_option('--toys'   ,action='store',type='int',dest='toys'   ,default=100,help='mass')
+    parser.add_option('--sig'    ,action='store',type='int',dest='sig'    ,default=10 ,help='sig')
+    (options,args) = parser.parse_args()
     print options
+
+    import tdrstyle
+    tdrstyle.setTDRStyle()
+
     setupMC('ZQQ_'+str(options.mass),options.mass,"mc")
     setup('ZQQ_'+str(options.mass),options.mass,"ralpha","base")
     os.chdir ('ZQQ_'+str(options.mass))
     generate(options.mass,options.toys)
+
     limit('card_ralpha.txt')
+
     goodness('card_ralpha.txt',options.toys,"goodness"+str(options.mass))
     bias('card_ralpha.txt','card_ralpha.txt',options.toys,options.sig,"fitbase"+str(options.mass))
     plotmass('card_ralpha.txt',options.mass)

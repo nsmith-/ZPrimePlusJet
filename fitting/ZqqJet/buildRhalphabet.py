@@ -333,7 +333,7 @@ def main(options,args):
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile("hist_1DZqq-rhoRestricted.root");
+	f = r.TFile(options.input);
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
@@ -393,6 +393,7 @@ if __name__ == '__main__':
 	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
+	parser.add_option('--input', dest='input', default = 'hist_1DZqq.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
 

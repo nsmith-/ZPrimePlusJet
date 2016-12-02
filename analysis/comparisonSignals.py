@@ -34,7 +34,7 @@ def main(options,args):
               'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
 	      'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	      'WHbb' : [idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root', idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-	      'tthbb' : [idir+'ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+	      'tthbb' : [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	      'Phibb':[idir+'/DMSpin0_ggPhibb1j_125_1000pb_weighted.root']
                }
 
