@@ -333,7 +333,7 @@ def main(options,args):
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile("hist_1DZqq-rhoRestricted.root");
+	f = r.TFile("hist_1DZqq-rhoRestricted-fixedSignalWeights.root");
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
