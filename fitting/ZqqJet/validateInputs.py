@@ -23,7 +23,7 @@ def main(options,args):
 	if not os.path.isdir("plots/mlfit"): os.mkdir( "plots/mlfit" );
 
 	# plot input histos
-	do2DHistInputs("hist_1DZqq-rhoRestricted.root");
+	do2DHistInputs("hist_1DZqq.root");
 
 	# Load the input histograms
 	f = r.TFile("base.root");
