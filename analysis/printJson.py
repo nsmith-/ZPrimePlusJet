@@ -44,30 +44,36 @@ def walk(top, topdown=True):
         yield dirpath, dirnames, filenames, top
 
     
-def convertTree2Dict(runLumiDict,tree,lumiBranch,runBranch):
+def convertTree2Dict(runLumiDict,tree,lumiBranch,runBranch):    
+    tree.SetBranchStatus("*",0)
+    tree.SetBranchStatus(runBranch,1)
+    tree.SetBranchStatus(lumiBranch,1)
 
+    runNum = array('i',[0])
+    lumiSec = array('i',[0])
+    tree.SetBranchAddress(runBranch,runNum)
+    tree.SetBranchAddress(lumiBranch,lumiSec)
+    
     if not (hasattr(tree,lumiBranch) and hasattr(tree,runBranch)):
         print "tree does not contain run and lumi branches, returning empty json"
         return runLumiDict
+    
     # loop over tree to get run, lumi "flat" dictionary
-    tree.Draw('>>elist','','entrylist')        
-    elist = rt.gDirectory.Get('elist')    
-    entry = -1;
-    while True:
-        entry = elist.Next()
-        if entry == -1: break
+    nent = tree.GetEntries()
+    print "total entries: %i"%nent
+    for entry in xrange(nent):
         tree.GetEntry(entry)
         if entry%10000==0:
             print "processing entry %i"%entry
-        if '%s'%(getattr(tree,runBranch)) in runLumiDict.keys():
-            currentLumi = runLumiDict['%s'%(getattr(tree,runBranch))]
-            if int(getattr(tree,lumiBranch)) in currentLumi:
+        if '%s'%(runNum[0]) in runLumiDict.keys():
+            currentLumi = runLumiDict['%s'%(runNum[0])]
+            if int(lumiSec[0]) in currentLumi:
                 pass
             else:                
-                currentLumi.append(int(getattr(tree,lumiBranch)))
-                runLumiDict.update({'%s'%(getattr(tree,runBranch)):currentLumi})
+                currentLumi.append(int(lumiSec[0]))
+                runLumiDict.update({'%s'%(runNum[0]):currentLumi})
         else:
-            runLumiDict['%s'%(getattr(tree,runBranch))] = [int(getattr(tree,lumiBranch))]
+            runLumiDict['%s'%(runNum[0])] = [int(lumiSec[0])]
         
     return runLumiDict
 
