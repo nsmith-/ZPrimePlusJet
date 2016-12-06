@@ -43,7 +43,8 @@ class sampleContainer:
                           ('nAK4PuppijetsLdR08','i',-999),('nAK4PuppijetsMdR08','i',-999),('nAK4PuppijetsTdR08','i',-999),('nAK4PuppijetsLPt100dR08','i',-999),
                           ('nAK4PuppijetsMPt100dR08','i',-999),('nAK4PuppijetsTPt100dR08','i',-999),('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),
                           ('AK8Puppijet0_ratioCA15_04','d',-999),('pfmet','f',-999),('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
-                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),
+                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('nAK4PuppijetsLPt150dR08','i',-999),
+                          ('nAK4PuppijetsMPt150dR08','i',-999),('nAK4PuppijetsTPt150dR08','i',-999)
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
@@ -68,13 +69,16 @@ class sampleContainer:
 	'h_pt_bbleading'        :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} [GeV];", 50, 300, 2100],
 	'h_bb_bbleading'        :["h_"+self._name+"_bb_bbleading","; bb ;", 40, -1, 1],
 	'h_msd_bbleading'        :["h_"+self._name+"_msd_bbleading","AK8 m_{SD}^{PUPPI} [GeV];", 48,40,400],
-        'h_n_ak4_fwd'          :["h_"+self._name+"_n_ak4fwd","; AK4 n_{jets}, p_{T} > 100 GeV, 2.5<|#eta|<4.5;", 20, 0, 20],
+        'h_n_ak4_fwd'          :["h_"+self._name+"_n_ak4fwd","; AK4 n_{jets}, p_{T} > 30 GeV, 2.5<|#eta|<4.5;", 20, 0, 20],
         'h_n_ak4L'             :["h_"+self._name+"_n_ak4L","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 40 GeV;", 20, 0, 20],
         'h_n_ak4L100'          :["h_"+self._name+"_n_ak4L100","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 100 GeV;", 10, 0, 10],
+	'h_n_ak4L150'          :["h_"+self._name+"_n_ak4L150","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 150 GeV;", 10, 0, 10],
         'h_n_ak4M'             :["h_"+self._name+"_n_ak4M","; AK4 n_{M b-tags}, #DeltaR > 0.8, p_{T} > 40 GeV;", 20, 0, 20],
         'h_n_ak4M100'          :["h_"+self._name+"_n_ak4M100","; AK4 n_{M b-tags}, #DeltaR > 0.8, p_{T} > 100 GeV;", 10, 0, 10],
+	'h_n_ak4M150'          :["h_"+self._name+"_n_ak4M150","; AK4 n_{M b-tags}, #DeltaR > 0.8, p_{T} > 150 GeV;", 10, 0, 10],
         'h_n_ak4T'             :["h_"+self._name+"_n_ak4T","; AK4 n_{T b-tags}, #DeltaR > 0.8, p_{T} > 40 GeV;", 20, 0, 20],
         'h_n_ak4T100'          :["h_"+self._name+"_n_ak4T100","; AK4 n_{T b-tags}, #DeltaR > 0.8, p_{T} > 100 GeV;", 10, 0, 10],
+	'h_n_ak4T150'          :["h_"+self._name+"_n_ak4T150","; AK4 n_{T b-tags}, #DeltaR > 0.8, p_{T} > 150 GeV;", 10, 0, 10],
         'h_n_ak4_dR0p8'        :["h_"+self._name+"_n_ak4_dR0p8","; AK4 n_{jets}, #DeltaR > 0.8, p_{T} > 30 GeV;", 20, 0, 20],
         'h_isolationCA15'      :["h_"+self._name+"_isolationCA15","; AK8/CA15 p_{T} ratio ;", 50, 0.5, 1.5], 
         'h_met'                :["h_"+self._name+"_met","; E_{T}^{miss} [GeV] ;", 50, 0, 500],
@@ -203,6 +207,10 @@ class sampleContainer:
             n_LPt100dR0p8_4 = self.nAK4PuppijetsLPt100dR08[0]
             n_MPt100dR0p8_4 = self.nAK4PuppijetsMPt100dR08[0]
             n_TPt100dR0p8_4 = self.nAK4PuppijetsTPt100dR08[0]
+	    n_LPt150dR0p8_4 = self.nAK4PuppijetsLPt150dR08[0]
+            n_MPt150dR0p8_4 = self.nAK4PuppijetsMPt150dR08[0]
+            n_TPt150dR0p8_4 = self.nAK4PuppijetsTPt150dR08[0]
+
             met = self.pfmet[0]
             ratioCA15_04 = self.AK8Puppijet0_ratioCA15_04[0]
 
@@ -234,16 +242,13 @@ class sampleContainer:
 	    for i in sorted(bb_idx, key=lambda bbtag: bbtag[2],reverse=True)	:
 		 if a>0 : continue
 		 a=a+1
-		 if met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and i[2] > 0.9   and i[0]> 40 and i[1]>500:
+		 if  i[2] > 0.9   and i[0]> 40 and i[1]>500:
 			self.h_msd_bbleading.Fill( i[0], weight )
 		 #print sorted(bb_idx, key=lambda bbtag: bbtag[2],reverse=True)
 		 self.h_pt_bbleading.Fill( i[1], weight )
 		 #print(i[0],i[1],i[2])
 		 self.h_bb_bbleading.Fill( i[2], weight )
 	
-	  
-	    
-
  
             if jpt_8 > 500 and jmsd_8 >40: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
@@ -268,6 +273,9 @@ class sampleContainer:
                 self.h_n_ak4M100.Fill(   n_MPt100dR0p8_4, weight )
                 self.h_n_ak4T.Fill(    n_TdR0p8_4 , weight )
                 self.h_n_ak4T100.Fill(    n_TPt100dR0p8_4, weight )
+		self.h_n_ak4L150.Fill(    n_LPt150dR0p8_4, weight )
+                self.h_n_ak4M150.Fill(   n_MPt150dR0p8_4, weight )
+                self.h_n_ak4T150.Fill(    n_TPt150dR0p8_4, weight )
                 self.h_isolationCA15.Fill(    ratioCA15_04 , weight )
                 self.h_met.Fill(met, weight)
 
@@ -288,12 +296,12 @@ class sampleContainer:
                 self.h_msd_ak8_topR4.Fill( jmsd_8, weight )
             if jpt_8 > 500  and jmsd_8 >40 and met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.55 :
                 self.h_msd_ak8_topR5.Fill( jmsd_8, weight )
-            if jpt_8 > 500  and jmsd_8 >40 and met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and  jdb_8 > 0.95  and jt21P_8 < 0.55 :
+            if jpt_8 > 500  and jmsd_8 >40 and met < 180 and n_dR0p8_4 <5 and n_MPt100dR0p8_4 <2 and  jdb_8 > 0.9  and jt21P_8 < 0.55 and n_fwd_4 < 3:
                 self.h_msd_ak8_topR6.Fill( jmsd_8, weight )
             if jpt_8 > 500  and jmsd_8 >40 and jpt_8_sub1 < 300 and met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and  jdb_8 > 0.9  and jt21P_8 < 0.4:
                 self.h_msd_ak8_topR7.Fill( jmsd_8, weight )            
 
-            if jpt_8 > 500 and jdb_8 > 0.9 and jmsd_8 >50:
+            if jpt_8 > 500 and jdb_8 > 0.9 and jmsd_8 >40:
                 self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
                 self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
 
