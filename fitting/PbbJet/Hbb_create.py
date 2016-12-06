@@ -54,6 +54,7 @@ def main(options,args):
     sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, lumi)
     sigSamples['wmhqq125']  = sampleContainer('wmhqq125',tfiles['wmhqq125']  , 1, lumi)
     sigSamples['wphqq125']  = sampleContainer('wphqq125',tfiles['wphqq125']  , 1, lumi)
+    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
     print "Backgrounds..."
     bkgSamples = {}    
     bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 100, lumi)
