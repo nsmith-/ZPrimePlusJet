@@ -239,13 +239,13 @@ class sampleContainer:
 
             vmuoLoose0_pt = self.vmuoLoose0_pt[0]
             # Single Muon Control Region 1 (inclusive)
-            if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 :
+            if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
                 self.h_msd_ak8_muCR1.Fill( jmsd_8, weight )
                 if jdb_8 > 0.9:
                     self.h_msd_ak8_muCR2.Fill( jmsd_8, weight )
                 if jt21P_8 < 0.4:
                     self.h_msd_ak8_muCR3.Fill( jmsd_8, weight )
-                if jdb_8 > 0.9 and jt21P_8 < 0.4:
+                if jdb_8 > 0.9 and jt21P_8 < 0.55:
                     self.h_msd_ak8_muCR4.Fill( jmsd_8, weight )
                 if jdb_8 > 0.7 and jt21P_8 < 0.4:
                     self.h_msd_ak8_muCR5.Fill( jmsd_8, weight )
