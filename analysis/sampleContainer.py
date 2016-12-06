@@ -30,7 +30,7 @@ class sampleContainer:
         self._fillCA15 = fillCA15
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("analysis/ZqqJet/h3_n2ddt.root","read")
+        f_h2ddt = ROOT.TFile.Open("ZqqJet/h3_n2ddt.root","read")
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
@@ -43,7 +43,7 @@ class sampleContainer:
                           ('nAK4PuppijetsLdR08','i',-999),('nAK4PuppijetsMdR08','i',-999),('nAK4PuppijetsTdR08','i',-999),('nAK4PuppijetsLPt100dR08','i',-999),
                           ('nAK4PuppijetsMPt100dR08','i',-999),('nAK4PuppijetsTPt100dR08','i',-999),('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),
                           ('AK8Puppijet0_ratioCA15_04','d',-999),('pfmet','f',-999),('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
-                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999)
+                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
@@ -65,6 +65,9 @@ class sampleContainer:
         histos1d = {
         'h_n_ak4'              :["h_"+self._name+"_n_ak4","; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],                    
         'h_n_ak4'              :["h_"+self._name+"_n_ak4","; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],
+	'h_pt_bbleading'        :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} [GeV];", 50, 300, 2100],
+	'h_bb_bbleading'        :["h_"+self._name+"_bb_bbleading","; bb ;", 40, -1, 1],
+	'h_msd_bbleading'        :["h_"+self._name+"_msd_bbleading","AK8 m_{SD}^{PUPPI} [GeV];", 48,40,400],
         'h_n_ak4_fwd'          :["h_"+self._name+"_n_ak4fwd","; AK4 n_{jets}, p_{T} > 100 GeV, 2.5<|#eta|<4.5;", 20, 0, 20],
         'h_n_ak4L'             :["h_"+self._name+"_n_ak4L","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 40 GeV;", 20, 0, 20],
         'h_n_ak4L100'          :["h_"+self._name+"_n_ak4L100","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 100 GeV;", 10, 0, 10],
@@ -79,10 +82,10 @@ class sampleContainer:
         'h_pt_ak8_sub1'        :["h_"+self._name+"_pt_ak8_sub1","; AK8 subleading p_{T} [GeV];", 50, 300, 2100],
         'h_pt_ak8_sub2'        :["h_"+self._name+"_pt_ak8_sub2","; AK8 3rd leading p_{T} [GeV];", 50, 300, 2100],
         'h_pt_ak8_dbtagCut'    :["h_"+self._name+"_pt_ak8_dbtagCut","; AK8 leading p_{T} [GeV];", 45, 300, 2100],
-        'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400],
-        'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} [GeV];", 24,40,400],
-        'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; m_{SD}^{PUPPI} [GeV];", 24,40,400],
-        'h_msd_ak8_N2Cut'      :["h_"+self._name+"_msd_ak8_N2Cut","; m_{SD}^{PUPPI} [GeV];", 24,40,400],
+        'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} [GeV];", 48,40,400],
+        'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} [GeV];", 30,40,400],
+        'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; m_{SD}^{PUPPI} [GeV];", 30,40,400],
+        'h_msd_ak8_N2Cut'      :["h_"+self._name+"_msd_ak8_N2Cut","; m_{SD}^{PUPPI} [GeV];", 30,40,400],
         'h_dbtag_ak8'          :["h_"+self._name+"_dbtag_ak8","; leading double b-tag;", 40, -1, 1],
         'h_dbtag_ak8_sub1'     :["h_"+self._name+"_dbtag_ak8_sub1","; subleading double b-tag;", 40, -1, 1],
         'h_dbtag_ak8_sub2'     :["h_"+self._name+"_dbtag_ak8_sub2","; 3rd leading double b-tag;", 40, -1, 1],
@@ -182,8 +185,14 @@ class sampleContainer:
             jtN2b1sdddt_8 = jtN2b1sd_8 - self._trans_h2ddt.GetBinContent(cur_rho_index,cur_pt_index)
 
             jdb_8 = self.AK8CHSjet0_doublecsv[0]
-            jdb_8_sub1 = self.AK8CHSjet1_doublecsv[0]
-            jdb_8_sub2 = self.AK8CHSjet2_doublecsv[0]
+            if self.AK8CHSjet1_doublecsv[0] > 1:
+		jdb_8_sub1=-99
+	    else:
+		jdb_8_sub1 = self.AK8CHSjet1_doublecsv[0]
+	    if self.AK8CHSjet2_doublecsv[0] > 1:
+                jdb_8_sub2=-99
+            else:
+                jdb_8_sub2 = self.AK8CHSjet2_doublecsv[0]
             
             n_4 = self.nAK4Puppijets[0]
             n_fwd_4 =  self.nAK4Puppijetsfwd[0]
@@ -219,7 +228,23 @@ class sampleContainer:
 
             # Lepton and photon veto
             if neleLoose != 0 or nmuLoose != 0 or ntau != 0 or nphoLoose != 0:  continue                
-            
+           
+	    bb_idx = [[jmsd_8,jpt_8,jdb_8],[self.AK8Puppijet1_msd[0],jpt_8_sub1,jdb_8_sub1],[self.AK8Puppijet2_msd[0],jpt_8_sub2,jdb_8_sub2]]
+	    a =0
+	    for i in sorted(bb_idx, key=lambda bbtag: bbtag[2],reverse=True)	:
+		 if a>0 : continue
+		 a=a+1
+		 if met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and i[2] > 0.9   and i[0]> 40 and i[1]>500:
+			self.h_msd_bbleading.Fill( i[0], weight )
+		 #print sorted(bb_idx, key=lambda bbtag: bbtag[2],reverse=True)
+		 self.h_pt_bbleading.Fill( i[1], weight )
+		 #print(i[0],i[1],i[2])
+		 self.h_bb_bbleading.Fill( i[2], weight )
+	
+	  
+	    
+
+ 
             if jpt_8 > 500 and jmsd_8 >40: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
                 self.h_pt_ak8_sub1.Fill( jpt_8_sub1, weight )

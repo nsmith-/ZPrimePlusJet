@@ -108,14 +108,14 @@ def main(options,args):
 		     'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
-             'DY':  ROOT.kRed,
-             'W':  ROOT.kTeal-1,
+             'DY':  ROOT.kRed+1,
+             'W':  ROOT.kGreen+2,
              'TTbar':  ROOT.kGray,
              'TTbar1Mu':  ROOT.kViolet,
              'TTbar1Ele':  ROOT.kSpring,
              'TTbar1Tau':  ROOT.kOrange+2,
              'TTbar0Lep':  ROOT.kGray,
-             'QCD': ROOT.kBlue,
+             'QCD': ROOT.kBlue+2,
 		     'data':ROOT.kBlack,
 		     'muon':ROOT.kBlack
             }
@@ -145,13 +145,13 @@ def main(options,args):
         
     print "Signals... "
     sigSamples = {}
-    #sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
+    sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
     #sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi ) 
     #sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
     #sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, lumi )    
     #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
     #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 
-    sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
+    #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
     #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
     print "Backgrounds..."
     bkgSamples = {}    
@@ -187,7 +187,7 @@ def main(options,args):
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8']
     else:	
-    	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2',
+    	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2','h_pt_bbleading','h_bb_bbleading','h_msd_bbleading',
                  'h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut',
                  'h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd',
                  'h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4L100','h_n_ak4M100','h_n_ak4T100',
@@ -208,7 +208,7 @@ def main(options,args):
             hd = getattr(dataSample,plot)
             c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         else:
-            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb150',plot.replace('h_','stack_'),odir,lumi,ofile)
+            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
             c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
         canvases.append(c)	
 

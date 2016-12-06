@@ -609,16 +609,15 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 
     c = ROOT.TCanvas("c"+name,"c"+name,1000,800)
     i=0
-    for process, s in hs.iteritems():
-    #sorted(hs.iteritems(),key=lambda (k,v): v.Integral()): 
+    for process, s in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()): 
          i+=1
          if i==1:
-                #hs[process].SetMaximum(1.5*maxval)
-	 	if unitnorm : hs[process].DrawNormalized("hist")
-                else: hs[process].Draw("hist")
+                s.SetMaximum(1.5*maxval)
+	 	if unitnorm : s.DrawNormalized("hist")
+                else: s.Draw("hist")
          else : 	
-		if unitnorm : hs[process].DrawNormalized("histsame")
-		else: hs[process].Draw("histsame")
+		if unitnorm : s.DrawNormalized("histsame")
+		else : s.Draw("histsame")
     leg.Draw()
     #hs[0].GetXaxis().SetRangeUser(0,400)
     #hs[0].SetMinimum(1e-1); i
@@ -644,7 +643,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     
 def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+    leg = ROOT.TLegend(0.65,0.65,0.88,0.88)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
@@ -785,7 +784,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 
 def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
     leg_y = 0.88 - len(legname.keys())*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+    leg = ROOT.TLegend(0.65,0.65,0.88,0.88)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)

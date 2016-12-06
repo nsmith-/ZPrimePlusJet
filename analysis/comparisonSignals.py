@@ -58,21 +58,58 @@ def main(options,args):
         
     print "Signals... "
     sigSamples = {}
-    print(tfiles['ggHbb'])
     #sigSamples['ggHbb']  = sampleContainer(tfiles['ggHbb']  , 1, lumi ) 
-    sigSamples['ggHbbp']  = sampleContainer(tfiles['ggHbbp']  , 1, lumi)
-    sigSamples['VBFHbb'] = sampleContainer(tfiles['VBFHbb'], 1, lumi) 
-    sigSamples['ZHbb'] = sampleContainer(tfiles['ZHbb'], 1, lumi ) 	
-    sigSamples['WHbb'] = sampleContainer(tfiles['WHbb'], 1, lumi )
-    sigSamples['tthbb'] = sampleContainer(tfiles['tthbb'], 1, lumi )	
-    sigSamples['Phibb'] = sampleContainer(tfiles['Phibb'], 1, lumi*0.00126535)   
+    sigSamples['ggHbbp']  = sampleContainer('ggHbbp',tfiles['ggHbbp']  , 1, lumi)
+    sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi) 
+    sigSamples['ZHbb'] = sampleContainer('ZHbb',tfiles['ZHbb'], 1, lumi ) 	
+    sigSamples['WHbb'] = sampleContainer('WHbb',tfiles['WHbb'], 1, lumi )
+    sigSamples['tthbb'] = sampleContainer('tthbb',tfiles['tthbb'], 1, lumi )	
+    sigSamples['Phibb'] = sampleContainer('Phibb',tfiles['Phibb'], 1, lumi*0.035)   
 
 
     ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','recreate')
 
 
 
-    plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_met']
+    plots = [
+'h_n_ak4'           ,
+'h_n_ak4'           ,
+'h_n_ak4_fwd'       ,
+'h_n_ak4L'          ,
+'h_n_ak4L100'       ,
+'h_n_ak4M'          ,
+'h_n_ak4M100'       ,
+'h_n_ak4T'          ,
+'h_n_ak4T100'       ,
+'h_n_ak4_dR0p8'     ,
+'h_isolationCA15'   ,
+'h_met'             ,
+'h_pt_ak8'          ,
+'h_pt_ak8_sub1'     ,
+'h_pt_ak8_sub2'     ,
+'h_pt_ak8_dbtagCut' ,
+'h_msd_ak8'         ,
+'h_msd_ak8_dbtagCut',
+'h_msd_ak8_t21ddtCut'  ,
+'h_msd_ak8_N2Cut'   ,
+'h_dbtag_ak8'       ,
+'h_dbtag_ak8_sub1'  ,
+'h_dbtag_ak8_sub2'  ,
+'h_t21_ak8'         ,
+'h_t21ddt_ak8'      ,
+'h_t32_ak8'         ,
+'h_t32_ak8_t21ddtCut'  ,
+'h_n2b1sd_ak8'      ,
+'h_n2b1sdddt_ak8'   ,
+'h_msd_ak8_topR1'   ,
+'h_msd_ak8_topR2'   ,
+'h_msd_ak8_topR3'   ,
+'h_msd_ak8_topR4'   ,
+'h_msd_ak8_topR5'   ,
+'h_msd_ak8_topR6'   ,
+'h_msd_ak8_topR7'   
+]
+#'h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_met']
     for plot in plots:
         hs = {}
         for process, s in sigSamples.iteritems():
