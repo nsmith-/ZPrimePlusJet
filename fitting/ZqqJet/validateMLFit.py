@@ -38,9 +38,9 @@ def main(options,args):
 			histograms_fail_summed = tmpfail;
 
 	for i in range(1,len(histograms_pass_all)): 
-		for j in range(len(histograms_pass_all[i])):
-			tmppass[j].Add( histograms_pass_all[i][j] );
-			tmpfail[j].Add( histograms_fail_all[i][j] );
+		#for j in range(len(histograms_pass_all[i])):
+			histograms_pass_summed.append( histograms_pass_all[i] );
+                        histograms_fail_summed.append( histograms_fail_all[i] );
 
 	shapes = ['wqq','zqq','tqq','qcd','zqq'+mass]
 	makeMLFitCanvas(histograms_pass_summed[0:4], histograms_pass_summed[5], histograms_pass_summed[4], shapes, "pass_allcats_"+options.fit+"_"+mass);
