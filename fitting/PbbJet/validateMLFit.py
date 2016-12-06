@@ -71,7 +71,6 @@ def plotCategory(fml,fd,index,fittype):
 		rags = fml.Get("norm_"+fitdir);
 		rags.Print();
 
-
 		rrv_fail = r.RooRealVar(rags.find("ch%i_fail_cat%i/%s" % (index,index,ish)));
 		curnorm_fail = rrv_fail.getVal();
 		rrv_pass = r.RooRealVar(rags.find("ch%i_pass_cat%i/%s" % (index,index,ish)));
@@ -115,7 +114,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag):
 
 	htot.SetLineColor(r.kBlack);
 	colors = [r.kRed, r.kBlue, r.kMagenta, r.kGreen+1, r.kCyan + 1]
-	for i,b in enumerate(bkgs): b.SetLineColor(colors[i]);
+	for i,b in enumerate(bkgs): 
+	#	b.SetFillColor(colors[i]);
+		b.SetLineColor(colors[i]);
 	hsig.SetLineColor(r.kBlack);
 	hsig.SetLineStyle(2);
 
@@ -132,9 +133,16 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag):
 	if data != None: l.AddEntry(data,"data","pe");
 
 	c = r.TCanvas("c","c",1000,800);
-	htot.Draw('hist');
-	for b in bkgs: b.Draw('histsames');
-	hsig.Draw('histsames');
+	htot.SetFillStyle(1001)
+	htot.SetFillColor(r.kGray+1)
+	
+	htot.Draw('E2');
+	for b in bkgs: 
+	#	b.SetFillStyle(1001)
+		b.Draw('hist sames');
+	hsig.SetFillStyle(1001)
+	hsig.SetFillColor(r.kGray+1)
+	hsig.Draw('E2 sames');
 	if data != None: data.Draw('pesames');
 	l.Draw();
 	c.SaveAs("plots/mlfit/mlfit_"+tag+".pdf")
