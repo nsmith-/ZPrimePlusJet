@@ -155,7 +155,7 @@ def main(options,args):
     #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 100, lumi)
+    bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
     if isData and muonCR:
         bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
         bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
