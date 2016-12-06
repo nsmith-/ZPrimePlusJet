@@ -57,14 +57,14 @@ def main(options,args):
     sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 100, lumi)
+    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, lumi)
     bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, lumi)
     bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, lumi)
     bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
     bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
     bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
     print "Data..."
-    dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
+    dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
     for plot in ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']:
