@@ -1,140 +1,101 @@
 import os
 import math
 from array import array
-import optparse
+from optparse import OptionParser
 import ROOT
-from ROOT import *
 import sys
-
-def createHist(trans_h2ddt,tag,filename,sf,lumi,mass):
-	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
-	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
-
-	sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/sklim-Nov7/"
-	infile=ROOT.TFile(sklimpath+filename+".root")	
-	print(sklimpath+filename+".root")
-	tree= infile.Get("otree")
-        nent = tree.GetEntries();
-	'''
-        finfo = ROOT.TFile("../../sklimming/signalXS/sig_vectordijet_xspt.root");
-        h_rw = None
-        if 'VectorDiJet1Jet' in filename and mass > 0:
-                hname = "med_"+str(mass)+"_0.1_proc_800";
-                if '75' in filename: hname = "med_"+str(mass)+"_0.1_proc_801";
-                hinfo = finfo.Get(hname)
-                hinfo.Scale(100*1000.); # 100. for coupling, 1000. for conversion to pb is the cross-section 
-                hinfo_nbins = hinfo.GetNbinsX();
-                hinfo_xlo = hinfo.GetXaxis().GetBinLowEdge(1);
-                hinfo_xhi = hinfo.GetXaxis().GetBinUpEdge(hinfo_nbins);
-                htmp = ROOT.TH1F("htmp","htmp",hinfo_nbins,hinfo_xlo,hinfo_xhi)
-                for i in range(nent):
-                        tree.GetEntry(i);
-                        htmp.Fill(tree.genVPt,tree.scale1fb)
-
-                h_rw = ROOT.TH1F( hinfo.Clone() );
-                h_rw.Divide(htmp);
-	'''
-        for i in range(tree.GetEntries()):
-
-            if i % sf != 0: continue
-            tree.GetEntry(i)
-            if(i % (1 * nent/100) == 0):
-                sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
-                sys.stdout.flush()
-
-            puweight = tree.puWeight
-            fbweight = tree.scale1fb * lumi
-            weight = puweight*fbweight*sf
-	    #if 'VectorDiJet1Jet' in filename and mass>0: weight = weight*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
-
-	    jmsd_8 = tree.AK8Puppijet0_msd
-	    jpt_8  = tree.AK8Puppijet0_pt
-	    if jmsd_8 <= 0: jmsd_8 = 0.01
-
-	    rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
-	    jtN2b1sd_8 = tree.AK8Puppijet0_N2sdb1
-
-            rhP_8 = math.log(jmsd_8*jmsd_8/jpt_8)
-            jt21_8 = tree.AK8Puppijet0_tau21
-            jt21P_8 = jt21_8 + 0.063*rhP_8
-	
-
-	    cur_rho_index = trans_h2ddt.GetXaxis().FindBin(rh_8);
-	    cur_pt_index  = trans_h2ddt.GetYaxis().FindBin(jpt_8);
-	    if rh_8 > trans_h2ddt.GetXaxis().GetBinUpEdge( trans_h2ddt.GetXaxis().GetNbins() ): cur_rho_index = trans_h2ddt.GetXaxis().GetNbins();
-	    if rh_8 < trans_h2ddt.GetXaxis().GetBinLowEdge( 1 ): cur_rho_index = 1;
-	    if jpt_8 > trans_h2ddt.GetYaxis().GetBinUpEdge( trans_h2ddt.GetYaxis().GetNbins() ): cur_pt_index = trans_h2ddt.GetYaxis().GetNbins();
-	    if jpt_8 < trans_h2ddt.GetYaxis().GetBinLowEdge( 1 ): cur_pt_index = 1;
-
-	    jtN2b1sdddt_8 = jtN2b1sd_8 - trans_h2ddt.GetBinContent(cur_rho_index,cur_pt_index);
-	    jdb_8 = tree.AK8CHSjet0_doublecsv
-
-	    # Lepton, photon veto and tight jets
-	    if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1 and jt21P_8 < 0.5  and tree.AK8Puppijet0_msd >40 and tree.pfmet < 180 and tree.nAK4PuppijetsdR08 <5 and tree.nAK4PuppijetsTdR08 < 3 :
-		    if tree.AK8Puppijet0_pt > 500 and jdb_8 >0.9:
-			    h_pass_ak8.Fill( jmsd_8, jpt_8, weight )
-		    if tree.AK8Puppijet0_pt > 500 and jdb_8 <0.9:
-			    h_fail_ak8.Fill( jmsd_8, jpt_8, weight )
-
-	return h_pass_ak8,h_fail_ak8
+from sampleContainer import *
 
 
-outfile=TFile("hist_1DZbb.root", "recreate");
+##----##----##----##----##----##----##
+def main(options,args):    
+    idir = options.idir
+    odir = options.odir
+    lumi = options.lumi
+    
+    outfile=ROOT.TFile(options.odir+"/hist_1DZbb.root", "recreate")
+    
+    tfiles = {'hqq125': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'vbfhqq125': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
+              'zhqq125': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'wmhqq125':[idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'wphqq125':[idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'tthqq125':  [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
+              'wqq':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
+              'tqq':  [idir+'/TTJets_13TeV_1000pb_weighted.root'],
+              'stqq': [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
+		                     idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
+		                     idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
+		                     idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
+              'vvqq':[idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
+                          idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
+                          idir+'/WZ_13TeV_1000pb_weighted.root'],
+              'qcd': [idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT2000toInf_13TeV_ext_1000pb_weighted.root',],     
+              'data_obs': [idir+'/JetHTRun2016B_PromptReco_v2_resub.root',
+                       idir+'/JetHTRun2016C_PromptReco_v2.root',
+                       idir+'/JetHTRun2016D_PromptReco_v2.root',
+                       idir+'/JetHTRun2016E_PromptReco_v2.root',
+                       idir+'/JetHTRun2016F_PromptReco_v1.root',
+                       idir+'/JetHTRun2016G_PromptReco_v1.root',
+                       idir+'/JetHTRun2016H_PromptReco_v2.root']
+            }
+    
+    print "Signals... "
+    sigSamples = {}
+    sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, lumi)
+    sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, lumi)
+    sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, lumi)
+    sigSamples['wmhqq125']  = sampleContainer('wmhqq125',tfiles['wmhqq125']  , 1, lumi)
+    sigSamples['wphqq125']  = sampleContainer('wphqq125',tfiles['wphqq125']  , 1, lumi)
+    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
+    print "Backgrounds..."
+    bkgSamples = {}    
+    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, lumi)
+    bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, lumi)
+    bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, lumi)
+    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
+    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
+    bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
+    print "Data..."
+    dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
 
-lumi =30.
-SF_tau21 =1
+    hall={}
+    for plot in ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']:
+        tag = plot.split('_')[-1] # 'pass' or 'fail'            
+        
+        for process, s in sigSamples.iteritems():
+            hall['%s_%s'%(process,tag)] = getattr(s,plot)
+            hall['%s_%s'%(process,tag)].SetName('%s_%s'%(process,tag))
+        for process, s in bkgSamples.iteritems():
+            hall['%s_%s'%(process,tag)] = getattr(s,plot)
+            hall['%s_%s'%(process,tag)].SetName('%s_%s'%(process,tag))
+        hall['%s_%s'%('data_obs',tag)] = getattr(dataSample,plot)
+        hall['%s_%s'%('data_obs',tag)].SetName('%s_%s'%('data_obs',tag))
 
-f_h2ddt = TFile("../../analysis/ZqqJet/h3_n2ddt.root");
-print("Opened file ... ")
-trans_h2ddt = f_h2ddt.Get("h2ddt");
-trans_h2ddt.SetDirectory(0)
-f_h2ddt.Close()
+    outfile.cd()
 
-data_obs_pass, data_obs_fail = createHist(trans_h2ddt,'data_obs','JetHTICHEP',1,1,0)
-qcd_pass, qcd_fail = createHist(trans_h2ddt,'qcd','QCD',1,lumi,0)
-tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTbar_madgraphMLM_1000pb_weighted',1,lumi,0)
-wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJets_1000pb_weighted',1,lumi,0)
-zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DY_1000pb_weighted',1,lumi,0)
-hs_pass, hs_fail = createHist(trans_h2ddt,'hqq125','GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
-hs1_pass, hs1_fail = createHist(trans_h2ddt,'tthqq125','ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
-hs2_pass, hs2_fail = createHist(trans_h2ddt,'vbfhqq125','VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted',1,lumi,0)
-hs3_pass, hs3_fail = createHist(trans_h2ddt,'zhqq125','ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
-hs4_pass, hs4_fail = createHist(trans_h2ddt,'wmhqq125','WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
-hs5_pass, hs5_fail = createHist(trans_h2ddt,'wphqq125','WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted',1,lumi,0)
+    for key, h in hall.iteritems():
+        h.Write()
+        
+    outfile.Write()
+    outfile.Close()
 
 
+##----##----##----##----##----##----##
+if __name__ == '__main__':
+    parser = OptionParser()
+    parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
+    parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
+    parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
+    parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write histograms', metavar='odir')
 
-'''
-for m in mass:
-	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,lumi,m)
-	outfile.cd()
-	hs_pass.Write()
-	hs_fail.Write()
-'''
-print("Building pass/fail")	
-outfile.cd()
-hs_pass.Write()
-hs_fail.Write()
-hs1_pass.Write()
-hs1_fail.Write()
-hs2_pass.Write()
-hs2_fail.Write()
-hs3_pass.Write()
-hs3_fail.Write()
-hs4_pass.Write()
-hs4_fail.Write()
-hs5_pass.Write()
-hs5_fail.Write()
-qcd_pass.Write()
-qcd_fail.Write()
-data_obs_pass.Write()
-data_obs_fail.Write()
-wqq_pass.Write()
-wqq_fail.Write()
-zqq_pass.Write()
-zqq_fail.Write()
-tqq_pass.Write()
-tqq_fail.Write()
-outfile.Write()
-outfile.Close()
+    (options, args) = parser.parse_args()
 
+    main(options,args)
