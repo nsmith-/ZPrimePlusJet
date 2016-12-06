@@ -1,0 +1,53 @@
+Combination of datacard.tpl
+imax 2 number of bins
+jmax 9 number of processes minus 1
+kmax 3 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *              ch1_fail_cat4  base.root w_fail_cat4:$PROCESS_fail_cat4 w_fail_cat4:$PROCESS_fail_cat4_$SYSTEMATIC
+shapes qcd            ch1_fail_cat4  ralphabase.root w_fail_cat4:$PROCESS_fail_cat4
+shapes *              ch1_pass_cat4  base.root w_pass_cat4:$PROCESS_pass_cat4 w_pass_cat4:$PROCESS_pass_cat4_$SYSTEMATIC
+shapes qcd            ch1_pass_cat4  ralphabase.root w_pass_cat4:$PROCESS_pass_cat4
+----------------------------------------------------------------------------------------------------------------------------------
+bin          ch1_pass_cat4  ch1_fail_cat4
+observation  -1.0           -1.0
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_pass_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4  ch1_fail_cat4
+process                         wmhqq125       wphqq125       hqq125         tthqq125       zhqq125        vbfhqq125      zqq            wqq            qcd            tqq            wmhqq125       wphqq125       hqq125         tthqq125       zhqq125        vbfhqq125      zqq            wqq            qcd            tqq
+process                         -5             -4             -3             -2             -1             0              1              2              3              4              -5             -4             -3             -2             -1             0              1              2              3              4
+rate                            -1             -1             -1             -1             -1             -1             -1             -1             1.0000         -1             -1             -1             -1             -1             -1             -1             -1             -1             1.0000         -1
+----------------------------------------------------------------------------------------------------------------------------------
+lumi                    lnN     1.05           1.05           1.05           1.05           1.05           1.05           1.05           1.05           -              -              1.05           1.05           1.05           1.05           1.05           1.05           1.05           1.05           -              -
+veff_unc                lnN     0.8            0.8            0.8            0.8            0.8            0.8            0.8            0.8            -              -              1.012          1.012          1.012          1.012          1.012          1.012          1.012          1.012          -              -
+znorm                   lnN     -              -              -              -              -              -              1.2            -              -              -              -              -              -              -              -              -              1.2            -              -              -
+#scale   shape 0.2	0.2     0.2     -  -         0.2      		       0.2        0.2		   - -
+#smear   shape -		1.0 	1.0     -   -        -		       		    1.0		        1.0	- -
+r1p0  flatParam
+r2p0  flatParam
+r0p1  flatParam
+r1p1  flatParam
+r2p1  flatParam
+qcdeff        flatParam
+qcd_fail_cat4_Bin1 flatParam 
+qcd_fail_cat4_Bin2 flatParam 
+qcd_fail_cat4_Bin3 flatParam 
+qcd_fail_cat4_Bin4 flatParam 
+qcd_fail_cat4_Bin5 flatParam 
+qcd_fail_cat4_Bin6 flatParam 
+qcd_fail_cat4_Bin7 flatParam 
+qcd_fail_cat4_Bin8 flatParam 
+qcd_fail_cat4_Bin9 flatParam 
+qcd_fail_cat4_Bin10 flatParam 
+qcd_fail_cat4_Bin11 flatParam 
+qcd_fail_cat4_Bin12 flatParam 
+qcd_fail_cat4_Bin13 flatParam 
+qcd_fail_cat4_Bin14 flatParam 
+qcd_fail_cat4_Bin15 flatParam 
+qcd_fail_cat4_Bin16 flatParam 
+qcd_fail_cat4_Bin17 flatParam 
+qcd_fail_cat4_Bin18 flatParam 
+qcd_fail_cat4_Bin19 flatParam 
+qcd_fail_cat4_Bin20 flatParam 
+qcd_fail_cat4_Bin21 flatParam 
+qcd_fail_cat4_Bin22 flatParam 
+qcd_fail_cat4_Bin23 flatParam 
+qcd_fail_cat4_Bin24 flatParam 
