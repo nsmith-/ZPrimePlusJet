@@ -17,17 +17,46 @@ from tools import *
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
-	
-	fml = r.TFile("mlfit.root");
-	fd  = r.TFile("base.root");
-	for i in range(5): plotCategory(fml, fd, i+1, options.fit);
 
-###############################################################
+        mass = 125;
+
+        fml = r.TFile("mlfit.root");
+        fd  = r.TFile("base.root");
+
+        histograms_pass_all = [];
+        histograms_fail_all = [];
+
+        histograms_pass_summed = None;
+        histograms_fail_summed = None;
+
+	shapes = ['wqq','zqq','tqq','qcd','hqq125','tthqq125','zhqq125','vbfhqq125','wmhqq125','wphqq125']
+
+        for i in range(5):
+                (tmppass,tmpfail) = plotCategory(fml,fd,i+1,options.fit);
+                histograms_pass_all.append(tmppass);
+                histograms_fail_all.append(tmpfail);
+		if i == 0:
+                        histograms_pass_summed = tmppass;
+                        histograms_fail_summed = tmpfail;
+
+        for i in range(1,len(histograms_pass_all)):
+        #        for j in range(len(histograms_pass_all[i])):
+		#for j in range(len(shapes)):
+                        histograms_pass_summed.append( histograms_pass_all[i] );
+                        histograms_fail_summed.append( histograms_fail_all[i] );
+
+	print("here")
+	print(histograms_pass_summed[4:10])
+	print(histograms_pass_summed[0:4])
+	print(histograms_pass_summed[10])
+        makeMLFitCanvas(histograms_pass_summed[0:4], histograms_pass_summed[10], histograms_pass_summed[5:9], shapes, "pass_allcats_"+options.fit);
+        makeMLFitCanvas(histograms_fail_summed[0:4], histograms_fail_summed[10], histograms_fail_summed[5:9], shapes, "fail_allcats_"+options.fit);
+
+
 
 def plotCategory(fml,fd,index,fittype):
 
-	shapes = ['wqq','zqq','tqq','qcd','hqq125']
-	cats   = ['pass','fail']
+	shapes = ['wqq','zqq','tqq','qcd','hqq125','tthqq125','zhqq125','vbfhqq125','wmhqq125','wphqq125']
 
 	histograms_fail = [];
 	histograms_pass = [];
@@ -37,9 +66,11 @@ def plotCategory(fml,fd,index,fittype):
 		
 		histograms_fail.append( fml.Get("shapes_"+fitdir+"/ch%i_fail_cat%i/%s" % (index,index,ish)) );
 		histograms_pass.append( fml.Get("shapes_"+fitdir+"/ch%i_pass_cat%i/%s" % (index,index,ish)) );
+			
 		
 		rags = fml.Get("norm_"+fitdir);
 		rags.Print();
+
 
 		rrv_fail = r.RooRealVar(rags.find("ch%i_fail_cat%i/%s" % (index,index,ish)));
 		curnorm_fail = rrv_fail.getVal();
@@ -58,16 +89,27 @@ def plotCategory(fml,fd,index,fittype):
 
 	data_fail = rdhf.createHistogram("data_fail_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
 	data_pass = rdhp.createHistogram("data_pass_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
+	
+	histograms_fail.append(data_fail);
+        histograms_pass.append(data_pass);
 
-	makeMLFitCanvas(histograms_fail[0:4], data_fail, histograms_fail[4], shapes, "fail_cat"+str(index)+"_"+fittype);
-	makeMLFitCanvas(histograms_pass[0:4], data_pass, histograms_pass[4], shapes, "pass_cat"+str(index)+"_"+fittype);
+	makeMLFitCanvas(histograms_fail[0:4], data_fail, histograms_fail[4:10], shapes, "fail_cat"+str(index)+"_"+fittype);
+	makeMLFitCanvas(histograms_pass[0:4], data_pass, histograms_pass[4:10], shapes, "pass_cat"+str(index)+"_"+fittype);
+	
+
+
+	return (histograms_pass,histograms_fail)
 
 ###############################################################
 
-def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
+def makeMLFitCanvas(bkgs, data, hsigs, leg, tag):
 
 	htot = bkgs[0].Clone("htot");
 	for ih in range(1,len(bkgs)): htot.Add(bkgs[ih]);
+	hsig = hsigs[0].Clone("hsig");
+		
+	for ih in range(1,len(hsigs)):
+		hsig.Add(hsigs[ih]);
 	# for ih in range(len(bkgs)): print bkgs[ih].GetNbinsX(), bkgs[ih].GetBinLowEdge(1), bkgs[ih].GetBinLowEdge( bkgs[ih].GetNbinsX() ) + bkgs[ih].GetBinWidth( bkgs[ih].GetNbinsX() );
 		
 
@@ -85,7 +127,8 @@ def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 	for i in range(len(bkgs)):
 		l.AddEntry(bkgs[i],leg[i],"l");
 	l.AddEntry(htot,"total bkg","l")
-	l.AddEntry(hsig,leg[len(leg)-1],"l")
+	l.AddEntry(hsig,"hqq125","l")
+	
 	if data != None: l.AddEntry(data,"data","pe");
 
 	c = r.TCanvas("c","c",1000,800);
