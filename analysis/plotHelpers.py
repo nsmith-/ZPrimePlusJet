@@ -642,8 +642,8 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 
     
 def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,ofile=None):
-    leg_y = 0.88 - len(legname.keys())*0.04
-    leg = ROOT.TLegend(0.65,0.65,0.88,0.88)
+    leg_y = 0.88 - (len(hs)+len(hb))*0.04
+    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
@@ -783,8 +783,8 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 
 
 def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
-    leg_y = 0.88 - len(legname.keys())*0.04
-    leg = ROOT.TLegend(0.65,0.65,0.88,0.88)
+    leg_y = 0.88 - (len(hs)+len(hb))*0.04
+    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
