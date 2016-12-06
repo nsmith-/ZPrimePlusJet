@@ -102,12 +102,12 @@ def main(options,args):
 'h_n2b1sd_ak8'      ,
 'h_n2b1sdddt_ak8'   ,
 'h_msd_ak8_topR1'   ,
-'h_msd_ak8_topR2'   ,
-'h_msd_ak8_topR3'   ,
-'h_msd_ak8_topR4'   ,
-'h_msd_ak8_topR5'   ,
-'h_msd_ak8_topR6'   ,
-'h_msd_ak8_topR7'   
+'h_msd_ak8_topR2_pass'   ,
+'h_msd_ak8_topR3_pass'   ,
+'h_msd_ak8_topR4_pass'   ,
+'h_msd_ak8_topR5_pass'   ,
+'h_msd_ak8_topR6_pass'   ,
+'h_msd_ak8_topR7_pass'   
 ]
 #'h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_met']
     for plot in plots:
