@@ -42,7 +42,7 @@ if __name__ == '__main__':
         else:
             return export_(var,string,csh)
     print export_('ZPRIMEPLUSJET_BASE',topDir,options.csh),'\n'
-    print prepend_('PYTHONPATH',os.path.join(topDir,'python'),options.csh),'\n'
+    print prepend_('PYTHONPATH',os.path.join(topDir,'analysis'),options.csh),'\n'
     
     LIBDIR = os.path.join(topDir,'lib')
     #annoying difference between macos and linux...        
