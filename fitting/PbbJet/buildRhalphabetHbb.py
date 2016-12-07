@@ -280,11 +280,11 @@ class dazsleRhalphabetBuilder:
         lVars=[125] #50,75,100,125,150,200,250,300]
         for i0 in range(0,len(lVars)):
             lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"hqq"+str(lVars[i0]),iBin)
-            lSig1 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"wmhqq"+str(lVars[i0]),iBin)
-            lSig2 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"wphqq"+str(lVars[i0]),iBin)
-            lSig3 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"zhqq"+str(lVars[i0]),iBin)
-            lSig4 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"vbfhqq"+str(lVars[i0]),iBin)
-            lSig5 = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"tthqq"+str(lVars[i0]),iBin)
+            lSig1 = self.rooTheHistFunc([iHP[i0+6],iHF[i0+6]],"zhqq"+str(lVars[i0]),iBin)
+            lSig2 = self.rooTheHistFunc([iHP[i0+7],iHF[i0+7]],"wmhqq"+str(lVars[i0]),iBin)
+            lSig3 = self.rooTheHistFunc([iHP[i0+8],iHF[i0+8]],"wphqq"+str(lVars[i0]),iBin)
+            lSig4 = self.rooTheHistFunc([iHP[i0+9],iHF[i0+9]],"vbfhqq"+str(lVars[i0]),iBin)
+            lSig5 = self.rooTheHistFunc([iHP[i0+10],iHF[i0+10]],"tthqq"+str(lVars[i0]),iBin)
             lPSigs.append(lSig[4])
             lFSigs.append(lSig[5])
             lPSigs.append(lSig1[4])
@@ -366,9 +366,15 @@ def loadHistograms(f,pseudo):
     masses=[125]#50,75,125,100,150,200,250,300]
     sigs = ["hqq","zhqq","wmhqq","wphqq","vbfhqq","tthqq"]
     for mass in masses:
-        for sig in sigs:            
-            hpass.append(f.Get(sig+str(mass)+"_pass"))
+        for sig in sigs:
+            passhist = f.Get(sig+str(mass)+"_pass").Clone()
+            for i in range(0,passhist.GetNbinsX()+2):
+                for j in range(0,passhist.GetNbinsY()+2):
+                    if passhist.GetBinContent(i,j) <= 0:
+                        passhist.SetBinContent(i,j,1e-10)
+            hpass.append(passhist)
             hfail.append(f.Get(sig+str(mass)+"_fail"))
+            #hpass.append(f.Get(sig+str(mass)+"_pass"))
 
     for lH in (hpass+hfail):
         lH.SetDirectory(0)	
