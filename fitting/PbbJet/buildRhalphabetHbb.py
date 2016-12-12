@@ -402,7 +402,7 @@ def loadHistograms(f,pseudo):
             for i in range(0,passhist.GetNbinsX()+2):
                 for j in range(0,passhist.GetNbinsY()+2):
                     if passhist.GetBinContent(i,j) <= 0:
-                        passhist.SetBinContent(i,j,0)
+                        passhist.SetBinContent(i,j,1e-10)
             hpass_sig.append(passhist)
             hfail_sig.append(f.Get(sig+str(mass)+"_fail"))
             #hpass_sig.append(f.Get(sig+str(mass)+"_pass"))
