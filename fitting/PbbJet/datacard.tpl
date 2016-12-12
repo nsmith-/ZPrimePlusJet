@@ -1,7 +1,7 @@
 Combination of datacard.tpl
 imax 2 number of bins
-jmax 9 number of processes minus 1
-kmax 3 number of nuisance parameters
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
 shapes *              fail_CATX  base.root w_fail_CATX:$PROCESS_fail_CATX w_fail_CATX:$PROCESS_fail_CATX_$SYSTEMATIC
 shapes qcd            fail_CATX  ralphabase.root w_fail_CATX:$PROCESS_fail_CATX
@@ -26,4 +26,6 @@ r2p0  flatParam
 r0p1  flatParam
 r1p1  flatParam
 r2p1  flatParam
+r2p2  flatParam
+r0p2  flatParam
 qcdeff        flatParam
