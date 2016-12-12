@@ -29,7 +29,8 @@ def main(options,args):
         histograms_pass_summed = None;
         histograms_fail_summed = None;
 
-	shapes = ['wqq','zqq','tqq','qcd','hqq125','tthqq125','zhqq125','vbfhqq125','wmhqq125','wphqq125']
+	shapes = ['wqq','zqq','tqq','qcd','hqq125','zhqq125','wmhqq125','wphqq125','tthqq125','vbfhqq125']	
+
 
         for i in range(5):
                 (tmppass,tmpfail) = plotCategory(fml,fd,i+1,options.fit);
@@ -56,12 +57,13 @@ def main(options,args):
 
 def plotCategory(fml,fd,index,fittype):
 
-	shapes = ['wqq','zqq','tqq','qcd','hqq125','tthqq125','zhqq125','vbfhqq125','wmhqq125','wphqq125']
-
+        shapes = ['wqq','zqq','tqq','qcd','hqq125','zhqq125','wmhqq125','wphqq125','tthqq125','vbfhqq125']
 	histograms_fail = [];
 	histograms_pass = [];
-	fitdir = fittype;
 	for i,ish in enumerate(shapes):	
+		if i<4:
+		   fitdir = fittype;
+		else :  fitdir = "prefit"	
 		print fitdir+"/ch%i_fail_cat%i/%s" % (index,index,ish)
 		
 		histograms_fail.append( fml.Get("shapes_"+fitdir+"/ch%i_fail_cat%i/%s" % (index,index,ish)) );
@@ -135,21 +137,21 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag):
 	c = r.TCanvas("c","c",1000,800);
 	htot.SetFillStyle(1001)
 	htot.SetFillColor(r.kGray+1)
+	htot.SetMinimum(1);
 	
 	htot.Draw('E2');
 	for b in bkgs: 
 	#	b.SetFillStyle(1001)
 		b.Draw('hist sames');
-	hsig.SetFillStyle(1001)
-	hsig.SetFillColor(r.kGray+1)
-	hsig.Draw('E2 sames');
+	#hsig.SetFillStyle(1001)
+	#hsig.SetFillColor(r.kGray+1)
+	hsig.Draw('hist sames');
 	if data != None: data.Draw('pesames');
 	l.Draw();
 	c.SaveAs("plots/mlfit/mlfit_"+tag+".pdf")
 	c.SaveAs("plots/mlfit/mlfit_"+tag+".png")
 	r.gPad.SetLogy();
 	htot.SetMaximum(data.GetMaximum()*2);
-	htot.SetMinimum(1);
 	c.SaveAs("plots/mlfit/mlfit_"+tag+"-log.pdf")
 	c.SaveAs("plots/mlfit/mlfit_"+tag+"-log.png")
 
