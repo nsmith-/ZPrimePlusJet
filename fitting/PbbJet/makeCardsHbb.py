@@ -18,7 +18,7 @@ from tools import *
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
-	dctpl = open("datacard.tpl");
+	dctpl = open("datacard_novbf.tpl");
 	numberOfMassBins = 24;
 
 	linel = [];
@@ -26,7 +26,7 @@ def main(options,args):
 		print line.strip().split();
 		linel.append(line.strip());
 
-	for i in range(1,6):
+	for i in range(1,5+1):
 
 		tag = "cat"+str(i);
 		dctmp = open("cards/card_rhalphabet_%s.txt" % tag, 'w')
@@ -34,7 +34,7 @@ def main(options,args):
 			newline = l;
 			if "CATX" in l: newline = l.replace('CATX',tag);
 			dctmp.write(newline + "\n");
-		for im in range(numberOfMassBins):
+		for im in range(1,numberOfMassBins+1):
 			dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
 
 

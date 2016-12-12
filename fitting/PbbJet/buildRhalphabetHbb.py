@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import ROOT as r,sys,math,array,os
+import ROOT as r,sys,math,os
 from ROOT import TFile, TTree, TChain, gPad, gDirectory
 from multiprocessing import Process
 from optparse import OptionParser
@@ -8,6 +8,9 @@ import math
 import sys
 import time
 import array
+#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+
 
 # including other directories
 sys.path.insert(0, '../.')
@@ -28,9 +31,9 @@ class dazsleRhalphabetBuilder:
 
         self._outputName = "base.root";
 
-        self._mass_nbins = 24;
-        self._mass_lo    = 6*(500/75.);
-        self._mass_hi    = 30*(500/75.);
+        self._mass_nbins = 24
+        self._mass_lo    = 6*(500/75.)
+        self._mass_hi    = 30*(500/75.)
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
         # self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
         # self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
@@ -38,8 +41,8 @@ class dazsleRhalphabetBuilder:
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
         #polynomial order for fit
-        self._poly_lNP = 2; #1 = linear ; 2 is quadratic
-        self._poly_lNR = 2;
+        self._poly_lNP = 2 #1 = linear ; 2 is quadratic
+        self._poly_lNR = 2
         #self._poly_lNRP =1;
 
         self._nptbins = hpass[0].GetYaxis().GetNbins();
@@ -98,6 +101,7 @@ class dazsleRhalphabetBuilder:
             self.makeWorkspace(self._outputName,[pDatas[0]],lPHists,self._allVars,"pass_cat"+str(ipt),True)
             self.makeWorkspace(self._outputName,[pDatas[1]],lFHists,self._allVars,"fail_cat"+str(ipt),True)
 
+        
         for ipt in range(1,self._nptbins+1):
             for imass in range(1,self._mass_nbins):
                 print "qcd_fail_cat%i_Bin%i flatParam" % (ipt,imass);
@@ -112,12 +116,12 @@ class dazsleRhalphabetBuilder:
 
         #Fix the pt (top) and teh qcd eff
         self._lPt.setVal(iPt)
-        self._lEffQCD.setVal(0.02)
+        self._lEffQCD.setVal(1.92e-02)
         self._lEffQCD.setConstant(False)
 
         polyArray = []
         self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-0.3,0.3)
-        print polyArray;
+        print polyArray
 
         #Now build the function
         lPassBins = r.RooArgList()
@@ -129,8 +133,15 @@ class dazsleRhalphabetBuilder:
             lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lMSD.getVal(),lUnity,lZero,polyArray)
             pSum = 0
             for i1 in range(0,len(iHs)):
-                pSum = pSum + iHs[i1].GetBinContent(i0) if i1 == 0 else pSum - iHs[i1].GetBinContent(i0); # subtract W/Z from data
+                if i1 == 0:
+                    print i1, iHs[i1].GetName(), "add data"
+                    pSum = pSum + iHs[i1].GetBinContent(i0) # add data
+                else:                    
+                    print i1, iHs[i1].GetName(), "subtract W/Z/ttbar"
+                    pSum = pSum - iHs[i1].GetBinContent(i0) # subtract W/Z/ttbar from data
             if pSum < 0: pSum = 0
+
+            print lName+"_fail_"+iCat+"_Bin"+str(i0), pSum
 
             #5 sigma range + 10 events
             pUnc = math.sqrt(pSum)*5+10
@@ -140,12 +151,13 @@ class dazsleRhalphabetBuilder:
             lArg = r.RooArgList(pFail,lPass,self._lEffQCD)
             pPass = r.RooFormulaVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),"@0*max(@1,0)*@2",lArg)
 
-            print pPass.Print();
+            print pPass.Print()
 
-            # print pPass.GetName();
+            # print pPass.GetName()
 
             #If the number of events in the failing is small remove the bin from being free in the fit
             if pSum < 4:
+                print "too small number of events", pSum, "Bin", str(i0)
                 pFail.setConstant(True)
                 pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),0,0,0)
                 pPass.setConstant(True)
@@ -161,6 +173,8 @@ class dazsleRhalphabetBuilder:
         lFail  = r.RooParametricHist(lName+"_fail_"+iCat,lName+"_fail_"+iCat,self._lMSD,lFailBins,iHs[0])
         lNPass = r.RooAddition(lName+"_pass_"+iCat+"_norm",lName+"_pass_"+iCat+"_norm",lPassBins)
         lNFail = r.RooAddition(lName+"_fail_"+iCat+"_norm",lName+"_fail_"+iCat+"_norm",lFailBins)
+        lNPass.Print()
+        lNFail.Print()        
         self._allShapes.extend([lPass,lFail,lNPass,lNFail])
 
         #Now write the wrokspace with the rooparamhist
@@ -189,12 +203,12 @@ class dazsleRhalphabetBuilder:
         for pRVar in range(0,self._poly_lNR+1):
             lTmpArray = r.RooArgList()
             for pVar in range(0,self._poly_lNP+1):
-                if lNCount == 0: lTmpArray.add(iQCD); # for the very first constant (e.g. p0r0), just set that to 1
+                if lNCount == 0: lTmpArray.add(iQCD) # for the very first constant (e.g. p0r0), just set that to 1
                 else: lTmpArray.add(iVars[lNCount])
                 lNCount=lNCount+1
             pLabel="Var_Pol_Bin_"+str(round(iPt,2))+"_"+str(round(iMass,3))+"_"+str(pRVar)
             pPol = r.RooPolyVar(pLabel,pLabel,lPt,lTmpArray)
-            lMassArray.add(pPol);
+            lMassArray.add(pPol)
             self._allVars.append(pPol)
 
         lLabel="Var_MassPol_Bin_"+str(round(iPt,2))+"_"+str(round(iMass,3))
@@ -218,7 +232,8 @@ class dazsleRhalphabetBuilder:
                 pXMax = iXMax0
                 pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin,pXMax)
                 print pVar
-                iVars.append(pRooVar)	
+                
+                iVars.append(pRooVar)
 
 
 
@@ -232,9 +247,9 @@ class dazsleRhalphabetBuilder:
         lData  = r.RooDataHist("comb_data_obs","comb_data_obs",r.RooArgList(self._lMSD),r.RooFit.Index(lCats),r.RooFit.Import("pass",lPData),r.RooFit.Import("fail",lFData)) 
 
         lW    = self.rooTheHistFunc([iHP[1],iHF[1]],"wqq",iBin)
-        lZ    = self.rooTheHistFunc([iHP[2],iHF[2]],"zqq",iBin)
-        ltop  = self.rooTheHistFunc([iHP[4],iHF[4]],"tqq",iBin)		
+        lZ    = self.rooTheHistFunc([iHP[2],iHF[2]],"zqq",iBin)	
         lQCD  = self.rooTheHistFunc([iHP[3],iHF[3]],"qcd",iBin)
+        ltop  = self.rooTheHistFunc([iHP[4],iHF[4]],"tqq",iBin)
 
         lTotP = r.RooAddPdf("tot_pass"+iBin,"tot_pass"+iBin,r.RooArgList(lQCD[0]))
         lTotF = r.RooAddPdf("tot_fail"+iBin,"tot_fail"+iBin,r.RooArgList(lQCD[1]))
@@ -277,26 +292,14 @@ class dazsleRhalphabetBuilder:
         lFSigs  = []
         lPHists = [] 
         lFHists = [] 
-        lVars=[125] #50,75,100,125,150,200,250,300]
-        for i0 in range(0,len(lVars)):
-            lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"hqq"+str(lVars[i0]),iBin)
-            lSig1 = self.rooTheHistFunc([iHP[i0+6],iHF[i0+6]],"zhqq"+str(lVars[i0]),iBin)
-            lSig2 = self.rooTheHistFunc([iHP[i0+7],iHF[i0+7]],"wmhqq"+str(lVars[i0]),iBin)
-            lSig3 = self.rooTheHistFunc([iHP[i0+8],iHF[i0+8]],"wphqq"+str(lVars[i0]),iBin)
-            lSig4 = self.rooTheHistFunc([iHP[i0+9],iHF[i0+9]],"vbfhqq"+str(lVars[i0]),iBin)
-            lSig5 = self.rooTheHistFunc([iHP[i0+10],iHF[i0+10]],"tthqq"+str(lVars[i0]),iBin)
-            lPSigs.append(lSig[4])
-            lFSigs.append(lSig[5])
-            lPSigs.append(lSig1[4])
-            lFSigs.append(lSig1[5])
-            lPSigs.append(lSig2[4])
-            lFSigs.append(lSig2[5])
-            lPSigs.append(lSig3[4])
-            lFSigs.append(lSig3[5])
-            lPSigs.append(lSig4[4])
-            lFSigs.append(lSig4[5])
-            lPSigs.append(lSig5[4])
-            lFSigs.append(lSig5[5])
+        lVars=[125] #50,75,100,125,150,200,250,300]        
+        #sigs = ["hqq","zhqq","wmhqq","wphqq","vbfhqq","tthqq"]
+        sigs = ["hqq","zhqq","wmhqq","wphqq","tthqq"]
+        for i0 in range(0,len(lVars)):            
+            for i1, sig in enumerate(sigs):
+                lSig = self.rooTheHistFunc([iHP[i0+i1+5],iHF[i0+i1+5]],sig+str(lVars[i0]),iBin)
+                lPSigs.append(lSig[4])
+                lFSigs.append(lSig[5])
         return (lPSigs,lFSigs)
 
 
@@ -305,7 +308,8 @@ class dazsleRhalphabetBuilder:
         lW = r.RooWorkspace("w_"+str(iCat))
 
         for pFunc in iFuncs:
-            getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
+            pFunc.Print()
+            getattr(lW,'import')(pFunc, r.RooFit.RecycleConflictNodes())
             # if iShift and pFunc.GetName().find("qq") > -1:
             # 	(pFUp, pFDown)  = shift(iVars[0],pFunc,5.)
             # 	(pSFUp,pSFDown) = smear(iVars[0],pFunc,0.05)
@@ -315,7 +319,8 @@ class dazsleRhalphabetBuilder:
             # 	getattr(lW,'import')(pSFDown,r.RooFit.RecycleConflictNodes())
 
         for pData in iDatas:
-            getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
+            pData.Print()
+            getattr(lW,'import')(pData, r.RooFit.RecycleConflictNodes())
 
         if iCat.find("pass_cat1") == -1:
             lW.writeToFile(iOutput,False)
@@ -338,33 +343,59 @@ def main(options,args):
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile("hist_1DZbb.root");
+	f = r.TFile.Open("hist_1DZbb.root")
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
-	dazsleRhalphabetBuilder(hpass,hfail);
+	dazsleRhalphabetBuilder(hpass,hfail)
 
 ##-------------------------------------------------------------------------------------
 def loadHistograms(f,pseudo):
     hpass = []
     hfail = []
     hpass.append(f.Get('data_obs_pass'))
-    hfail.append(f.Get('data_obs_pass'))
+    hfail.append(f.Get('data_obs_fail'))
 
+    hpass_bkg = []
+    hfail_bkg = []
     bkgs = ["wqq", "zqq", "qcd", "tqq"]
-    for bkg in bkgs:
-        hpass.append(f.Get(bkg+'_pass'))
-        hfail.append(f.Get(bkg+'_fail'))
-    if pseudo:
-        hpass[0] = hpass[-1].Clone('data_obs_pass') # qcd
-        hfail[0] = hfail[-1].Clone('data_obs_fail') # qcd
-        for i in range(1,len(hpass)):
-            hpass[0].Add(hpass[i])
-            hfail[0].Add(hfail[i])
+    for i, bkg in enumerate(bkgs):
+        if bkg=='qcd':
+            qcd_pass_real = f.Get('qcd_pass').Clone('qcd_pass_real')
+            qcd_fail = f.Get('qcd_fail')
+            qcd_pass = qcd_fail.Clone('qcd_pass')
+            qcd_pass_real_integral = 0
+            qcd_fail_integral = 0
+            for i in range(1,qcd_pass_real.GetNbinsX()+1):
+                for j in range(1,qcd_pass_real.GetNbinsY()+1):
+                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > 40 and qcd_pass_real.GetXaxis().GetBinCenter(i) < 200:
+                        qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
+                        qcd_fail_integral += qcd_fail.GetBinContent(i,j)
+            qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
+            hpass_bkg.append(qcd_pass)
+            hfail_bkg.append(qcd_fail)
+            print 'qcd pass integral', qcd_pass.Integral()
+            print 'qcd fail integral', qcd_fail.Integral()
+        else:            
+            hpass_bkg.append(f.Get(bkg+'_pass'))
+            hfail_bkg.append(f.Get(bkg+'_fail'))
+        
+    if pseudo:        
+        hpass[0] = hpass_bkg[0].Clone('data_obs_pass')
+        hfail[0] = hfail_bkg[0].Clone('data_obs_fail')
+        for i, bkg in enumerate(bkgs):
+            if i==0:
+                continue # don't add again
+            else:                
+                hpass[0].Add(hpass_bkg[i])
+                hfail[0].Add(hfail_bkg[i])        
 
     #signals
+    hpass_sig = []
+    hfail_sig = []
     masses=[125]#50,75,125,100,150,200,250,300]
-    sigs = ["hqq","zhqq","wmhqq","wphqq","vbfhqq","tthqq"]
+    #sigs = ["hqq","zhqq","wmhqq","wphqq","vbfhqq","tthqq"]
+    sigs = ["hqq","zhqq","wmhqq","wphqq","tthqq"]
     for mass in masses:
         for sig in sigs:
             passhist = f.Get(sig+str(mass)+"_pass").Clone()
@@ -372,10 +403,15 @@ def loadHistograms(f,pseudo):
                 for j in range(0,passhist.GetNbinsY()+2):
                     if passhist.GetBinContent(i,j) <= 0:
                         passhist.SetBinContent(i,j,1e-10)
-            hpass.append(passhist)
-            hfail.append(f.Get(sig+str(mass)+"_fail"))
-            #hpass.append(f.Get(sig+str(mass)+"_pass"))
+            hpass_sig.append(passhist)
+            hfail_sig.append(f.Get(sig+str(mass)+"_fail"))
+            #hpass_sig.append(f.Get(sig+str(mass)+"_pass"))
 
+    hpass.extend(hpass_bkg)
+    hpass.extend(hpass_sig)
+    hfail.extend(hfail_bkg)
+    hfail.extend(hfail_sig)
+    
     for lH in (hpass+hfail):
         lH.SetDirectory(0)	
 
