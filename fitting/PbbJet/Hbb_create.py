@@ -64,7 +64,7 @@ def main(options,args):
     bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
     bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
     print "Data..."
-    dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
+    dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
     for plot in ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']:
