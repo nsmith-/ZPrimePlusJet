@@ -127,7 +127,7 @@ class sampleContainer:
         msd_binBoundaries=[]
         for i in range(0,76):	
             msd_binBoundaries.append(500./75.*i)
-        pt_binBoundaries =[500,530,560,600,700,1000]
+        pt_binBoundaries = [500,550,600,675,800,1000]
         print msd_binBoundaries
         print pt_binBoundaries
 

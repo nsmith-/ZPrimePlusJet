@@ -293,8 +293,7 @@ class dazsleRhalphabetBuilder:
         lPHists = [] 
         lFHists = [] 
         lVars=[125] #50,75,100,125,150,200,250,300]        
-        #sigs = ["hqq","zhqq","wmhqq","wphqq","vbfhqq","tthqq"]
-        sigs = ["hqq","zhqq","wmhqq","wphqq","tthqq"]
+        sigs = ["hqq","zhqq","whqq","vbfhqq","tthqq"]
         for i0 in range(0,len(lVars)):            
             for i1, sig in enumerate(sigs):
                 lSig = self.rooTheHistFunc([iHP[i0+i1+5],iHF[i0+i1+5]],sig+str(lVars[i0]),iBin)
@@ -394,15 +393,14 @@ def loadHistograms(f,pseudo):
     hpass_sig = []
     hfail_sig = []
     masses=[125]#50,75,125,100,150,200,250,300]
-    #sigs = ["hqq","zhqq","wmhqq","wphqq","vbfhqq","tthqq"]
-    sigs = ["hqq","zhqq","wmhqq","wphqq","tthqq"]
+    sigs = ["hqq","zhqq","whqq","vbfhqq","tthqq"]
     for mass in masses:
         for sig in sigs:
             passhist = f.Get(sig+str(mass)+"_pass").Clone()
             for i in range(0,passhist.GetNbinsX()+2):
                 for j in range(0,passhist.GetNbinsY()+2):
                     if passhist.GetBinContent(i,j) <= 0:
-                        passhist.SetBinContent(i,j,1e-10)
+                        passhist.SetBinContent(i,j,0)
             hpass_sig.append(passhist)
             hfail_sig.append(f.Get(sig+str(mass)+"_fail"))
             #hpass_sig.append(f.Get(sig+str(mass)+"_pass"))

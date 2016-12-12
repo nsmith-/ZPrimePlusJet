@@ -40,8 +40,7 @@ def main(options,args):
     categories = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5']
     
     bkgs = ['qcd','wqq','zqq','tqq']
-    #sigs = ['hqq125','zhqq125','wmhqq125','wphqq125','vbfhqq125','tthqq125']
-    sigs = ['hqq125','zhqq125','wmhqq125','wphqq125','tthqq125']
+    sigs = ['hqq125','zhqq125','whqq125','vbfhqq125','tthqq125']
     
     wbase = {}
     wralphabase = {}
@@ -50,7 +49,7 @@ def main(options,args):
         wralphabase[cat] = fralphabase.Get('w_%s'%cat)
     
     w = rt.RooWorkspace('w')
-    w.factory('r[1.,0.,20.]')
+    w.factory('r[1.,%f,20.]'%options.rMin)
     x = wbase[categories[0]].var('x')
     rooCat = rt.RooCategory('cat','cat')
        
@@ -142,7 +141,7 @@ def main(options,args):
     CMS_set = rt.RooArgSet()
     CMS_set.add(rooCat)
     CMS_set.add(x)
-    combData = simPdf_s.generateBinned(CMS_set,rt.RooFit.Asimov()) # overwrite data with asimov dataset
+    #combData = simPdf_s.generateBinned(CMS_set,rt.RooFit.Asimov()) # overwrite data with asimov dataset
 
     getattr(w,'import')(simPdf_b,rt.RooFit.RecycleConflictNodes())
     getattr(w,'import')(combData,rt.RooFit.RecycleConflictNodes())
@@ -218,12 +217,12 @@ def main(options,args):
     
     print "signal+background nll = %f on data at r = %f"%(minNll,rBestFit)
     
-    xs, ys = np.linspace(0, options.rMax, npoints + 1), []    
+    xs, ys = np.linspace(options.rMin, options.rMax, npoints + 1), []    
     for xi in xs:
         r.setVal(xi)
         r.setConstant(True)
         ys.append(2.*nll.getVal() - 2.*minNll)
-    xp, yp = np.linspace(0, options.rMax, npoints + 1), []
+    xp, yp = np.linspace(options.rMin, options.rMax, npoints + 1), []
     for xi in xp:        
         r.setVal(xi)
         r.setConstant(True)
@@ -248,7 +247,7 @@ def main(options,args):
     gr_p.SetLineWidth(3)
     gr_p.SetName("p2ll_data")
     
-    rFrame = r.frame(rt.RooFit.Bins(npoints),rt.RooFit.Range(0.0,options.rMax),rt.RooFit.Title("r frame (data)"))
+    rFrame = r.frame(rt.RooFit.Bins(npoints),rt.RooFit.Range(options.rMin,options.rMax),rt.RooFit.Title("r frame (data)"))
     rFrame.SetMinimum(0)
     rFrame.SetMaximum(6)
 
@@ -260,7 +259,7 @@ def main(options,args):
     tlines = []
     cl = 0.95
     crossing = rt.TMath.Power(rt.Math.normal_quantile(1-0.5*(1-cl), 1.0),2)
-    tline = rt.TLine(0,crossing,options.rMax,crossing)
+    tline = rt.TLine(options.rMin,crossing,options.rMax,crossing)
     tline.SetLineColor(rt.kRed)
     tline.SetLineWidth(2)
     tlines.append(tline)
@@ -290,7 +289,7 @@ def main(options,args):
     leg.SetFillStyle(0)
     leg.AddEntry("p2ll_data", "stat + syst","l")
     leg.AddEntry("n2ll_data", "stat only","l")
-    #leg.Draw()
+    leg.Draw()
     
     d.Print("deltaLL.pdf")
     d.Print("deltaLL.C")
@@ -302,6 +301,7 @@ if __name__ == '__main__':
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
+    parser.add_option('--rMin',dest='rMin', default=0 ,type='float',help='minimum of r (signal strength) in profile likelihood plot')
     parser.add_option('--rMax',dest='rMax', default=20,type='float',help='maximum of r (signal strength) in profile likelihood plot')
 
     (options, args) = parser.parse_args()

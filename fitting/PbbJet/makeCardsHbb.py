@@ -18,7 +18,7 @@ from tools import *
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
-	dctpl = open("datacard_novbf.tpl");
+	dctpl = open("datacard.tpl");
 	numberOfMassBins = 24;
 
 	linel = [];
