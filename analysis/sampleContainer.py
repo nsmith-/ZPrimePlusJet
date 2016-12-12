@@ -32,7 +32,7 @@ class sampleContainer:
         self._fillCA15 = fillCA15
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("/uscms_data/d3/cvernier/ZPrimePlusJet/analysis/ZqqJet/h3_n2ddt.root","read")
+        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt.root","read")
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
@@ -49,7 +49,7 @@ class sampleContainer:
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
-            
+
         if self._fillCA15:
             self._branches.extend( [ ('CA15Puppijet0_msd','d',-999),('CA15Puppijet0_pt','d',-999),('CA15Puppijet0_tau21','d',-999) ] )
 
@@ -124,19 +124,19 @@ class sampleContainer:
         'h_t21_ca15'           :["h_"+self._name+"_t21_ca15","; CA15 #tau_{21};", 25, 0, 1.5],
         'h_t21ddt_ca15'        :["h_"+self._name+"_t21ddt_ca15","; CA15 #tau_{21};", 25, 0, 1.5]
         }
-	msd_binBoundaries=[]
-	for i in range(0,76):	
-		msd_binBoundaries.append(500./75.*i)
-	pt_binBoundaries =[500,530,560,600,700,1000]
-	print msd_binBoundaries
-	print pt_binBoundaries
-	
-	histos2d_fix = {
-	  'h_rhop_v_t21_ak8'          :["h_"+self._name+"_rhop_v_t21_ak8","; AK8 rho^{DDT}; AK8 <#tau_{21}>",15,-5,10,25,0,1.5],
-	  'h_rhop_v_t21_ca15'         :["h_"+self._name+"_rhop_v_t21_ca15","; CA15 rho^{DDT}; CA15 <#tau_{21}>",15,-5,10,25,0,1.5]
-	}
-	
-		
+        msd_binBoundaries=[]
+        for i in range(0,76):	
+            msd_binBoundaries.append(500./75.*i)
+        pt_binBoundaries =[500,530,560,600,700,1000]
+        print msd_binBoundaries
+        print pt_binBoundaries
+
+        histos2d_fix = {
+        'h_rhop_v_t21_ak8'          :["h_"+self._name+"_rhop_v_t21_ak8","; AK8 rho^{DDT}; AK8 <#tau_{21}>",15,-5,10,25,0,1.5],
+        'h_rhop_v_t21_ca15'         :["h_"+self._name+"_rhop_v_t21_ca15","; CA15 rho^{DDT}; CA15 <#tau_{21}>",15,-5,10,25,0,1.5]
+        }
+
+
         histos2d = {
         'h_msd_v_pt_ak8_topR1'      :["h_"+self._name+"_msd_v_pt_ak8_topR1","; AK8 m_{SD}^{PUPPI} [GeV]; AK8 p_{T} [GeV]"],
         'h_msd_v_pt_ak8_topR2_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR2_pass","; AK8 m_{SD}^{PUPPI} [GeV]; AK8 p_{T} [GeV]"],
@@ -155,12 +155,11 @@ class sampleContainer:
         for key, val in histos1d.iteritems():
             setattr( self, key, ROOT.TH1F(val[0], val[1], val[2] ,val[3], val[4]) )
             (getattr(self, key)).Sumw2()
-	for key, val in histos2d_fix.iteritems():
-	    setattr( self, key, ROOT.TH2F(val[0], val[1], val[2] ,val[3], val[4]), val[5], val[6], val[7] )
+        for key, val in histos2d_fix.iteritems():
+            setattr( self, key, ROOT.TH2F(val[0], val[1], val[2] ,val[3], val[4]), val[5], val[6], val[7] )
             (getattr(self, key)).Sumw2()
-	
         for key, val in histos2d.iteritems():
-	    tmp = ROOT.TH2F(val[0], val[1], len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries),len(pt_binBoundaries)-1, array.array('d',pt_binBoundaries))
+            tmp = ROOT.TH2F(val[0], val[1], len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries),len(pt_binBoundaries)-1, array.array('d',pt_binBoundaries))
             setattr( self, key, tmp) 
             (getattr(self, key)).Sumw2()
 
