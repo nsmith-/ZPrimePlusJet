@@ -34,7 +34,7 @@ def main(options,args):
 			newline = l;
 			if "CATX" in l: newline = l.replace('CATX',tag);
 			dctmp.write(newline + "\n");
-		for im in range(1,numberOfMassBins+1):
+		for im in range(numberOfMassBins):
 			dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
 
 

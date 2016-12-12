@@ -28,7 +28,7 @@ bin          cat1_pass_cat1  cat1_fail_cat1  cat2_pass_cat2  cat2_fail_cat2  cat
 observation  -1.0            -1.0            -1.0            -1.0            -1.0            -1.0            -1.0            -1.0            -1.0            -1.0          
 ----------------------------------------------------------------------------------------------------------------------------------
 bin                             cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_pass_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat1_fail_cat1  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_pass_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat2_fail_cat2  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_pass_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat3_fail_cat3  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_pass_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat4_fail_cat4  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_pass_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5  cat5_fail_cat5
-process                         wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq             wmhqq125        wphqq125        hqq125          tthqq125        zhqq125         zqq             wqq             qcd             tqq           
+process                         tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq             tthqq125        whqq125         hqq125          zhqq125         vbfhqq125       zqq             wqq             qcd             tqq           
 process                         -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4               -4              -3              -2              -1              0               1               2               3               4             
 rate                            -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1              -1              -1              -1              -1              -1              -1              -1              1.0000          -1            
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -48,6 +48,7 @@ qcd_fail_cat2_Bin18  flatParam
 qcd_fail_cat2_Bin19  flatParam
 qcd_fail_cat4_Bin2  flatParam
 qcd_fail_cat4_Bin3  flatParam
+qcd_fail_cat4_Bin1  flatParam
 qcd_fail_cat4_Bin6  flatParam
 qcd_fail_cat4_Bin7  flatParam
 qcd_fail_cat4_Bin4  flatParam
@@ -57,7 +58,6 @@ qcd_fail_cat4_Bin8  flatParam
 qcd_fail_cat4_Bin9  flatParam
 qcd_fail_cat5_Bin2  flatParam
 qcd_fail_cat4_Bin20  flatParam
-qcd_fail_cat5_Bin23  flatParam
 qcd_fail_cat4_Bin23  flatParam
 qcd_fail_cat4_Bin22  flatParam
 qcd_fail_cat3_Bin13  flatParam
@@ -72,6 +72,7 @@ qcd_fail_cat3_Bin19  flatParam
 qcd_fail_cat3_Bin18  flatParam
 qcd_fail_cat2_Bin8  flatParam
 qcd_fail_cat2_Bin9  flatParam
+qcd_fail_cat2_Bin1  flatParam
 qcd_fail_cat2_Bin2  flatParam
 qcd_fail_cat2_Bin3  flatParam
 qcd_fail_cat2_Bin4  flatParam
@@ -81,7 +82,6 @@ qcd_fail_cat2_Bin7  flatParam
 r2p0          flatParam
 r2p1          flatParam
 r2p2          flatParam
-qcd_fail_cat4_Bin25  flatParam
 qcd_fail_cat5_Bin4  flatParam
 qcd_fail_cat4_Bin24  flatParam
 qcd_fail_cat4_Bin10  flatParam
@@ -101,7 +101,7 @@ qcd_fail_cat3_Bin21  flatParam
 qcd_fail_cat5_Bin20  flatParam
 qcd_fail_cat5_Bin21  flatParam
 qcd_fail_cat3_Bin24  flatParam
-qcd_fail_cat3_Bin25  flatParam
+qcd_fail_cat5_Bin23  flatParam
 qcd_fail_cat5_Bin11  flatParam
 qcd_fail_cat5_Bin10  flatParam
 qcd_fail_cat5_Bin13  flatParam
@@ -115,9 +115,10 @@ qcd_fail_cat5_Bin18  flatParam
 qcd_fail_cat5_Bin7  flatParam
 qcd_fail_cat5_Bin24  flatParam
 qcd_fail_cat5_Bin6  flatParam
-qcd_fail_cat5_Bin25  flatParam
+qcd_fail_cat5_Bin1  flatParam
 qcd_fail_cat3_Bin3  flatParam
 qcd_fail_cat3_Bin2  flatParam
+qcd_fail_cat3_Bin1  flatParam
 qcd_fail_cat3_Bin7  flatParam
 qcd_fail_cat3_Bin6  flatParam
 qcd_fail_cat3_Bin5  flatParam
@@ -137,14 +138,13 @@ qcd_fail_cat1_Bin21  flatParam
 qcd_fail_cat1_Bin22  flatParam
 qcd_fail_cat1_Bin23  flatParam
 qcd_fail_cat1_Bin24  flatParam
-qcd_fail_cat1_Bin25  flatParam
 qcd_fail_cat5_Bin16  flatParam
 qcd_fail_cat2_Bin23  flatParam
 qcd_fail_cat2_Bin22  flatParam
 qcd_fail_cat2_Bin21  flatParam
 qcd_fail_cat2_Bin20  flatParam
-qcd_fail_cat2_Bin25  flatParam
 qcd_fail_cat2_Bin24  flatParam
+qcd_fail_cat1_Bin1  flatParam
 qcd_fail_cat1_Bin3  flatParam
 qcd_fail_cat1_Bin2  flatParam
 qcd_fail_cat1_Bin5  flatParam

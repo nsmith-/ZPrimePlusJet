@@ -1,4 +1,4 @@
-Combination of datacard_novbf.tpl
+Combination of datacard.tpl
 imax 2 number of bins
 jmax * number of processes minus 1
 kmax * number of nuisance parameters
@@ -12,7 +12,7 @@ bin          pass_cat3  fail_cat3
 observation  -1.0           -1.0
 ----------------------------------------------------------------------------------------------------------------------------------
 bin                             pass_cat3  pass_cat3  pass_cat3  pass_cat3  pass_cat3  pass_cat3  pass_cat3  pass_cat3  pass_cat3  fail_cat3  fail_cat3  fail_cat3  fail_cat3  fail_cat3  fail_cat3  fail_cat3  fail_cat3  fail_cat3
-process                         wmhqq125       wphqq125       hqq125         tthqq125       zhqq125        zqq            wqq            qcd            tqq            wmhqq125       wphqq125       hqq125         tthqq125       zhqq125        zqq            wqq            qcd            tqq
+process                         tthqq125       whqq125        hqq125         zhqq125        vbfhqq125      zqq            wqq            qcd            tqq            tthqq125       whqq125        hqq125         zhqq125        vbfhqq125      zqq            wqq            qcd            tqq
 process                         -4             -3             -2             -1             0              1              2              3              4              -4             -3             -2             -1             0              1              2              3              4
 rate                            -1             -1             -1             -1             -1             -1             -1             1.0000         -1             -1             -1             -1             -1             -1             -1             -1             1.0000         -1
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -29,6 +29,7 @@ r2p1  flatParam
 r2p2  flatParam
 r0p2  flatParam
 qcdeff        flatParam
+qcd_fail_cat3_Bin1 flatParam 
 qcd_fail_cat3_Bin2 flatParam 
 qcd_fail_cat3_Bin3 flatParam 
 qcd_fail_cat3_Bin4 flatParam 
@@ -52,4 +53,3 @@ qcd_fail_cat3_Bin21 flatParam
 qcd_fail_cat3_Bin22 flatParam 
 qcd_fail_cat3_Bin23 flatParam 
 qcd_fail_cat3_Bin24 flatParam 
-qcd_fail_cat3_Bin25 flatParam 
