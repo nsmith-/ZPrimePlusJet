@@ -49,8 +49,7 @@ def main(options,args):
     tags.append([ 'DMSpin0_ggPhibb1j_500.root', 0] )
     tags.append([ 'DMSpin0_ggPhibb1j_75.root', 0] )
     tags.append([ 'DYJetsToQQ_HT180_13TeV.root', 0] )
-    tags.append([ 'GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_ext.root', 0] )
-    tags.append([ 'GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8.root', 0] )
+    tags.append([ 'GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8', 0] )
     tags.append([ 'GluGluHToBB_M125_13TeV_powheg_herwigpp.root', 0] )
     tags.append([ 'GluGluHToBB_M125_13TeV_powheg_pythia8.root', 0] )
     tags.append([ 'JetHTRun2016B_PromptReco_v2_resub.root', 0] )
@@ -84,8 +83,7 @@ def main(options,args):
     tags.append([ 'TTWJetsToQQ_13TeV.root', 0] )
     tags.append([ 'TTZToQQ_13TeV.root', 0] )
     tags.append([ 'VBFHToBB_M125_13TeV_amcatnlo_pythia8.root', 0] )
-    tags.append([ 'VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_ext.root', 0] )
-    tags.append([ 'VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix.root', 0] )
+    tags.append([ 'VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix', 0] )
     tags.append([ 'VectorDiJet1Gamma_100_1_800_v2.root', 0] )
     tags.append([ 'VectorDiJet1Gamma_125_1_800_v2.root', 0] )
     tags.append([ 'VectorDiJet1Gamma_150_1_800_v2.root', 0] )
@@ -117,12 +115,16 @@ def main(options,args):
     tags.append([ 'ZZTo4Q_13TeV_amcatnlo.root', 0] )
     tags.append([ 'ttHTobb_M125_13TeV_powheg_pythia8.root', 0] )
     tags.append([ 'ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8.root', 0] )
+    tags.append([ 'ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8', 0] )
+    tags.append([ 'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8.root', 0] )
+    tags.append([ 'ZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_ext.root', 0] )
+    tags.append([ 'ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext.root', 0] )
 
     # make a tmp dir
     #####
     postfix = ''
     for i in range(len(tags)):
-        filesToConvert = getFilesRecursively(DataDir,tags[i][0])
+        filesToConvert = getFilesRecursively(DataDir,tags[i][0],None,'sklim')
         print "files To Convert = ",filesToConvert
         # curweight = getLHEWeight( filesToConvert )
 
@@ -185,8 +187,9 @@ def sklimAdd(fn,odir,mass=0):
     otree.SetBranchStatus("CA15Puppi*",0)	
 
     # otree.SetBranchStatus("bst8_PUPPIjet0_pt",1)
-    nent = tree.GetEntriesFast()
 
+    nent = tree.GetEntries()
+    print nent
     fto = ROOT.TFile("test"+str(mass)+".root","RECREATE")
     finfo = ROOT.TFile("signalXS/sig_vectordijet_xspt.root")
     # # h_rw = ROOT.TH1F()
@@ -214,7 +217,7 @@ def sklimAdd(fn,odir,mass=0):
 
     for i in range(nent):
 
-        if(i % (1 * nent/100) == 0):
+        if( nent/100 > 0 and i % (1 * nent/100) == 0):
             sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
             sys.stdout.flush()
 
@@ -259,7 +262,7 @@ def sklimAdd(fn,odir,mass=0):
     otree.Write()
     ofile.Close()
 
-def getFilesRecursively(dir,searchstring,additionalstring = None):
+def getFilesRecursively(dir,searchstring,additionalstring = None, skipString = None):
 	
     # thesearchstring = "_"+searchstring+"_"
     thesearchstring = searchstring
@@ -269,10 +272,17 @@ def getFilesRecursively(dir,searchstring,additionalstring = None):
         theadditionalstring = additionalstring
 
     cfiles = []
+    alreadySkimmed = False
     for root, dirs, files in os.walk(dir):
         for file in files:
             # print file	
             if thesearchstring in file:
+                print file
+                print root
+                print dir
+                print skipString
+                if skipString != None and (skipString in file or skipString in dir or skipString in root):
+                    return []
                 if theadditionalstring == None or theadditionalstring in file:
                     cfiles.append(os.path.join(root, file))
     return cfiles
