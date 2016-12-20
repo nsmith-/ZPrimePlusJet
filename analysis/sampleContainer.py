@@ -40,12 +40,12 @@ class sampleContainer:
         # set branch statuses and addresses
         self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
                           ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8CHSjet0_doublecsv','d',-999),('AK8CHSjet1_doublecsv','d',-999),
-                          ('AK8CHSjet2_doublecsv','i',-999),('nAK4Puppijets','i',-999),('nAK4PuppijetsdR08','i',-999),('nAK4Puppijetsfwd','i',-999),
-                          ('nAK4PuppijetsLdR08','i',-999),('nAK4PuppijetsMdR08','i',-999),('nAK4PuppijetsTdR08','i',-999),('nAK4PuppijetsLPt100dR08','i',-999),
-                          ('nAK4PuppijetsMPt100dR08','i',-999),('nAK4PuppijetsTPt100dR08','i',-999),('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),
+                          ('AK8CHSjet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
+                          ('nAK4PuppijetsLPt50dR08_0','i',-999),('nAK4PuppijetsMPt50dR08_0','i',-999),('nAK4PuppijetsTPt50dR08_0','i',-999),('nAK4PuppijetsLPt100dR08_0','i',-999),
+                          ('nAK4PuppijetsMPt100dR08_0','i',-999),('nAK4PuppijetsTPt100dR08_ 0','i',-999),('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),
                           ('AK8Puppijet0_ratioCA15_04','d',-999),('pfmet','f',-999),('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
                           ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),
-                          ('nAK4PuppijetsLPt150dR08','i',-999),('nAK4PuppijetsMPt150dR08','i',-999),('nAK4PuppijetsTPt150dR08','i',-999),('AK8Puppijet0_isTightVJet','i',0)
+                          ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),('AK8Puppijet0_isTightVJet','i',0)
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
@@ -57,8 +57,8 @@ class sampleContainer:
         for branch in self._branches:
             self._tt.SetBranchStatus(branch[0],1)
         for branch in self._branches:
-            setattr(self, branch[0], array.array(branch[1],[branch[2]]))
-            self._tt.SetBranchAddress( branch[0], getattr(self, branch[0]) )
+            setattr(self, branch[0].replace(' ', ''), array.array(branch[1],[branch[2]]))
+            self._tt.SetBranchAddress( branch[0], getattr(self, branch[0].replace(' ', '')) )
 
         #x = array.array('d',[0])
         #self._tt.SetBranchAddress( "h_n_ak4", n_ak4  )
@@ -156,7 +156,7 @@ class sampleContainer:
             setattr( self, key, ROOT.TH1F(val[0], val[1], val[2] ,val[3], val[4]) )
             (getattr(self, key)).Sumw2()
         for key, val in histos2d_fix.iteritems():
-            setattr( self, key, ROOT.TH2F(val[0], val[1], val[2] ,val[3], val[4]), val[5], val[6], val[7] )
+            setattr( self, key, ROOT.TH2F(val[0], val[1], val[2] ,val[3], val[4], val[5], val[6], val[7] ) )
             (getattr(self, key)).Sumw2()
         for key, val in histos2d.iteritems():
             tmp = ROOT.TH2F(val[0], val[1], len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries),len(pt_binBoundaries)-1, array.array('d',pt_binBoundaries))
@@ -186,7 +186,7 @@ class sampleContainer:
             
             self._tt.GetEntry(i)
             
-            if(i % (1 * nent/100) == 0):
+            if(nent/100 > 0 and i % (1 * nent/100) == 0):
                 sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
                 sys.stdout.flush()
 
@@ -231,18 +231,18 @@ class sampleContainer:
             else:
                 jdb_8_sub2 = self.AK8CHSjet2_doublecsv[0]
             
-            n_4 = self.nAK4Puppijets[0]
-            n_fwd_4 =  self.nAK4Puppijetsfwd[0]
-            n_dR0p8_4 = self.nAK4PuppijetsdR08[0]
-            n_LdR0p8_4 = self.nAK4PuppijetsLdR08[0]
-            n_MdR0p8_4 = self.nAK4PuppijetsMdR08[0]
-            n_TdR0p8_4 = self.nAK4PuppijetsTdR08[0]
-            n_LPt100dR0p8_4 = self.nAK4PuppijetsLPt100dR08[0]
-            n_MPt100dR0p8_4 = self.nAK4PuppijetsMPt100dR08[0]
-            n_TPt100dR0p8_4 = self.nAK4PuppijetsTPt100dR08[0]
-            n_LPt150dR0p8_4 = self.nAK4PuppijetsLPt150dR08[0]
-            n_MPt150dR0p8_4 = self.nAK4PuppijetsMPt150dR08[0]
-            n_TPt150dR0p8_4 = self.nAK4PuppijetsTPt150dR08[0]
+            n_4 = self.nAK4PuppijetsPt30[0]
+            n_fwd_4 =  self.nAK4PuppijetsfwdPt30[0]
+            n_dR0p8_4 = self.nAK4PuppijetsPt30dR08_0[0]
+            n_LdR0p8_4 = self.nAK4PuppijetsLPt50dR08_0[0]
+            n_MdR0p8_4 = self.nAK4PuppijetsMPt50dR08_0[0]
+            n_TdR0p8_4 = self.nAK4PuppijetsTPt50dR08_0[0]
+            n_LPt100dR0p8_4 = self.nAK4PuppijetsLPt100dR08_0[0]
+            n_MPt100dR0p8_4 = self.nAK4PuppijetsMPt100dR08_0[0]
+            n_TPt100dR0p8_4 = self.nAK4PuppijetsTPt100dR08_0[0]
+            n_LPt150dR0p8_4 = self.nAK4PuppijetsLPt150dR08_0[0]
+            n_MPt150dR0p8_4 = self.nAK4PuppijetsMPt150dR08_0[0]
+            n_TPt150dR0p8_4 = self.nAK4PuppijetsTPt150dR08_0[0]
 
             met = self.pfmet[0]
             ratioCA15_04 = self.AK8Puppijet0_ratioCA15_04[0]
