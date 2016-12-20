@@ -130,8 +130,8 @@ def main(options,args):
 
 
         for f in filesToConvert:
-            print f
-            sklimAdd(f,OutDir,tags[i][1])
+            status = sklimAdd(f,OutDir,tags[i][1])
+            print status
         ## hadd stuff
 
     # 	oname = OutDir + '/ProcJPM_'+tags[i][0]+"_"+tags[i][1]+"-"+postfix+".root"
@@ -163,7 +163,9 @@ def sklimAdd(fn,odir,mass=0):
 
     f1 = ROOT.TFile(fn,'read')
     tree = f1.Get("Events")
-
+    if not tree.InheritsFrom("TTree"):
+        return -1
+    
     ofile = ROOT.TFile(odir+'/'+basename,'RECREATE')
     ofile.cd()
     f1.cd()	
@@ -178,6 +180,8 @@ def sklimAdd(fn,odir,mass=0):
         print key.GetName()
         obj.Write(key.GetName())
 
+        
+    
     otree = tree.CloneTree(0)
     otree.SetName("otree")
 
@@ -185,8 +189,7 @@ def sklimAdd(fn,odir,mass=0):
     otree.SetBranchStatus("*Puppijet0_e3*",0)
     otree.SetBranchStatus("*Puppijet0_e4*",0)
     otree.SetBranchStatus("CA15Puppi*",0)	
-
-    # otree.SetBranchStatus("bst8_PUPPIjet0_pt",1)
+    #otree.SetBranchStatus("bst8_PUPPIjet0_pt",1)
 
     nent = tree.GetEntries()
     print nent
@@ -261,6 +264,7 @@ def sklimAdd(fn,odir,mass=0):
     ofile.cd()
     otree.Write()
     ofile.Close()
+    return 0
 
 def getFilesRecursively(dir,searchstring,additionalstring = None, skipString = None):
 	
@@ -272,16 +276,12 @@ def getFilesRecursively(dir,searchstring,additionalstring = None, skipString = N
         theadditionalstring = additionalstring
 
     cfiles = []
-    alreadySkimmed = False
     for root, dirs, files in os.walk(dir):
         for file in files:
             # print file	
             if thesearchstring in file:
-                print file
-                print root
-                print dir
-                print skipString
                 if skipString != None and (skipString in file or skipString in dir or skipString in root):
+                    print "already skimmed"
                     return []
                 if theadditionalstring == None or theadditionalstring in file:
                     cfiles.append(os.path.join(root, file))
