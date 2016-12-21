@@ -221,6 +221,31 @@ class dazsleRhalphabetBuilder:
         self._allVars.extend([lPt,lMass,lMassPol])
         return lMassPol
 
+    def buildRooPolyRhoArray(self,iPt,iRho,iQCD,iZero,iVars):
+
+                # print "---- [buildRooPolyArray]"      
+
+                lPt  = r.RooConstVar("Var_Pt_" +str(iPt)+"_"+str(iRho), "Var_Pt_" +str(iPt)+"_"+str(iRho),(iPt))
+                lRho = r.RooConstVar("Var_Rho_"+str(iPt)+"_"+str(iRho), "Var_Rho_"+str(iPt)+"_"+str(iRho),(iRho))
+                lRhoArray = r.RooArgList()
+                lNCount=0
+                for pRVar in range(0,self._poly_lNR+1):
+                        lTmpArray = r.RooArgList()
+                        for pVar in range(0,self._poly_lNP+1):
+                                if lNCount == 0: lTmpArray.add(iQCD); # for the very first constant (e.g. p0r0), just set that to 1
+                                else: lTmpArray.add(iVars[lNCount])
+                                lNCount=lNCount+1
+                        pLabel="Var_Pol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))+"_"+str(pRVar)
+                        pPol = r.RooPolyVar(pLabel,pLabel,lPt,lTmpArray)
+                        print pPol.Print()
+                        lRhoArray.add(pPol);
+                        self._allVars.append(pPol)
+
+                lLabel="Var_RhoPol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))
+                lRhoPol = r.RooPolyVar(lLabel,lLabel,lRho,lRhoArray)
+                self._allVars.extend([lPt,lRho,lRhoPol])
+                return lRhoPol
+
 
     def buildPolynomialArray(self, iVars,iNVar0,iNVar1,iLabel0,iLabel1,iXMin0,iXMax0):
 
