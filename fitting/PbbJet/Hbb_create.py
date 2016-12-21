@@ -12,8 +12,12 @@ def main(options,args):
     idir = options.idir
     odir = options.odir
     lumi = options.lumi
+
+    fileName = 'hist_1DZbb.root'
+    if optinos.bb:
+        fileName = 'hist_1DZbb_sortByBB.root'
     
-    outfile=ROOT.TFile(options.odir+"/hist_1DZbb.root", "recreate")
+    outfile=ROOT.TFile(options.odir+"/"+fileName, "recreate")
     
     tfiles = {'hqq125': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'vbfhqq125': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
@@ -21,8 +25,10 @@ def main(options,args):
               'wmhqq125':[idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'wphqq125':[idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'tthqq125':  [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
-              'wqq':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
+              'zqq': [idir+'/ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],
+              #'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
+              #'wqq':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
+              'wqq':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
               'tqq':  [idir+'/TTJets_13TeV_1000pb_weighted.root'],
               'stqq': [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
 		                     idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
@@ -67,7 +73,11 @@ def main(options,args):
     dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
-    for plot in ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']:
+    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']
+    if options.bb:
+        plots =  ['h_msd_v_pt_ak8_bbleading_topR6_pass','h_msd_v_pt_ak8_bbleading_topR6_fail']
+        
+    for plot in plots:
         tag = plot.split('_')[-1] # 'pass' or 'fail'            
         
         for process, s in sigSamples.iteritems():
@@ -93,6 +103,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
+    parser.add_option("--bb", dest="bb", default = False,type=float,help="sort by double b-tag", metavar="bb")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write histograms', metavar='odir')
 
