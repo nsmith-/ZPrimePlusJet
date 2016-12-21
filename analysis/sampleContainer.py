@@ -41,7 +41,7 @@ class sampleContainer:
         # set branch statuses and addresses
         self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
                           ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8CHSjet0_doublecsv','d',-999),('AK8CHSjet1_doublecsv','d',-999),
-                          ('AK8CHSjet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
+			  ('kfactor','f',0),('AK8CHSjet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
                           ('nAK4PuppijetsLPt50dR08_0','i',-999),('nAK4PuppijetsMPt50dR08_0','i',-999),('nAK4PuppijetsTPt50dR08_0','i',-999),
                           ('nAK4PuppijetsLPt100dR08_0','i',-999),('nAK4PuppijetsMPt100dR08_0','i',-999),('nAK4PuppijetsTPt100dR08_ 0','i',-999),
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
@@ -77,6 +77,7 @@ class sampleContainer:
 
         # define histograms        
         histos1d = {
+	'h_Cuts'               :["h_"+self._name+"_Cuts","; Cut ", 7, 0, 7],
         'h_n_ak4'              :["h_"+self._name+"_n_ak4","; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],     
         'h_pt_bbleading'       :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} (GeV);", 50, 300, 2100],
         'h_bb_bbleading'       :["h_"+self._name+"_bb_bbleading","; double b-tag ;", 40, -1, 1],
@@ -196,11 +197,14 @@ class sampleContainer:
         # looping
         nent = self._tt.GetEntries()
         print nent
+	cut=[]
+        cut = [0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
+
 
         self._tt.SetNotify(self._cutFormula)
         for i in xrange(nent):
             if i % self._sf != 0: continue
-
+	
             #self._tt.LoadEntry(i)
             self._tt.LoadTree(i)
             selected = False
@@ -215,11 +219,11 @@ class sampleContainer:
             if(nent/100 > 0 and i % (1 * nent/100) == 0):
                 sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
                 sys.stdout.flush()
-
             
             puweight = self.puWeight[0]
             fbweight = self.scale1fb[0] * self._lumi
-            weight = puweight*fbweight*self._sf
+	    vjetsKF = self.kfactor[0] #==1 for not V+jets events
+            weight = puweight*fbweight*self._sf*vjetsKF
 
             # Trigger (for JetHT triggerBits& 2 or in this case triggerBits!=1 )
             #if self._isData and self._tt.triggerBits !=1: continue
@@ -337,9 +341,19 @@ class sampleContainer:
                     else:
                         self.h_msd_ak8_bbleading_muCR4_fail.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_muCR4_fail.Fill( i[0], i[1], weight)
-                                        
+               
+	    if jpt_8 > 500 :  cut[3]=cut[3]+1
+            if jpt_8 > 500 and jmsd_8 > 40:
+                cut[4]=cut[4]+1
+            if jpt_8 > 500 and jmsd_8 > 40 and isTightVJet: cut[5]=cut[5]+1
+            if jpt_8 > 500 and jmsd_8 > 40 and isTightVJet and neleLoose==0 and nmuLoose==0 : cut[0]=cut[0]+1
+            if jpt_8 > 500 and jmsd_8 > 40 and isTightVJet and neleLoose==0 and nmuLoose==0 and ntau==0 :cut[1]=cut[1]+1
+            if jpt_8 > 500 and jmsd_8 > 40 and isTightVJet and neleLoose==0 and nmuLoose==0 and ntau==0 and nphoLoose==0 : cut[2]=cut[2]+1
+
+
+                        
             # Lepton and photon veto
-            if neleLoose != 0 or nmuLoose != 0 or ntau != 0 or nphoLoose != 0:  continue
+            if neleLoose != 0 or nmuLoose != 0 : continue #or ntau != 0 or nphoLoose != 0:  continue
                 
             a = 0
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
@@ -419,14 +433,19 @@ class sampleContainer:
                 else:
                     self.h_msd_ak8_topR4_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR4_fail.Fill( jmsd_8, jpt_8, weight )                    
-            if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_TdR0p8_4 < 3 and jt21P_8 < T21DDTCUT and isTightVJet:
+	    if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and jt21P_8 < T21DDTCUT and n_fwd_4 < 3 and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR5_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR5_pass.Fill( jmsd_8, jpt_8, weight ) 
                 else:                    
                     self.h_msd_ak8_topR5_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR5_fail.Fill( jmsd_8, jpt_8, weight ) 
-            if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and jt21P_8 < T21DDTCUT and n_fwd_4 < 3 and isTightVJet:
+	    if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and isTightVJet: cut[6]=cut[6]+1
+            if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and isTightVJet: cut[7]=cut[7]+1
+           # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2:  cut[8]=cut[8]+1
+           # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and n_fwd_4 < 3 : cut[9]=cut[9]+1
+            if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < T21DDTCUT  and isTightVJet:
+		cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight ) 
@@ -466,6 +485,31 @@ class sampleContainer:
                 self.h_msd_ca15_t21ddtCut.Fill( jmsd_15, weight )
             #####
         print "\n"
+	self.h_Cuts.SetBinContent(4,float(cut[0]/nent*100.))
+#        self.h_Cuts.SetBinContent(5,float(cut[1]/nent*100.))
+#        self.h_Cuts.SetBinContent(6,float(cut[2]/nent*100.))
+        self.h_Cuts.SetBinContent(1,float(cut[3]/nent*100.))
+        self.h_Cuts.SetBinContent(2,float(cut[4]/nent*100.))
+        self.h_Cuts.SetBinContent(3,float(cut[5]/nent*100.))
+        self.h_Cuts.SetBinContent(5,float(cut[6]/nent*100.))
+        self.h_Cuts.SetBinContent(6,float(cut[7]/nent*100.))
+        #self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
+        #self.h_Cuts.SetBinContent(10,float(cut[9]/nent*100.))
+        self.h_Cuts.SetBinContent(7,float(cut[8])/nent*100.)
+        print(cut[0]/nent*100.,cut[3]/nent*100.,cut[4]/nent*100.)
+        a_Cuts=self.h_Cuts.GetXaxis();
+        a_Cuts.SetBinLabel(4, "lep veto");
+       # a_Cuts.SetBinLabel(5, "#tau veto");
+       # a_Cuts.SetBinLabel(6, "#gamma veto");
+        a_Cuts.SetBinLabel(1, "p_{T}>500 GeV");
+        a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV");
+        a_Cuts.SetBinLabel(3, "tight ID");
+        a_Cuts.SetBinLabel(5, "MET<180");
+        a_Cuts.SetBinLabel(6, "njet<5");
+        #a_Cuts.SetBinLabel(9, "nb jet <2");
+        #a_Cuts.SetBinLabel(10, "njet fwd <3");
+        a_Cuts.SetBinLabel(7, "#tau_{21}^{DDT}<0.55");
+
         self.h_rhop_v_t21_ak8_Px = self.h_rhop_v_t21_ak8.ProfileX()
         self.h_rhop_v_t21_ca15_Px = self.h_rhop_v_t21_ca15.ProfileX()
         self.h_rhop_v_t21_ak8_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
