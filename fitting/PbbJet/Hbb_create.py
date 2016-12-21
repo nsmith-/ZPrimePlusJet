@@ -14,7 +14,7 @@ def main(options,args):
     lumi = options.lumi
 
     fileName = 'hist_1DZbb.root'
-    if optinos.bb:
+    if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     
     outfile=ROOT.TFile(options.odir+"/"+fileName, "recreate")
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
-    parser.add_option("--bb", dest="bb", default = False,type=float,help="sort by double b-tag", metavar="bb")
+    parser.add_option("--bb", action='store_true', dest="bb", default = False,type=float,help="sort by double b-tag", metavar="bb")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write histograms', metavar='odir')
 
