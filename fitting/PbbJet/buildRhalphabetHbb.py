@@ -28,6 +28,7 @@ class dazsleRhalphabetBuilder:
 
         self._hpass = hpass;
         self._hfail = hfail;
+	self._massfit = options.massfit
 
         self._outputName = odir+"/base.root";
 
@@ -128,9 +129,13 @@ class dazsleRhalphabetBuilder:
         lFailBins = r.RooArgList()
 
         for i0 in range(1,self._mass_nbins+1):
-
-            self._lMSD.setVal(iHs[0].GetXaxis().GetBinCenter(i0)) 
-            lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lMSD.getVal(),lUnity,lZero,polyArray)
+	    self._lMSD.setVal(iHs[0].GetXaxis().GetBinCenter(i0))
+            if self._massfit :
+                print ("Pt/mass poly")
+                lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lMSD.getVal(),lUnity,lZero,polyArray)
+            else :
+                print ("Pt/Rho poly")
+                lPass = self.buildRooPolyRhoArray(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polyArray)
             pSum = 0
             for i1 in range(0,len(iHs)):
                 if i1 == 0:
@@ -427,7 +432,8 @@ if __name__ == '__main__':
 	parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
-
+	parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
+	
 	(options, args) = parser.parse_args()
 
 	import tdrstyle
