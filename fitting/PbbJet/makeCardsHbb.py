@@ -29,7 +29,7 @@ def main(options,args):
 	for i in range(1,5+1):
 
 		tag = "cat"+str(i);
-		dctmp = open("cards/card_rhalphabet_%s.txt" % tag, 'w')
+		dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
 		for l in linel:
 			newline = l;
 			if "CATX" in l: newline = l.replace('CATX',tag);
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
 	parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
 	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
-	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
+	parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory to write cards', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
 
 	(options, args) = parser.parse_args()

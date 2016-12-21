@@ -8,8 +8,8 @@ from operator import add
 import math
 import sys
 import time
-#rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 rt.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 rt.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 rt.RooRandom.randomGenerator().SetSeed(1988)
@@ -20,6 +20,7 @@ from tools import *
 from RootIterator import RootIterator
 
 from array import array
+
 
 def reset(w,fr):
     for p in RootIterator(fr.floatParsFinal()):
@@ -33,9 +34,10 @@ def main(options,args):
     odir = options.odir
     lumi = options.lumi
     npoints = 20
+    printYields = True
     
-    fbase = rt.TFile.Open("base.root")
-    fralphabase = rt.TFile.Open("ralphabase.root")
+    fbase = rt.TFile.Open(idir+"/base.root")
+    fralphabase = rt.TFile.Open(idir+"/ralphabase.root")
 
     categories = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5']
     
@@ -147,8 +149,35 @@ def main(options,args):
     getattr(w,'import')(combData,rt.RooFit.RecycleConflictNodes())
 
     w.Print('v')
-    
-    
+
+
+
+    nBins = 24
+    msdMin = 40.
+    msdMax = 200.    
+    pt_binBoundaries = [500,550,600,675,800,1000]
+    iBin = -1
+    if printYields:
+        csvFile = open(odir+'/yields.csv','w')
+        csvOutput = "cat,pT range,msd range,signal yield (S),background yield from MC (B),S/B,S/sqrt(B)"
+        for cat in categories:
+            catNum = int(cat.replace('pass_cat','').replace('fail_cat',''))
+            ptBinMin = pt_binBoundaries[catNum-1]
+            ptBinMax = pt_binBoundaries[catNum]
+            for iMsdBin in range(0, nBins):
+                iBin+=1
+                signal = 0
+                msdBinMin = float(msdMin+iMsdBin*(msdMax-msdMin)/nBins)
+                msdBinMax = float(msdMin+(iMsdBin+1)*(msdMax-msdMin)/nBins)
+                mc = data[cat].sumEntries('x>= %f && x<%f'%(msdBinMin,msdBinMax ))
+                for sig in sigs:
+                    signal += datahist['%s_%s'%(sig,cat)].sumEntries('x>= %f && x<%f'%(msdBinMin,msdBinMax ))
+                print "%s,%i-%i,%.2f-%.2f,%f,%f,=D%i/E%i,=D%i/sqrt(E%i)" % (cat, ptBinMin, ptBinMax, msdBinMin, msdBinMax, signal,mc,iBin+2,iBin+2,iBin+2,iBin+2)                    
+                csvOutput += "\n%s,%i-%i,%.2f-%.2f,%f,%f,=D%i/E%i,=D%i/sqrt(E%i)" % (cat, ptBinMin, ptBinMax, msdBinMin, msdBinMax, signal,mc,iBin+2,iBin+2,iBin+2,iBin+2)
+        csvFile.write(csvOutput)
+        csvFile.close()
+        print ""
+        print "yields written into %s/%s"%(odir,'yields.csv')
     
     allParams = simPdf_s.getParameters(combData)
     rt.RooStats.RemoveConstantParameters(allParams)
@@ -177,19 +206,44 @@ def main(options,args):
     rBestFit = r.getVal()
 
     frame = {}
+    r.setVal(10)
     for cat in categories:
         
         frame[cat] = x.frame(rt.RooFit.Title(cat))
         combData.plotOn(frame[cat],rt.RooFit.Cut('cat==cat::%s'%cat),rt.RooFit.DataError(rt.RooAbsData.Poisson))
-        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
                         rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData))
-        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
                         rt.RooFit.Components('qcd_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineStyle(rt.kDashed))
+                        rt.RooFit.LineStyle(rt.kDashed))      
+        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+                        rt.RooFit.Components('wqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+                        rt.RooFit.LineStyle(3))          
+        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+                        rt.RooFit.Components('zqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+                        rt.RooFit.LineStyle(4))          
+        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+                        rt.RooFit.Components('tqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+                        rt.RooFit.LineStyle(5))          
         simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
                         rt.RooFit.Components('histpdf_hqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineColor(rt.kRed),rt.RooFit.LineStyle(rt.kDashed))
+                        rt.RooFit.LineColor(rt.kRed))
+        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+                        rt.RooFit.Components('histpdf_whqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+                        rt.RooFit.LineColor(rt.kViolet),rt.RooFit.LineStyle(2))
+        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+                        rt.RooFit.Components('histpdf_tthqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+                        rt.RooFit.LineColor(rt.kBlack),rt.RooFit.LineStyle(3))
+        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+                        rt.RooFit.Components('histpdf_zhqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+                        rt.RooFit.LineColor(rt.kGreen),rt.RooFit.LineStyle(5))        
+        #histpdf['hqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kRed))
+        #histpdf['whqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kViolet),rt.RooFit.LineStyle(2))
+        #histpdf['tthqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kBlack),rt.RooFit.LineStyle(3))
+        #histpdf['vbfhqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kBlue),rt.RooFit.LineStyle(4))
+        #histpdf['zhqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kGreen),rt.RooFit.LineStyle(5))
 
+    r.setVal(rBestFit)
     c = rt.TCanvas('c','c',600,300)
     for i in range(1,5+1):
         c.Clear() 
@@ -206,8 +260,8 @@ def main(options,args):
         frame['pass_cat%i'%i].Draw()
         #frame['pass_cat%i'%i].SetMinimum(0.1)
         #frame['pass_cat%i'%i].SetMaximum(2e5)
-        c.Print('c%i.pdf'%i)
-        c.Print('c%i.C'%i)
+        c.Print(odir+'/c%i.pdf'%i)
+        c.Print(odir+'/c%i.C'%i)
 
 
     poi = rt.RooArgSet(r)
@@ -263,10 +317,30 @@ def main(options,args):
     tline.SetLineColor(rt.kRed)
     tline.SetLineWidth(2)
     tlines.append(tline)
+    
+    rLimit = -1
+    rLimitNoSys = -1
+    for xi in range(0,1001):
+        xr = xi*options.rMax/1000.
+        if gr_p.Eval(xr) >= crossing and rLimit < 0:
+            rLimit = xr
+        if gr_s.Eval(xr) >= crossing and rLimitNoSys < 0:
+            rLimitNoSys = xr
+
+    tline = rt.TLine(rLimit,0,rLimit,crossing)
+    tline.SetLineColor(rt.kBlack)
+    tline.SetLineWidth(2)
+    tlines.append(tline)
+    tline = rt.TLine(rLimitNoSys,0,rLimitNoSys,crossing)
+    tline.SetLineColor(rt.kBlue)
+    tline.SetLineStyle(2)
+    tline.SetLineWidth(2)
+    tlines.append(tline)
+            
     for tline in tlines:
         rFrame.addObject(tline,"")
 
-        
+
     d = rt.TCanvas('d','d',500,400)
     rFrame.Draw()
     rFrame.SetMinimum(0)
@@ -289,10 +363,21 @@ def main(options,args):
     leg.SetFillStyle(0)
     leg.AddEntry("p2ll_data", "stat + syst","l")
     leg.AddEntry("n2ll_data", "stat only","l")
-    leg.Draw()
+    leg.Draw("same")
     
-    d.Print("deltaLL.pdf")
-    d.Print("deltaLL.C")
+    tag1 = rt.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.04)
+    tag2 = rt.TLatex(0.17,0.92,"CMS")
+    tag2.SetNDC(); tag2.SetTextFont(62)
+    tag3 = rt.TLatex(0.27,0.92,"Simulation Preliminary")
+    tag3.SetNDC(); tag3.SetTextFont(52)
+    tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
+    
+    d.Print(odir+"/deltaLL.pdf")
+    d.Print(odir+"/deltaLL.C")
+
+
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
     parser = OptionParser()

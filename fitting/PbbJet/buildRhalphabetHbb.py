@@ -8,8 +8,8 @@ import math
 import sys
 import time
 import array
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 
 
 # including other directories
@@ -24,12 +24,12 @@ from tools import *
 
 class dazsleRhalphabetBuilder: 
 
-    def __init__( self, hpass, hfail ): 
+    def __init__( self, hpass, hfail, odir ): 
 
         self._hpass = hpass;
         self._hfail = hfail;
 
-        self._outputName = "base.root";
+        self._outputName = odir+"/base.root";
 
         self._mass_nbins = 24
         self._mass_lo    = 6*(500/75.)
@@ -103,7 +103,7 @@ class dazsleRhalphabetBuilder:
 
         
         for ipt in range(1,self._nptbins+1):
-            for imass in range(1,self._mass_nbins):
+            for imass in range(1,self._mass_nbins+1):
                 print "qcd_fail_cat%i_Bin%i flatParam" % (ipt,imass);
 
     def makeRhalph(self,iHs,iPt,iCat):
@@ -185,10 +185,10 @@ class dazsleRhalphabetBuilder:
         getattr(lWFail,'import')(lFail,r.RooFit.RecycleConflictNodes())
         getattr(lWFail,'import')(lNFail,r.RooFit.RecycleConflictNodes())
         if iCat.find("1") > -1:
-            lWPass.writeToFile("ralpha"+self._outputName)
+            lWPass.writeToFile(self._outputName.replace("base","ralphabase"))
         else:
-            lWPass.writeToFile("ralpha"+self._outputName,False)
-        lWFail.writeToFile("ralpha"+self._outputName,False)
+            lWPass.writeToFile(self._outputName.replace("base","ralphabase"),False)
+        lWFail.writeToFile(self._outputName.replace("base","ralphabase"),False)
         return [lPass,lFail]
 
     def buildRooPolyArray(self,iPt,iMass,iQCD,iZero,iVars):
@@ -335,18 +335,17 @@ class dazsleRhalphabetBuilder:
 
 def main(options,args):
 	
-	idir = options.idir
+	ifile = options.ifile
 	odir = options.odir
-	lumi = options.lumi
 
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile.Open("hist_1DZbb.root")
+	f = r.TFile.Open(ifile)
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
-	dazsleRhalphabetBuilder(hpass,hfail)
+	dazsleRhalphabetBuilder(hpass,hfail,odir)
 
 ##-------------------------------------------------------------------------------------
 def loadHistograms(f,pseudo):
@@ -397,12 +396,14 @@ def loadHistograms(f,pseudo):
     for mass in masses:
         for sig in sigs:
             passhist = f.Get(sig+str(mass)+"_pass").Clone()
-            for i in range(0,passhist.GetNbinsX()+2):
-                for j in range(0,passhist.GetNbinsY()+2):
-                    if passhist.GetBinContent(i,j) <= 0:
-                        passhist.SetBinContent(i,j,0)
-            hpass_sig.append(passhist)
-            hfail_sig.append(f.Get(sig+str(mass)+"_fail"))
+            failhist = f.Get(sig+str(mass)+"_fail").Clone()
+            for hist in [passhist, failhist]:
+                for i in range(0,hist.GetNbinsX()+2):
+                    for j in range(0,hist.GetNbinsY()+2):
+                        if hist.GetBinContent(i,j) <= 0:
+                            hist.SetBinContent(i,j,0)
+            hpass_sig.append(passhist)            
+            hfail_sig.append(failhist)
             #hpass_sig.append(f.Get(sig+str(mass)+"_pass"))
 
     hpass.extend(hpass_bkg)
@@ -423,8 +424,7 @@ def loadHistograms(f,pseudo):
 if __name__ == '__main__':
 	parser = OptionParser()
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-	parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
-	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
+	parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
 
