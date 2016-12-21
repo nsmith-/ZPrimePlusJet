@@ -23,8 +23,8 @@ def main(options,args):
               #'vbfhqq125': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
               'vbfhqq125': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
               'zhqq125': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'wmhqq125':[idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'wphqq125':[idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'whqq125':[idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                         idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'tthqq125':  [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'zqq': [idir+'/ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],
               #'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
@@ -59,8 +59,7 @@ def main(options,args):
     sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, lumi)
     sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, lumi)
     sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, lumi)
-    sigSamples['wmhqq125']  = sampleContainer('wmhqq125',tfiles['wmhqq125']  , 1, lumi)
-    sigSamples['wphqq125']  = sampleContainer('wphqq125',tfiles['wphqq125']  , 1, lumi)
+    sigSamples['whqq125']  = sampleContainer('whqq125',tfiles['whqq125']  , 1, lumi)
     sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
     print "Backgrounds..."
     bkgSamples = {}    
