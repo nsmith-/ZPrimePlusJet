@@ -27,7 +27,7 @@ def main(options,args):
                'Hbb': 'H(b#bar{b})',
                'VBFHbb':'VBF H(b#bar{b})',
                'VHbb': 'VH(b#bar{b})',
-	           'ttHbb': 't#bar{t}H(b#bar{b})',
+	       'ttHbb': 't#bar{t}H(b#bar{b})',
                'Diboson': 'VV(4q)',
                'SingleTop': 'single-t',
                'DY': 'Z+jets',
@@ -50,7 +50,7 @@ def main(options,args):
         legname['data'] = 'SingleMuon data'
         
     tfiles = {'Hbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root',
+                      idir+'/VBFHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                       idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                       idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                       idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
@@ -64,7 +64,7 @@ def main(options,args):
               'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
                           idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
                           idir+'/WZ_13TeV_1000pb_weighted.root'],
-              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
+              'DY': [idir+'/ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
               'SingleTop':  [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
 		                     idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
 		                     idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
@@ -99,7 +99,7 @@ def main(options,args):
                        idir+'/SingleMuonRun2016H_PromptReco_v2.root']
             }
 
-    color = {'ggHbb': ROOT.kRed,
+    color = {'ggHbb': ROOT.kAzure+1,
              'Hbb': ROOT.kRed,
              'VHbb': ROOT.kTeal+1,
              'VBFHbb': ROOT.kBlue-10,
@@ -149,7 +149,7 @@ def main(options,args):
     sigSamples = {}
     sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
     sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi ) 
-    sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
+    #sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
     sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, lumi )    
     #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
     #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 

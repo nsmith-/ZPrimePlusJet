@@ -390,14 +390,14 @@ def makeCanvasDataMC_MONEY(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 
 	tag1 = ROOT.TLatex(0.7,0.95,"0.46 fb^{-1} (13 TeV)")
 	tag1.SetNDC();
-	tag1.SetTextSize(0.035);
+	tag1.SetTextSize(0.033);
 	tag1.SetTextFont(52);
-	txta = ROOT.TLatex(0.17,0.95,"CMS");
+	txta = ROOT.TLatex(0.2,0.95,"CMS");
 	txta.SetNDC();
-	txtb = ROOT.TLatex(0.22,0.95,"Simulation Preliminary");
+	txtb = ROOT.TLatex(0.24,0.95,"Simulation Preliminary");
 	txtb.SetNDC(); txtb.SetTextFont(52);
-	txta.SetTextSize(0.035);
-	txtb.SetTextSize(0.035);
+	txta.SetTextSize(0.033);
+	txtb.SetTextSize(0.033);
 
 	gpred.SetMarkerStyle(24);
 	gpred.SetMarkerColor(2);
@@ -569,7 +569,7 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 		if hs[h].GetMaximum() > maxval: maxval = hs[h].GetMaximum();
 		leg.AddEntry(hs[h],legname[h],"l");
 
-	tag2 = ROOT.TLatex(0.17,0.90,"CMS preliminary")
+	tag2 = ROOT.TLatex(0.2,0.90,"CMS preliminary")
 	tag2.SetNDC();
 	tag2.SetTextSize(0.032);
 
@@ -587,10 +587,11 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=None,unitnorm=False):
     #color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
     #style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
-    leg = ROOT.TLegend(0.55,0.65,0.9,0.9)
+    leg = ROOT.TLegend(0.65,0.65,0.9,0.9)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
-    leg.SetTextSize(0.035)
+    leg.SetTextSize(0.027)
+    leg.SetTextFont(42)
 
     maxval = -99
     for iname, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
@@ -598,6 +599,14 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
         h.SetLineStyle(style[iname])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
+	h.GetXaxis().SetLabelSize(0.03)
+	h.GetXaxis().SetTitleOffset(1.1)
+	h.GetXaxis().SetTitleSize(0.033)
+        h.GetYaxis().SetLabelSize(0.03)
+	h.GetYaxis().SetTitleOffset(1.2)
+	h.GetYaxis().SetTitleSize(0.033)
+
+
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
         leg.AddEntry(h,legname[iname],"l")
 
@@ -607,12 +616,13 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
         print iname+":        %.4f "%(h.Integral())
 
 
-    c = ROOT.TCanvas("c"+name,"c"+name,1000,800)
+    c = ROOT.TCanvas("c"+name,"c"+name,900,800)
     i=0
     for process, s in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()): 
          i+=1
          if i==1:
-                s.SetMaximum(1.5*maxval)
+		s.SetMaximum(2.*maxval)
+         	s.SetMinimum(0.001)
 	 	if unitnorm : s.DrawNormalized("hist")
                 else: s.Draw("hist")
          else : 	
@@ -623,12 +633,12 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     #hs[0].SetMinimum(1e-1); i
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
-    tag1.SetTextSize(0.045)
-    tag2 = ROOT.TLatex(0.1,0.92,"CMS")
+    tag1.SetTextSize(0.033)
+    tag2 = ROOT.TLatex(0.17,0.92,"CMS")
     tag2.SetNDC(); tag2.SetTextFont(62)
-    tag3 = ROOT.TLatex(0.2,0.92,"Simulation Preliminary")
+    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
     tag3.SetNDC(); tag3.SetTextFont(52)
-    tag2.SetTextSize(0.055); tag3.SetTextSize(0.045); tag1.Draw(); tag2.Draw(); tag3.Draw()
+    tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw()
     c.SaveAs(pdir+"/"+name+".pdf")
     ROOT.gPad.SetLogy()
 
@@ -716,18 +726,14 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
-    tag1.SetTextSize(0.045)
-    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
-    tag2.SetNDC()
-    tag2.SetTextFont(62)
-    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
-    tag3.SetNDC()
-    tag3.SetTextFont(52)
-    tag2.SetTextSize(0.055)
-    tag3.SetTextSize(0.045)
-    tag1.Draw()
-    tag2.Draw()
-    tag3.Draw()
+    tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.033)
+    tag2 = ROOT.TLatex(0.17,0.92,"CMS")
+    tag2.SetNDC(); tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.27,0.92,"Simulation Preliminary")
+    tag3.SetNDC(); tag3.SetTextFont(52)
+    tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw()
 
     unten.cd()
     unten.SetLogy()	

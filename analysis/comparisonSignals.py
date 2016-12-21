@@ -21,10 +21,11 @@ def main(options,args):
     lumi = options.lumi
     
     legname = {'ggHbb': 'ggH(b#bar{b}) MC@NLO',
-	       'ggHbbp': 'ggH(b#bar{b}) powheg',
+	       'ggHbbp': 'ggH(b#bar{b})',
                'VBFHbb':'VBF H(b#bar{b})',
-	       'ZHbb': ' ZH(b#bar{b})',
-	       'WHbb': 'WH(b#bar{b})',
+	       'ZHbb': ' Z(q#bar{q})H(b#bar{b})',
+	       'ZnnHbb': ' Z(#nu#nu)H(b#bar{b})',
+	       'WHbb': 'W(q#bar{q})H(b#bar{b})',
 	       'tthbb': 'ttH(b#bar{b})',	   	
 	       'Phibb': ' Phi(125)(b#bar{b})'}
 
@@ -33,6 +34,7 @@ def main(options,args):
        	      'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
 	      'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+	      'ZnnHbb': [idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
 	      'WHbb' : [idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root', idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	      'tthbb' : [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	      'Phibb':[idir+'/DMSpin0_ggPhibb1j_125_1000pb_weighted.root']
@@ -41,8 +43,9 @@ def main(options,args):
     color = {'ggHbb': ROOT.kRed,
 	     'ggHbbp': ROOT.kBlue+2,
              'VBFHbb': ROOT.kAzure+3,
-	     'ZHbb': ROOT.kAzure+1,
-	     'WHbb': ROOT.kPink+2,	
+	     'ZnnHbb': ROOT.kPink+5,
+	     'ZHbb': ROOT.kPink+1,
+	     'WHbb': ROOT.kAzure+1,	
 	     'tthbb': ROOT.kOrange+1,
 	     'Phibb':ROOT.kRed-2
                }
@@ -52,6 +55,7 @@ def main(options,args):
              'VBFHbb': 2,
 	     'ZHbb': 1,
 	     'WHbb':1,
+             'ZnnHbb': 1,
 	     'tthbb':1,		
 	     'Phibb':2
                }
@@ -64,7 +68,8 @@ def main(options,args):
     sigSamples['ZHbb'] = sampleContainer('ZHbb',tfiles['ZHbb'], 1, lumi ) 	
     sigSamples['WHbb'] = sampleContainer('WHbb',tfiles['WHbb'], 1, lumi )
     sigSamples['tthbb'] = sampleContainer('tthbb',tfiles['tthbb'], 1, lumi )	
-    sigSamples['Phibb'] = sampleContainer('Phibb',tfiles['Phibb'], 1, lumi*0.035)   
+    sigSamples['ZnnHbb'] = sampleContainer('ZnnHbb',tfiles['ZnnHbb'], 1, lumi )
+    #sigSamples['Phibb'] = sampleContainer('Phibb',tfiles['Phibb'], 1, lumi*0.035)   
 
 
     ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','recreate')
