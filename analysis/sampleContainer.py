@@ -285,7 +285,8 @@ class sampleContainer:
 
             vmuoLoose0_pt = self.vmuoLoose0_pt[0]
             # Single Muon Control Region 1 (inclusive)
-            if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
+            #if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
+            if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
                 self.h_msd_ak8_muCR1.Fill( jmsd_8, weight )
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_muCR2.Fill( jmsd_8, weight )
@@ -334,7 +335,7 @@ class sampleContainer:
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
                 if a > 0 : continue
                 a = a+1                
-                if i[1] > 500 and i[0] > 40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and i[4] < T21DDTCUT and i[5]:
+                if i[1] > 500 and i[0] > 40 and nmuLoose>=1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and i[4] < T21DDTCUT and i[5]:
                     if i[2] > DBTAGCUT:
                         self.h_msd_ak8_bbleading_muCR4_pass.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_muCR4_pass.Fill( i[0], i[1], weight)
