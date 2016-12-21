@@ -77,7 +77,7 @@ class sampleContainer:
 
         # define histograms        
         histos1d = {
-	'h_Cuts'               :["h_"+self._name+"_Cuts","; Cut ", 7, 0, 7],
+	'h_Cuts'               :["h_"+self._name+"_Cuts","; Cut ", 8, 0, 8],
         'h_n_ak4'              :["h_"+self._name+"_n_ak4","; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],     
         'h_pt_bbleading'       :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} (GeV);", 50, 300, 2100],
         'h_bb_bbleading'       :["h_"+self._name+"_bb_bbleading","; double b-tag ;", 40, -1, 1],
@@ -354,7 +354,7 @@ class sampleContainer:
 
                         
             # Lepton and photon veto
-            if neleLoose != 0 or nmuLoose != 0 : continue #or ntau != 0 or nphoLoose != 0:  continue
+            if neleLoose != 0 or nmuLoose != 0 or ntau != 0: continue# or nphoLoose != 0:  continue
                 
             a = 0
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
@@ -487,29 +487,29 @@ class sampleContainer:
             #####
         print "\n"
 	self.h_Cuts.SetBinContent(4,float(cut[0]/nent*100.))
-#        self.h_Cuts.SetBinContent(5,float(cut[1]/nent*100.))
+        self.h_Cuts.SetBinContent(5,float(cut[1]/nent*100.))
 #        self.h_Cuts.SetBinContent(6,float(cut[2]/nent*100.))
         self.h_Cuts.SetBinContent(1,float(cut[3]/nent*100.))
         self.h_Cuts.SetBinContent(2,float(cut[4]/nent*100.))
         self.h_Cuts.SetBinContent(3,float(cut[5]/nent*100.))
-        self.h_Cuts.SetBinContent(5,float(cut[6]/nent*100.))
-        self.h_Cuts.SetBinContent(6,float(cut[7]/nent*100.))
+        self.h_Cuts.SetBinContent(6,float(cut[6]/nent*100.))
+        self.h_Cuts.SetBinContent(7,float(cut[7]/nent*100.))
         #self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
         #self.h_Cuts.SetBinContent(10,float(cut[9]/nent*100.))
-        self.h_Cuts.SetBinContent(7,float(cut[8])/nent*100.)
+        self.h_Cuts.SetBinContent(8,float(cut[8])/nent*100.)
         print(cut[0]/nent*100.,cut[3]/nent*100.,cut[4]/nent*100.)
         a_Cuts=self.h_Cuts.GetXaxis();
         a_Cuts.SetBinLabel(4, "lep veto");
-       # a_Cuts.SetBinLabel(5, "#tau veto");
+        a_Cuts.SetBinLabel(5, "#tau veto");
        # a_Cuts.SetBinLabel(6, "#gamma veto");
         a_Cuts.SetBinLabel(1, "p_{T}>500 GeV");
         a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV");
         a_Cuts.SetBinLabel(3, "tight ID");
-        a_Cuts.SetBinLabel(5, "MET<180");
-        a_Cuts.SetBinLabel(6, "njet<5");
+        a_Cuts.SetBinLabel(6, "MET<180");
+        a_Cuts.SetBinLabel(7, "njet<5");
         #a_Cuts.SetBinLabel(9, "nb jet <2");
         #a_Cuts.SetBinLabel(10, "njet fwd <3");
-        a_Cuts.SetBinLabel(7, "#tau_{21}^{DDT}<0.55");
+        a_Cuts.SetBinLabel(8, "#tau_{21}^{DDT}<0.55");
 
         self.h_rhop_v_t21_ak8_Px = self.h_rhop_v_t21_ak8.ProfileX()
         self.h_rhop_v_t21_ca15_Px = self.h_rhop_v_t21_ca15.ProfileX()
