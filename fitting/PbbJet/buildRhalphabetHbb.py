@@ -32,9 +32,9 @@ class dazsleRhalphabetBuilder:
 
         self._outputName = odir+"/base.root";
 
-        self._mass_nbins = 24
-        self._mass_lo    = 6*(500/75.)
-        self._mass_hi    = 30*(500/75.)
+        self._mass_nbins = 30
+        self._mass_lo    = 40 #6*(500/75.)
+        self._mass_hi    = 250#30*(500/75.)
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
         # self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
         # self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
