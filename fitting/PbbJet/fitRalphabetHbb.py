@@ -8,8 +8,8 @@ from operator import add
 import math
 import sys
 import time
-#rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 rt.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 rt.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 rt.RooRandom.randomGenerator().SetSeed(1988)
@@ -152,9 +152,9 @@ def main(options,args):
 
 
 
-    nBins = 24
+    nBins = 23
     msdMin = 40.
-    msdMax = 200.    
+    msdMax = 201.    
     pt_binBoundaries = [500,550,600,675,800,1000]
     iBin = -1
     if printYields:

@@ -8,8 +8,8 @@ import math
 import sys
 import time
 import array
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 
 
 # including other directories
@@ -32,9 +32,9 @@ class dazsleRhalphabetBuilder:
 
         self._outputName = odir+"/base.root";
 
-        self._mass_nbins = 30
+        self._mass_nbins = 25
         self._mass_lo    = 40 #6*(500/75.)
-        self._mass_hi    = 250#30*(500/75.)
+        self._mass_hi    = 201#30*(500/75.)
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
         # self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
         # self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
@@ -399,7 +399,7 @@ def loadHistograms(f,pseudo):
             qcd_fail_integral = 0
             for i in range(1,qcd_pass_real.GetNbinsX()+1):
                 for j in range(1,qcd_pass_real.GetNbinsY()+1):
-                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > 40 and qcd_pass_real.GetXaxis().GetBinCenter(i) < 200:
+                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > 40 and qcd_pass_real.GetXaxis().GetBinCenter(i) < 201:
                         qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
                         qcd_fail_integral += qcd_fail.GetBinContent(i,j)
             qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
