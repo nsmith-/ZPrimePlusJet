@@ -73,7 +73,8 @@ def main(options,args):
 		                     idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
               #'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
               'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
-              'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'],
+              #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
+              'TTbar':  [idir+'/TT_13TeV_powheg_pythia8_ext_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
@@ -187,7 +188,8 @@ def main(options,args):
 
     canvases = []
     if isData and muonCR:
-        plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6']        
+        plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6'
+                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4']                 ]
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met']
     else:	
