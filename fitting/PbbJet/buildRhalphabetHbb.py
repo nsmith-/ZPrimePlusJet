@@ -60,6 +60,10 @@ class dazsleRhalphabetBuilder:
         self._lEff    = r.RooRealVar("veff"      ,"veff"      ,0.5 ,0.,1.0)
 
         self._lEffQCD = r.RooRealVar("qcdeff"    ,"qcdeff"   ,0.01,0.,10.)
+        if hfail[3].Integral() > 0:
+            qcdeff = hpass[3].Integral()/hfail[3].Integral()
+            self._lEffQCD.setVal(qcdeff)
+            print "qcdeff = %f"%qcdeff
         self._lDM     = r.RooRealVar("dm","dm", 0.,-10,10)
         self._lShift  = r.RooFormulaVar("shift",self._lMSD.GetName()+"-dm",r.RooArgList(self._lMSD,self._lDM)) 
 
@@ -117,7 +121,6 @@ class dazsleRhalphabetBuilder:
 
         #Fix the pt (top) and teh qcd eff
         self._lPt.setVal(iPt)
-        self._lEffQCD.setVal(1.92e-02)
         self._lEffQCD.setConstant(False)
 
         polyArray = []
