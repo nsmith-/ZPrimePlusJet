@@ -673,8 +673,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 	nevt.append(h.Integral())
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
 
-    allMC=hstack.GetStack().Last().Clone()	
-    
+    allMC=hstack.GetStack().Last().Clone()
     ntotal=allMC.Integral()
     nsig=hs[nameS].Integral()
 
@@ -772,6 +771,9 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.C")
 
+    
+    allMC=hstack.GetStack().Last().Clone()	    
+    ntotal=allMC.Integral()
     i=0
     print "========== Background composition ==========="
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
@@ -915,6 +917,14 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     if ofile is not None:
         ofile.cd()
         c.Write('c'+outname)
+
+    allMC=hstack.GetStack().Last().Clone()	    
+    ntotal=allMC.Integral()
+    i=0
+    print "========== Background composition ==========="
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+        print name, h.Integral()
+    print 'data', hd.Integral()
 
     return c        
     

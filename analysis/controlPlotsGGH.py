@@ -202,13 +202,13 @@ def main(options,args):
                  'h_msd_ak8_topR3_pass','h_msd_ak8_topR4_pass','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5_pass','h_msd_ak8_topR7_pass',
                  'h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
                  'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail',
-		 'h_msd_ak8_topR6_pass_0p4','h_msd_ak8_topR6_fail_0p4',
-		 'h_msd_ak8_topR6_pass_0p45','h_msd_ak8_topR6_fail_0p45',
-		 'h_msd_ak8_topR6_pass_0p5','h_msd_ak8_topR6_fail_0p5',
-		 'h_msd_ak8_topR6_pass_0p6','h_msd_ak8_topR6_fail_0p6',
-		 'h_msd_ak8_topR6_pass_0p65','h_msd_ak8_topR6_fail_0p65',
-	         'h_msd_ak8_topR6_pass_0p7','h_msd_ak8_topR6_fail_0p7',
-		 'h_msd_ak8_topR6_pass_0p75','h_msd_ak8_topR6_fail_0p75',
+		 #'h_msd_ak8_topR6_pass_0p4','h_msd_ak8_topR6_fail_0p4',
+		 #'h_msd_ak8_topR6_pass_0p45','h_msd_ak8_topR6_fail_0p45',
+		 #'h_msd_ak8_topR6_pass_0p5','h_msd_ak8_topR6_fail_0p5',
+		 #'h_msd_ak8_topR6_pass_0p6','h_msd_ak8_topR6_fail_0p6',
+		 #'h_msd_ak8_topR6_pass_0p65','h_msd_ak8_topR6_fail_0p65',
+	     #    'h_msd_ak8_topR6_pass_0p7','h_msd_ak8_topR6_fail_0p7',
+		 #'h_msd_ak8_topR6_pass_0p75','h_msd_ak8_topR6_fail_0p75',
                  'h_msd_ak8_bbleading_topR6_pass','h_msd_ak8_bbleading_topR6_fail']
     for plot in plots:
         hs = {}
