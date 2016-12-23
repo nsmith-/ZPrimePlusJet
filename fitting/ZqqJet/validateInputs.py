@@ -34,8 +34,8 @@ def main(options,args):
 	wpr = fr.Get("w_pass_cat5");
 	wfr = fr.Get("w_fail_cat5");
 
-	print "---------";
-	print "qcd_fail_cat5_Bin1 = ", r.RooRealVar( wfr.var("qcd_fail_cat5_Bin1") ).getVal()
+	# print "---------";
+	# print "qcd_fail_cat5_Bin1 = ", r.RooRealVar( wfr.var("qcd_fail_cat5_Bin1") ).getVal()
 
 	# wp.Print();
 	# wf.Print();
