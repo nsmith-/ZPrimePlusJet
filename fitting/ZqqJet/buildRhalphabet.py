@@ -356,14 +356,16 @@ def loadHistograms(f,pseudo):
 	lHP4 = f.Get("tqq_pass")
 	lHF4 = f.Get("tqq_fail")
 	if pseudo:
-		lHP0 = lHP3.Clone("qcd_pass")
+		# lHP0 = lHP3.Clone("qcd_pass")
 		lHF0 = lHF3.Clone("qcd_fail")
-		lHP0.Add(lHP1)
 		lHF0.Add(lHF1)
-		lHP0.Add(lHP2)
 		lHF0.Add(lHF2)
-		lHP0.Add(lHP4)
 		lHF0.Add(lHF4)
+		lHP0 = lHF3.Clone("qcd_pass");
+		lHP0.Scale(0.05);
+		lHP0.Add(lHP1)
+		lHP0.Add(lHP2)
+		lHP0.Add(lHP4)
 
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])
@@ -378,6 +380,7 @@ def loadHistograms(f,pseudo):
 
 	for lH in (hpass+hfail):
 		lH.SetDirectory(0)	
+		print lH.GetName(), lH.Integral()
 
 	# print "lengths = ", len(hpass), len(hfail)
 	# print hpass;
