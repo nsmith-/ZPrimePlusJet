@@ -119,6 +119,7 @@ def main(options,args):
     tags.append([ 'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8.root', 0] )
     tags.append([ 'ZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_ext.root', 0] )
     tags.append([ 'ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext.root', 0] )
+    tags.append([ 'TT_13TeV_powheg_pythia8_ext.root', 0] )
 
     # make a tmp dir
     #####
@@ -163,7 +164,10 @@ def sklimAdd(fn,odir,mass=0):
 
     f1 = ROOT.TFile(fn,'read')
     tree = f1.Get("Events")
-    if not tree.InheritsFrom("TTree"):
+    try:
+        if not tree.InheritsFrom("TTree"):
+            return -1
+    except:
         return -1
     
     ofile = ROOT.TFile(odir+'/'+basename,'RECREATE')
