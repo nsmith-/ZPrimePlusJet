@@ -19,9 +19,10 @@ from tools import *
 def main(options,args):
 	
 	mass = options.mass;
+	idir = options.idir;
 
-	fml = r.TFile("mlfit_asym_zqq%s.root" % mass);
-	fd  = r.TFile("base.root");
+	fml = r.TFile("%s/mlfit_asym_zqq%s.root" % (idir,mass) );
+	fd  = r.TFile("%s/base.root" % idir);
 	
 	histograms_pass_all = [];
 	histograms_fail_all = [];
@@ -45,6 +46,25 @@ def main(options,args):
 	shapes = ['wqq','zqq','tqq','qcd','zqq'+mass]
 	makeMLFitCanvas(histograms_pass_summed[0:4], histograms_pass_summed[5], histograms_pass_summed[4], shapes, "pass_allcats_"+options.fit+"_"+mass);
 	makeMLFitCanvas(histograms_fail_summed[0:4], histograms_fail_summed[5], histograms_fail_summed[4], shapes, "fail_allcats_"+options.fit+"_"+mass);
+
+	# print out fit results
+	if options.fit == "fit_b" or options.fit == "fit_s":
+		rfr = r.RooFitResult( fml.Get(options.fit) )
+		lParams = [];
+		lParams.append("qcdeff");
+		lParams.append("p1r0");
+		lParams.append("p2r0");
+		lParams.append("p0r1"); ##
+		lParams.append("p1r1");
+		lParams.append("p2r1");
+		lParams.append("p0r2"); ##
+		lParams.append("p1r2");
+		lParams.append("p2r2");
+
+		for p in lParams:
+			print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError() # ,"+",rfr.floatParsFinal().find(p).getAsymErrorHi(),"-",rfr.floatParsFinal().find(p).getAsymErrorLo()
+
+
 
 ###############################################################
 
@@ -118,6 +138,16 @@ def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 	if data != None: l.AddEntry(data,"data","pe");
 
 	c = r.TCanvas("c","c",1000,800);
+
+	p12 = r.TPad("p12","p12",0.0,0.3,1.0,1.0);
+	p22 = r.TPad("p22","p22",0.0,0.0,1.0,0.3);
+	p12.SetBottomMargin(0.02);
+	p22.SetTopMargin(0.05);
+	p22.SetBottomMargin(0.3);
+
+	c.cd();
+	p12.Draw(); p12.cd();
+
 	htot.SetFillStyle(3001);
 	htot.SetFillColor(1);
 	htot.Draw('e2');
@@ -125,9 +155,40 @@ def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 	hsig.Draw('histsames');
 	if data != None: data.Draw('pesames');
 	l.Draw();
+	
+	c.cd();
+	p22.Draw(); p22.cd();
+	p22.SetGrid();
+
+	iRatio = data.Clone();
+	iRatio.Divide(htot);
+	iRatio.SetTitle("; soft drop mass (GeV); Data/Prediction");
+	iRatio.GetYaxis().SetTitleSize(0.13);
+	iRatio.GetYaxis().SetNdivisions(6);
+	iRatio.GetYaxis().SetLabelSize(0.12);
+	iRatio.GetYaxis().SetTitleOffset(0.44);
+	iRatio.GetXaxis().SetTitleSize(0.13);
+	iRatio.GetXaxis().SetLabelSize(0.12);
+	iRatio.GetXaxis().SetTitleOffset(0.9);
+	iRatio.GetYaxis().SetRangeUser(0.51,1.49);
+	iOneWithErrors = htot.Clone();
+	iOneWithErrors.Divide(htot.Clone());
+	for i in range(iOneWithErrors.GetNbinsX()): 
+		if htot.GetBinContent(i+1) > 0: iOneWithErrors.SetBinError( i+1, htot.GetBinError(i+1)/htot.GetBinContent(i+1) );
+		else: iOneWithErrors.SetBinError( i+1, 1);
+		
+	iOneWithErrors.SetFillStyle(3001);
+	iOneWithErrors.SetFillColor(4);
+	iOneWithErrors.SetMarkerSize(0);
+	iOneWithErrors.SetLineWidth(0);
+	iRatio.Draw();
+	iOneWithErrors.Draw("e2 sames");
+	iRatio.Draw("sames");
+
 	c.SaveAs("plots/mlfit/mlfit_"+tag+".pdf")
 	c.SaveAs("plots/mlfit/mlfit_"+tag+".png")
-	r.gPad.SetLogy();
+	
+	p12.SetLogy();
 	htot.SetMaximum(data.GetMaximum()*2);
 	htot.SetMinimum(1);
 	c.SaveAs("plots/mlfit/mlfit_"+tag+"-log.pdf")
@@ -138,8 +199,9 @@ if __name__ == '__main__':
 	parser = OptionParser()
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
 	parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
-	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
+	# parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
 	parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
+	parser.add_option('--idir', dest='idir', default = 'results',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
 	parser.add_option('--mass', dest='mass', default = '100',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
 

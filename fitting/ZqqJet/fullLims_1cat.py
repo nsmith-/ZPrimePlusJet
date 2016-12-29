@@ -108,15 +108,17 @@ def main():
 	# masses = [       50,       75,       90,      100,      110, 125, 135, 150, 165, 180, 200, 250, 300];
 	# sXSgb1 = [1.394e+05,8.419e+04,4.481e+04,2.641e+04,1.939e+04,1.462e+04,7870,5707,4254,3233,2320,1131, 620]
 	# masses = [       50,       60,       75,       90,      100,      110, 135, 150, 165, 180, 200, 250, 300];
+	# sXSgb1 = [1.394e+05,4.481e+04,1.939e+04,9976,5707,2320,1131]
+	# masses = [       50,       75,      100, 125, 150, 200, 250];
 	sXSgb1 = [1.394e+05,4.481e+04,1.939e+04,9976,5707,2320]
 	masses = [       50,       75,      100, 125, 150, 200];
 	KFACTOR = 1.218;
-	idir = "datacards";
+	idir = "results_Data5percent_2d27invfb_MassTo250";
 
 	#--------------------------------
 	results = [];
 	for i in range(len(masses)): 
-		results.append( getAsymLimits('higgsCombine_asym_zqq%s.Asymptotic.mH%s.root' % (str(masses[i]),str(masses[i])),'Zp'+str(masses[i])) );
+		results.append( getAsymLimits('%s/higgsCombine_asym_zqq%s.Asymptotic.mH%s.root' % ( idir,str(masses[i]),str(masses[i])),'Zp'+str(masses[i])) );
 
 	names   = [];
 	l_obs   = [];
@@ -223,11 +225,11 @@ def main():
 	# PLOTTING
 	lowlim = 75;
 
-	txta = ROOT.TLatex(0.16,0.83,"CMS");
+	txta = ROOT.TLatex(0.16,0.92,"CMS");
 	txta.SetNDC();
 	txtb = ROOT.TLatex(0.20,0.92,"Preliminary");
 	txtb.SetNDC(); txtb.SetTextFont(52);
-	txtc = ROOT.TLatex(0.68,0.92,"12.9 fb^{-1} (13 TeV)");
+	txtc = ROOT.TLatex(0.68,0.92,"34.1 fb^{-1} (13 TeV)");
 	txtc.SetNDC(); txtc.SetTextFont(42); txtc.SetTextSize(0.04);
 	txtd = ROOT.TLatex(0.60,0.80,"g_{B} = 1 or g_{q} = 1/6");
 	txtd.SetNDC(); txtd.SetTextFont(42); txtd.SetTextSize(0.04);
@@ -293,7 +295,7 @@ def main():
 	can_XS.SaveAs('limplots/xslim.pdf');
 	#--------------------------------
 
-	leg2 = ROOT.TLegend(0.45,0.16,0.66,0.4);
+	leg2 = ROOT.TLegend(0.13,0.55,0.50,0.85);
 	leg2.SetFillStyle(0);
 	leg2.SetFillColor(10);    
 	leg2.SetBorderSize(0);
@@ -313,18 +315,18 @@ def main():
 	leg2.AddEntry(Zfunc,"Z Width (indirect)","l")
 	# leg2.AddEntry(Upsfunc,"#Upsilon Width","l")
 
-	leg2b = ROOT.TLegend(0.13,0.67,0.45,0.80);
+	leg2b = ROOT.TLegend(0.6,0.15,0.85,0.30);
 	leg2b.SetFillStyle(0);
 	leg2b.SetFillColor(10);    
 	leg2b.SetBorderSize(0);
 	leg2b.SetTextFont(42);  
 	leg2b.SetTextSize(0.035);  
-	# leg2b.AddEntry(gr_mu_obs,"Observed","l")	
+	leg2b.AddEntry(gr_mu_obs,"Observed","l")	
 	leg2b.AddEntry(gr_mu_exp,"Expected","l")
 	leg2b.AddEntry(gr_mu_1sigma,"#pm 1 std. deviation","f")	
 	leg2b.AddEntry(gr_mu_2sigma,"#pm 2 std. deviation","f")
 
-	leg3 = ROOT.TLegend(0.50,0.50,0.95,0.85);
+	leg3 = ROOT.TLegend(0.50,0.6,0.95,0.85);
 	leg3.SetFillStyle(0);
 	leg3.SetFillColor(0);    
 	leg3.SetBorderSize(0);  
@@ -382,7 +384,7 @@ def main():
 	#####
 
 	can_gB2 = ROOT.TCanvas("can_gB2","can_gB2",1000,800);
-	hrl2 = can_gB.DrawFrame(20,0.2,801,3);
+	hrl2 = can_gB.DrawFrame(30,0.2,801,3);
 	hrl2.GetYaxis().SetTitle("coupling, g_{B}");
 	hrl2.GetYaxis().SetTitleOffset(0.85);	
 	hrl2.GetXaxis().SetTitle("Z\' mass (GeV)");
@@ -396,14 +398,15 @@ def main():
 	# Ufunc2.SetFillStyle(1001)
 	# Ufunc2.SetFillColor(2);
 	# Ufunc1.Draw("sames");
-	Upsfunc.Draw("sames");
+	
+	# Upsfunc.Draw("sames");
 	# Ufunc2.Draw("fillsames");
 	Zfunc.Draw("sames");
 	
 
 	gr_gB_2sigma.Draw('fsames');
 	gr_gB_1sigma.Draw('fsames');
-	# gr_gB_obs.Draw('lsames');
+	gr_gB_obs.Draw('lsames');
 	gr_gB_exp.Draw('lsames');
 
 	gr_UA2.Draw("csames")
