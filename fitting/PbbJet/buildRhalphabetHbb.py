@@ -35,6 +35,9 @@ class dazsleRhalphabetBuilder:
         self._mass_nbins = 23
         self._mass_lo    = 40 #6*(500/75.)
         self._mass_hi    = 201#30*(500/75.)
+        self._mass_lo    = 2 #6*(500/75.)
+        self._mass_blind_lo = 110
+        self._mass_blind_hi = 131
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
         # self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
         # self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
@@ -52,6 +55,9 @@ class dazsleRhalphabetBuilder:
 
         # define RooRealVars
         self._lMSD    = r.RooRealVar("x","x",self._mass_lo,self._mass_hi)
+        self._lMSD.setRange('Low',self._mass_lo,self._mass_blind_lo)
+        self._lMSD.setRange('Blind',self._mass_blind_lo,self._mass_blind_hi)
+        self._lMSD.setRange('High',self._mass_blind_hi,self._mass_hi)
         #self._lMSD.setBins(self._mass_nbins)		
         self._lPt     = r.RooRealVar("pt","pt",self._pt_lo,self._pt_hi);
         self._lPt.setBins(self._nptbins)
@@ -116,8 +122,8 @@ class dazsleRhalphabetBuilder:
         print "---- [makeRhalph]"	
 
         lName ="qcd";
-        lUnity = r.RooConstVar("unity","unity",1.);
-        lZero  = r.RooConstVar("lZero","lZero",0.);
+        lUnity = r.RooConstVar("unity","unity",1.)
+        lZero  = r.RooConstVar("lZero","lZero",0.)
 
         #Fix the pt (top) and teh qcd eff
         self._lPt.setVal(iPt)
@@ -458,7 +464,7 @@ if __name__ == '__main__':
 	parser = OptionParser()
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
 	parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
-	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
+	parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
 	parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
 	
