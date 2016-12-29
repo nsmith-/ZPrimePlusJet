@@ -152,9 +152,9 @@ def main(options,args):
 
 
 
-    nBins = 24
+    nBins = 23
     msdMin = 40.
-    msdMax = 200.    
+    msdMax = 201.    
     pt_binBoundaries = [500,550,600,675,800,1000]
     iBin = -1
     if printYields:

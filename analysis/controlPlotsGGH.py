@@ -65,14 +65,16 @@ def main(options,args):
               'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
                           idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
                           idir+'/WZ_13TeV_1000pb_weighted.root'],
-              'DY': [idir+'/ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
+              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+		#ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
               'SingleTop':  [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
 		                     idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
 		                     idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
 		                     idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
               #'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
               'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
-              'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'],
+              #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
+              'TTbar':  [idir+'/TT_13TeV_powheg_pythia8_ext_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
@@ -186,9 +188,10 @@ def main(options,args):
 
     canvases = []
     if isData and muonCR:
-        plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6']        
+        plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
+                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4']                 
     elif isData:
-        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8']
+        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8']
     else:	
     	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2',
                  'h_pt_bbleading','h_bb_bbleading','h_msd_bbleading',
@@ -199,6 +202,13 @@ def main(options,args):
                  'h_msd_ak8_topR3_pass','h_msd_ak8_topR4_pass','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5_pass','h_msd_ak8_topR7_pass',
                  'h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
                  'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail',
+		 #'h_msd_ak8_topR6_pass_0p4','h_msd_ak8_topR6_fail_0p4',
+		 #'h_msd_ak8_topR6_pass_0p45','h_msd_ak8_topR6_fail_0p45',
+		 #'h_msd_ak8_topR6_pass_0p5','h_msd_ak8_topR6_fail_0p5',
+		 #'h_msd_ak8_topR6_pass_0p6','h_msd_ak8_topR6_fail_0p6',
+		 #'h_msd_ak8_topR6_pass_0p65','h_msd_ak8_topR6_fail_0p65',
+	     #    'h_msd_ak8_topR6_pass_0p7','h_msd_ak8_topR6_fail_0p7',
+		 #'h_msd_ak8_topR6_pass_0p75','h_msd_ak8_topR6_fail_0p75',
                  'h_msd_ak8_bbleading_topR6_pass','h_msd_ak8_bbleading_topR6_fail']
     for plot in plots:
         hs = {}
