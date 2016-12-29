@@ -36,6 +36,11 @@ def main(options,args):
     npoints = 20
     printYields = True
     
+    nBins = 23
+    msdMin = 40.
+    msdMax = 201.    
+    pt_binBoundaries = [500,550,600,675,800,1000]
+    
     fbase = rt.TFile.Open(idir+"/base.root")
     fralphabase = rt.TFile.Open(idir+"/ralphabase.root")
 
@@ -70,6 +75,19 @@ def main(options,args):
     for cat in categories:        
         norms_b = rt.RooArgList()
         norms_s = rt.RooArgList()
+        ## lBins = rt.RooArgList()
+        ## for iMsdBin in range(1, nBins+1):
+        ##     if 'fail' in cat:
+        ##         p = wralphabase[cat].var('qcd_%s_Bin%i'%(cat,iMsdBin))
+        ##     else:
+        ##         p = wralphabase[cat].function('qcd_%s_Bin%i'%(cat,iMsdBin))
+        ##     if options.fitRegion=='Low,High' and iMsdBin in [11,12,13]:
+        ##         continue
+        ##     else:
+        ##         lBins.add(p)
+        ## lN = rt.RooAddition('qcd_%s_newnorm'%cat,'qcd_%s_newnorm'%cat,lBins)
+        ## norms_b.add(lN)
+        ## norms_s.add(lN)
         norms_b.add(wralphabase[cat].function('qcd_%s_norm'%cat))
         norms_s.add(wralphabase[cat].function('qcd_%s_norm'%cat))
         pdfs_b = rt.RooArgList()
@@ -86,7 +104,6 @@ def main(options,args):
                                                         'histpdf_%s_%s'%(proc,cat),
                                                         rt.RooArgSet(wbase[cat].var('x')),
                                                         datahist['%s_%s'%(proc,cat)])
-            datahist['%s_%s'%(proc,cat)].Print('v')
             getattr(w,'import')(datahist['%s_%s'%(proc,cat)],rt.RooFit.RecycleConflictNodes())
             getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],rt.RooFit.RecycleConflictNodes())
             if 'hqq125' in proc:
@@ -140,22 +157,22 @@ def main(options,args):
         simPdf_s.addPdf(epdf_s[cat],cat)
 
     r.setVal(0.)    
-    CMS_set = rt.RooArgSet()
-    CMS_set.add(rooCat)
-    CMS_set.add(x)
-    #combData = simPdf_s.generateBinned(CMS_set,rt.RooFit.Asimov()) # overwrite data with asimov dataset
 
     getattr(w,'import')(simPdf_b,rt.RooFit.RecycleConflictNodes())
+    #getattr(w,'import')(simPdf_s,rt.RooFit.RecycleConflictNodes())
     getattr(w,'import')(combData,rt.RooFit.RecycleConflictNodes())
 
     w.Print('v')
-
-
-
-    nBins = 23
-    msdMin = 40.
-    msdMax = 201.    
-    pt_binBoundaries = [500,550,600,675,800,1000]
+    simPdf_b = w.pdf('simPdf_b')
+    #simPdf_s = w.pdf('simPdf_s')
+    combData = w.data('data_obs')
+    x = w.var('x')
+    rooCat = w.cat('cat')
+    r = w.var('r')
+    CMS_set = rt.RooArgSet()
+    CMS_set.add(rooCat)
+    CMS_set.add(x)
+    
     iBin = -1
     if printYields:
         csvFile = open(odir+'/yields.csv','w')
@@ -178,15 +195,37 @@ def main(options,args):
         csvFile.close()
         print ""
         print "yields written into %s/%s"%(odir,'yields.csv')
-    
-    allParams = simPdf_s.getParameters(combData)
-    rt.RooStats.RemoveConstantParameters(allParams)
-
+            
+    ## w.var('r0p1').setConstant(True)
+    ## w.var('r0p2').setConstant(True)
+    ## w.var('r1p0').setConstant(True)
+    ## w.var('r1p1').setConstant(True)
+    ## w.var('r1p2').setConstant(True)
+    ## w.var('r2p0').setConstant(True)
+    ## w.var('r2p1').setConstant(True)
+    ## w.var('r2p2').setConstant(True)
+    ## w.var('qcdeff').setConstant(True)
+            
     opt = rt.RooLinkedList()
     opt.Add(rt.RooFit.CloneData(False))
+    ## if options.fitRegion!='Full':
+    ##     opt.Add(rt.RooFit.Range(options.fitRegion))
+    ## if options.fitRegion=='Low,High':
+    ##     for cat in categories:
+    ##         if 'pass' in cat: continue
+    ##         w.var('qcd_%s_Bin11'%cat).setConstant(True)
+    ##         w.var('qcd_%s_Bin12'%cat).setConstant(True)
+    ##         w.var('qcd_%s_Bin13'%cat).setConstant(True)
+    ##         w.var('qcd_%s_Bin11'%cat).setVal(0)
+    ##         w.var('qcd_%s_Bin12'%cat).setVal(0)
+    ##         w.var('qcd_%s_Bin13'%cat).setVal(0)
+    allParams = simPdf_b.getParameters(combData)
+    rt.RooStats.RemoveConstantParameters(allParams)            
     opt.Add(rt.RooFit.Constrain(allParams))
 
-    nll = simPdf_s.createNLL(combData,opt)
+    
+    #nll = simPdf_s.createNLL(combData,opt)
+    nll = simPdf_b.createNLL(combData,opt)
     m2 = rt.RooMinimizer(nll)
     m2.setStrategy(2)
     m2.setMaxFunctionCalls(100000)
@@ -205,38 +244,55 @@ def main(options,args):
     minNll = fr.minNll()
     rBestFit = r.getVal()
 
-    frame = {}
-    r.setVal(10)
-    for cat in categories:
+    r.setVal(0)
+    
+    asimov = simPdf_b.generateBinned(CMS_set,rt.RooFit.Asimov(),rt.RooFit.Name('central'))
         
-        frame[cat] = x.frame(rt.RooFit.Title(cat))
-        combData.plotOn(frame[cat],rt.RooFit.Cut('cat==cat::%s'%cat),rt.RooFit.DataError(rt.RooAbsData.Poisson))
-        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData))
-        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('qcd_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineStyle(rt.kDashed))      
-        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('wqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineStyle(3))          
-        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('zqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineStyle(4))          
-        simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('tqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineStyle(5))          
-        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('histpdf_hqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineColor(rt.kRed))
-        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('histpdf_whqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineColor(rt.kViolet),rt.RooFit.LineStyle(2))
-        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('histpdf_tthqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineColor(rt.kBlack),rt.RooFit.LineStyle(3))
-        simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
-                        rt.RooFit.Components('histpdf_zhqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
-                        rt.RooFit.LineColor(rt.kGreen),rt.RooFit.LineStyle(5))        
+    frame = {}
+    h_data = {}
+    h_fit = {}
+    dataCat = {}
+    asimovCat = {}
+    for cat in categories:
+        rooCat.setLabel(cat)
+        dataCat[cat] = combData.reduce(rt.RooFit.Cut('cat==cat::%s'%cat))
+        asimovCat[cat] = asimov.reduce(rt.RooFit.Cut('cat==cat::%s'%cat))
+        h_data[cat] = dataCat[cat].createHistogram('h_data_%s'%cat,x)
+        h_fit[cat] = asimovCat[cat].createHistogram('h_fit_%s'%cat,x)
+        h_data[cat].SetMarkerSize(0.7)
+        h_fit[cat].SetLineWidth(2)
+        h_fit[cat].SetLineColor(rt.kBlue)
+        h_fit[cat].SetMarkerStyle(0)
+        h_fit[cat].SetMarkerSize(0)
+        h_fit[cat].SetMarkerColor(rt.kBlue)
+        ## frame[cat] = x.frame(rt.RooFit.Title(cat),rt.RooFit.Range(40,201))
+        ## combData.plotOn(frame[cat],rt.RooFit.Cut('cat==cat::%s'%cat),rt.RooFit.DataError(rt.RooAbsData.Poisson))
+        ## simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData))
+        ## simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('qcd_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineStyle(rt.kDashed))      
+        ## simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('wqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineStyle(3))          
+        ## simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('zqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineStyle(4))          
+        ## simPdf_b.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('tqq_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineStyle(5))          
+        ## simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('histpdf_hqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineColor(rt.kRed))
+        ## simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('histpdf_whqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineColor(rt.kViolet),rt.RooFit.LineStyle(2))
+        ## simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('histpdf_tthqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineColor(rt.kBlack),rt.RooFit.LineStyle(3))
+        ## simPdf_s.plotOn(frame[cat],rt.RooFit.Slice(rooCat,cat),
+        ##                 rt.RooFit.Components('histpdf_zhqq125_%s'%cat),rt.RooFit.ProjWData(rt.RooArgSet(rooCat),combData),
+        ##                 rt.RooFit.LineColor(rt.kGreen),rt.RooFit.LineStyle(5))        
         #histpdf['hqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kRed))
         #histpdf['whqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kViolet),rt.RooFit.LineStyle(2))
         #histpdf['tthqq125_%s'%cat].plotOn(frame[cat],rt.RooFit.LineColor(rt.kBlack),rt.RooFit.LineStyle(3))
@@ -249,21 +305,26 @@ def main(options,args):
         c.Clear() 
         c.Divide(2)
         c.cd(1)
+        h_data['fail_cat%i'%i].Draw('pez')
+        h_fit['fail_cat%i'%i].Draw("histsame")
         #rt.gPad.SetLogy()
-        frame['fail_cat%i'%i].GetYaxis().SetTitleOffset(1.4)
-        frame['fail_cat%i'%i].Draw()
+        #frame['fail_cat%i'%i].GetYaxis().SetTitleOffset(1.4)
+        #frame['fail_cat%i'%i].Draw()
         #frame['fail_cat%i'%i].SetMinimum(0.1)
         #frame['fail_cat%i'%i].SetMaximum(2e5)
         c.cd(2)
+        h_data['pass_cat%i'%i].Draw('pez')
+        h_fit['pass_cat%i'%i].Draw("histsame")
         #rt.gPad.SetLogy()
-        frame['pass_cat%i'%i].GetYaxis().SetTitleOffset(1.4)
-        frame['pass_cat%i'%i].Draw()
+        #frame['pass_cat%i'%i].GetYaxis().SetTitleOffset(1.4)
+        #frame['pass_cat%i'%i].Draw()
         #frame['pass_cat%i'%i].SetMinimum(0.1)
         #frame['pass_cat%i'%i].SetMaximum(2e5)
         c.Print(odir+'/c%i.pdf'%i)
         c.Print(odir+'/c%i.C'%i)
 
 
+    sys.exit()
     poi = rt.RooArgSet(r)
     pll = nll.createProfile(poi)
     n2ll = rt.RooFormulaVar("n2ll","2*@0-2*%f"%minNll,rt.RooArgList(nll))
@@ -377,6 +438,10 @@ def main(options,args):
     d.Print(odir+"/deltaLL.pdf")
     d.Print(odir+"/deltaLL.C")
 
+    print "stat+sys:  r < %f"%rLimit
+    print "stat-only: r < %f"%rLimitNoSys
+
+
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -387,8 +452,8 @@ if __name__ == '__main__':
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--rMin',dest='rMin', default=0 ,type='float',help='minimum of r (signal strength) in profile likelihood plot')
-    parser.add_option('--rMax',dest='rMax', default=20,type='float',help='maximum of r (signal strength) in profile likelihood plot')
-
+    parser.add_option('--rMax',dest='rMax', default=20,type='float',help='maximum of r (signal strength) in profile likelihood plot')    
+    
     (options, args) = parser.parse_args()
 
     import tdrstyle

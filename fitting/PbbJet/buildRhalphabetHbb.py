@@ -16,6 +16,11 @@ r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHigg
 sys.path.insert(0, '../.')
 from tools import *
 
+NBINS = 23
+MASS_LO = 40
+MASS_HI = 201
+BLIND_LO = 110
+BLIND_HI = 131
 ##############################################################################
 ##############################################################################
 #### B E G I N N I N G   O F   C L A S S
@@ -32,11 +37,11 @@ class dazsleRhalphabetBuilder:
 
         self._outputName = odir+"/base.root";
 
-        self._mass_nbins = 23
-        self._mass_lo    = 40 #6*(500/75.)
-        self._mass_hi    = 201#30*(500/75.)
-        self._mass_blind_lo = 110
-        self._mass_blind_hi = 131
+        self._mass_nbins = NBINS
+        self._mass_lo    = MASS_LO
+        self._mass_hi    = MASS_HI
+        self._mass_blind_lo = BLIND_LO
+        self._mass_blind_hi = BLIND_HI
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
         # self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
         # self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
@@ -159,7 +164,8 @@ class dazsleRhalphabetBuilder:
             #5 sigma range + 10 events
             pUnc = math.sqrt(pSum)*5+10
             #Define the failing category
-            pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,max(pSum-pUnc,0),max(pSum+pUnc,0))
+            #pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,max(pSum-pUnc,0),max(pSum+pUnc,0))
+            pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,0,max(pSum+pUnc,0))
             #Now define the passing cateogry based on the failing (make sure it can't go negative)
             lArg = r.RooArgList(pFail,lPass,self._lEffQCD)
             pPass = r.RooFormulaVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),"@0*max(@1,0)*@2",lArg)
@@ -380,13 +386,13 @@ def main(options,args):
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
 	f = r.TFile.Open(ifile)
-	(hpass,hfail) = loadHistograms(f,options.pseudo);
+	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind);
 
 	# Build the workspacees
 	dazsleRhalphabetBuilder(hpass,hfail,odir)
 
 ##-------------------------------------------------------------------------------------
-def loadHistograms(f,pseudo):
+def loadHistograms(f,pseudo,blind):
     hpass = []
     hfail = []
     hpass.append(f.Get('data_obs_pass'))
@@ -404,7 +410,7 @@ def loadHistograms(f,pseudo):
             qcd_fail_integral = 0
             for i in range(1,qcd_pass_real.GetNbinsX()+1):
                 for j in range(1,qcd_pass_real.GetNbinsY()+1):
-                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > 40 and qcd_pass_real.GetXaxis().GetBinCenter(i) < 201:
+                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > MASS_LO and qcd_pass_real.GetXaxis().GetBinCenter(i) < MASS_HI:
                         qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
                         qcd_fail_integral += qcd_fail.GetBinContent(i,j)
             qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
@@ -450,6 +456,13 @@ def loadHistograms(f,pseudo):
     hfail.extend(hfail_sig)
     
     for lH in (hpass+hfail):
+        if blind:            
+            for i in range(1,lH.GetNbinsX()+1):
+                for j in range(1,lH.GetNbinsY()+1):
+                    if lH.GetXaxis().GetBinCenter(i) > BLIND_LO and lH.GetXaxis().GetBinCenter(i) < BLIND_HI:
+                        print "blinding signal region for %s, mass bin [%i,%i] "%(lH.GetName(),lH.GetXaxis().GetBinLowEdge(i),lH.GetXaxis().GetBinUpEdge(i))
+                        lH.SetBinContent(i,j,0.)
+                        print lH.GetBinContent(i,j)
         lH.SetDirectory(0)	
 
     # print "lengths = ", len(hpass), len(hfail)
@@ -464,7 +477,8 @@ if __name__ == '__main__':
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
 	parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
 	parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write plots', metavar='odir')
-	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
+	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='use MC', metavar='pseudo')
+	parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
 	parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
 	
 	(options, args) = parser.parse_args()
