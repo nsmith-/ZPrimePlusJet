@@ -35,7 +35,6 @@ class dazsleRhalphabetBuilder:
         self._mass_nbins = 23
         self._mass_lo    = 40 #6*(500/75.)
         self._mass_hi    = 201#30*(500/75.)
-        self._mass_lo    = 2 #6*(500/75.)
         self._mass_blind_lo = 110
         self._mass_blind_hi = 131
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
