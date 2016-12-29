@@ -162,7 +162,7 @@ def sklimAdd(fn,odir,mass=0):
 
     basename = os.path.basename( fn )
 
-    f1 = ROOT.TFile(fn,'read')
+    f1 = ROOT.TFile.Open(fn,'read')
     tree = f1.Get("Events")
     try:
         if not tree.InheritsFrom("TTree"):
@@ -170,7 +170,7 @@ def sklimAdd(fn,odir,mass=0):
     except:
         return -1
     
-    ofile = ROOT.TFile(odir+'/'+basename,'RECREATE')
+    ofile = ROOT.TFile.Open(odir+'/'+basename,'RECREATE')
     ofile.cd()
     f1.cd()	
     obj = ROOT.TObject
@@ -197,11 +197,12 @@ def sklimAdd(fn,odir,mass=0):
 
     nent = tree.GetEntries()
     print nent
-    fto = ROOT.TFile("test"+str(mass)+".root","RECREATE")
-    finfo = ROOT.TFile("signalXS/sig_vectordijet_xspt.root")
-    fr = ROOT.TFile("signalXS/Higgs_v2.root")
-    h_ggh_num = fr.Get('gghpt_amcnlo012jmt');
-    h_ggh_den = fr.Get('ggh_hpt');
+    fto = ROOT.TFile.Open("test"+str(mass)+".root","RECREATE")
+    finfo = ROOT.TFile.Open("signalXS/sig_vectordijet_xspt.root")
+    fr = ROOT.TFile.Open("signalXS/Higgs_v2.root")
+    h_ggh_num = fr.Get('gghpt_amcnlo012jmt')
+    h_ggh_den = fr.Get('ggh_hpt')
+    h_ggh_den.Scale(28.45024/h_ggh_den.Integral())
     # # h_rw = ROOT.TH1F()
     h_rw = None
     if 'VectorDiJet' in fn and mass > 0: 	
@@ -247,7 +248,7 @@ def sklimAdd(fn,odir,mass=0):
             # lheWeight[0] = float(weight)
             # MHTOvHT[0] = tree.MHT/math.sqrt(tree.HT)
             # print tree.genVPt ,tree.scale1fb,h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
-	    if 'GluGluHTobb':  newscale1fb[0] =  h_ggh_num.GetBinContent( h_ggh_num.FindBin(tree.genVPt) )/h_ggh_den.GetBinContent( h_ggh_den.FindBin(tree.genVPt) )
+	    if 'GluGluHToBB_M125_13TeV_powheg' in fn:  newscale1fb[0] =  h_ggh_num.GetBinContent( h_ggh_num.FindBin(tree.genVPt) )/h_ggh_den.GetBinContent( h_ggh_den.FindBin(tree.genVPt) )
             if 'VectorDiJet' in fn and mass > 0: newscale1fb[0] = tree.scale1fb*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
             else: newscale1fb[0] = tree.scale1fb
             #newscale1fb[0]= NEvents.GetBinContent(1)	
