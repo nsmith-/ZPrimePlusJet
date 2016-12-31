@@ -927,7 +927,236 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     print 'data', hd.Integral()
 
     return c        
+
+def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,pt=None,f2params=None):
+    leg_y = 0.88 - (6)*0.04
+    leg = ROOT.TLegend(0.5,leg_y,0.88,0.88)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+
+    maxval = -99
+
+    h_denom.Scale(1./h_denom.Integral())
+    h_numer.Scale(1./h_numer.Integral())
+    leg.AddEntry(h_denom,legname[0],'l')
+    leg.AddEntry(h_numer,legname[1],'pe')
     
+    c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+
+    c.SetFillStyle(4000)
+    c.SetFrameFillStyle(1000)
+    c.SetFrameFillColor(0)
+
+    oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
+    oben.SetBottomMargin(0)
+    oben.SetFillStyle(4000)
+    oben.SetFrameFillStyle(1000)
+    oben.SetFrameFillColor(0)
+    unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
+    unten.SetTopMargin(0.)
+    unten.SetBottomMargin(0.35)
+    unten.SetFillStyle(4000)
+    unten.SetFrameFillStyle(1000)
+    unten.SetFrameFillColor(0)
+
+    oben.Draw()
+    unten.Draw()
+    oben.cd()
+
+    h_denom.GetYaxis().SetTitle('Probability')
+    h_denom.GetYaxis().SetTitleOffset(1.0)
+    h_denom.SetMaximum(1.2*max(h_denom.GetMaximum(),h_numer.GetMaximum()))
+    h_denom.SetMinimum(0)
+    h_denom.SetLineColor(color[0])
+    h_numer.SetLineColor(color[1])
+    h_denom.Draw('hist')
+    h_numer.Draw('pezsame')
+
+    if pt is not None and f2params is not None:
+        f1params = array.array('d',list(f2params))
+        f1params.append(pt)
+        npar = len(f2params)
+        f2 = ROOT.TF2("f2",fun2,h_denom.GetXaxis().GetXmin(),h_denom.GetXaxis().GetXmax(),500,1000,npar)
+        f2.SetParameters(f2params)
+        f1 = ROOT.TF1("f1",fun1,h_denom.GetXaxis().GetXmin(),h_denom.GetXaxis().GetXmax(),npar+1)
+        f1.SetParameters(f1params)
+
+        h_pred = h_denom.Clone('h_pred')
+        for i in range(1,h_pred.GetXaxis().GetNbins()+1):
+            h_pred.SetBinContent(i,f2.Eval(h_pred.GetBinCenter(i),pt)*h_pred.GetBinContent(i))
+
+        h_pred.SetLineColor(ROOT.kRed)
+        h_pred.Draw('histsame')        
+        leg.AddEntry(h_pred,'QCD fail #times polynomial','l')
+    
+    leg.Draw()
+    tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.25,0.92,"Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    unten.cd()
+    ratio= getRatio(h_numer,h_denom)
+    ksScore = h_numer.KolmogorovTest( h_denom )
+    chiScore = h_numer.Chi2Test( h_denom , "WWCHI2/NDF")
+    print ksScore
+    print chiScore
+    ratio.SetStats(0)
+    ratio.GetYaxis().SetRangeUser(0,3.5)	
+    ratio.GetYaxis().SetNdivisions(504)
+    ratio.GetYaxis().SetTitle("Ratio")
+    ratio.GetXaxis().SetTitle(h_denom.GetXaxis().GetTitle())    
+    ratio.GetXaxis().SetTitleSize(0.14)
+    ratio.GetXaxis().SetTitleOffset(1.0)
+    ratio.GetYaxis().SetTitleOffset(0.5)
+    ratio.GetYaxis().SetLabelSize(0.12)
+    ratio.GetYaxis().SetTitleSize(0.14)
+    ratio.GetXaxis().SetLabelSize(0.12)
+	
+    
+    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+                      ratio.GetXaxis().GetXmax(), 1.0)
+    line.SetLineColor(ROOT.kGray)
+    line.SetLineStyle(2)
+    line.Draw()
+    tKsChi = ROOT.TLatex()
+    tKsChi.SetNDC()
+    tKsChi.SetTextFont(42)
+    tKsChi.SetTextSize(0.09)
+
+    #ratioError = ROOT.TGraphErrors(error)
+    #ratioError.SetFillColor(ROOT.kGray+3)
+    #ratioError.SetFillStyle(3013)
+    ratio.Draw("pez")	
+    line.Draw("same")
+    
+    if pt is not None:
+        f1.SetLineColor(ROOT.kRed)
+        f1.Draw("csame")
+        
+    tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
+
+    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".C")
+    
+    h_denom.SetMinimum(0.0005)
+    h_denom.SetMaximum(1)
+    oben.SetLogy()
+
+
+    c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.C")
+
+    if ofile is not None:
+        ofile.cd()
+        c.Write('c'+outname)
+
+    return c        
+
+def fun2(x, par):
+    rho = ROOT.TMath.Log((x[0]*x[0])/(x[1]*x[1]))
+    poly0 =  par[0] + par[1]*rho + par[2] *rho + par[3] *rho*rho
+    poly1 = (par[4] + par[5]*rho + par[6] *rho + par[7] *rho*rho)*x[1]
+    poly2 = (par[8] + par[9]*rho + par[10]*rho + par[11]*rho*rho)*x[1]*x[1]
+    return poly0+poly1+poly2
+
+def fun1(x, par):
+    rho = ROOT.TMath.Log((x[0]*x[0])/(par[12]*par[12]))
+    poly0 =  par[0] + par[1]*rho + par[2] *rho + par[3] *rho*rho
+    poly1 = (par[4] + par[5]*rho + par[6] *rho + par[7] *rho*rho)*par[12]
+    poly2 = (par[8] + par[9]*rho + par[10]*rho + par[11]*rho*rho)*par[12]*par[12]
+    return poly0+poly1+poly2
+
+def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+    leg_y = 0.88 - (6)*0.04
+    leg = ROOT.TLegend(0.5,leg_y,0.88,0.88)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+
+    maxval = -99
+
+    h_denom.Scale(1./h_denom.Integral())
+    h_numer.Scale(1./h_numer.Integral())
+    ratio = h_numer.Clone('ratio')
+    ratio.Divide(h_denom)
+    ratio.GetXaxis().SetTitleOffset(1.5)
+    ratio.GetYaxis().SetTitleOffset(1.5)
+    ratio.GetZaxis().SetTitle('Ratio')
+    ratio.GetXaxis().SetNdivisions(504)
+    ratio.GetYaxis().SetNdivisions(504)
+    ratio.GetZaxis().SetNdivisions(504)
+    
+    c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
+
+    c.SetFillStyle(4000)
+    c.SetFrameFillStyle(1000)
+    c.SetFrameFillColor(0)
+
+    ratio.SetLineColor(ROOT.kBlue+1)
+    ratio.Draw('surf1')
+
+
+    f2params = array.array('d',[1,0,0,0,0,0,0,0,0,0,0,0])
+    npar = len(f2params)
+    f2 = ROOT.TF2("f2",fun2,ratio.GetXaxis().GetXmin(),ratio.GetXaxis().GetXmax(),ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+    f2.SetParameters(f2params)
+    ratio.Fit('f2','RN')
+    f2.Draw("surf same bb")
+    
+    ROOT.gPad.SetTheta(30)
+    ROOT.gPad.SetPhi(30+270)
+    ROOT.gPad.Modified()
+    ROOT.gPad.Update()
+   
+    tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = ROOT.TLatex(0.25,0.92,"Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".C")
+
+    
+    ROOT.gPad.SetLogz()
+
+    ratio.SetMinimum(1e-2)
+    ratio.SetMaximum(10)
+    f2.GetParameters(f2params)
+    print f2params
+
+    c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.C")
+
+    if ofile is not None:
+        ofile.cd()
+        c.Write('c'+outname)
+
+    return c, f2params
+
 def	makeCanvas2D( TFMap, name, pdir='plots' ):
 
 	c1 = ROOT.TCanvas("c1","c1",1000,800)
