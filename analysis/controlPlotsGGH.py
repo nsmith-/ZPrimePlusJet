@@ -7,13 +7,22 @@ import math
 import sys
 import time
 import array
-
+import glob
 from plotHelpers import *
 from sampleContainer import *
 #
-
+def makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
+    for plot in plots:
+        if isData:
+            c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+            canvases.append(c)	
+        else:
+            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
+            c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
+            canvases.append(c)	
+            canvases.append(c1)
 ##############################################################################
-def main(options,args):
+def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
     #odir = "plots_2016_10_31/"
     idir = options.idir
@@ -148,42 +157,6 @@ def main(options,args):
 		     'muon':1
             }
         
-    print "Signals... "
-    sigSamples = {}
-    sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
-    sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi ) 
-    #sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
-    sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, lumi )    
-    #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
-    #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 
-    #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
-    #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
-    print "Backgrounds..."
-    bkgSamples = {}    
-    bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
-    if isData and muonCR:
-        bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-        bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-        bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-        bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
-    else:        
-        bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
-    bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
-    bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, lumi)
-    bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
-    bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
-    #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
-
-    if isData:
-        print "Data..."
-    if isData and muonCR:
-        dataSample = sampleContainer('muon',tfiles['muon'], 1, lumi, isData, False, '((triggerBits&4)&&passJson)')
-    elif isData:
-        dataSample = sampleContainer('data',tfiles['data'], 1, lumi, isData, False, '((triggerBits&2)&&passJson)')
-        
-
-
-    ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
 
 
     canvases = []
@@ -210,23 +183,103 @@ def main(options,args):
 	     #    'h_msd_ak8_topR6_pass_0p7','h_msd_ak8_topR6_fail_0p7',
 		 #'h_msd_ak8_topR6_pass_0p75','h_msd_ak8_topR6_fail_0p75',
                  'h_msd_ak8_bbleading_topR6_pass','h_msd_ak8_bbleading_topR6_fail']
-    for plot in plots:
-        hs = {}
-        hb = {}
-        hall={}
-        for process, s in sigSamples.iteritems():
-            hs[process] = getattr(s,plot)
-            hall[process] = getattr(s,plot)
-        for process, s in bkgSamples.iteritems():
-            hb[process] = getattr(s,plot)
-            hall[process] = getattr(s,plot)
+            
+    if not outputExists: 
+        print "Signals... "
+        sigSamples = {}
+        sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
+        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi ) 
+        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
+        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, lumi )    
+        #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
+        #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 
+        #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
+        #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
+        print "Backgrounds..."
+        bkgSamples = {}    
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 10000, lumi)
+        if isData and muonCR:
+            bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+            bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+            bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
+        else:        
+            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
+        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
+        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, lumi)
+        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
+        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
+        #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
+
         if isData:
-            hd = getattr(dataSample,plot)
-            c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
-        else:
-            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
-            c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
-        canvases.append(c)	
+            print "Data..."
+        if isData and muonCR:
+            dataSample = sampleContainer('muon',tfiles['muon'], 1, lumi, isData, False, '((triggerBits&4)&&passJson)')
+        elif isData:
+            dataSample = sampleContainer('data',tfiles['data'], 1, lumi, isData, False, '((triggerBits&2)&&passJson)')
+        
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
+
+        hall_byproc = {}
+        for process, s in sigSamples.iteritems():
+            hall_byproc[process] = {}
+        for process, s in bkgSamples.iteritems():
+            hall_byproc[process] = {}
+        for plot in plots:
+            hs = {}
+            hb = {}
+            hall={}
+            hd = None
+            for process, s in sigSamples.iteritems():
+                hs[process] = getattr(s,plot)
+                hall[process] = getattr(s,plot)
+                hall_byproc[process][plot] = getattr(s,plot)
+            for process, s in bkgSamples.iteritems():
+                hb[process] = getattr(s,plot)
+                hall[process] = getattr(s,plot)
+                hall_byproc[process][plot] = getattr(s,plot)
+            if isData:
+                hd = getattr(dataSample,plot)          
+                if muonCR:      
+                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
+                else:
+                    hall_byproc['data'][plot] = getattr(dataSample,plot)
+    
+        makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+            
+        ofile.cd()
+        for proc, hDict in hall_byproc.iteritems():
+            for plot, h in hDict.iteritems():
+                h.Write()
+        ofile.Close()
+    
+    else:        
+        sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
+        bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
+        if isData and muonCR:
+            bkgSamples.extend(['TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep'])
+        else:        
+            bkgSamples.extend(['TTbar'])
+            
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','read')
+        for plot in plots:
+            hb = {}
+            hs = {}
+            hall = {}
+            hd = None
+            for process in bkgSamples:
+                hb[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
+                hall[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
+            for process in sigSamples:
+                hs[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
+                hall[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
+            if isData and muonCR:
+                hd = ofile.Get(plot.replace('h_','h_muon_'))
+            elif isData:
+                hd = ofile.Get(plot.replace('h_','h_data_'))
+                
+        makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+        
 
 
 ##----##----##----##----##----##----##
@@ -248,12 +301,17 @@ if __name__ == '__main__':
     ROOT.gStyle.SetPadTopMargin(0.10)
     ROOT.gStyle.SetPadLeftMargin(0.16)
     ROOT.gStyle.SetPadRightMargin(0.10)
-    ROOT.gStyle.SetPalette(1)
+    #ROOT.gStyle.SetPalette(1)
     ROOT.gStyle.SetPaintTextFormat("1.1f")
     ROOT.gStyle.SetOptFit(0000)
     ROOT.gROOT.SetBatch()
+
     
-    main(options,args)
+    outputExists = False
+    if glob.glob(options.odir+'/Plots_1000pb_weighted.root'):
+        outputExists = True
+        
+    main(options,args,outputExists)
 ##----##----##----##----##----##----##
 
 

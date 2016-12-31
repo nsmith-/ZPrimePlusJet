@@ -13,6 +13,36 @@ from plotHelpers import *
 from sampleContainer import *
 #
 
+def makePlots(hb,style,odir,lumi,ofile,canvases):
+    hist_pass_cat = []
+    hist_fail_cat = []
+    msd_binBoundaries=[]
+    for i in range(0,24):	
+        msd_binBoundaries.append(40.+i*7)
+    ptBinBoundaries = []
+    ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinLowEdge(1))
+    for j in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsY()+1):
+        hist_pass = ROOT.TH1F('h_QCD_msd_ak8_topR6_pass_cat%i'%j, 'h_QCD_msd_ak8_topR6_pass_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
+        hist_fail = ROOT.TH1F('h_QCD_msd_ak8_topR6_fail_cat%i'%j, 'h_QCD_msd_ak8_topR6_fail_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
+        hist_pass.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetXaxis().GetTitle())
+        hist_fail.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetXaxis().GetTitle())
+        ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinUpEdge(j))
+        for i in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsX()+1):
+            hist_pass.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinContent(i,j))
+            hist_pass.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinError(i,j))
+            hist_fail.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinContent(i,j))
+            hist_fail.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinError(i,j))
+        hist_pass_cat.append(hist_pass)
+        hist_fail_cat.append(hist_fail)
+
+    c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_fail'],hb['QCD']['h_msd_ak8_topR6_pass'],['QCD fail, p_{T} > %i GeV'%ptBinBoundaries[0],'QCD pass, p_{T} > %i GeV'%ptBinBoundaries[0]],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6',odir,lumi,ofile)
+    canvases.append(c)	
+    c1, f2params = makeCanvasRatio2D(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'],hb['QCD']['h_msd_v_pt_ak8_topR6_pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6',odir,lumi,ofile)
+    canvases.append(c1)	
+    for i in range(1,len(ptBinBoundaries)):
+        c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params)
+        canvases.append(c)
+    
 ##############################################################################
 def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
@@ -166,11 +196,8 @@ def main(options,args,outputExists):
             for plot in plots:
                 hb[process][plot] = getattr(s,plot)
             
-            
-        c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_fail'],hb['QCD']['h_msd_ak8_topR6_pass'],['QCD fail, p_{T}>500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6',odir,lumi,ofile)
-
-    
-        canvases.append(c)
+        makePlots(hb,style,odir,lumi,ofile,canvases)
+        
         ofile.cd()
         for proc, hDict in hb.iteritems():
             for plot, h in hDict.iteritems():
@@ -185,36 +212,8 @@ def main(options,args,outputExists):
             hb[process] = {}
             for plot in plots:
                 hb[process][plot] = ofile.Get(plot.replace('h_','h_%s_'%process))
-
-        hist_pass_cat = []
-        hist_fail_cat = []
-        
-        msd_binBoundaries=[]
-        for i in range(0,24):	
-            msd_binBoundaries.append(40.+i*7)
-        ptBinBoundaries = []
-        ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinLowEdge(1))
-        for j in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsY()+1):
-            hist_pass = ROOT.TH1F('h_QCD_msd_ak8_topR6_pass_cat%i'%j, 'h_QCD_msd_ak8_topR6_pass_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
-            hist_fail = ROOT.TH1F('h_QCD_msd_ak8_topR6_fail_cat%i'%j, 'h_QCD_msd_ak8_topR6_fail_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
-            hist_pass.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetXaxis().GetTitle())
-            hist_fail.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetXaxis().GetTitle())
-            ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinUpEdge(j))
-            for i in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsX()+1):
-                hist_pass.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinContent(i,j))
-                hist_pass.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinError(i,j))
-                hist_fail.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinContent(i,j))
-                hist_fail.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinError(i,j))
-            hist_pass_cat.append(hist_pass)
-            hist_fail_cat.append(hist_fail)
-            
-        c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_fail'],hb['QCD']['h_msd_ak8_topR6_pass'],['QCD fail, p_{T} > %i GeV'%ptBinBoundaries[0],'QCD pass, p_{T} > %i GeV'%ptBinBoundaries[0]],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6',odir,lumi,ofile)
-        c, f2params = makeCanvasRatio2D(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'],hb['QCD']['h_msd_v_pt_ak8_topR6_pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6',odir,lumi,ofile)
-        for i in range(1,len(ptBinBoundaries)):
-            c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params)
-        
-
-
+                
+        makePlots(hb,style,odir,lumi,ofile,canvases)
         
 
 
