@@ -386,13 +386,13 @@ def main(options,args):
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
 	f = r.TFile.Open(ifile)
-	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind);
+	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind,options.useQCD);
 
 	# Build the workspacees
 	dazsleRhalphabetBuilder(hpass,hfail,odir)
 
 ##-------------------------------------------------------------------------------------
-def loadHistograms(f,pseudo,blind):
+def loadHistograms(f,pseudo,blind,useQCD):
     hpass = []
     hfail = []
     hpass.append(f.Get('data_obs_pass'))
@@ -403,17 +403,20 @@ def loadHistograms(f,pseudo,blind):
     bkgs = ["wqq", "zqq", "qcd", "tqq"]
     for i, bkg in enumerate(bkgs):
         if bkg=='qcd':
-            qcd_pass_real = f.Get('qcd_pass').Clone('qcd_pass_real')
             qcd_fail = f.Get('qcd_fail')
-            qcd_pass = qcd_fail.Clone('qcd_pass')
-            qcd_pass_real_integral = 0
-            qcd_fail_integral = 0
-            for i in range(1,qcd_pass_real.GetNbinsX()+1):
-                for j in range(1,qcd_pass_real.GetNbinsY()+1):
-                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > MASS_LO and qcd_pass_real.GetXaxis().GetBinCenter(i) < MASS_HI:
-                        qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
-                        qcd_fail_integral += qcd_fail.GetBinContent(i,j)
-            qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
+            if useQCD:
+                qcd_pass = f.Get('qcd_pass')
+            else:
+                qcd_pass_real = f.Get('qcd_pass').Clone('qcd_pass_real')
+                qcd_pass = qcd_fail.Clone('qcd_pass')
+                qcd_pass_real_integral = 0
+                qcd_fail_integral = 0
+                for i in range(1,qcd_pass_real.GetNbinsX()+1):
+                    for j in range(1,qcd_pass_real.GetNbinsY()+1):
+                        if qcd_pass_real.GetXaxis().GetBinCenter(i) > MASS_LO and qcd_pass_real.GetXaxis().GetBinCenter(i) < MASS_HI:
+                            qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
+                            qcd_fail_integral += qcd_fail.GetBinContent(i,j)
+                qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
             hpass_bkg.append(qcd_pass)
             hfail_bkg.append(qcd_fail)
             print 'qcd pass integral', qcd_pass.Integral()
@@ -479,6 +482,7 @@ if __name__ == '__main__':
 	parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='use MC', metavar='pseudo')
 	parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
+	parser.add_option('--use-qcd', action='store_true', dest='useQCD', default =False,help='use real QCD MC', metavar='useQCD')
 	parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
 	
 	(options, args) = parser.parse_args()
