@@ -8,19 +8,41 @@ import sys
 import time
 import array
 import glob
+
 from plotHelpers import *
 from sampleContainer import *
 #
-def makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
-    for plot in plots:
-        if isData:
-            c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
-            canvases.append(c)	
-        else:
-            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
-            c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
-            canvases.append(c)	
-            canvases.append(c1)
+
+def makePlots(hb,style,odir,lumi,ofile,canvases):
+    hist_pass_cat = []
+    hist_fail_cat = []
+    msd_binBoundaries=[]
+    for i in range(0,24):	
+        msd_binBoundaries.append(40.+i*7)
+    ptBinBoundaries = []
+    ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinLowEdge(1))
+    for j in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsY()+1):
+        hist_pass = ROOT.TH1F('h_QCD_msd_ak8_topR6_pass_cat%i'%j, 'h_QCD_msd_ak8_topR6_pass_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
+        hist_fail = ROOT.TH1F('h_QCD_msd_ak8_topR6_fail_cat%i'%j, 'h_QCD_msd_ak8_topR6_fail_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
+        hist_pass.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetXaxis().GetTitle())
+        hist_fail.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetXaxis().GetTitle())
+        ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinUpEdge(j))
+        for i in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsX()+1):
+            hist_pass.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinContent(i,j))
+            hist_pass.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinError(i,j))
+            hist_fail.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinContent(i,j))
+            hist_fail.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinError(i,j))
+        hist_pass_cat.append(hist_pass)
+        hist_fail_cat.append(hist_fail)
+
+    c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_fail'],hb['QCD']['h_msd_ak8_topR6_pass'],['QCD fail, p_{T} > %i GeV'%ptBinBoundaries[0],'QCD pass, p_{T} > %i GeV'%ptBinBoundaries[0]],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6',odir,lumi,ofile)
+    canvases.append(c)	
+    c1, f2params = makeCanvasRatio2D(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'],hb['QCD']['h_msd_v_pt_ak8_topR6_pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6',odir,lumi,ofile)
+    canvases.append(c1)	
+    for i in range(1,len(ptBinBoundaries)):
+        c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params)
+        canvases.append(c)
+    
 ##############################################################################
 def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
@@ -156,129 +178,42 @@ def main(options,args,outputExists):
              'data': 1,
 		     'muon':1
             }
+
         
-
-
     canvases = []
-    if isData and muonCR:
-        plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
-                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4']                 
-    elif isData:
-        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8']
-    else:	
-    	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2',
-                 'h_pt_bbleading','h_bb_bbleading','h_msd_bbleading',
-                 'h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut',
-                 'h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd',
-                 'h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4L100','h_n_ak4M100','h_n_ak4T100','h_n_ak4L150','h_n_ak4M150','h_n_ak4T150',
-                 'h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2_pass',
-                 'h_msd_ak8_topR3_pass','h_msd_ak8_topR4_pass','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5_pass','h_msd_ak8_topR7_pass',
-                 'h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
-                 'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail',
-		 #'h_msd_ak8_topR6_pass_0p4','h_msd_ak8_topR6_fail_0p4',
-		 #'h_msd_ak8_topR6_pass_0p45','h_msd_ak8_topR6_fail_0p45',
-		 #'h_msd_ak8_topR6_pass_0p5','h_msd_ak8_topR6_fail_0p5',
-		 #'h_msd_ak8_topR6_pass_0p6','h_msd_ak8_topR6_fail_0p6',
-		 #'h_msd_ak8_topR6_pass_0p65','h_msd_ak8_topR6_fail_0p65',
-	     #    'h_msd_ak8_topR6_pass_0p7','h_msd_ak8_topR6_fail_0p7',
-		 #'h_msd_ak8_topR6_pass_0p75','h_msd_ak8_topR6_fail_0p75',
-                 'h_msd_ak8_bbleading_topR6_pass','h_msd_ak8_bbleading_topR6_fail']
-            
+    plots = ['h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail','h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']
+
     if not outputExists: 
-        print "Signals... "
-        sigSamples = {}
-        sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
-        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi ) 
-        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
-        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, lumi )    
-        #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
-        #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 
-        #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
-        #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 10000, lumi)
-        if isData and muonCR:
-            bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-            bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-            bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
-        else:        
-            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
-        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
-        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, lumi)
-        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
-        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
-        #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
 
-        if isData:
-            print "Data..."
-        if isData and muonCR:
-            dataSample = sampleContainer('muon',tfiles['muon'], 1, lumi, isData, False, '((triggerBits&4)&&passJson)')
-        elif isData:
-            dataSample = sampleContainer('data',tfiles['data'], 1, lumi, isData, False, '((triggerBits&2)&&passJson)')
-        
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Ratios_1000pb_weighted.root','recreate')
 
-        hall_byproc = {}
-        for process, s in sigSamples.iteritems():
-            hall_byproc[process] = {}
+        hb = {}
         for process, s in bkgSamples.iteritems():
-            hall_byproc[process] = {}
-        for plot in plots:
-            hs = {}
-            hb = {}
-            hall={}
-            hd = None
-            for process, s in sigSamples.iteritems():
-                hs[process] = getattr(s,plot)
-                hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
-            for process, s in bkgSamples.iteritems():
-                hb[process] = getattr(s,plot)
-                hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
-            if isData:
-                hd = getattr(dataSample,plot)          
-                if muonCR:      
-                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
-                else:
-                    hall_byproc['data'][plot] = getattr(dataSample,plot)
-    
-        makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+            hb[process] = {}
+            for plot in plots:
+                hb[process][plot] = getattr(s,plot)
             
+        makePlots(hb,style,odir,lumi,ofile,canvases)
+        
         ofile.cd()
-        for proc, hDict in hall_byproc.iteritems():
+        for proc, hDict in hb.iteritems():
             for plot, h in hDict.iteritems():
                 h.Write()
         ofile.Close()
-    
-    else:        
-        sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
-        if isData and muonCR:
-            bkgSamples.extend(['TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep'])
-        else:        
-            bkgSamples.extend(['TTbar'])
-            
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','read')
-        for plot in plots:
-            hb = {}
-            hs = {}
-            hall = {}
-            hd = None
-            for process in bkgSamples:
-                hb[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
-                hall[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
-            for process in sigSamples:
-                hs[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
-                hall[process] = ofile.Get(plot.replace('h_','h_%s_'%process))
-            if isData and muonCR:
-                hd = ofile.Get(plot.replace('h_','h_muon_'))
-            elif isData:
-                hd = ofile.Get(plot.replace('h_','h_data_'))
+    else:
+        
+        ofile = ROOT.TFile.Open(odir+'/Ratios_1000pb_weighted.root','read')
+        
+        hb = {}
+        for process in ['QCD']:
+            hb[process] = {}
+            for plot in plots:
+                hb[process][plot] = ofile.Get(plot.replace('h_','h_%s_'%process))
                 
-        makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+        makePlots(hb,style,odir,lumi,ofile,canvases)
         
 
 
@@ -301,17 +236,37 @@ if __name__ == '__main__':
     ROOT.gStyle.SetPadTopMargin(0.10)
     ROOT.gStyle.SetPadLeftMargin(0.16)
     ROOT.gStyle.SetPadRightMargin(0.10)
-    #ROOT.gStyle.SetPalette(1)
     ROOT.gStyle.SetPaintTextFormat("1.1f")
     ROOT.gStyle.SetOptFit(0000)
+    ROOT.gStyle.SetPalette(ROOT.kBird)
     ROOT.gROOT.SetBatch()
 
+    ## stops = [0.0000, 0.1250, 0.2500, 0.3750, 0.5000, 0.6250, 0.7500, 0.8750, 1.0000]
+    ## red   = [0.2082, 0.0592, 0.0780, 0.0232, 0.1802, 0.5301, 0.8186, 0.9956, 0.9764]
+    ## green = [0.1664, 0.3599, 0.5041, 0.6419, 0.7178, 0.7492, 0.7328, 0.7862, 0.9832]
+    ## blue  = [0.5293, 0.8684, 0.8385, 0.7914, 0.6425, 0.4662, 0.3499, 0.1968, 0.0539]
+
     
+    ## stops = [0.00, 0.34, 0.61, 0.84, 1.00]
+    ## red   = [0.00, 0.00, 0.87, 1.00, 0.51]
+    ## green = [0.00, 0.81, 1.00, 0.20, 0.00]
+    ## blue  = [0.51, 1.00, 0.12, 0.00, 0.00]
+    
+    ## s = array.array('d', stops)
+    ## r = array.array('d', red)
+    ## g = array.array('d', green)
+    ## b = array.array('d', blue)
+
+    ## npoints = len(s)
+    ## ROOT.TColor.CreateGradientColorTable(npoints, s, r, g, b, 255)
+    ## ROOT.gStyle.SetNumberContours(255)
+
     outputExists = False
-    if glob.glob(options.odir+'/Plots_1000pb_weighted.root'):
+    if glob.glob(options.odir+'/Ratios_1000pb_weighted.root'):
         outputExists = True
         
     main(options,args,outputExists)
+        
 ##----##----##----##----##----##----##
 
 

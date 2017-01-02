@@ -172,7 +172,7 @@ class sampleContainer:
         }
             
         msd_binBoundaries=[]
-        for i in range(0,31):	
+        for i in range(0,24):	
             msd_binBoundaries.append(40.+i*7)
 	print(msd_binBoundaries)
         pt_binBoundaries = [500,550,600,675,800,1000]
@@ -266,6 +266,9 @@ class sampleContainer:
             fbweight = self.scale1fb[0] * self._lumi
 	    vjetsKF = self.kfactor[0] #==1 for not V+jets events
             weight = puweight*fbweight*self._sf*vjetsKF
+
+            if self._isData:
+                weight = 1
 
             # Trigger (for JetHT triggerBits& 2 or in this case triggerBits!=1 )
             #if self._isData and self._tt.triggerBits !=1: continue
