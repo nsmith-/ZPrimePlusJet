@@ -21,11 +21,13 @@ veff_unc                lnN     0.8            0.8            0.8            0.8
 znorm                   lnN     -              -              -              -              -              1.2            -              -              -              -              -              -              -              -              1.2            -              -              -            
 #scale   shape 0.2	0.2     0.2     -  -         0.2      		       0.2        0.2		   - -
 #smear   shape -		1.0 	1.0     -   -        -		       		    1.0		        1.0	- -
+r0p0  flatParam
 r1p0  flatParam
 r2p0  flatParam
 r0p1  flatParam
 r1p1  flatParam
 r2p1  flatParam
-r2p2  flatParam
 r0p2  flatParam
+r1p2  flatParam
+r2p2  flatParam
 qcdeff        flatParam

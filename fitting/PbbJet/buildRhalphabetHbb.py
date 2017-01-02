@@ -34,6 +34,7 @@ class dazsleRhalphabetBuilder:
         self._hpass = hpass;
         self._hfail = hfail;
 	self._massfit = options.massfit
+	self._freeze = options.freeze
 
         self._outputName = odir+"/base.root";
 
@@ -70,10 +71,17 @@ class dazsleRhalphabetBuilder:
         self._lEff    = r.RooRealVar("veff"      ,"veff"      ,0.5 ,0.,1.0)
 
         self._lEffQCD = r.RooRealVar("qcdeff"    ,"qcdeff"   ,0.01,0.,10.)
-        if hfail[3].Integral() > 0:
-            qcdeff = hpass[3].Integral()/hfail[3].Integral()
+        qcd_pass_integral = 0
+        qcd_fail_integral = 0
+        for i in range(1,hfail[3].GetNbinsX()+1):
+            for j in range(1,hfail[3].GetNbinsY()+1):
+                if hfail[3].GetXaxis().GetBinCenter(i) > MASS_LO and hfail[3].GetXaxis().GetBinCenter(i) < MASS_HI:
+                    qcd_fail_integral += hfail[3].GetBinContent(i,j)
+                    qcd_pass_integral += hpass[3].GetBinContent(i,j)
+        if qcd_fail_integral>0:
+            qcdeff = qcd_pass_integral/qcd_fail_integral
             self._lEffQCD.setVal(qcdeff)
-            print "qcdeff = %f"%qcdeff
+        print "qcdeff = %f"%qcdeff
         self._lDM     = r.RooRealVar("dm","dm", 0.,-10,10)
         self._lShift  = r.RooFormulaVar("shift",self._lMSD.GetName()+"-dm",r.RooArgList(self._lMSD,self._lDM)) 
 
@@ -268,14 +276,54 @@ class dazsleRhalphabetBuilder:
         ## (p0r0 + p1r0 * pT + p2r0 * pT^2 + ...) + 
         ## (p0r1 + p1r1 * pT + p2r1 * pT^2 + ...) * rho + 
         ## (p0r2 + p1r2 * pT + p2r2 * pT^2 + ...) * rho^2 + ...
-
+	'''
+	r0p0    =    0, pXMin,pXMax
+	r1p0    =   -3.7215e-03 +/-  1.71e-08
+ 	r2p0    =    2.4063e-06 +/-  2.76e-11
+        r0p1    =   -2.1088e-01 +/-  2.72e-06I	
+        r1p1    =    3.6847e-05 +/-  4.66e-09
+        r2p1    =   -3.8415e-07 +/-  7.23e-12
+        r0p2    =   -8.5276e-02 +/-  6.90e-07
+        r1p2    =    2.2058e-04 +/-  1.10e-09
+        r2p2    =   -2.2425e-07 +/-  1.64e-12
+	'''
+	value = [ 0.,
+		-3.7215e-03,
+ 		2.4063e-06,
+		-2.1088e-01, 
+ 		3.6847e-05, 
+		-3.8415e-07, 
+		-8.5276e-02, 
+ 		2.2058e-04,
+		-2.2425e-07]
+	error = [iXMax0,
+		1.71e-08,
+		2.76e-11,
+		2.72e-06,
+		4.66e-09,
+		7.23e-12,
+		6.90e-07,
+		1.10e-09,
+		1.64e-12]
+		
         for i0 in range(iNVar0+1):
             for i1 in range(iNVar1+1):
                 pVar = iLabel1+str(i1)+iLabel0+str(i0);		
-                pXMin = iXMin0
-                pXMax = iXMax0
+		if self._freeze :
+		
+			start = value [i0*3+i1]
+			pXMin = value [i0*3+i1]-error[i0*3+i1]
+			pXMax = value [i0*3+i1]+error[i0*3+i1]
+			
+		else: 
+			 start = 0.0
+                	 pXMin = iXMin0
+               		 pXMax = iXMax0
+		
                 pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin,pXMax)
+		print("========  here i0 %s i1 %s"%(i0,i1))
                 print pVar
+		print(" is : %s  +/- %s"%(value[i0*3+i1],error[i0*3+i1]))
                 
                 iVars.append(pRooVar)
 
@@ -386,13 +434,13 @@ def main(options,args):
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
 	f = r.TFile.Open(ifile)
-	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind);
+	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind,options.useQCD);
 
 	# Build the workspacees
 	dazsleRhalphabetBuilder(hpass,hfail,odir)
 
 ##-------------------------------------------------------------------------------------
-def loadHistograms(f,pseudo,blind):
+def loadHistograms(f,pseudo,blind,useQCD):
     hpass = []
     hfail = []
     hpass.append(f.Get('data_obs_pass'))
@@ -403,17 +451,20 @@ def loadHistograms(f,pseudo,blind):
     bkgs = ["wqq", "zqq", "qcd", "tqq"]
     for i, bkg in enumerate(bkgs):
         if bkg=='qcd':
-            qcd_pass_real = f.Get('qcd_pass').Clone('qcd_pass_real')
             qcd_fail = f.Get('qcd_fail')
-            qcd_pass = qcd_fail.Clone('qcd_pass')
-            qcd_pass_real_integral = 0
-            qcd_fail_integral = 0
-            for i in range(1,qcd_pass_real.GetNbinsX()+1):
-                for j in range(1,qcd_pass_real.GetNbinsY()+1):
-                    if qcd_pass_real.GetXaxis().GetBinCenter(i) > MASS_LO and qcd_pass_real.GetXaxis().GetBinCenter(i) < MASS_HI:
-                        qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
-                        qcd_fail_integral += qcd_fail.GetBinContent(i,j)
-            qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
+            if useQCD:
+                qcd_pass = f.Get('qcd_pass')
+            else:
+                qcd_pass_real = f.Get('qcd_pass').Clone('qcd_pass_real')
+                qcd_pass = qcd_fail.Clone('qcd_pass')
+                qcd_pass_real_integral = 0
+                qcd_fail_integral = 0
+                for i in range(1,qcd_pass_real.GetNbinsX()+1):
+                    for j in range(1,qcd_pass_real.GetNbinsY()+1):
+                        if qcd_pass_real.GetXaxis().GetBinCenter(i) > MASS_LO and qcd_pass_real.GetXaxis().GetBinCenter(i) < MASS_HI:
+                            qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
+                            qcd_fail_integral += qcd_fail.GetBinContent(i,j)                   
+                qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
             hpass_bkg.append(qcd_pass)
             hfail_bkg.append(qcd_fail)
             print 'qcd pass integral', qcd_pass.Integral()
@@ -479,7 +530,9 @@ if __name__ == '__main__':
 	parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='use MC', metavar='pseudo')
 	parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
+	parser.add_option('--use-qcd', action='store_true', dest='useQCD', default =False,help='use real QCD MC', metavar='useQCD')
 	parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
+	parser.add_option('--freeze', action='store_true', dest='freeze', default =False,help='freeze pol values', metavar='freeze')
 	
 	(options, args) = parser.parse_args()
 
