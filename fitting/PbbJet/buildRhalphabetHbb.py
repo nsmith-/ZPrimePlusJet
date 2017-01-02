@@ -70,10 +70,17 @@ class dazsleRhalphabetBuilder:
         self._lEff    = r.RooRealVar("veff"      ,"veff"      ,0.5 ,0.,1.0)
 
         self._lEffQCD = r.RooRealVar("qcdeff"    ,"qcdeff"   ,0.01,0.,10.)
-        if hfail[3].Integral() > 0:
-            qcdeff = hpass[3].Integral()/hfail[3].Integral()
+        qcd_pass_integral = 0
+        qcd_fail_integral = 0
+        for i in range(1,hfail[3].GetNbinsX()+1):
+            for j in range(1,hfail[3].GetNbinsY()+1):
+                if hfail[3].GetXaxis().GetBinCenter(i) > MASS_LO and hfail[3].GetXaxis().GetBinCenter(i) < MASS_HI:
+                    qcd_fail_integral += hfail[3].GetBinContent(i,j)
+                    qcd_pass_integral += hpass[3].GetBinContent(i,j)
+        if qcd_fail_integral>0:
+            qcdeff = qcd_pass_integral/qcd_fail_integral
             self._lEffQCD.setVal(qcdeff)
-            print "qcdeff = %f"%qcdeff
+        print "qcdeff = %f"%qcdeff
         self._lDM     = r.RooRealVar("dm","dm", 0.,-10,10)
         self._lShift  = r.RooFormulaVar("shift",self._lMSD.GetName()+"-dm",r.RooArgList(self._lMSD,self._lDM)) 
 
@@ -415,7 +422,7 @@ def loadHistograms(f,pseudo,blind,useQCD):
                     for j in range(1,qcd_pass_real.GetNbinsY()+1):
                         if qcd_pass_real.GetXaxis().GetBinCenter(i) > MASS_LO and qcd_pass_real.GetXaxis().GetBinCenter(i) < MASS_HI:
                             qcd_pass_real_integral += qcd_pass_real.GetBinContent(i,j)
-                            qcd_fail_integral += qcd_fail.GetBinContent(i,j)
+                            qcd_fail_integral += qcd_fail.GetBinContent(i,j)                   
                 qcd_pass.Scale(qcd_pass_real_integral/qcd_fail_integral) # qcd_pass = qcd_fail * eff(pass)/eff(fail)
             hpass_bkg.append(qcd_pass)
             hfail_bkg.append(qcd_fail)
