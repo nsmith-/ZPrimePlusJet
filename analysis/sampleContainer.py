@@ -238,8 +238,8 @@ class sampleContainer:
 	'h_msd_v_pt_ak8_topR6_0p93_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p93_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 
-	'h_msd_v_pt_ak8_topR6_0p93_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-        'h_msd_v_pt_ak8_topR6_0p93_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+	'h_msd_v_pt_ak8_topR6_0p94_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p94_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_0p94_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p94_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	
 	'h_msd_v_pt_ak8_topR6_0p95_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p95_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p95_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p95_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
