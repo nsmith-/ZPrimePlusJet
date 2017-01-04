@@ -29,9 +29,9 @@ class dazsleRhalphabetBuilder:
 
 		self._outputName = "base.root";
 
-		self._mass_nbins = 36;
+		self._mass_nbins = 16;
 		self._mass_lo    = 2*(500/75.);
-		self._mass_hi    = 38*(500/75.);
+		self._mass_hi    = 42*(500/75.);
 
 		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
@@ -83,7 +83,8 @@ class dazsleRhalphabetBuilder:
 			pPt = self._hpass[0].GetYaxis().GetBinLowEdge(ipt)+self._hpass[0].GetYaxis().GetBinWidth(ipt)*0.3;
 			
 			#Make the ralphabet fit for a specific pt bin
-			lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],pPt,"cat"+str(ipt))
+			#lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],pPt,"cat"+str(ipt))
+			lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],[hpass_inPtBin[0],hpass_inPtBin[1],hpass_inPtBin[2],hpass_inPtBin[4]],pPt,"cat"+str(ipt))			
 			
 			# #Get signals and SM backgrounds
 			lPHists=[pHists[0],pHists[1],pHists[2]]
@@ -98,7 +99,7 @@ class dazsleRhalphabetBuilder:
 			for imass in range(1,self._mass_nbins):
 				print "qcd_fail_cat%i_Bin%i flatParam" % (ipt,imass);
 			
-	def makeRhalph(self,iHs,iPt,iCat):
+	def makeRhalph(self,iHs,iHPs,iPt,iCat):
 		
 		print "---- [makeRhalph]"	
 
@@ -138,9 +139,13 @@ class dazsleRhalphabetBuilder:
 			
 			print pPass.Print();
 			# print pPass.GetName();
+			pSumP = 0
+			for i1 in range(0,len(iHPs)):
+			        pSumP = pSumP + iHPs[i1].GetBinContent(i0) if i1 == 0 else pSumP - iHPs[i1].GetBinContent(i0); # subtract W/Z from data 
+			if pSumP < 0: pSumP = 0
 
 			#If the number of events in the failing is small remove the bin from being free in the fit
-			if pSum < 4:
+			if pSum < 4 and pSumP < 4:
 				pFail.setConstant(True)
 				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),0,0,0)
 				pPass.setConstant(True)
