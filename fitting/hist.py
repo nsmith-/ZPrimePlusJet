@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import ROOT as r,sys,math,array
 
-class histManip:
+class hist:
     def __init__( self , iVars, iHists):
         self._vals  = iVars
         self._hists = iHists

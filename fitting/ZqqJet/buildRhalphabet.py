@@ -13,7 +13,7 @@ import array
 # including other directories
 sys.path.insert(0, '../.')
 from tools import *
-from histManip import *
+from hist import *
 
 ##############################################################################
 ##############################################################################
@@ -334,7 +334,7 @@ class dazsleRhalphabetBuilder:
 				
 				#####
 				# smear/shift the matched
-				hist_container = histManip( [mass],[tmph_mass_matched] );	
+				hist_container = hist( [mass],[tmph_mass_matched] );	
 				mass_shift = 0.99;
 				mass_shift_unc = 0.03;
 				res_shift = 1.094;
