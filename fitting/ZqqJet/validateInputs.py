@@ -23,7 +23,7 @@ def main(options,args):
 	if not os.path.isdir("plots/mlfit"): os.mkdir( "plots/mlfit" );
 
 	# plot input histos
-	do2DHistInputs("hist_1DZqq.root");
+	do2DHistInputs("hist_1DZqq-matchtest.root");
 
 	# Load the input histograms
 	f = r.TFile("base.root");
@@ -42,7 +42,7 @@ def main(options,args):
 	# wpr.Print();
 	# wfr.Print();
 
-	for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
+	# for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
 
 ###############################################################
 

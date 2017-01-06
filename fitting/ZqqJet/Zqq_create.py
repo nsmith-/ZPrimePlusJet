@@ -8,12 +8,28 @@ import sys
 
 def createHist(trans_h2ddt,tag,filename,sf,lumi,mass,isdata=False):
 
-	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
-	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",75,0,500,5,500,1000)
+	massbins = 100;
+	masslo   = 0;
+	masshi   = 500;
+
+	h_pass_ak8 = TH2F(tag+"_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",massbins,masslo,masshi,5,500,1000)
+	h_fail_ak8 = TH2F(tag+"_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",massbins,masslo,masshi,5,500,1000)
+	h_pass_matched_ak8 = TH2F(tag+"_pass_matched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",massbins,masslo,masshi,5,500,1000)
+	h_pass_unmatched_ak8 = TH2F(tag+"_pass_unmatched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",massbins,masslo,masshi,5,500,1000)
+	h_fail_matched_ak8 = TH2F(tag+"_fail_matched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",massbins,masslo,masshi,5,500,1000)
+	h_fail_unmatched_ak8 = TH2F(tag+"_fail_unmatched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)",massbins,masslo,masshi,5,500,1000)
+	
+	# validation
+	h_pass_msd_ak8 = TH1F(tag+"pass_msd", "; AK8 m_{SD}^{PUPPI}; N", 40, 0, 200)
+	h_fail_msd_ak8 = TH1F(tag+"fail_msd", "; AK8 m_{SD}^{PUPPI}; N", 40, 0, 200)
+	h_pass_msd_matched_ak8 = TH1F(tag+"pass_msd_matched", "; AK8 m_{SD}^{PUPPI}; N", 40, 0, 200)
+	h_pass_msd_unmatched_ak8 = TH1F(tag+"pass_msd_unmatched", "; AK8 m_{SD}^{PUPPI}; N", 40, 0, 200)
+	h_fail_msd_matched_ak8 = TH1F(tag+"fail_msd_matched", "; AK8 m_{SD}^{PUPPI}; N", 40, 0, 200)
+	h_fail_msd_unmatched_ak8 = TH1F(tag+"fail_msd_unmatched", "; AK8 m_{SD}^{PUPPI}; N", 40, 0, 200)
 
 	# sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v11.05/sklim-Nov7/"
 	# sklimpath="root://cmsxrootd.fnal.gov//eos/uscms/store/user/lpchbb/sklim-Nov7/"
-	sklimpath="/uscms_data/d2/ntran/physics/dijets/DAZSLE/go11/ZPrimePlusJet/sklimming/skim/"
+	sklimpath="/uscms_data/d3/cmantill/CMSSW_8_0_20/src/zprime/ZPrimePlusJet/sklimming/skim/"
 	infile=ROOT.TFile(sklimpath+filename+".root")	
 	print(sklimpath+filename+".root")
 	tree= infile.Get("otree")
@@ -74,19 +90,65 @@ def createHist(trans_h2ddt,tag,filename,sf,lumi,mass,isdata=False):
 
 		jtN2b1sdddt_8 = jtN2b1sd_8 - trans_h2ddt.GetBinContent(cur_rho_index,cur_pt_index);
 
+		# non resonant case
+		jphi  = 9999;
+		dphi  = 9999;
+		dpt   = 9999;
+		dmass = 9999;
+		if mass > 0:
+			jphi = getattr(tree,"AK8Puppijet0_phi");
+			dphi = math.fabs(tree.genVPhi - jphi)
+			dpt = math.fabs(tree.genVPt - jpt_8)/tree.genVPt
+			dmass = math.fabs(mass - jmsd_8)/mass
+		
 		# Lepton, photon veto and tight jets
 		if tree.neleLoose == 0 and tree.nmuLoose == 0 and tree.ntau==0 and tree.nphoLoose==0 and tree.AK8Puppijet0_isTightVJet ==1:
+			
+			# pass category
 			if tree.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 < 0:
 				h_pass_ak8.Fill( jmsd_8, jpt_8, weight )
+				## for signal morphing
+				h_pass_msd_ak8.Fill( jmsd_8, weight );
+				if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+					h_pass_msd_matched_ak8.Fill( jmsd_8, weight );
+					h_pass_matched_ak8.Fill( jmsd_8, jpt_8, weight );
+				else:
+					h_pass_msd_unmatched_ak8.Fill( jmsd_8, weight );
+					h_pass_unmatched_ak8.Fill( jmsd_8, jpt_8, weight );
+			# fail category
 			if tree.AK8Puppijet0_pt > 500 and jtN2b1sdddt_8 > 0:
 				h_fail_ak8.Fill( jmsd_8, jpt_8, weight )
+				## for signal morphing
+				h_fail_msd_ak8.Fill( jmsd_8, weight );
+				if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+					h_fail_msd_matched_ak8.Fill( jmsd_8, weight );
+					h_fail_matched_ak8.Fill( jmsd_8, jpt_8, weight );
+				else:
+					h_fail_msd_unmatched_ak8.Fill( jmsd_8, weight );	
+					h_fail_unmatched_ak8.Fill( jmsd_8, jpt_8, weight );
 
-	return h_pass_ak8,h_fail_ak8
+	hists_out = [];
+	#2d histograms
+	hists_out.append( h_pass_ak8 );
+	hists_out.append( h_fail_ak8 );
+	hists_out.append( h_pass_matched_ak8 );
+	hists_out.append( h_pass_unmatched_ak8 );
+	hists_out.append( h_fail_matched_ak8 );
+	hists_out.append( h_fail_unmatched_ak8 );
+	#1d validation histograms
+	hists_out.append( h_pass_msd_ak8 );
+	hists_out.append( h_pass_msd_matched_ak8 );
+	hists_out.append( h_pass_msd_unmatched_ak8 );
+	hists_out.append( h_fail_msd_ak8 );
+	hists_out.append( h_fail_msd_matched_ak8 );
+	hists_out.append( h_fail_msd_unmatched_ak8 );
+
+	return hists_out
 
 mass=[50,75,100,125,150,200,250,300]#,400,500]
 # mass=[100]#,400,500]
 
-outfile=TFile("hist_1DZqq-dataPrompt2d27.root", "recreate");
+outfile=TFile("hist_1DZqq-matchtest.root", "recreate");
 # outfile=TFile("test.root", "recreate");
 
 #lumi =34.100
@@ -99,30 +161,25 @@ trans_h2ddt = f_h2ddt.Get("h2ddt");
 trans_h2ddt.SetDirectory(0)
 f_h2ddt.Close()
 
-data_obs_pass, data_obs_fail = createHist(trans_h2ddt,'data_obs','JetHT-Prompt-all',15,1,0,True)
-qcd_pass, qcd_fail = createHist(trans_h2ddt,'qcd','QCD',1,lumi,0)
-tqq_pass, tqq_fail = createHist(trans_h2ddt,'tqq','TTJets_13TeV_1000pb_weighted',1,lumi,0)
-wqq_pass, wqq_fail = createHist(trans_h2ddt,'wqq','WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted',1,lumi,0)
-zqq_pass, zqq_fail = createHist(trans_h2ddt,'zqq','DYJetsToQQ_HT180_13TeV_1000pb_weighted',1,lumi,0)
+data_hists = createHist(trans_h2ddt,'data_obs','JetHTReReco_B',15,1,0,True)
+qcd_hists = createHist(trans_h2ddt,'qcd','QCD',1,lumi,0)
+tqq_hists = createHist(trans_h2ddt,'tqq','TTJets_13TeV_1000pb_weighted',1,lumi,0)
+wqq_hists = createHist(trans_h2ddt,'wqq','WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted',1,lumi,80.)
+zqq_hists = createHist(trans_h2ddt,'zqq','DYJetsToQQ_HT180_13TeV_1000pb_weighted',1,lumi,91.)
+
 
 for m in mass:
-	hs_pass, hs_fail = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,lumi,m)
+	hs_hists = createHist(trans_h2ddt,'zqq%s'%(m),'VectorDiJet1Jet_M%s_1000pb_weighted'%(m),1,lumi,m)
 	outfile.cd()
-	hs_pass.Write()
-	hs_fail.Write()
+	for h in hs_hists: h.Write();
 
 print("Building pass/fail")	
 outfile.cd()
-qcd_pass.Write()
-qcd_fail.Write()
-data_obs_pass.Write()
-data_obs_fail.Write()
-wqq_pass.Write()
-wqq_fail.Write()
-zqq_pass.Write()
-zqq_fail.Write()
-tqq_pass.Write()
-tqq_fail.Write()
+for h in data_hists: h.Write();
+for h in qcd_hists: h.Write();
+for h in tqq_hists: h.Write();
+for h in wqq_hists: h.Write();
+for h in zqq_hists: h.Write();
 outfile.Write()
 outfile.Close()
 

@@ -13,6 +13,7 @@ import array
 # including other directories
 sys.path.insert(0, '../.')
 from tools import *
+from hist import *
 
 ##############################################################################
 ##############################################################################
@@ -22,16 +23,18 @@ from tools import *
 
 class dazsleRhalphabetBuilder: 
 
-	def __init__( self, hpass, hfail ): 
+	def __init__( self, hpass, hfail, inputfile ): 
 
 		self._hpass = hpass;
 		self._hfail = hfail;
+		self._inputfile = inputfile;
 
 		self._outputName = "base.root";
+		self._outfile_validation = r.TFile("validation.root","RECREATE");
 
-		self._mass_nbins = 16;
+		self._mass_nbins = 36;
 		self._mass_lo    = 2*(500/75.);
-		self._mass_hi    = 42*(500/75.);
+		self._mass_hi    = 38*(500/75.);
 
 		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
@@ -304,15 +307,78 @@ class dazsleRhalphabetBuilder:
 		
 		lW = r.RooWorkspace("w_"+str(iCat))
 
+		# get the pT bin
+		ipt = iCat[-1:];
+
 		for pFunc in iFuncs:
-			getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
-			# if iShift and pFunc.GetName().find("qq") > -1:
-			# 	(pFUp, pFDown)  = shift(iVars[0],pFunc,5.)
-			# 	(pSFUp,pSFDown) = smear(iVars[0],pFunc,0.05)
-			# 	getattr(lW,'import')(pFUp,  r.RooFit.RecycleConflictNodes())
-			# 	getattr(lW,'import')(pFDown,r.RooFit.RecycleConflictNodes())
-			# 	getattr(lW,'import')(pSFUp,  r.RooFit.RecycleConflictNodes())
-			# 	getattr(lW,'import')(pSFDown,r.RooFit.RecycleConflictNodes())
+			
+			ptbin = ipt;
+			process = pFunc.GetName().split("_")[0];
+			cat     = pFunc.GetName().split("_")[1];
+			mass    = 0.;
+
+			if iShift and ("wqq" in process or "zqq" in process):
+
+				if process == "wqq": mass = 80.;
+				elif process == "zqq": mass = 91.;
+				else: mass = float(process[3:])
+
+				print process, mass;
+
+				####
+				# get the matched and unmatched hist
+				tmph_matched = self._inputfile.Get(process+"_"+cat+"_matched");
+				tmph_unmatched = self._inputfile.Get(process+"_"+cat+"_unmatched");
+				tmph_mass_matched = proj("cat",str(ipt),tmph_matched,self._mass_nbins,self._mass_lo,self._mass_hi);
+				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
+				
+				#####
+				# smear/shift the matched
+				hist_container = hist( [mass],[tmph_mass_matched] );	
+				mass_shift = 0.99;
+				mass_shift_unc = 0.03;
+				res_shift = 1.094;
+				res_shift_unc = 0.123;
+				# get new central value
+				shift_val = mass - mass*mass_shift;
+				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val);
+				# get new central value and new smeared value
+				smear_val = res_shift - 1;
+				tmp_smeared_h = hist_container.smear( tmp_shifted_h[0], smear_val)
+				hmatched_new_central = tmp_smeared_h[0];
+				if smear_val <= 0: hmatched_new_central = tmp_smeared_h[1];
+				# get shift up/down
+				shift_unc = mass*mass_shift*mass_shift_unc;
+				hmatchedsys_shift = hist_container.shift( hmatched_new_central, mass*mass_shift_unc);
+				# get res up/down
+				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc);	
+
+				#####
+				# add back the unmatched 
+				hmatched_new_central.Add(tmph_mass_unmatched);
+				hmatchedsys_shift[0].Add(tmph_mass_unmatched);
+				hmatchedsys_shift[1].Add(tmph_mass_unmatched);
+				hmatchedsys_smear[0].Add(tmph_mass_unmatched);
+				hmatchedsys_smear[1].Add(tmph_mass_unmatched);
+				hmatched_new_central.SetName(pFunc.GetName());
+				hmatchedsys_shift[0].SetName(pFunc.GetName()+"_scaleUp");
+				hmatchedsys_shift[1].SetName(pFunc.GetName()+"_scaleDown");
+				hmatchedsys_smear[0].SetName(pFunc.GetName()+"_smearUp");
+				hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown");
+				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]];
+				
+				self._outfile_validation.cd();
+				for h in hout:
+					h.Write();
+					tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+
+			else: 
+				
+				getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
+
+		self._outfile_validation.Write();
+		self._outfile_validation.Close();
 
 		for pData in iDatas:
 			getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
@@ -342,7 +408,7 @@ def main(options,args):
 	(hpass,hfail) = loadHistograms(f,options.pseudo);
 
 	# Build the workspacees
-	dazsleRhalphabetBuilder(hpass,hfail);
+	dazsleRhalphabetBuilder(hpass,hfail,f);
 
 ##-------------------------------------------------------------------------------------
 def loadHistograms(f,pseudo):
