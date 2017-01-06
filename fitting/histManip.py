@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import ROOT as r,sys,math,array
 
-class hist:
+class histManip:
     def __init__( self , iVars, iHists):
         self._vals  = iVars
         self._hists = iHists
@@ -31,7 +31,7 @@ class hist:
         lMed   = r.RooRealVar("med","med",0,1)
         lRH0   = self.histpdf(self._hists[lMarker])
         lRH1   = self.histpdf(self._hists[lMarker-1])
-        lMorph = r.RooIntegralMorph("Morph","Morph",lRH1,lRH0,self._mass,lMed)
+        lMorph = r.RooIntegralMorph("Morph","Morph",lRH0,lRH1,self._mass,lMed)
         lMed.setVal(lVal);
         lOut   = lMorph.createHistogram("tmp"+str(iValue),self._mass)
         lInt   = (self._hists[lMarker].Integral()-self._hists[lMarker-1].Integral())*lVal+self._hists[lMarker-1].Integral()
