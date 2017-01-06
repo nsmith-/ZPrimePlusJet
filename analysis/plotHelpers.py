@@ -123,7 +123,7 @@ def makeCanvasDataMC(hd,hmcs,legname,name,pdir="plots",nodata=False):
     hstack2 = ROOT.THStack("hstack2",";"+xtitle+";"+ytitle+";");
     for h in hmcs: hstack2.Add(h);
 
-    maxval = 1.5*max(hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum());
+    maxval = 2.*max(hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum())
     # print maxval;
     leg = ROOT.TLegend(0.6,0.7,0.9,0.9);
     leg.SetFillStyle(0);
@@ -295,7 +295,7 @@ def makeCanvasDataMC_wpred(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 	p1.Draw(); p1.cd();
 
 	mcall = hstack2.GetStack().Last()
-	maxval = 1.5*max(mcall.GetMaximum(),hd.GetMaximum());
+	maxval = 2.*max(mcall.GetMaximum(),hd.GetMaximum());
 	hd.SetLineColor(1);
 	mcall.SetLineColor(4);
 	if not blind: 
@@ -574,7 +574,7 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 	tag2.SetTextSize(0.032);
 
 	c = ROOT.TCanvas("c"+name,"c"+name,1000,800);
-	hs[0].SetMaximum(1.5*maxval);
+	hs[0].SetMaximum(2.*maxval);
 	hs[0].Draw("hist");
 	for h in range(1,len(hs)): hs[h].Draw("histsames"); 
 	leg.Draw();
@@ -716,7 +716,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     oben.cd()
 
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(2.*maxval)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
@@ -847,7 +847,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 
     fullmc = hstack.GetStack().Last()
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(2.*maxval)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetYaxis().SetTitleOffset(1.0)	
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
@@ -921,10 +921,38 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     allMC=hstack.GetStack().Last().Clone()	    
     ntotal=allMC.Integral()
     i=0
+    ttbarInt = 0
+    ttbarErr = 0
+    ttbarErr2 = 0
+    otherInt = 0
+    otherErr = 0
+    otherErr2 = 0
     print "========== Background composition ==========="
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
-        print name, h.Integral()
-    print 'data', hd.Integral()
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):            
+        error = array.array('d',[0.0])
+        integral = h.IntegralAndError(1,h.GetNbinsX(),error)
+        print name, integral, '+/-', error[0]        
+        if 'TTbar' in name:
+            ttbarInt += integral
+            ttbarErr2 += error[0]*error[0]
+        else:
+            otherInt +integral
+            otherErr2 += error[0]*error[0]
+
+    ttbarErr = sqrt(ttbarErr2)
+    otherErr = sqrt(otherErr2)
+    error = array.array('d',[0.0])
+    integral = hd.IntegralAndError(1,hd.GetNbinsX(),error)
+    print 'data', integral, '+/-', error[0]
+    dataInt = integral
+    dataErr = error[0]
+
+    kTTbar = (dataInt-otherInt)/ttbarInt
+    kTTbarErr = kTTbar*sqrt(pow(sqrt(dataErr*dataErr + otherErr*otherErr)/(dataInt-otherInt),2.) + pow(ttbarErr/ttbarInt,2.))
+
+    print 'kTTbar', kTTbar, '+/-', kTTbarErr
+    #print kTTbar*ttbarInt+otherInt
+    #print (kTTbarErr/kTTbar)*(dataInt)
 
     return c        
 
