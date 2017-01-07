@@ -45,6 +45,7 @@ def main(options,args,outputExists):
                'TTbar1Ele': 't#bar{t}+jets, 1e',        
                'TTbar1Tau': 't#bar{t}+jets, 1#tau',        
                'TTbar0Lep': 't#bar{t}+jets, 0l',        
+               'TTbar2Lep': 't#bar{t}+jets, 2l',        
                'QCD': 'QCD',
 		       'data': 'JetHT data',
                'muon': 'SingleMuon data',
@@ -128,6 +129,7 @@ def main(options,args,outputExists):
              'TTbar1Ele':  ROOT.kSpring,
              'TTbar1Tau':  ROOT.kOrange+2,
              'TTbar0Lep':  ROOT.kGray,
+             'TTbar2Lep':  ROOT.kMagenta+1,
              'QCD': ROOT.kBlue+2,
 		     'data':ROOT.kBlack,
 		     'muon':ROOT.kBlack
@@ -151,6 +153,7 @@ def main(options,args,outputExists):
              'TTbar1Ele': 1,
              'TTbar1Tau': 1,
              'TTbar0Lep': 1,
+             'TTbar2Lep': 1,
              'QCD': 1,
              'data': 1,
 		     'muon':1
@@ -202,6 +205,7 @@ def main(options,args,outputExists):
             bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
             bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
             bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar2Lep']  = sampleContainer('TTbar2Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
         else:        
             bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
         bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
@@ -262,7 +266,7 @@ def main(options,args,outputExists):
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
         if isData and muonCR:
-            bkgSamples.extend(['TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep'])
+            bkgSamples.extend(['TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
         else:        
             bkgSamples.extend(['TTbar'])
             
