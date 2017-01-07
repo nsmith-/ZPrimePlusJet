@@ -12,10 +12,14 @@ def main(options,args):
     idir = options.idir
     odir = options.odir
     lumi = options.lumi
+    muonCR = options.muonCR
 
     fileName = 'hist_1DZbb.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
+    elif muonCR:
+        fileName = 'hist_1DZbb_muonCR.root'
+        
     
     outfile=ROOT.TFile(options.odir+"/"+fileName, "recreate")
     
@@ -54,6 +58,16 @@ def main(options,args):
                        idir+'/JetHTRun2016G_PromptReco_v1.root',
                        idir+'/JetHTRun2016H_PromptReco_v2.root']
             }
+
+    if muonCR:
+        tfiles['data_obs'] = [idir+'/SingleMuonRun2016B_PromptReco_v2.root',
+                       idir+'/SingleMuonRun2016C_PromptReco_v2.root',
+                       idir+'/SingleMuonRun2016D_PromptReco_v2.root',
+                       idir+'/SingleMuonRun2016E_PromptReco_v2.root',
+                       idir+'/SingleMuonRun2016F_PromptReco_v1.root',
+                       idir+'/SingleMuonRun2016G_PromptReco_v1.root',
+                       idir+'/SingleMuonRun2016H_PromptReco_v2.root']
+        
     
     print "Signals... "
     sigSamples = {}
@@ -71,12 +85,17 @@ def main(options,args):
     bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
     bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
     print "Data..."
-    dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
+    if muonCR:
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
+    else:
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
     plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']
     if options.bb:
         plots =  ['h_msd_v_pt_ak8_bbleading_topR6_pass','h_msd_v_pt_ak8_bbleading_topR6_fail']
+    elif muonCR:
+        plots =  ['h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail']
         
     for plot in plots:
         tag = plot.split('_')[-1] # 'pass' or 'fail'            
@@ -107,6 +126,7 @@ if __name__ == '__main__':
     parser.add_option("--bb", action='store_true', dest="bb", default = False,help="sort by double b-tag")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write histograms', metavar='odir')
+    parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
 
     (options, args) = parser.parse_args()
 
