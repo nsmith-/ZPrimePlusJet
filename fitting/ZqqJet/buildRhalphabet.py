@@ -9,7 +9,7 @@ import math
 import sys
 import time
 import array
-
+r.gROOT.Macro(os.path.expanduser('~/rootlogon.C'))
 # including other directories
 sys.path.insert(0, '../.')
 from tools import *
@@ -32,9 +32,9 @@ class dazsleRhalphabetBuilder:
 		self._outputName = "base.root";
 		self._outfile_validation = r.TFile("validation.root","RECREATE");
 
-		self._mass_nbins = 36;
-		self._mass_lo    = 2*(500/75.);
-		self._mass_hi    = 38*(500/75.);
+		self._mass_nbins = 25;
+		self._mass_lo    = 5*(500/75.);
+		self._mass_hi    = 30*(500/75.);
 
 		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
@@ -116,7 +116,7 @@ class dazsleRhalphabetBuilder:
 		self._lEffQCD.setConstant(False)
 
 		polyArray = []
-		self.buildPolynomialArray(polyArray,self._poly_lNR,self._poly_lNP,"r","p",-0.1,0.1)
+		self.buildPolynomialArray(polyArray,self._poly_lNR,self._poly_lNP,"r","p",-1.0,1.0)
 		print polyArray;
 
 		#Now build the function

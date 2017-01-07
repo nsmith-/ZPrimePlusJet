@@ -11,15 +11,16 @@ import glob
 from plotHelpers import *
 from sampleContainer import *
 #
-def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
-    if isData:
-        c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
-        canvases.append(c)	
-    else:
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
-        c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
-        canvases.append(c)	
-        canvases.append(c1)
+def makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
+    for plot in plots:
+        if isData:
+            c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+            canvases.append(c)	
+        else:
+            c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,ofile)
+            c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
+            canvases.append(c)	
+            canvases.append(c1)
 ##############################################################################
 def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
@@ -196,7 +197,7 @@ def main(options,args,outputExists):
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 10000, lumi)
         if isData and muonCR:
             bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
             bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
@@ -224,12 +225,6 @@ def main(options,args,outputExists):
             hall_byproc[process] = {}
         for process, s in bkgSamples.iteritems():
             hall_byproc[process] = {}
-        if isData:
-            if muonCR:
-                hall_byproc['muon'] = {}
-            else:
-                hall_byproc['data'] = {}
-
         for plot in plots:
             hs = {}
             hb = {}
@@ -250,7 +245,7 @@ def main(options,args,outputExists):
                 else:
                     hall_byproc['data'][plot] = getattr(dataSample,plot)
     
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+        makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
             
         ofile.cd()
         for proc, hDict in hall_byproc.iteritems():
@@ -283,7 +278,7 @@ def main(options,args,outputExists):
             elif isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
                 
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+        makePlots(plots,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
 
 

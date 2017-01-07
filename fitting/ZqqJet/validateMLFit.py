@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
-import ROOT as r,sys,math,array,os
-from ROOT import TFile, TTree, TChain, gPad, gDirectory
+from ROOT import TFile, TTree, TChain, gPad, gDirectory,TH1F
+import ROOT as r,sys,math,os
+from array    import array
 from multiprocessing import Process
 from optparse import OptionParser
 from operator import add
 import math
 import sys
 import time
-import array
+
+
 
 # including other directories
 sys.path.insert(0, '../.')
@@ -31,7 +33,7 @@ def main(options,args):
 	histograms_fail_summed = None;
 
 	for i in range(5): 
-		(tmppass,tmpfail) = plotCategory(fml, fd, i+1, options.fit, options.mass);
+		(tmppass,tmpfail) = plotCategory(fml, fd, i+1, options.fit, options.mass, options.useMLFit);
 		histograms_pass_all.append(tmppass);
 		histograms_fail_all.append(tmpfail);
 		if i == 0:
@@ -67,8 +69,20 @@ def main(options,args):
 
 
 ###############################################################
+def convertAsymGraph(iData):
+	lX = array('d')
+	for i0 in range(iData.GetN()):
+		lX.append(-iData.GetErrorXlow(i0)+iData.GetX()[i0])
+	lX.append(iData.GetX()[iData.GetN()-1]+iData.GetErrorXhigh(iData.GetN()-1))
+	lHist = r.TH1D(iData.GetName(),iData.GetName(),len(lX)-1,lX)
+	for i0 in range(iData.GetN()):
+		lHist.Fill(iData.GetX()[i0],iData.GetY()[i0]*(iData.GetErrorXlow(i0)+iData.GetErrorXhigh(i0)))
+	for i0 in range(1,iSum.GetNbinsX()+1):
+		lHist.SetBinError(i0,math.sqrt(lHist.GetBinContent(i0)))
+	return lHist
 
-def plotCategory(fml,fd,index,fittype,mass):
+
+def plotCategory(fml,fd,index,fittype,mass,usemlfit):
 
 	shapes = ['wqq','zqq','tqq','qcd','zqq'+mass]
 	cats   = ['pass','fail']
@@ -83,8 +97,9 @@ def plotCategory(fml,fd,index,fittype,mass):
 		histograms_pass.append( fml.Get("shapes_"+fitdir+"/ch%i_pass_cat%i/%s" % (index,index,ish)) );
 		
 		rags = fml.Get("norm_"+fitdir);
+		print fitdir
 		rags.Print();
-
+		
 		rrv_fail = r.RooRealVar(rags.find("ch%i_fail_cat%i/%s" % (index,index,ish)));
 		curnorm_fail = rrv_fail.getVal();
 		rrv_pass = r.RooRealVar(rags.find("ch%i_pass_cat%i/%s" % (index,index,ish)));
@@ -93,18 +108,22 @@ def plotCategory(fml,fd,index,fittype,mass):
 		print ish, curnorm_fail, curnorm_pass, index
 		if curnorm_fail > 0.: histograms_fail[i].Scale(curnorm_fail/histograms_fail[i].Integral());
 		if curnorm_pass > 0.: histograms_pass[i].Scale(curnorm_pass/histograms_pass[i].Integral());
+	
+	if usemlfit:
+		histograms_fail.append(convertAsymGraph(fml.Get("shapes_"+fitdir+"/ch%i_fail_cat%i/data" % (index,index)) ));
+		hisograms_pass .append(convertAsymGraph(fml.Get("shapes_"+fitdir+"/ch%i_pass_cat%i/data" % (index,index)) ));
+	else:
+		wp = fd.Get("w_pass_cat%i" % (index));
+		wf = fd.Get("w_fail_cat%i" % (index));
+		rdhp = wp.data("data_obs_pass_cat%i" % (index));
+		rdhf = wf.data("data_obs_fail_cat%i" % (index));
+		rrv   = wp.var("x"); 
+		
+		data_fail = rdhf.createHistogram("data_fail_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
+		data_pass = rdhp.createHistogram("data_pass_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
 
-	wp = fd.Get("w_pass_cat%i" % (index));
-	wf = fd.Get("w_fail_cat%i" % (index));
-	rdhp = wp.data("data_obs_pass_cat%i" % (index));
-	rdhf = wf.data("data_obs_fail_cat%i" % (index));
-	rrv   = wp.var("x"); 
-
-	data_fail = rdhf.createHistogram("data_fail_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
-	data_pass = rdhp.createHistogram("data_pass_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()));
-
-	histograms_fail.append(data_fail);
-	histograms_pass.append(data_pass);
+		histograms_fail.append(data_fail);
+		histograms_pass.append(data_pass);
 
 	makeMLFitCanvas(histograms_fail[0:4], data_fail, histograms_fail[4], shapes, "fail_cat"+str(index)+"_"+fittype+"_"+mass);
 	makeMLFitCanvas(histograms_pass[0:4], data_pass, histograms_pass[4], shapes, "pass_cat"+str(index)+"_"+fittype+"_"+mass);
@@ -204,6 +223,7 @@ if __name__ == '__main__':
 	parser.add_option('--idir', dest='idir', default = 'results',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
 	parser.add_option('--mass', dest='mass', default = '100',help='choice is either prefit, fit_sb or fit_b', metavar='fit')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
+	parser.add_option('--useMLFit', action='store_true', dest='useMLFit', default =False,help='signal comparison', metavar='isData')
 
 	(options, args) = parser.parse_args()
 
