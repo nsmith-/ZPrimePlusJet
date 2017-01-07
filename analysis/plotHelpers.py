@@ -123,7 +123,7 @@ def makeCanvasDataMC(hd,hmcs,legname,name,pdir="plots",nodata=False):
     hstack2 = ROOT.THStack("hstack2",";"+xtitle+";"+ytitle+";");
     for h in hmcs: hstack2.Add(h);
 
-    maxval = 1.5*max(hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum());
+    maxval = 2.*max(hstack2.GetStack().Last().GetMaximum(),hd.GetMaximum())
     # print maxval;
     leg = ROOT.TLegend(0.6,0.7,0.9,0.9);
     leg.SetFillStyle(0);
@@ -295,7 +295,7 @@ def makeCanvasDataMC_wpred(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 	p1.Draw(); p1.cd();
 
 	mcall = hstack2.GetStack().Last()
-	maxval = 1.5*max(mcall.GetMaximum(),hd.GetMaximum());
+	maxval = 2.*max(mcall.GetMaximum(),hd.GetMaximum());
 	hd.SetLineColor(1);
 	mcall.SetLineColor(4);
 	if not blind: 
@@ -574,7 +574,7 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 	tag2.SetTextSize(0.032);
 
 	c = ROOT.TCanvas("c"+name,"c"+name,1000,800);
-	hs[0].SetMaximum(1.5*maxval);
+	hs[0].SetMaximum(2.*maxval);
 	hs[0].Draw("hist");
 	for h in range(1,len(hs)): hs[h].Draw("histsames"); 
 	leg.Draw();
@@ -716,7 +716,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     oben.cd()
 
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(2.*maxval)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
@@ -791,6 +791,40 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 
 
 def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+    ttbarInt = 0
+    ttbarErr = 0
+    ttbarErr2 = 0
+    otherInt = 0
+    otherErr = 0
+    otherErr2 = 0
+    print "========== Background composition ==========="
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):            
+        error = array.array('d',[0.0])
+        integral = h.IntegralAndError(1,h.GetNbinsX(),error)
+        print name, integral, '+/-', error[0]        
+        if 'TTbar' in name:
+            ttbarInt += integral
+            ttbarErr2 += error[0]*error[0]
+        else:
+            otherInt += integral
+            otherErr2 += error[0]*error[0]
+
+    ttbarErr = sqrt(ttbarErr2)
+    otherErr = sqrt(otherErr2)
+    error = array.array('d',[0.0])
+    integral = hd.IntegralAndError(1,hd.GetNbinsX(),error)
+    print 'data', integral, '+/-', error[0]
+    dataInt = integral
+    dataErr = error[0]
+
+    kTTbar = (dataInt-otherInt)/ttbarInt
+    kTTbarErr = kTTbar*sqrt(pow(sqrt(dataErr*dataErr + otherErr*otherErr)/(dataInt-otherInt),2.) + pow(ttbarErr/ttbarInt,2.))
+
+    print 'kTTbar', kTTbar, '+/-', kTTbarErr
+    
+    print 'data TTBar', dataInt-otherInt,'+/-', sqrt(dataErr*dataErr + otherErr*otherErr)
+    print 'mc   TTBar', ttbarInt, '+/-', ttbarErr
+    
     leg_y = 0.88 - (len(hs)+len(hb))*0.04
     leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
@@ -802,6 +836,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 
     hstack = ROOT.THStack("hstack","hstack")
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+        #if 'TTbar' in name:
+        #    print 'scaling %s by k = %f'%(name, kTTbar)
+        #    h.Scale(kTTbar)
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -809,7 +846,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
-    allMC=hstack.GetStack().Last().Clone()	
+    allMC=hstack.GetStack().Last().Clone()
+    maxval = hd.GetMaximum() #max(hd.GetMaximum(),maxval)
     
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])
@@ -847,7 +885,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 
     fullmc = hstack.GetStack().Last()
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(2.*maxval)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetYaxis().SetTitleOffset(1.0)	
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
@@ -918,14 +956,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         ofile.cd()
         c.Write('c'+outname)
 
-    allMC=hstack.GetStack().Last().Clone()	    
-    ntotal=allMC.Integral()
-    i=0
-    print "========== Background composition ==========="
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
-        print name, h.Integral()
-    print 'data', hd.Integral()
-
+    
     return c        
 
 def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,pt=None,f2params=None):
@@ -938,8 +969,8 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
 
     maxval = -99
 
-    h_denom.Scale(1./h_denom.Integral())
-    h_numer.Scale(1./h_numer.Integral())
+    #h_denom.Scale(1./h_denom.Integral())
+    #h_numer.Scale(1./h_numer.Integral())
     leg.AddEntry(h_denom,legname[0],'l')
     leg.AddEntry(h_numer,legname[1],'pe')
     
@@ -968,7 +999,7 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     h_denom.GetYaxis().SetTitle('Probability')
     h_denom.GetYaxis().SetTitleOffset(1.0)
     h_denom.SetMaximum(1.2*max(h_denom.GetMaximum(),h_numer.GetMaximum()))
-    h_denom.SetMinimum(0)
+    h_denom.SetMinimum(0.)
     h_denom.SetLineColor(color[0])
     h_numer.SetLineColor(color[1])
     h_denom.Draw('hist')
@@ -1014,7 +1045,7 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     print ksScore
     print chiScore
     ratio.SetStats(0)
-    ratio.GetYaxis().SetRangeUser(0,3.5)	
+    ratio.GetYaxis().SetRangeUser(0.3,1.7)	
     ratio.GetYaxis().SetNdivisions(504)
     ratio.GetYaxis().SetTitle("Ratio")
     ratio.GetXaxis().SetTitle(h_denom.GetXaxis().GetTitle())    
@@ -1089,8 +1120,8 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
 
     maxval = -99
 
-    h_denom.Scale(1./h_denom.Integral())
-    h_numer.Scale(1./h_numer.Integral())
+    #h_denom.Scale(1./h_denom.Integral())
+    #h_numer.Scale(1./h_numer.Integral())
     ratio = h_numer.Clone('ratio')
     ratio.Divide(h_denom)
     ratio.GetXaxis().SetTitleOffset(1.5)
@@ -1107,7 +1138,6 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
     c.SetFrameFillColor(0)
 
     ratio.SetLineColor(ROOT.kBlue+1)
-    ratio.Draw('surf1')
 
 
     f2params = array.array('d',[1,0,0,0,0,0,0,0,0,0,0,0])
@@ -1115,12 +1145,21 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
     f2 = ROOT.TF2("f2",fun2,ratio.GetXaxis().GetXmin(),ratio.GetXaxis().GetXmax(),ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
     f2.SetParameters(f2params)
     ratio.Fit('f2','RN')
-    f2.Draw("surf same bb")
-    
+    #f2.Draw("surf")
+    ratio.Draw('surf1')
+    f2.Draw("surf fb bb same")
+
+    #ratio.GetZaxis().SetRangeUser(0.3,1.7)
+    #ratio.SetMinimum(0.3)
+    #ratio.SetMaximum(1.7)
+
     ROOT.gPad.SetTheta(30)
     ROOT.gPad.SetPhi(30+270)
     ROOT.gPad.Modified()
     ROOT.gPad.Update()
+    #h1 = c.DrawFrame(40,500,200,1000)
+    #ratio.Draw('surf1')
+    #f2.Draw("surf same bb")
    
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
@@ -1139,7 +1178,13 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
 
     c.SaveAs(pdir+"/"+outname+".pdf")
     c.SaveAs(pdir+"/"+outname+".C")
+    for i in range(0,360):        
+        ROOT.gPad.SetPhi(30+270+i)
+        ROOT.gPad.Modified()
+        ROOT.gPad.Update()
+        c.SaveAs(pdir+"/"+outname+"_%03d.png"%i)
 
+    #raw_input("Press Enter to continue...")
     
     ROOT.gPad.SetLogz()
 
