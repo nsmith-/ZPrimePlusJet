@@ -847,7 +847,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetFillStyle(1001)
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
     allMC=hstack.GetStack().Last().Clone()
-    maxval = hd.GetMaximum() #max(hd.GetMaximum(),maxval)
+    maxval = max(hd.GetMaximum(),maxval)
     
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])

@@ -100,10 +100,10 @@ class sampleContainer:
         'h_pt_ak8_sub1'        :["h_"+self._name+"_pt_ak8_sub1","; AK8 subleading p_{T} (GeV);", 50, 300, 2100],
         'h_pt_ak8_sub2'        :["h_"+self._name+"_pt_ak8_sub2","; AK8 3rd leading p_{T} (GeV);", 50, 300, 2100],
         'h_pt_ak8_dbtagCut'    :["h_"+self._name+"_pt_ak8_dbtagCut","; AK8 leading p_{T} (GeV);", 45, 300, 2100],
-        'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_N2Cut'      :["h_"+self._name+"_msd_ak8_N2Cut","; m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_N2Cut'      :["h_"+self._name+"_msd_ak8_N2Cut","; m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_dbtag_ak8'          :["h_"+self._name+"_dbtag_ak8","; p_{T}-leading double b-tag;", 40, -1, 1],
         'h_dbtag_ak8_sub1'     :["h_"+self._name+"_dbtag_ak8_sub1","; 2nd p_{T}-leading double b-tag;", 40, -1, 1],
         'h_dbtag_ak8_sub2'     :["h_"+self._name+"_dbtag_ak8_sub2","; 3rd p_{T}-leading double b-tag;", 40, -1, 1],
@@ -113,51 +113,51 @@ class sampleContainer:
         'h_t32_ak8_t21ddtCut'  :["h_"+self._name+"_t32_ak8_t21ddtCut","; AK8 #tau_{32};", 20, 0, 1.5],
         'h_n2b1sd_ak8'         :["h_"+self._name+"_n2b1sd_ak8","; AK8 N_{2}^{1} (SD);", 25, 0, 0.5],
         'h_n2b1sdddt_ak8'      :["h_"+self._name+"_n2b1sdddt_ak8","; AK8 N_{2}^{1,DDT} (SD);", 25, 0, 1],
-        'h_msd_ak8_topR1'      :["h_"+self._name+"_msd_ak8_topR1","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR2_pass' :["h_"+self._name+"_msd_ak8_topR2_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR3_pass' :["h_"+self._name+"_msd_ak8_topR3_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR4_pass' :["h_"+self._name+"_msd_ak8_topR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR5_pass' :["h_"+self._name+"_msd_ak8_topR5_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_pass' :["h_"+self._name+"_msd_ak8_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR7_pass' :["h_"+self._name+"_msd_ak8_topR7_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR2_fail' :["h_"+self._name+"_msd_ak8_topR2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR3_fail' :["h_"+self._name+"_msd_ak8_topR3_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR4_fail' :["h_"+self._name+"_msd_ak8_topR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR5_fail' :["h_"+self._name+"_msd_ak8_topR5_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_fail' :["h_"+self._name+"_msd_ak8_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR7_fail' :["h_"+self._name+"_msd_ak8_topR7_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p6_pass' :["h_"+self._name+"_msd_ak8_topR6_0p6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p6_fail' :["h_"+self._name+"_msd_ak8_topR6_0p6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p65_pass' :["h_"+self._name+"_msd_ak8_topR6_0p65_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p65_fail' :["h_"+self._name+"_msd_ak8_topR6_0p65_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p7_pass' :["h_"+self._name+"_msd_ak8_topR6_0p7_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p7_fail' :["h_"+self._name+"_msd_ak8_topR6_0p7_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p75_pass' :["h_"+self._name+"_msd_ak8_topR6_0p75_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p75_fail' :["h_"+self._name+"_msd_ak8_topR6_0p75_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p5_pass' :["h_"+self._name+"_msd_ak8_topR6_0p5_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p5_fail' :["h_"+self._name+"_msd_ak8_topR6_0p5_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p45_pass' :["h_"+self._name+"_msd_ak8_topR6_0p45_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p45_fail' :["h_"+self._name+"_msd_ak8_topR6_0p45_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p4_pass' :["h_"+self._name+"_msd_ak8_topR6_0p4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p4_fail' :["h_"+self._name+"_msd_ak8_topR6_0p4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p91_pass' :["h_"+self._name+"_msd_ak8_topR6_0p91_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p91_fail' :["h_"+self._name+"_msd_ak8_topR6_0p91_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p92_pass' :["h_"+self._name+"_msd_ak8_topR6_0p92_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_topR6_0p92_fail' :["h_"+self._name+"_msd_ak8_topR6_0p92_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p93_pass' :["h_"+self._name+"_msd_ak8_topR6_0p93_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p93_fail' :["h_"+self._name+"_msd_ak8_topR6_0p93_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p94_pass' :["h_"+self._name+"_msd_ak8_topR6_0p94_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p94_fail' :["h_"+self._name+"_msd_ak8_topR6_0p94_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p95_pass' :["h_"+self._name+"_msd_ak8_topR6_0p95_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-	'h_msd_ak8_topR6_0p95_fail' :["h_"+self._name+"_msd_ak8_topR6_0p95_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8_topR1'      :["h_"+self._name+"_msd_ak8_topR1","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR2_pass' :["h_"+self._name+"_msd_ak8_topR2_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR3_pass' :["h_"+self._name+"_msd_ak8_topR3_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR4_pass' :["h_"+self._name+"_msd_ak8_topR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR5_pass' :["h_"+self._name+"_msd_ak8_topR5_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_pass' :["h_"+self._name+"_msd_ak8_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR7_pass' :["h_"+self._name+"_msd_ak8_topR7_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR2_fail' :["h_"+self._name+"_msd_ak8_topR2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR3_fail' :["h_"+self._name+"_msd_ak8_topR3_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR4_fail' :["h_"+self._name+"_msd_ak8_topR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR5_fail' :["h_"+self._name+"_msd_ak8_topR5_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_fail' :["h_"+self._name+"_msd_ak8_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR7_fail' :["h_"+self._name+"_msd_ak8_topR7_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p6_pass' :["h_"+self._name+"_msd_ak8_topR6_0p6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p6_fail' :["h_"+self._name+"_msd_ak8_topR6_0p6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p65_pass' :["h_"+self._name+"_msd_ak8_topR6_0p65_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p65_fail' :["h_"+self._name+"_msd_ak8_topR6_0p65_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p7_pass' :["h_"+self._name+"_msd_ak8_topR6_0p7_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p7_fail' :["h_"+self._name+"_msd_ak8_topR6_0p7_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p75_pass' :["h_"+self._name+"_msd_ak8_topR6_0p75_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p75_fail' :["h_"+self._name+"_msd_ak8_topR6_0p75_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p5_pass' :["h_"+self._name+"_msd_ak8_topR6_0p5_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p5_fail' :["h_"+self._name+"_msd_ak8_topR6_0p5_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p45_pass' :["h_"+self._name+"_msd_ak8_topR6_0p45_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p45_fail' :["h_"+self._name+"_msd_ak8_topR6_0p45_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p4_pass' :["h_"+self._name+"_msd_ak8_topR6_0p4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p4_fail' :["h_"+self._name+"_msd_ak8_topR6_0p4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p91_pass' :["h_"+self._name+"_msd_ak8_topR6_0p91_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p91_fail' :["h_"+self._name+"_msd_ak8_topR6_0p91_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p92_pass' :["h_"+self._name+"_msd_ak8_topR6_0p92_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_0p92_fail' :["h_"+self._name+"_msd_ak8_topR6_0p92_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p93_pass' :["h_"+self._name+"_msd_ak8_topR6_0p93_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p93_fail' :["h_"+self._name+"_msd_ak8_topR6_0p93_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p94_pass' :["h_"+self._name+"_msd_ak8_topR6_0p94_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p94_fail' :["h_"+self._name+"_msd_ak8_topR6_0p94_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p95_pass' :["h_"+self._name+"_msd_ak8_topR6_0p95_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_topR6_0p95_fail' :["h_"+self._name+"_msd_ak8_topR6_0p95_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
 
                 
-        'h_msd_ak8_bbleading_topR6_pass' :["h_"+self._name+"_msd_ak8_bbleading_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_bbleading_topR6_fail' :["h_"+self._name+"_msd_ak8_bbleading_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8_bbleading_topR6_pass' :["h_"+self._name+"_msd_ak8_bbleading_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_bbleading_topR6_fail' :["h_"+self._name+"_msd_ak8_bbleading_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
-        'h_msd_ak8_muCR1'      :["h_"+self._name+"_msd_ak8_muCR1","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_muCR2'      :["h_"+self._name+"_msd_ak8_muCR2","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_muCR3'      :["h_"+self._name+"_msd_ak8_muCR3","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8_muCR1'      :["h_"+self._name+"_msd_ak8_muCR1","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR2'      :["h_"+self._name+"_msd_ak8_muCR2","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR3'      :["h_"+self._name+"_msd_ak8_muCR3","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
         'h_pt_mu_muCR4'        :["h_"+self._name+"_pt_mu_muCR4","; leading muon p_{T} (GeV);", 50, 30, 500],    
         'h_eta_mu_muCR4'       :["h_"+self._name+"_eta_mu_muCR4","; leading muon #eta;", 50, -2.5, 2.5],           
@@ -165,15 +165,15 @@ class sampleContainer:
         'h_eta_ak8_muCR4'      :["h_"+self._name+"_eta_ak8_muCR4","; AK8 leading #eta;", 50, -3, 3],         
         'h_dbtag_ak8_muCR4'    :["h_"+self._name+"_dbtag_ak8_muCR4","; p_{T}-leading double b-tag;", 40, -1, 1],
         'h_t21ddt_ak8_muCR4'   :["h_"+self._name+"_t21ddt_ak8_muCR4","; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
-        'h_msd_ak8_muCR4'      :["h_"+self._name+"_msd_ak8_muCR4","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_muCR4_pass' :["h_"+self._name+"_msd_ak8_muCR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_muCR4_fail' :["h_"+self._name+"_msd_ak8_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8_muCR4'      :["h_"+self._name+"_msd_ak8_muCR4","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass' :["h_"+self._name+"_msd_ak8_muCR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail' :["h_"+self._name+"_msd_ak8_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
-        'h_msd_ak8_muCR5'      :["h_"+self._name+"_msd_ak8_muCR5","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_muCR6'      :["h_"+self._name+"_msd_ak8_muCR6","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8_muCR5'      :["h_"+self._name+"_msd_ak8_muCR5","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR6'      :["h_"+self._name+"_msd_ak8_muCR6","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
-        'h_msd_ak8_bbleading_muCR4_pass'      :["h_"+self._name+"_msd_ak8_bbleading_muCR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
-        'h_msd_ak8_bbleading_muCR4_fail'      :["h_"+self._name+"_msd_ak8_bbleading_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 30,40,250],
+        'h_msd_ak8_bbleading_muCR4_pass'      :["h_"+self._name+"_msd_ak8_bbleading_muCR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_bbleading_muCR4_fail'      :["h_"+self._name+"_msd_ak8_bbleading_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
         'h_pt_ca15'            :["h_"+self._name+"_pt_ca15","; CA15 p{T} (GeV);", 100, 300, 3000],
         'h_msd_ca15'           :["h_"+self._name+"_msd_ca15","; CA15 m_{SD}^{PUPPI} (GeV);", 35,50,400],
@@ -359,7 +359,7 @@ class sampleContainer:
             vmuoLoose0_eta = self.vmuoLoose0_eta[0]
             # Single Muon Control Region 1 (inclusive)
             #if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
-            if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and abs(vmuoLoose0_eta)<2.1 and isTightVJet:
+            if jpt_8 > 500 and jmsd_8 >40 and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and abs(vmuoLoose0_eta)<2.1 and isTightVJet:
                 self.h_msd_ak8_muCR1.Fill( jmsd_8, weight )
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_muCR2.Fill( jmsd_8, weight )
@@ -416,7 +416,7 @@ class sampleContainer:
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
                 if a > 0 : continue
                 a = a+1                
-                if i[1] > 500 and i[0] > 40 and nmuLoose>=1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and abs(vmuoLoose0_eta)<2.1 and i[4] < T21DDTCUT and i[5]:
+                if i[1] > 500 and i[0] > 40 and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and abs(vmuoLoose0_eta)<2.1 and i[4] < T21DDTCUT and i[5]:
                     if i[2] > DBTAGCUT:
                         self.h_msd_ak8_bbleading_muCR4_pass.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_muCR4_pass.Fill( i[0], i[1], weight)
@@ -485,7 +485,7 @@ class sampleContainer:
                 self.h_isolationCA15.Fill(    ratioCA15_04 , weight )
                 self.h_met.Fill(met, weight)
 
-            if jpt_8 > 500 and jt21P_8 < 0.4 and jmsd_8 > 40:
+            if jpt_8 > 500 and jt21P_8 < T21DDTCUT and jmsd_8 > 40:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
 	        self.h_t32_ak8_t21ddtCut.Fill( jt32_8, weight )
 

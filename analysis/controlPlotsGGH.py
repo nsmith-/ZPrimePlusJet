@@ -129,7 +129,7 @@ def main(options,args,outputExists):
              'TTbar1Ele':  ROOT.kSpring,
              'TTbar1Tau':  ROOT.kOrange+2,
              'TTbar0Lep':  ROOT.kGray,
-             'TTbar2Lep':  ROOT.kMagenta+1,
+             'TTbar2Lep':  ROOT.kMagenta-9,
              'QCD': ROOT.kBlue+2,
 		     'data':ROOT.kBlack,
 		     'muon':ROOT.kBlack

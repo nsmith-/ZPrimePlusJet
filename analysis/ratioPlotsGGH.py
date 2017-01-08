@@ -38,7 +38,7 @@ def makePlots(hb,style,odir,lumi,ofile,canvases):
     c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_fail'],hb['QCD']['h_msd_ak8_topR6_pass'],['QCD fail, p_{T} > %i GeV'%ptBinBoundaries[0],'QCD pass, p_{T} > %i GeV'%ptBinBoundaries[0]],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6',odir,lumi,ofile)
     canvases.append(c)	
     c1, f2params = makeCanvasRatio2D(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'],hb['QCD']['h_msd_v_pt_ak8_topR6_pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6',odir,lumi,ofile)
-    canvases.append(c1)	
+    canvases.append(c1)
     for i in range(1,len(ptBinBoundaries)):
         c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params)
         canvases.append(c)
@@ -187,6 +187,11 @@ def main(options,args,outputExists):
         print "Backgrounds..."
         bkgSamples = {}    
         bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
+        #bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+        #bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+        #bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+        #bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
+        #bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
 
         ofile = ROOT.TFile.Open(odir+'/Ratios_1000pb_weighted.root','recreate')
 
@@ -213,7 +218,13 @@ def main(options,args,outputExists):
             for plot in plots:
                 hb[process][plot] = ofile.Get(plot.replace('h_','h_%s_'%process))
                 
+        hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].Integral())
+        hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].Integral())
+        hb['QCD']['h_msd_ak8_topR6_pass'].Scale(1./hb['QCD']['h_msd_ak8_topR6_pass'].Integral())
+        hb['QCD']['h_msd_ak8_topR6_fail'].Scale(1./hb['QCD']['h_msd_ak8_topR6_fail'].Integral())
+                
         makePlots(hb,style,odir,lumi,ofile,canvases)
+        
         
 
 
