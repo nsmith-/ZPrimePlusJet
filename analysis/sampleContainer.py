@@ -436,6 +436,11 @@ class sampleContainer:
 
 
                         
+            if jpt_8 > 500:           
+                self.h_msd_ak8_inc.Fill( jmsd_8, weight )
+                if jt21P_8 < T21DDTCUT:
+                    self.h_msd_ak8_t21ddtCut_inc.Fill( jmsd_8, weight )
+                    
             # Lepton and photon veto
             if neleLoose != 0 or nmuLoose != 0 or ntau != 0: continue# or nphoLoose != 0:  continue
                 
@@ -456,10 +461,6 @@ class sampleContainer:
                     else:
                         self.h_msd_ak8_bbleading_topR6_fail.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_topR6_fail.Fill( i[0], i[1], weight)
-            if jpt_8 > 500:           
-                self.h_msd_ak8_inc.Fill( jmsd_8, weight )
-                if jt21P_8 < T21DDTCUT:
-                    self.h_msd_ak8_t21ddtCut_inc.Fill( jmsd_8, weight )
                     
             if jpt_8 > 500 and jmsd_8 > 40: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
