@@ -459,7 +459,7 @@ class sampleContainer:
             if jpt_8 > 500:           
                 self.h_msd_ak8_inc.Fill( jmsd_8, weight )
                 if jt21P_8 < T21DDTCUT:
-                    self.h_msd_ak8_t2ddtCut_inc.Fill( jmsd_8, weight )
+                    self.h_msd_ak8_t21ddtCut_inc.Fill( jmsd_8, weight )
                     
             if jpt_8 > 500 and jmsd_8 > 40: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
