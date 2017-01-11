@@ -101,9 +101,11 @@ class sampleContainer:
         'h_pt_ak8_sub2'        :["h_"+self._name+"_pt_ak8_sub2","; AK8 3rd leading p_{T} (GeV);", 50, 300, 2100],
         'h_pt_ak8_dbtagCut'    :["h_"+self._name+"_pt_ak8_dbtagCut","; AK8 leading p_{T} (GeV);", 45, 300, 2100],
         'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_inc'        :["h_"+self._name+"_msd_ak8_inc","; AK8 m_{SD}^{PUPPI} (GeV);", 100,0,500],
         'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-        'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; m_{SD}^{PUPPI} (GeV);", 23,40,201],
-        'h_msd_ak8_N2Cut'      :["h_"+self._name+"_msd_ak8_N2Cut","; m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_t21ddtCut_inc':["h_"+self._name+"_msd_ak8_t21ddtCut_inc","; AK8 m_{SD}^{PUPPI} (GeV);", 100,0,500],
+        'h_msd_ak8_N2Cut'      :["h_"+self._name+"_msd_ak8_N2Cut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_dbtag_ak8'          :["h_"+self._name+"_dbtag_ak8","; p_{T}-leading double b-tag;", 40, -1, 1],
         'h_dbtag_ak8_sub1'     :["h_"+self._name+"_dbtag_ak8_sub1","; 2nd p_{T}-leading double b-tag;", 40, -1, 1],
         'h_dbtag_ak8_sub2'     :["h_"+self._name+"_dbtag_ak8_sub2","; 3rd p_{T}-leading double b-tag;", 40, -1, 1],
@@ -454,7 +456,11 @@ class sampleContainer:
                     else:
                         self.h_msd_ak8_bbleading_topR6_fail.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_topR6_fail.Fill( i[0], i[1], weight)
-                        
+            if jpt_8 > 500:           
+                self.h_msd_ak8_inc.Fill( jmsd_8, weight )
+                if jt21P_8 < T21DDTCUT:
+                    self.h_msd_ak8_t2ddtCut_inc.Fill( jmsd_8, weight )
+                    
             if jpt_8 > 500 and jmsd_8 > 40: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
                 self.h_eta_ak8.Fill( jeta_8, weight )

@@ -168,10 +168,10 @@ def main(options,args,outputExists):
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8']
     else:	
-    	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2',
+    	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_msd_ak8_inc','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2',
                  'h_pt_bbleading','h_bb_bbleading','h_msd_bbleading',
                  'h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut',
-                 'h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_n_ak4_fwd',
+                 'h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_t21ddtCut_inc','h_msd_ak8_N2Cut','h_n_ak4_fwd',
                  'h_n_ak4L','h_n_ak4M','h_n_ak4T','h_n_ak4L100','h_n_ak4M100','h_n_ak4T100','h_n_ak4L150','h_n_ak4M150','h_n_ak4T150',
                  'h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2_pass',
                  'h_msd_ak8_topR3_pass','h_msd_ak8_topR4_pass','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5_pass','h_msd_ak8_topR7_pass',
