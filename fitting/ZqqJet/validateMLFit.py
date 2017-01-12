@@ -49,6 +49,7 @@ def main(options,args):
 	makeMLFitCanvas(histograms_pass_summed[0:4], histograms_pass_summed[5], histograms_pass_summed[4], shapes, "pass_allcats_"+options.fit+"_"+mass);
 	makeMLFitCanvas(histograms_fail_summed[0:4], histograms_fail_summed[5], histograms_fail_summed[4], shapes, "fail_allcats_"+options.fit+"_"+mass);
 
+	pars = [];
 	# print out fit results
 	if options.fit == "fit_b" or options.fit == "fit_s":
 		rfr = r.RooFitResult( fml.Get(options.fit) )
@@ -56,17 +57,26 @@ def main(options,args):
 		lParams.append("qcdeff");
 		lParams.append("p1r0");
 		lParams.append("p2r0");
+                lParams.append("p3r0");
 		lParams.append("p0r1"); ##
 		lParams.append("p1r1");
 		lParams.append("p2r1");
+                lParams.append("p3r1");
 		lParams.append("p0r2"); ##
 		lParams.append("p1r2");
 		lParams.append("p2r2");
+                lParams.append("p3r2"); ##
+                lParams.append("p0r3");
+                lParams.append("p1r3");
+                lParams.append("p2r3");
+                lParams.append("p3r3");	
 
 		for p in lParams:
-			print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError() # ,"+",rfr.floatParsFinal().find(p).getAsymErrorHi(),"-",rfr.floatParsFinal().find(p).getAsymErrorLo()
+			print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError()
+			pars.append(rfr.floatParsFinal().find(p).getVal())
 
-
+	        # Plot TF poly
+		makeTF(pars);
 
 ###############################################################
 def convertAsymGraph(iData):
@@ -81,7 +91,7 @@ def convertAsymGraph(iData):
 		lHist.SetBinError(i0,math.sqrt(lHist.GetBinContent(i0)))
 	return lHist
 
-
+###############################################################
 def plotCategory(fml,fd,index,fittype,mass,usemlfit):
 
 	shapes = ['wqq','zqq','tqq','qcd','zqq'+mass]
@@ -212,6 +222,45 @@ def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 	htot.SetMinimum(1);
 	c.SaveAs("plots/mlfit/mlfit_"+tag+"-log.pdf")
 	c.SaveAs("plots/mlfit/mlfit_"+tag+"-log.png")
+
+###############################################################
+
+def makeTF(pars):
+
+    # x is pt and y is rho                                                                                                                                                
+    #tf = r.TF2("tf","[0]*((1+[1]*x+[2]*x*x)+([3]+[4]*x+[5]*x*x)*y+([6]+[7]*x+[8]*x*x)*y*y)", 500, 1000, -6, -1.5)
+    tf = r.TF2("tf","[0]*((1+[1]*x+[2]*x*x+[3]*x*x*x)+([4]+[5]*x+[6]*x*x+[7]*x*x*x)*y+([8]+[9]*x+[10]*x*x+[11]*x*x*x)*y*y+([12]+[13]*x+[14]*x*x+[15]*x*x*x)*y*y*y)", 500, 1000, -6, -1.5)
+    for i in range(0,15):
+	    tf.SetParameter(i,pars[i]);
+
+    c = r.TCanvas("c","c",1000,800)
+    c.SetFillStyle(4000)
+    c.SetFrameFillStyle(1000)
+    c.SetFrameFillColor(0)
+    tf.Draw("surf bb")
+
+    r.gPad.SetTheta(30)
+    r.gPad.SetPhi(30+270)
+    r.gPad.Modified()
+    r.gPad.Update()
+
+    tag1 = r.TLatex(0.67,0.92,"2.3 fb^{-1} (13 TeV)")
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = r.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    c.SaveAs("tf.pdf")
+    c.SaveAs("tf.C")
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
