@@ -32,6 +32,11 @@ class sampleContainer:
             self._lumi = 1
         self._fillCA15 = fillCA15
 
+	f_puppi= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/puppiCorr.root","read")
+  	self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
+  	self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
+  	self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
+
         # get histogram for transform
         f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt.root","read")
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
@@ -101,6 +106,7 @@ class sampleContainer:
         'h_pt_ak8_sub2'        :["h_"+self._name+"_pt_ak8_sub2","; AK8 3rd leading p_{T} (GeV);", 50, 300, 2100],
         'h_pt_ak8_dbtagCut'    :["h_"+self._name+"_pt_ak8_dbtagCut","; AK8 leading p_{T} (GeV);", 45, 300, 2100],
         'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_raw'            :["h_"+self._name+"_msd_ak8_raw","; AK8 m_{SD}^{PUPPI} no correction (GeV);", 23,40,201],
         'h_msd_ak8_inc'        :["h_"+self._name+"_msd_ak8_inc","; AK8 m_{SD}^{PUPPI} (GeV);", 100,0,500],
         'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
@@ -127,6 +133,8 @@ class sampleContainer:
         'h_msd_ak8_topR4_fail' :["h_"+self._name+"_msd_ak8_topR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR5_fail' :["h_"+self._name+"_msd_ak8_topR5_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_fail' :["h_"+self._name+"_msd_ak8_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+	'h_msd_ak8_raw_SR_fail' :["h_"+self._name+"_msd_ak8_raw_SR_fail","; AK8 m_{SD}^{PUPPI} no corr (GeV);", 23,40,201],
+	'h_msd_ak8_raw_SR_pass' :["h_"+self._name+"_msd_ak8_raw_SR_pass","; AK8 m_{SD}^{PUPPI} no corr (GeV);", 23,40,201],
         'h_msd_ak8_topR7_fail' :["h_"+self._name+"_msd_ak8_topR7_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_0p6_pass' :["h_"+self._name+"_msd_ak8_topR6_0p6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_0p6_fail' :["h_"+self._name+"_msd_ak8_topR6_0p6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
@@ -263,6 +271,8 @@ class sampleContainer:
         # loop
         self.loop()
 
+    
+
     def loop( self ):
         # looping
         nent = self._tt.GetEntries()
@@ -303,13 +313,16 @@ class sampleContainer:
 
 
             ##### AK8 info
-            jmsd_8 = self.AK8Puppijet0_msd[0]
+            jmsd_8_raw = self.AK8Puppijet0_msd[0]
+
             jpt_8  = self.AK8Puppijet0_pt[0]
             jeta_8  = self.AK8Puppijet0_eta[0]
+	    jmsd_8 = self.AK8Puppijet0_msd[0]*self.PUPPIweight(jpt_8,jeta_8)
+
             jpt_8_sub1  = self.AK8Puppijet1_pt[0]
             jpt_8_sub2  = self.AK8Puppijet2_pt[0]
             if jmsd_8 <= 0: jmsd_8 = 0.01
-            rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)
+            rh_8 = math.log(jmsd_8*jmsd_8/jpt_8/jpt_8)  #tocheck here
             rhP_8 = math.log(jmsd_8*jmsd_8/jpt_8)
             jt21_8 = self.AK8Puppijet0_tau21[0]
             jt32_8 = self.AK8Puppijet0_tau32[0]
@@ -468,6 +481,7 @@ class sampleContainer:
                 self.h_pt_ak8_sub1.Fill( jpt_8_sub1, weight )
                 self.h_pt_ak8_sub2.Fill( jpt_8_sub2, weight )
                 self.h_msd_ak8.Fill( jmsd_8, weight )
+		self.h_msd_ak8_raw.Fill( jmsd_8_raw, weight )
                 self.h_dbtag_ak8.Fill( jdb_8, weight )
                 self.h_dbtag_ak8_sub1.Fill( jdb_8_sub1, weight )
                 self.h_dbtag_ak8_sub2.Fill( jdb_8_sub2, weight )
@@ -538,10 +552,12 @@ class sampleContainer:
 		cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
+		    self.h_msd_ak8_raw_SR_pass.Fill( jmsd_8_raw, weight )
                     self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight ) 
                 else:
                     self.h_msd_ak8_topR6_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_fail.Fill( jmsd_8, jpt_8, weight )                     
+		    self.h_msd_ak8_raw_SR_fail.Fill( jmsd_8_raw, weight )
 		if jdb_8 > 0.91:
     		    self.h_msd_v_pt_ak8_topR6_0p91_pass.Fill( jmsd_8, jpt_8, weight )
 		else:
@@ -685,6 +701,18 @@ class sampleContainer:
         self.h_rhop_v_t21_ak8_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
         self.h_rhop_v_t21_ca15_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
 
+    def PUPPIweight(self,puppipt=30., puppieta=0. ):
+
+        genCorr  = 1.
+        recoCorr = 1.
+        totalWeight = 1.
+        genCorr =  self._puppisd_corrGEN.Eval( puppipt )
+  	if( abs(puppieta)  < 1.3 ):
+    		recoCorr = self._puppisd_corrRECO_cen.Eval( puppipt )
+    	else: 
+		recoCorr = self._puppisd_corrRECO_for.Eval( puppipt );
+	totalWeight = genCorr*recoCorr
+  	return totalWeight
 
 ##########################################################################################
 
