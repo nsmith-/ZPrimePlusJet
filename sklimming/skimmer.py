@@ -209,7 +209,7 @@ def sklimAdd(fn,odir,mass=0):
     h_ggh_den.Scale(28.45024/h_ggh_den.Integral())
     h_vbf_num = fvbf.Get('h_nnnlo_ptH')
     h_vbf_den = fvbf_pt.Get('vbf_hpt')
-    h_vbf_den.Scale(2.2026368/h_vbf_den.Scale.Integral())
+    h_vbf_den.Scale(2.2026368/h_vbf_den.Integral())
 
     # # h_rw = ROOT.TH1F()
     h_rw = None
@@ -257,7 +257,7 @@ def sklimAdd(fn,odir,mass=0):
             # MHTOvHT[0] = tree.MHT/math.sqrt(tree.HT)
             # print tree.genVPt ,tree.scale1fb,h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
 	    if 'GluGluHToBB_M125_13TeV_powheg' in fn:  newscale1fb[0] =  h_ggh_num.GetBinContent( h_ggh_num.FindBin(tree.genVPt) )/h_ggh_den.GetBinContent( h_ggh_den.FindBin(tree.genVPt) )
-	    if 'VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix' in fb : newscale1fb[0] =  h_vbf_num.GetBinContent( h_vbf_num.FindBin(tree.genVPt) )/h_vbf_den.GetBinContent( h_vbf_den.FindBin(tree.genVPt) )
+	    if 'VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix' in fn : newscale1fb[0] =  h_vbf_num.GetBinContent( h_vbf_num.FindBin(tree.genVPt) )/h_vbf_den.GetBinContent( h_vbf_den.FindBin(tree.genVPt) )
             if 'VectorDiJet' in fn and mass > 0: newscale1fb[0] = tree.scale1fb*h_rw.GetBinContent( h_rw.FindBin(tree.genVPt) )
             else: newscale1fb[0] = tree.scale1fb
             #newscale1fb[0]= NEvents.GetBinContent(1)	
