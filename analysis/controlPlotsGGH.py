@@ -81,7 +81,13 @@ def main(options,args,outputExists):
 		                     idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
 		                     idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
               #'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root',
+                     idir+'WJetsToLNu_HT_100To200_13TeV_ext_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_800To1200_13TeV_all_1000pb_weighted.root',
+                    idir+'/WJetsToLNu_HT_1200To2500_13TeV_all_1000pb_weighted.root'],
               #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
               'TTbar':  [idir+'/TT_13TeV_powheg_pythia8_ext_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',

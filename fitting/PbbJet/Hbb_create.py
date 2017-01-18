@@ -23,7 +23,7 @@ def main(options,args):
     
     outfile=ROOT.TFile(options.odir+"/"+fileName, "recreate")
     
-    tfiles = {'hqq125': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+    tfiles = {'hqq125': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted_pt.root'],
               #'vbfhqq125': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
               'vbfhqq125': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
               'zhqq125': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
@@ -33,7 +33,13 @@ def main(options,args):
               #'zqq': [idir+'/ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],
               'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
               #'wqq':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
-              'wqq':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'wqq':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root',
+                     idir+'WJetsToLNu_HT_100To200_13TeV_ext_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_800To1200_13TeV_all_1000pb_weighted.root',
+                    idir+'/WJetsToLNu_HT_1200To2500_13TeV_all_1000pb_weighted.root'],
               #'tqq':  [idir+'/TTJets_13TeV_1000pb_weighted.root'],
               'tqq':  [idir+'/TT_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'stqq': [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
@@ -88,7 +94,7 @@ def main(options,args):
     if muonCR:
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
     else:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 10, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
     plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']
