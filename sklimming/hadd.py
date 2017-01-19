@@ -55,7 +55,7 @@ def main(options,args):
         filesToConvert = getFilesRecursively(DataDir,tags[i][0],None,'sklim')
         print "files To Convert = ",filesToConvert
         print 'hadd -f %s/%s %s'%(OutDir,basename,' '.join(filesToConvert))
-        os.system('hadd -f %s/%s %s << hadd_command_%s.sh'%(OutDir,basename,' '.join(filesToConvert),basename))
+        os.system('echo hadd -f %s/%s %s >> hadd_command_%s.sh'%(OutDir,basename,' '.join(filesToConvert),basename))
         os.system('hadd -f %s/%s %s'%(OutDir,basename,' '.join(filesToConvert))
 
 
@@ -71,23 +71,29 @@ def getFilesRecursively(dir,searchstring,additionalstring = None, skipString = N
 
     cfiles = []
     for root, dirs, files in os.walk(dir+'/'+thesearchstring):
-        for file in files:
+        nfiles = len(files)
+        for ifile, file in enumerate(files):
             print file
+            if ifile%100: print '%i/%i files checked in %s'%(ifile,nfiles,dir)
             try:
                 f = ROOT.TFile.Open(os.path.join(root, file))
                 if f.IsZombie():
                     f.Close()
+                    os.system('rm %s'%os.path.join(root, file))
                     continue
                 elif not f.Get('Events'):
                     f.Close()
+                    os.system('rm %s'%os.path.join(root, file))
                     continue
                 elif not f.Get('Events').IneritsFrom('TTree'):
                     f.Close()
+                    os.system('rm %s'%os.path.join(root, file))
                     continue
                 else:
                     f.Close()
                     cfiles.append(os.path.join(root, file))                    
             except:
+                os.system('rm %s'%os.path.join(root, file))
                 continue
                 
     return cfiles
