@@ -36,12 +36,12 @@ def main(options,args):
     #tags.append([ 'JetHTRun2016B_23Sep2016_v3/', 0] )
     #tags.append([ 'JetHTRun2016B_23Sep2016_v1/', 0] )
     #tags.append([ 'JetHTRun2016C_23Sep2016_v1/', 0] )
-    tags.append([ 'JetHTRun2016D_23Sep2016_v1/', 0] )
+    #tags.append([ 'JetHTRun2016D_23Sep2016_v1/', 0] )
     #tags.append([ 'JetHTRun2016E_23Sep2016_v1/', 0] )
-    tags.append([ 'JetHTRun2016F_23Sep2016_v1/', 0] )
+    #tags.append([ 'JetHTRun2016F_23Sep2016_v1/', 0] )
     #tags.append([ 'JetHTRun2016G_23Sep2016_v1/', 0] )
-    tags.append([ 'JetHTRun2016H_PromptReco_v1/', 0] )
-    tags.append([ 'JetHTRun2016H_PromptReco_v2/', 0] )
+    #tags.append([ 'JetHTRun2016H_PromptReco_v1/', 0] )
+    #tags.append([ 'JetHTRun2016H_PromptReco_v2/', 0] )
     #tags.append([ 'JetHTRun2016H_PromptReco_v3/', 0] )
     tags.append([ 'SingleMuonRun2016B_23Sep2016_v1/', 0] )
     tags.append([ 'SingleMuonRun2016B_23Sep2016_v3/', 0] )
@@ -51,8 +51,8 @@ def main(options,args):
     tags.append([ 'SingleMuonRun2016F_23Sep2016_v1/', 0] )
     tags.append([ 'SingleMuonRun2016G_23Sep2016_v1/', 0] )
     tags.append([ 'SingleMuonRun2016H_PromptReco_v1/', 0] )
-    #tags.append([ 'SingleMuonRun2016H_PromptReco_v2/', 0] )
-    #tags.append([ 'SingleMuonRun2016H_PromptReco_v3/', 0] )
+    tags.append([ 'SingleMuonRun2016H_PromptReco_v2/', 0] )
+    tags.append([ 'SingleMuonRun2016H_PromptReco_v3/', 0] )
 
     postfix = ''
     for i in range(len(tags)):
@@ -68,7 +68,7 @@ def main(options,args):
             for badFile in badFiles:
                 f.write(badFile+'\n')
 
-        os.system('source hadd_command_%s.sh'%basename)
+        os.system('source $PWD/hadd_command_%s.sh'%basename)
 
 
 
