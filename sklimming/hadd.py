@@ -61,7 +61,7 @@ def main(options,args):
 
 
 def getFilesRecursively(dir,searchstring,additionalstring = None, skipString = None):
-	
+    
     # thesearchstring = "_"+searchstring+"_"
     thesearchstring = searchstring
 
@@ -73,26 +73,28 @@ def getFilesRecursively(dir,searchstring,additionalstring = None, skipString = N
     for root, dirs, files in os.walk(dir+'/'+thesearchstring):
         nfiles = len(files)
         for ifile, file in enumerate(files):
-            if ifile%100==0: print '%i/%i files checked in %s'%(ifile,nfiles,dir)
+            
+            if ifile%100==0:
+                print '%i/%i files checked in %s'%(ifile,nfiles,dir+'/'+thesearchstring)
             try:
                 f = ROOT.TFile.Open(os.path.join(root, file))
                 if f.IsZombie():
+                    print 'file is zombie'
                     f.Close()
-                    os.system('echo rm %s'%os.path.join(root, file))
                     continue
                 elif not f.Get('Events'):
+                    print 'tree is false'
                     f.Close()
-                    os.system('echo rm %s'%os.path.join(root, file))
                     continue
-                elif not f.Get('Events').IneritsFrom('TTree'):
+                elif not f.Get('Events').InheritsFrom('TTree'):
+                    print 'tree is not a tree'
                     f.Close()
-                    os.system('echo rm %s'%os.path.join(root, file))
                     continue
                 else:
                     f.Close()
                     cfiles.append(os.path.join(root, file))                    
-            except:
-                os.system('echo rm %s'%os.path.join(root, file))
+            except KeyError:
+                print 'could not open file or tree'
                 continue
                 
     return cfiles
