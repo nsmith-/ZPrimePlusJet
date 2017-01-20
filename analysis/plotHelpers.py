@@ -651,7 +651,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     return c
 
     
-def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,ofile=None):
+def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,printSB=False,ofile=None):
     leg_y = 0.88 - (len(hs)+len(hb))*0.04
     leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
@@ -662,8 +662,9 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     maxval = -99
     nevt=[]
     hstack = ROOT.THStack("hstack","hstack")
-    #for name, h in (sorted(hb.iteritems(),key=customSort)):
-    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+    for name, h in (sorted(hb.iteritems(),key=customSort)):
+	print name
+    #for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -677,9 +678,10 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     ntotal=allMC.Integral()
     nsig=hs[nameS].Integral()
 
-    ratio = hs[nameS].Clone("%s_ratio"%hs[nameS].GetName())
-    ratio.SetDirectory(0)
-    for i in range(0, allMC.GetNbinsX()):
+    if(printSB): 
+      ratio = hs[nameS].Clone("%s_ratio"%hs[nameS].GetName())
+      ratio.SetDirectory(0)
+      for i in range(0, allMC.GetNbinsX()):
         SoverB=0
         SoverB= getSoverRootB(hs[nameS],allMC,i)
         ratio.SetBinContent(i,SoverB)
@@ -690,7 +692,8 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
-	#h.Scale(1000)
+	h.Scale(100)
+    
         
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"f")
@@ -699,24 +702,31 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 
 
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
-    oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
-    oben.SetBottomMargin(0)
-    oben.SetFillStyle(4000)
-    oben.SetFrameFillStyle(1000)
-    oben.SetFrameFillColor(0)
-    unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
-    unten.SetTopMargin(0.)
-    unten.SetBottomMargin(0.35)
-    unten.SetFillStyle(4000)
-    unten.SetFrameFillStyle(1000)
-    unten.SetFrameFillColor(0)
+    c.SetFillStyle(4000)
+    c.SetFrameFillStyle(1000)
+    c.SetFrameFillColor(0)
 
-    oben.Draw()
-    unten.Draw()
-    oben.cd()
+    if(printSB): 
+     oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
+     oben.SetBottomMargin(0)
+     oben.SetFillStyle(4000)
+     oben.SetFrameFillStyle(1000)
+     oben.SetFrameFillColor(0)
+     unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
+     unten.SetTopMargin(0.)
+     unten.SetBottomMargin(0.35)
+     unten.SetFillStyle(4000)
+     unten.SetFrameFillStyle(1000)
+     unten.SetFrameFillColor(0)
+
+     oben.Draw()
+     unten.Draw()
+     oben.cd()
+    else :
+     c.cd()
 
     hstack.Draw('hist')
-    hstack.SetMaximum(2.*maxval)
+    hstack.SetMaximum(1.5*maxval)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
@@ -734,30 +744,31 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw()
 
-    unten.cd()
-    unten.SetLogy()	
-    ratio.SetStats(0)
-    ratio.SetLineColor(hs[nameS].GetLineColor())
-    ratio.SetLineWidth(2)
-    ratio.SetLineStyle(1)
-    ratio.GetYaxis().SetRangeUser(0.001,2)
-    ratio.GetYaxis().SetTitle("S/#sqrt{B}")
-    ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
-    ratio.GetXaxis().SetTitleSize(0.14)
-    ratio.GetXaxis().SetTitleOffset(1.0)
-    ratio.GetYaxis().SetTitleOffset(0.5)
-    ratio.GetYaxis().SetLabelSize(0.12)
-    ratio.GetYaxis().SetTitleSize(0.14)
-    ratio.GetXaxis().SetLabelSize(0.12)
+    if(printSB): 
+     unten.cd()
+     unten.SetLogy()	
+     ratio.SetStats(0)
+     ratio.SetLineColor(hs[nameS].GetLineColor())
+     ratio.SetLineWidth(2)
+     ratio.SetLineStyle(1)
+     ratio.GetYaxis().SetRangeUser(0.001,2)
+     ratio.GetYaxis().SetTitle("S/#sqrt{B}")
+     ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+     ratio.GetXaxis().SetTitleSize(0.14)
+     ratio.GetXaxis().SetTitleOffset(1.0)
+     ratio.GetYaxis().SetTitleOffset(0.5)
+     ratio.GetYaxis().SetLabelSize(0.12)
+     ratio.GetYaxis().SetTitleSize(0.14)
+     ratio.GetXaxis().SetLabelSize(0.12)
 
-    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+     line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
                       ratio.GetXaxis().GetXmax(), 1.0)
-    line.SetLineColor(ROOT.kGray)
-    line.SetLineStyle(2)
-    line.Draw()
+     line.SetLineColor(ROOT.kGray)
+     line.SetLineStyle(2)
+     line.Draw()
 
-    ratio.Draw("HIST")
-    line.Draw("same")
+     ratio.Draw("HIST")
+     line.Draw("same")
 
 
     c.SaveAs(pdir+"/"+outname+".pdf")
@@ -765,7 +776,10 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 		
 	
     #ROOT.gPad.SetLogy()
-    oben.SetLogy()	
+    if(printSB): 
+	oben.SetLogy()	
+    else:
+      c.SetLogy()
     hstack.SetMinimum(1e-1)	
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
