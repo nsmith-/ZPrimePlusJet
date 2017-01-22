@@ -220,6 +220,8 @@ class sampleContainer:
         'h_msd_v_pt_ak8_topR5_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR5_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	'h_msd_v_pt_ak8_topR6_N2_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_raw_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_raw_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+	'h_msd_v_pt_ak8_topR6_raw_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_raw_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR7_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR7_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],            
         'h_msd_v_pt_ak8_bbleading_topR6_pass' :["h_"+self._name+"_msd_v_pt_ak8_bbleading_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_bbleading_topR6_fail' :["h_"+self._name+"_msd_v_pt_ak8_bbleading_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
@@ -558,10 +560,12 @@ class sampleContainer:
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
 		    self.h_msd_ak8_raw_SR_pass.Fill( jmsd_8_raw, weight )
                     self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight ) 
+		    self.h_msd_v_pt_ak8_topR6_raw_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_fail.Fill( jmsd_8, jpt_8, weight )                     
 		    self.h_msd_ak8_raw_SR_fail.Fill( jmsd_8_raw, weight )
+	            self.h_msd_v_pt_ak8_topR6_raw_fail.Fill( jmsd_8, jpt_8, weight )
 	    if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jtN2b1sdddt_8 < 0  and isTightVJet:
                 cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:

@@ -97,7 +97,9 @@ def main(options,args):
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
-    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']
+    #plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail'] #SR with tau21DDT < 0.55 && db >0.9, msd corrected
+    #plots = ['h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail']  #SR with N2DDT @40% && db >0.9, msd corrected
+    plots = ['h_msd_v_pt_ak8_topR6_raw_pass','h_msd_v_pt_ak8_topR6_raw_fail'] #SR with tau21DDT < 0.55 && db >0.9
     if options.bb:
         plots =  ['h_msd_v_pt_ak8_bbleading_topR6_pass','h_msd_v_pt_ak8_bbleading_topR6_fail']
     elif muonCR:
