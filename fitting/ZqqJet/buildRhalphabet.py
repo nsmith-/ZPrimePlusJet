@@ -78,25 +78,15 @@ class dazsleRhalphabetBuilder:
 			hfail_inPtBin = [];
 			for ih,h in enumerate(self._hpass):
 				tmppass_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi)
-				if ih == 0:
-					for i0 in range(1,self._mass_nbins+1):
-						if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
-							tmppass_inPtBin.SetBinContent(i0,0.1);
-				else:
-					for i0 in range(1,self._mass_nbins+1):
-						if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
-							tmppass_inPtBin.SetBinContent(i0,1);
+				for i0 in range(1,self._mass_nbins+1):
+					if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
+						tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
                         for ih,h in enumerate(self._hfail):
                                 tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
-				if ih == 0:
-                                        for i0 in range(1,self._mass_nbins+1):
-                                                if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
-                                                        tmpfail_inPtBin.SetBinContent(i0,0.1);
-                                else:
-                                        for i0 in range(1,self._mass_nbins+1):
-                                                if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
-                                                        tmpfail_inPtBin.SetBinContent(i0,1);
+				for i0 in range(1,self._mass_nbins+1):
+					if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
+						tmpfail_inPtBin.SetBinContent(i0,0);
                                 hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
 			# make RooDataset, RooPdfs, and histograms
@@ -106,7 +96,6 @@ class dazsleRhalphabetBuilder:
 			pPt = self._hpass[0].GetYaxis().GetBinLowEdge(ipt)+self._hpass[0].GetYaxis().GetBinWidth(ipt)*0.3;
 			
 			#Make the ralphabet fit for a specific pt bin
-			#lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],pPt,"cat"+str(ipt))
 			lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],[hpass_inPtBin[0],hpass_inPtBin[1],hpass_inPtBin[2],hpass_inPtBin[4]],pPt,"cat"+str(ipt))			
 			
 			# #Get signals and SM backgrounds
@@ -169,9 +158,9 @@ class dazsleRhalphabetBuilder:
 
 			#If the number of events in the failing is small remove the bin from being free in the fit
 			if pSum < 5 and pSumP < 5:
-                                pFail = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),0.1,0.1,0.2)
+				pFail = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSum ,0.,max(pSum,0.1))
 				pFail.setConstant(True)
-				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),0.1,0.1,0.2)
+				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSumP,0.,max(pSumP,0.1))
 				pPass.setConstant(True)
 
 			#Add bins to the array
@@ -352,7 +341,7 @@ class dazsleRhalphabetBuilder:
 				tmph_matched = self._inputfile.Get(process+"_"+cat+"_matched");
 				tmph_unmatched = self._inputfile.Get(process+"_"+cat+"_unmatched");
 				tmph_mass_matched = proj("cat",str(ipt),tmph_matched,self._mass_nbins,self._mass_lo,self._mass_hi);
-				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
+                                tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
 				
 				#####
 				# smear/shift the matched
@@ -391,6 +380,10 @@ class dazsleRhalphabetBuilder:
 				
 				self._outfile_validation.cd();
 				for h in hout:
+					for i0 in range(1,self._mass_nbins+1):
+						if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4):
+							h.SetBinContent(i0,0);
+							h.SetBinContent(i0,0);
 					h.Write();
 					tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
 					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
