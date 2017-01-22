@@ -68,7 +68,7 @@ def main(options,args,outputExists):
               #'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
               'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_0_1000pb_weighted.root'],
               'VHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
-                       idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
+                       idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',],
                        #idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'ttHbb':  [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
               'Diboson': [idir+'/WWTo4Q_13TeV_powheg_0_1000pb_weighted.root',
@@ -91,7 +91,7 @@ def main(options,args,outputExists):
               #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
               'TTbar':  [idir+'/TT_powheg_0_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-		      idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
+		      idir+'/QCD_HT200to300_13TeV_1000pb_weighted.root',
 		      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
 		      idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
 		      idir+'/QCD_HT700to1000_13TeV_ext_0_1000pb_weighted.root',
