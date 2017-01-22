@@ -553,7 +553,7 @@ class sampleContainer:
            # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2:  cut[8]=cut[8]+1
            # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and n_fwd_4 < 3 : cut[9]=cut[9]+1
             if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < T21DDTCUT  and isTightVJet:
-		cut[8]=cut[8]+1
+		#cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
 		    self.h_msd_ak8_raw_SR_pass.Fill( jmsd_8_raw, weight )
@@ -563,7 +563,7 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_topR6_fail.Fill( jmsd_8, jpt_8, weight )                     
 		    self.h_msd_ak8_raw_SR_fail.Fill( jmsd_8_raw, weight )
 	    if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jtN2b1sdddt_8 < 0  and isTightVJet:
-                #cut[8]=cut[8]+1
+                cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_N2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_pass.Fill( jmsd_8, jpt_8, weight )
@@ -696,7 +696,7 @@ class sampleContainer:
         #self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
         #self.h_Cuts.SetBinContent(10,float(cut[9]/nent*100.))
         self.h_Cuts.SetBinContent(8,float(cut[8])/nent*100.)
-        print(cut[0]/nent*100.,cut[3]/nent*100.,cut[4]/nent*100.)
+        print(cut[0]/nent*100.,cut[7],cut[8])
         a_Cuts=self.h_Cuts.GetXaxis();
         a_Cuts.SetBinLabel(4, "lep veto");
         a_Cuts.SetBinLabel(5, "#tau veto");
