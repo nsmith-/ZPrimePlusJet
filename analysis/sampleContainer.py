@@ -10,7 +10,7 @@ import pdb
 import sys
 import time
 import warnings
-DBTAGCUT = 0.865
+DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 #########################################################################################################
 class sampleContainer:
@@ -36,9 +36,13 @@ class sampleContainer:
   	self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
   	self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
   	self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
+	
+	f_pu= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_Jan11.root","read")
+        self._puw      = f_pu.Get("puw")
+
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_30eff.root","read")
+        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_20eff.root","read")
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
@@ -58,7 +62,7 @@ class sampleContainer:
                           ('nAK4PuppijetsLPt150dR08_2','i',-999),('nAK4PuppijetsMPt150dR08_2','i',-999),('nAK4PuppijetsTPt150dR08_2','i',-999),
                           ('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),('AK8Puppijet1_tau21','d',-999),('AK8Puppijet2_tau21','d',-999),                        
                           ('AK8Puppijet0_ratioCA15_04','d',-999),('pfmet','f',-999),('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
-                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('npv','i',1),
+                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('npv','d',1),('npu','d',1), 
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
                           ('AK8Puppijet0_isTightVJet','i',0),
                           ('AK8Puppijet1_isTightVJet','i',0),
@@ -307,7 +311,8 @@ class sampleContainer:
                 sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
                 sys.stdout.flush()
             
-            puweight = self.puWeight[0]
+            puweight = 1 #self.puWeight[0] #corrected 
+	    puWeight = self._puw.GetBinContent(self._puw.FindBin(self.npu[0]));
             fbweight = self.scale1fb[0] * self._lumi
 	    vjetsKF = self.kfactor[0] #==1 for not V+jets events
             weight = puweight*fbweight*self._sf*vjetsKF
@@ -557,7 +562,7 @@ class sampleContainer:
            # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2:  cut[8]=cut[8]+1
            # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and n_fwd_4 < 3 : cut[9]=cut[9]+1
             if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < T21DDTCUT  and isTightVJet:
-		cut[8]=cut[8]+1
+		#cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
 		    cut[9]=cut[9]+1
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
@@ -570,7 +575,7 @@ class sampleContainer:
 		    self.h_msd_ak8_raw_SR_fail.Fill( jmsd_8_raw, weight )
 	            self.h_msd_v_pt_ak8_topR6_raw_fail.Fill( jmsd_8, jpt_8, weight )
 	    if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jtN2b1sdddt_8 < 0  and isTightVJet:
-                #cut[8]=cut[8]+1
+                cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_N2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_pass.Fill( jmsd_8, jpt_8, weight )
