@@ -56,8 +56,8 @@ if __name__ == '__main__':
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
 	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
-        parser.add_option('--np', dest="np", type=int,default=2, help='degree poly pt')
-        parser.add_option('--nr', dest="nr", type=int,default=2, help='degree poly rho')
+        parser.add_option('--np', dest="np", type=int,default=3, help='degree poly pt')
+        parser.add_option('--nr', dest="nr", type=int,default=3, help='degree poly rho')
         parser.add_option('--nmass', dest="nmass", type=int,default=36, help='number of mass bins')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
 

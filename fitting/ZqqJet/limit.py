@@ -168,13 +168,13 @@ if __name__ == "__main__":
     import tdrstyle
     tdrstyle.setTDRStyle()
 
-    setupMC('ZQQ_'+str(options.mass),options.mass,"mc")
-    setup('ZQQ_'+str(options.mass),options.mass,"ralpha","base")
-    os.chdir ('ZQQ_'+str(options.mass))
-    generate(options.mass,options.toys)
+    #setupMC('ZQQ_'+str(options.mass),options.mass,"mc")
+    #setup('ZQQ_'+str(options.mass),options.mass,"ralpha","base")
+    os.chdir ('ZQQ_'+str(options.mass)+'_9bins')
+    #generate(options.mass,options.toys)
 
-    limit('card_ralpha.txt')
+    #limit('cards_all.txt')
 
-    goodness('card_ralpha.txt',options.toys,"goodness"+str(options.mass))
-    bias('card_ralpha.txt','card_ralpha.txt',options.toys,options.sig,"fitbase"+str(options.mass))
-    plotmass('card_ralpha.txt',options.mass)
+    goodness('cards_all_zqq'+str(options.mass)+'.txt',options.toys,"goodness"+str(options.mass))
+    #bias('card_ralpha.txt','card_ralpha.txt',options.toys,options.sig,"fitbase"+str(options.mass))
+    #plotmass('card_ralpha.txt',options.mass)

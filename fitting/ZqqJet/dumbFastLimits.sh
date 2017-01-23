@@ -3,7 +3,7 @@
 echo "hello!"
 
 masses=(50 75 100 125 150 200)
-#masses=(50)
+#masses=(200)
 
 for i in "${masses[@]}"
 do 

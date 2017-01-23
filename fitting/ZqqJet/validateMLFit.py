@@ -185,7 +185,17 @@ def makeMLFitCanvas(bkgs, data, hsig, leg, tag):
 	
 	print 'N BINS'
 	for ih in range(len(bkgs)): print bkgs[ih].GetNbinsX(), bkgs[ih].GetBinLowEdge(1), bkgs[ih].GetBinLowEdge( bkgs[ih].GetNbinsX() ) + bkgs[ih].GetBinWidth( bkgs[ih].GetNbinsX() );
-		
+
+	if 'cat5' in tag:
+		print 'DATA!!!'
+		print data.GetNbinsX()
+		for i in range(1,data.GetNbinsX()):
+			print i
+			print data.GetBinLowEdge(i)
+			print data.GetBinWidth(data.GetNbinsX())
+			print data.GetBinContent(i)
+			print 'vs' 
+			print bkgs[0].GetBinContent(i)+bkgs[1].GetBinContent(i)+bkgs[2].GetBinContent(i)+bkgs[3].GetBinContent(i)
 	htot.SetLineColor(r.kBlack);
 	colors = [r.kRed, r.kBlue, r.kMagenta, r.kGreen+1, r.kCyan + 1]
 	for i,b in enumerate(bkgs): b.SetLineColor(colors[i]);
