@@ -103,7 +103,6 @@ def main(options,args,outputExists):
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_0_1000pb_weighted.root'],
               'Phibb250': [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_0_1000pb_weighted.root'],
               'data': [idir+'JetHTRun2016B_23Sep2016_v1_0.root',
-                       idir+'JetHTRun2016B_23Sep2016_v2_0.root',
                        idir+'JetHTRun2016B_23Sep2016_v3_0.root',
                        idir+'JetHTRun2016B_23Sep2016_v3_1.root',
                        idir+'JetHTRun2016B_23Sep2016_v3_10.root',
@@ -212,9 +211,9 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
-                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4']                 
+                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4','h_msd_ak8_topR6_N2_pass']                 
     elif isData:
-        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8']
+        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:	
     	plots = ['h_pt_ak8','h_pt_ak8_sub1','h_pt_ak8_sub2','h_msd_ak8','h_msd_ak8_inc','h_dbtag_ak8','h_dbtag_ak8_sub1','h_dbtag_ak8_sub2',
                  'h_pt_bbleading','h_bb_bbleading','h_msd_bbleading',
