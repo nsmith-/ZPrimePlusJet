@@ -10,7 +10,7 @@ import pdb
 import sys
 import time
 import warnings
-DBTAGCUT = 0.90
+DBTAGCUT = 0.865
 T21DDTCUT = 0.55
 #########################################################################################################
 class sampleContainer:
@@ -38,7 +38,7 @@ class sampleContainer:
   	self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_40eff.root","read")
+        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_30eff.root","read")
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
@@ -58,7 +58,7 @@ class sampleContainer:
                           ('nAK4PuppijetsLPt150dR08_2','i',-999),('nAK4PuppijetsMPt150dR08_2','i',-999),('nAK4PuppijetsTPt150dR08_2','i',-999),
                           ('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),('AK8Puppijet1_tau21','d',-999),('AK8Puppijet2_tau21','d',-999),                        
                           ('AK8Puppijet0_ratioCA15_04','d',-999),('pfmet','f',-999),('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
-                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),
+                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('npv','i',1),
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
                           ('AK8Puppijet0_isTightVJet','i',0),
                           ('AK8Puppijet1_isTightVJet','i',0),
@@ -84,6 +84,7 @@ class sampleContainer:
         histos1d = {
         'h_Cuts'               :["h_"+self._name+"_Cuts","; Cut ", 8, 0, 8],
         'h_n_ak4'              :["h_"+self._name+"_n_ak4","; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],     
+	'h_npv'              :["h_"+self._name+"_npv","; number of PV;;", 100, 0, 100],
         'h_pt_bbleading'       :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} (GeV);", 50, 300, 2100],
         'h_bb_bbleading'       :["h_"+self._name+"_bb_bbleading","; double b-tag ;", 40, -1, 1],
         'h_msd_bbleading'      :["h_"+self._name+"_msd_bbleading","AK8 m_{SD}^{PUPPI} (GeV);", 30, 40, 250],
@@ -378,6 +379,7 @@ class sampleContainer:
 
             vmuoLoose0_pt = self.vmuoLoose0_pt[0]
             vmuoLoose0_eta = self.vmuoLoose0_eta[0]
+	    self.h_npv.Fill(self.npv[0],weight)
             # Single Muon Control Region 1 (inclusive)
             #if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
             if jpt_8 > 500 and jmsd_8 >40 and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and abs(vmuoLoose0_eta)<2.1 and isTightVJet:
@@ -555,8 +557,9 @@ class sampleContainer:
            # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2:  cut[8]=cut[8]+1
            # if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and n_fwd_4 < 3 : cut[9]=cut[9]+1
             if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < T21DDTCUT  and isTightVJet:
-		#cut[8]=cut[8]+1
+		cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
+		    cut[9]=cut[9]+1
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
 		    self.h_msd_ak8_raw_SR_pass.Fill( jmsd_8_raw, weight )
                     self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight ) 
@@ -567,7 +570,7 @@ class sampleContainer:
 		    self.h_msd_ak8_raw_SR_fail.Fill( jmsd_8_raw, weight )
 	            self.h_msd_v_pt_ak8_topR6_raw_fail.Fill( jmsd_8, jpt_8, weight )
 	    if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jtN2b1sdddt_8 < 0  and isTightVJet:
-                cut[8]=cut[8]+1
+                #cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_N2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_pass.Fill( jmsd_8, jpt_8, weight )
@@ -700,7 +703,7 @@ class sampleContainer:
         #self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
         #self.h_Cuts.SetBinContent(10,float(cut[9]/nent*100.))
         self.h_Cuts.SetBinContent(8,float(cut[8])/nent*100.)
-        print(cut[0]/nent*100.,cut[7],cut[8])
+        print(cut[0]/nent*100.,cut[7],cut[8],cut[9])
         a_Cuts=self.h_Cuts.GetXaxis();
         a_Cuts.SetBinLabel(4, "lep veto");
         a_Cuts.SetBinLabel(5, "#tau veto");
