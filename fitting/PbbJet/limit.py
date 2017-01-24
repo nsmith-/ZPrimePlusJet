@@ -164,15 +164,15 @@ def goodnessVals(iFName1):
 
 def ftest(base,alt,ntoys,iLabel,options):
     if not options.justPlot:
-        os.system('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF'% base)
+        os.system('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm saturated --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF'% base)
         os.system('mv higgsCombineTest.GoodnessOfFit.mH120.root %s/base1.root'%options.odir)
-        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % alt)
+        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 --algorithm saturated --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF' % alt)
         os.system('mv higgsCombineTest.GoodnessOfFit.mH120.root %s/base2.root'%options.odir)
         os.system('combine -M GenerateOnly %s --rMax 50 --rMin -50 --toysFrequentist -t %i --expectSignal 0 --saveToys --freezeNuisances tqqnormSF,tqqeffSF' % (base,ntoys))
         os.system('mv higgsCombineTest.GenerateOnly.mH120.123456.root %s/'%options.odir)
-        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombineTest.GenerateOnly.mH120.123456.root --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % (base,ntoys,options.odir))
+        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombineTest.GenerateOnly.mH120.123456.root --fixedSignalStrength 0 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % (base,ntoys,options.odir))
         os.system('mv higgsCombineTest.GoodnessOfFit.mH120.123456.root %s/toys1.root'%options.odir)
-        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombineTest.GenerateOnly.mH120.123456.root --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % (alt,ntoys,options.odir))
+        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombineTest.GenerateOnly.mH120.123456.root --fixedSignalStrength 0 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % (alt,ntoys,options.odir))
         os.system('mv higgsCombineTest.GoodnessOfFit.mH120.123456.root %s/toys2.root'%options.odir)
     nllBase=fStat("%s/base1.root"%options.odir,"%s/base2.root"%options.odir,options.p1,options.p2,options.n)
     nllToys=fStat("%s/toys1.root"%options.odir,"%s/toys2.root"%options.odir,options.p1,options.p2,options.n)
@@ -187,10 +187,10 @@ def ftest(base,alt,ntoys,iLabel,options):
 
 def goodness(base,ntoys,iLabel,options):
     if not options.justPlot:
-        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50  --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % base)
+        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50  --algorithm saturated --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF' % base)
         os.system('mv higgsCombineTest.GoodnessOfFit.mH120.root %s/goodbase.root'%options.odir)
         os.system('combine -M GenerateOnly %s --rMax 50 --rMin -50 --toysFrequentist -t %i --expectSignal 0 --saveToys --freezeNuisances tqqnormSF,tqqeffSF' % (base,ntoys))
-        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 --toysFile higgsCombineTest.GenerateOnly.mH120.123456.root -t %i --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF' % (base,ntoys))
+        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 --toysFile higgsCombineTest.GenerateOnly.mH120.123456.root -t %i --algorithm saturated --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF' % (base,ntoys))
         os.system('mv higgsCombineTest.GoodnessOfFit.mH120.123456.root %s/goodtoys.root'%(options.odir))
     nllBase=goodnessVals('%s/goodbase.root'%options.odir)
     nllToys=goodnessVals('%s/goodtoys.root'%options.odir)
