@@ -270,11 +270,12 @@ if __name__ == "__main__":
     parser.add_option('-d','--datacard'   ,action='store',type='string',dest='datacard'   ,default='card_rhalphabet.txt', help='datacard name')
     parser.add_option('--datacard-alt'   ,action='store',type='string',dest='datacardAlt'   ,default='card_rhalphabet_alt.txt', help='alternative datacard name')
     parser.add_option('-M','--method'   ,dest='method'   ,default='GoodnessOfFit', 
-                      choices=['GoodnessOfFit','FTest','Asymptotic','Bias'],help='combine method to use')
+                      choices=['GoodnessOfFit','FTest','Asymptotic','Bias','MaxLikelihoodFit'],help='combine method to use')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots and output toys', metavar='odir')
     parser.add_option('--just-plot', action='store_true', dest='justPlot', default=False, help='just plot')
     parser.add_option('--data', action='store_true', dest='isData', default=False, help='is data')
     parser.add_option('-l','--lumi'   ,action='store',type='float',dest='lumi'   ,default=36.4, help='lumi')
+
 
     (options,args) = parser.parse_args()
 
@@ -318,7 +319,9 @@ if __name__ == "__main__":
     elif options.method=='MaxLikelihoodFit':
         fit(options.datacard,options)
 
+    elif options.method=='Asymptotic'
+
+        
     elif options.method=='FTest':
         iLabel= 'ftest_%s_vs_%s'%(options.datacard.split('/')[-1].replace('.txt',''),options.datacardAlt.split('/')[-1].replace('.txt',''))
         ftest(options.datacard, options.datacardAlt, options.toys, iLabel, options)
-        

@@ -8,8 +8,8 @@ import math
 import sys
 import time
 import array
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 
 
 # including other directories
@@ -21,6 +21,7 @@ MASS_LO = 40
 MASS_HI = 201
 BLIND_LO = 110
 BLIND_HI = 131
+
 ##############################################################################
 ##############################################################################
 #### B E G I N N I N G   O F   C L A S S
@@ -29,7 +30,7 @@ BLIND_HI = 131
 
 class dazsleRhalphabetBuilder: 
 
-    def __init__( self, hpass, hfail, odir ): 
+    def __init__( self, hpass, hfail, odir, NR, NP): 
 
         self._hpass = hpass;
         self._hfail = hfail;
@@ -50,8 +51,8 @@ class dazsleRhalphabetBuilder:
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
         #polynomial order for fit
-        self._poly_lNP = 2 #1 = linear ; 2 is quadratic
-        self._poly_lNR = 2
+        self._poly_lNR = NR
+        self._poly_lNP = NP #1 = linear ; 2 is quadratic
         #self._poly_lNRP =1;
 
         self._nptbins = hpass[0].GetYaxis().GetNbins();
@@ -142,7 +143,7 @@ class dazsleRhalphabetBuilder:
         self._lEffQCD.setConstant(False)
 
         polyArray = []
-        self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-0.3,0.3)
+        self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-3,3)
         print polyArray
 
         #Now build the function
@@ -321,9 +322,9 @@ class dazsleRhalphabetBuilder:
                		 pXMax = iXMax0
 		
                 pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin,pXMax)
-		print("========  here i0 %s i1 %s"%(i0,i1))
+		#print("========  here i0 %s i1 %s"%(i0,i1))
                 print pVar
-		print(" is : %s  +/- %s"%(value[i0*3+i1],error[i0*3+i1]))
+		#print(" is : %s  +/- %s"%(value[i0*3+i1],error[i0*3+i1]))
                 
                 iVars.append(pRooVar)
 
@@ -434,13 +435,13 @@ def main(options,args):
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
 	f = r.TFile.Open(ifile)
-	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind,options.useQCD);
+	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind,options.useQCD,options.scale);
 
 	# Build the workspacees
-	dazsleRhalphabetBuilder(hpass,hfail,odir)
+	dazsleRhalphabetBuilder(hpass,hfail,odir,options.NR,options.NP)
 
 ##-------------------------------------------------------------------------------------
-def loadHistograms(f,pseudo,blind,useQCD):
+def loadHistograms(f,pseudo,blind,useQCD,scale):
     hpass = []
     hfail = []
     hpass.append(f.Get('data_obs_pass'))
@@ -452,10 +453,13 @@ def loadHistograms(f,pseudo,blind,useQCD):
     for i, bkg in enumerate(bkgs):
         if bkg=='qcd':
             qcd_fail = f.Get('qcd_fail')
+            qcd_fail.Scale(1./scale)
             if useQCD:
                 qcd_pass = f.Get('qcd_pass')
+                qcd_pass.Scale(1./scale)
             else:
                 qcd_pass_real = f.Get('qcd_pass').Clone('qcd_pass_real')
+                qcd_pass_real.Scale(1./scale)
                 qcd_pass = qcd_fail.Clone('qcd_pass')
                 qcd_pass_real_integral = 0
                 qcd_fail_integral = 0
@@ -469,9 +473,13 @@ def loadHistograms(f,pseudo,blind,useQCD):
             hfail_bkg.append(qcd_fail)
             print 'qcd pass integral', qcd_pass.Integral()
             print 'qcd fail integral', qcd_fail.Integral()
-        else:            
-            hpass_bkg.append(f.Get(bkg+'_pass'))
-            hfail_bkg.append(f.Get(bkg+'_fail'))
+        else:
+            hpass_tmp = f.Get(bkg+'_pass')
+            hfail_tmp = f.Get(bkg+'_fail')
+            hpass_tmp.Scale(1./scale)
+            hfail_tmp.Scale(1./scale)
+            hpass_bkg.append(hpass_tmp)
+            hfail_bkg.append(hfail_tmp)
         
     if pseudo:        
         hpass[0] = hpass_bkg[0].Clone('data_obs_pass')
@@ -497,6 +505,8 @@ def loadHistograms(f,pseudo,blind,useQCD):
                     for j in range(0,hist.GetNbinsY()+2):
                         if hist.GetBinContent(i,j) <= 0:
                             hist.SetBinContent(i,j,0)
+            passhist.Scale(1./scale)
+            failhist.Scale(1./scale)
             hpass_sig.append(passhist)            
             hfail_sig.append(failhist)
             #hpass_sig.append(f.Get(sig+str(mass)+"_pass"))
@@ -524,27 +534,31 @@ def loadHistograms(f,pseudo,blind,useQCD):
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
-	parser = OptionParser()
-	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-	parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
-	parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write plots', metavar='odir')
-	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='use MC', metavar='pseudo')
-	parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
-	parser.add_option('--use-qcd', action='store_true', dest='useQCD', default =False,help='use real QCD MC', metavar='useQCD')
-	parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
-	parser.add_option('--freeze', action='store_true', dest='freeze', default =False,help='freeze pol values', metavar='freeze')
-	
-	(options, args) = parser.parse_args()
+    parser = OptionParser()
+    parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
+    parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
+    parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write plots', metavar='odir')
+    parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='use MC', metavar='pseudo')
+    parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
+    parser.add_option('--use-qcd', action='store_true', dest='useQCD', default =False,help='use real QCD MC', metavar='useQCD')
+    parser.add_option('--massfit', action='store_true', dest='massfit', default =False,help='mass fit or rho', metavar='massfit')
+    parser.add_option('--freeze', action='store_true', dest='freeze', default =False,help='freeze pol values', metavar='freeze')
+    parser.add_option('--scale',dest='scale', default=1,type='float',help='scale factor to scale MC (assuming only using a fraction of the data)')
+    parser.add_option('--nr', dest='NR', default=2, type='int', help='order of rho (or mass) polynomial')
+    parser.add_option('--np', dest='NP', default=2, type='int', help='order of pt polynomial')
 
-	import tdrstyle
-	tdrstyle.setTDRStyle()
-	r.gStyle.SetPadTopMargin(0.10)
-	r.gStyle.SetPadLeftMargin(0.16)
-	r.gStyle.SetPadRightMargin(0.10)
-	r.gStyle.SetPalette(1)
-	r.gStyle.SetPaintTextFormat("1.1f")
-	r.gStyle.SetOptFit(0000)
-	r.gROOT.SetBatch()
-	
-	main(options,args)
+
+    (options, args) = parser.parse_args()
+
+    import tdrstyle
+    tdrstyle.setTDRStyle()
+    r.gStyle.SetPadTopMargin(0.10)
+    r.gStyle.SetPadLeftMargin(0.16)
+    r.gStyle.SetPadRightMargin(0.10)
+    r.gStyle.SetPalette(1)
+    r.gStyle.SetPaintTextFormat("1.1f")
+    r.gStyle.SetOptFit(0000)
+    r.gROOT.SetBatch()
+
+    main(options,args)
 ##-------------------------------------------------------------------------------------
