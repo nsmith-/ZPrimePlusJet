@@ -319,9 +319,6 @@ if __name__ == "__main__":
     elif options.method=='MaxLikelihoodFit':
         fit(options.datacard,options)
 
-    elif options.method=='Asymptotic'
-
-        
     elif options.method=='FTest':
         iLabel= 'ftest_%s_vs_%s'%(options.datacard.split('/')[-1].replace('.txt',''),options.datacardAlt.split('/')[-1].replace('.txt',''))
         ftest(options.datacard, options.datacardAlt, options.toys, iLabel, options)
