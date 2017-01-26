@@ -14,7 +14,7 @@ def main(options,args):
     lumi = options.lumi
     muonCR = options.muonCR
 
-    fileName = 'hist_1DZbb.root'
+    fileName = 'hist_1DZbb_pt_scalesmear.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
@@ -23,7 +23,7 @@ def main(options,args):
     
     outfile=ROOT.TFile(options.odir+"/"+fileName, "recreate")
     
-    tfiles = {'hqq125': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+    tfiles = {'hqq125': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted_pt.root'],
               #'vbfhqq125': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
               'vbfhqq125': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
               'zhqq125': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
@@ -91,7 +91,7 @@ def main(options,args):
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
-    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_fail_unmatched']
+    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_pass_unmatched','h_msd_v_pt_ak8_topR6_fail_matched','h_msd_v_pt_ak8_topR6_fail_unmatched']
     if options.bb:
         plots =  ['h_msd_v_pt_ak8_bbleading_topR6_pass','h_msd_v_pt_ak8_bbleading_topR6_fail']
     elif muonCR:

@@ -30,16 +30,15 @@ BLIND_HI = 131
 
 class dazsleRhalphabetBuilder: 
 
-    def __init__( self, hpass, hfail, odir ): 
+    def __init__( self, hpass, hfail, inputfile, odir ): 
 
         self._hpass = hpass
         self._hfail = hfail
 	self._massfit = options.massfit
-	self._freeze = options.freeze
-    self._blind = options.blind
+	self._inputfile = inputfile
+	self._freeze = options.freeze; self._blind = options.blind
 
-        self._outputName = odir+"/base.root";
-		self._outfile_validation = r.TFile.Open(odir+"/validation.root","RECREATE");
+        self._outputName = odir+"/base.root"; self._outfile_validation = r.TFile.Open("validation.root","RECREATE");
 
         self._mass_nbins = NBINS
         self._mass_lo    = MASS_LO
@@ -402,21 +401,18 @@ class dazsleRhalphabetBuilder:
         lW = r.RooWorkspace("w_"+str(iCat))
 
 		# get the pT bin
-		ipt = iCat[-1:]
+        ipt = iCat[-1:]
         
         for pFunc in iFuncs:
             pFunc.Print()            
             ptbin = ipt
             process = pFunc.GetName().split('_')[0]
-            cat = pFunc.GetName().split('_')[0]
+            cat = pFunc.GetName().split('_')[1]
             mass = 0
             if iShift and ( 'wqq' in process or 'zqq' in process or 'hqq' in process ):
-				if process == 'wqq':
-                    mass = 80.
-				elif process == 'zqq':
-                    mass = 91.
-				else:
-                    mass = float(process[-3:]) # hqq125 -> 125
+				if process == 'wqq': mass = 80.
+				elif process == 'zqq': mass = 91.
+				else: mass = float(process[-3:]) # hqq125 -> 125
             
 				# get the matched and unmatched hist
 				tmph_matched = self._inputfile.Get(process+'_'+cat+'_matched')
@@ -442,7 +438,7 @@ class dazsleRhalphabetBuilder:
 				shift_unc = mass*mass_shift*mass_shift_unc
 				hmatchedsys_shift = hist_container.shift( hmatched_new_central, mass*mass_shift_unc)
 				# get res up/down
-				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc);
+				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc)
                         
 				# add back the unmatched 
 				hmatched_new_central.Add(tmph_mass_unmatched)
@@ -459,20 +455,19 @@ class dazsleRhalphabetBuilder:
 				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]]
 
                 
-                # validation 
-				self._outfile_validation.cd()
+                # blind if necessary and output to workspace   
 				for h in hout:
-					h.Write()
+				   if self._blind:
+				      for i in range(1,h.GetNbinsX()+1):
+				         if h.GetXaxis().GetBinCenter(i) > BLIND_LO and h.GetXaxis().GetBinCenter(i) < BLIND_HI:
+				            print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
+				            h.SetBinContent(i,0.)
+				   tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+				   getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+                   # validation 
+				   self._outfile_validation.cd()
+				   h.Write()
 
-                # blind if necessary and output to workspace                                    
-                for h in hout:
-                    if self._blind:
-                        for i in range(1,h.GetNbinsX()+1):
-                            if h.GetXaxis().GetBinCenter(i) > BLIND_LO and h.GetXaxis().GetBinCenter(i) < BLIND_HI:
-                                print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
-                                h.SetBinContent(i,0.)
-					tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
-					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                 
             else: 
                 getattr(lW,'import')(pFunc, r.RooFit.RecycleConflictNodes())
@@ -482,8 +477,8 @@ class dazsleRhalphabetBuilder:
             getattr(lW,'import')(pData, r.RooFit.RecycleConflictNodes())
 
             
-		self._outfile_validation.Write()
-		self._outfile_validation.Close()
+        self._outfile_validation.Write()
+        self._outfile_validation.Close()
         
         if iCat.find("pass_cat1") == -1:
             lW.writeToFile(iOutput,False)
@@ -509,7 +504,7 @@ def main(options,args):
 	(hpass,hfail) = loadHistograms(f,options.pseudo,options.blind,options.useQCD);
 
 	# Build the workspacees
-	dazsleRhalphabetBuilder(hpass,hfail,odir)
+	dazsleRhalphabetBuilder(hpass,hfail,f,odir)
 
 ##-------------------------------------------------------------------------------------
 def loadHistograms(f,pseudo,blind,useQCD):
