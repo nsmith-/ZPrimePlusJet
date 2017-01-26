@@ -194,6 +194,7 @@ def goodness(base,ntoys,iLabel,options):
         os.system('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm saturated --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF -n %s'% (base,base.replace('.txt','')))
         os.system('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/goodbase.root'%(base.replace('.txt',''),options.odir))
         os.system('combine -M GenerateOnly %s --rMax 50 --rMin -50 --toysFrequentist -t %i --expectSignal 0 --saveToys --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,base.replace('.txt','')))
+        os.system('cp higgsCombine%s.GenerateOnly.mH120.123456.root %s/'%(base.replace('.txt',''),options.odir))        
         os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --fixedSignalStrength 0 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,options.odir,base.replace('.txt',''),base.replace('.txt','')))
         os.system('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/goodtoys.root'%(base.replace('.txt',''),options.odir))
     nllBase=goodnessVals('%s/goodbase.root'%options.odir)
