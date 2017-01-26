@@ -42,4 +42,11 @@ r2p1 flatParam
 r0p2 flatParam
 r1p2 flatParam
 r2p2 flatParam
+r3p2 flatParam
+r3p1 flatParam
+r3p0 flatParam
+r0p3 flatParam
+r1p3 flatParam
+r2p3 flatParam
+r3p3 flatParam
 qcdeff flatParam
