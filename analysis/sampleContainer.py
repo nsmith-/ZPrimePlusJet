@@ -50,7 +50,7 @@ class sampleContainer:
         f_h2ddt.Close()
 
         # set branch statuses and addresses
-        self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
+        self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_phi','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
                           ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8CHSjet0_doublecsv','d',-999),('AK8CHSjet1_doublecsv','d',-999),
 			  ('kfactor','f',0),('AK8CHSjet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
                           ('nAK4PuppijetsLPt50dR08_0','i',-999),('nAK4PuppijetsMPt50dR08_0','i',-999),('nAK4PuppijetsTPt50dR08_0','i',-999),

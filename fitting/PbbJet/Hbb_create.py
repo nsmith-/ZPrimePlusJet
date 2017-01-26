@@ -14,7 +14,7 @@ def main(options,args):
     lumi = options.lumi
     muonCR = options.muonCR
 
-    fileName = 'hist_1DZbb.root'
+    fileName = 'hist_1DZbb_pt_scalesmear.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
@@ -98,7 +98,7 @@ def main(options,args):
 
     hall={}
 
-    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_fail_unmatched'] #SR with tau21DDT < 0.55 && db >0.9, msd corrected
+    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_pass_unmatched','h_msd_v_pt_ak8_topR6_fail_matched','h_msd_v_pt_ak8_topR6_fail_unmatched'] #SR with tau21DDT < 0.55 && db >0.9, msd corrected
     #plots = ['h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail']  #SR with N2DDT @40% && db >0.9, msd corrected
     #plots = ['h_msd_v_pt_ak8_topR6_raw_pass','h_msd_v_pt_ak8_topR6_raw_fail'] #SR with tau21DDT < 0.55 && db >0.9
     
