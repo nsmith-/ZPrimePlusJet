@@ -61,6 +61,7 @@ class sampleContainer:
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
+            self._branches.extend( [ ('genVPt','f',-999),('genVEta','f',-999),('genVPhi','f',-999), ('genVMass','f',-999), ] )
 
         if self._fillCA15:
             self._branches.extend( [ ('CA15Puppijet0_msd','d',-999),('CA15Puppijet0_pt','d',-999),('CA15Puppijet0_tau21','d',-999) ] )
@@ -215,6 +216,10 @@ class sampleContainer:
         'h_msd_v_pt_ak8_muCR4_fail'      :["h_"+self._name+"_msd_v_pt_ak8_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_bbleading_muCR4_pass'      :["h_"+self._name+"_msd_v_pt_ak8_bbleading_muCR4_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_bbleading_muCR4_fail'      :["h_"+self._name+"_msd_v_pt_ak8_bbleading_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_pass_matched' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass_matched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_pass_unmatched' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass_unmatched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_fail_matched' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail_matched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_fail_unmatched' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail_unmatched","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	
         'h_msd_v_pt_ak8_topR6_0p4_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p4_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p4_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p4_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
@@ -306,6 +311,7 @@ class sampleContainer:
             jmsd_8 = self.AK8Puppijet0_msd[0]
             jpt_8  = self.AK8Puppijet0_pt[0]
             jeta_8  = self.AK8Puppijet0_eta[0]
+            jphi_8  = self.AK8Puppijet0_phi[0]
             jpt_8_sub1  = self.AK8Puppijet1_pt[0]
             jpt_8_sub2  = self.AK8Puppijet2_pt[0]
             if jmsd_8 <= 0: jmsd_8 = 0.01
@@ -356,9 +362,25 @@ class sampleContainer:
             neleLoose = self.neleLoose[0]
             nphoLoose = self.nphoLoose[0]
             isTightVJet = self.AK8Puppijet0_isTightVJet[0]
-
+            
+            # muon info
             vmuoLoose0_pt = self.vmuoLoose0_pt[0]
             vmuoLoose0_eta = self.vmuoLoose0_eta[0]
+            
+            # gen-matching for scale/smear systematic  
+            dphi  = 9999
+            dpt   = 9999
+            dmass = 9999
+            if (not self._isData):
+                genVPt = self.genVPt[0]
+                genVEta = self.genVEta[0]
+                genVPhi = self.genVPhi[0]
+                genVMass = self.genVMass[0]
+                if genVPt > 0 and genVMass > 0:
+                    dphi = math.fabs(genVPhi - jphi_8)
+                    dpt = math.fabs(genVPt - jpt_8)/genVPt
+                    dmass = math.fabs(genVMass - jmsd_8)/genVMass
+            
             # Single Muon Control Region 1 (inclusive)
             #if jpt_8 > 500 and jmsd_8 >40 and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
             if jpt_8 > 500 and jmsd_8 >40 and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>50 and abs(vmuoLoose0_eta)<2.1 and isTightVJet:
@@ -538,10 +560,20 @@ class sampleContainer:
 		cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
-                    self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight ) 
+                    self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight )
+                    # for signal morphing             
+                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                        self.h_msd_v_pt_ak8_topR6_pass_matched.Fill( jmsd_8, jpt_8, weight )
+                    else:
+                        self.h_msd_v_pt_ak8_topR6_pass_unmatched.Fill( jmsd_8, jpt_8, weight )                        
                 else:
                     self.h_msd_ak8_topR6_fail.Fill( jmsd_8, weight )
-                    self.h_msd_v_pt_ak8_topR6_fail.Fill( jmsd_8, jpt_8, weight )                     
+                    self.h_msd_v_pt_ak8_topR6_fail.Fill( jmsd_8, jpt_8, weight )             
+                    # for signal morphing             
+                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                        self.h_msd_v_pt_ak8_topR6_fail_matched.Fill( jmsd_8, jpt_8, weight )
+                    else:
+                        self.h_msd_v_pt_ak8_topR6_fail_unmatched.Fill( jmsd_8, jpt_8, weight )               
 		if jdb_8 > 0.91:
     		    self.h_msd_v_pt_ak8_topR6_0p91_pass.Fill( jmsd_8, jpt_8, weight )
 		else:
@@ -562,10 +594,6 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_topR6_0p95_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                         self.h_msd_v_pt_ak8_topR6_0p95_fail.Fill( jmsd_8, jpt_8, weight )
-
-
-
-
 
 
 	  #######tau21 optimization for ggH 
