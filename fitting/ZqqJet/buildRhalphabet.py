@@ -79,24 +79,14 @@ class dazsleRhalphabetBuilder:
 			for ih,h in enumerate(self._hpass):
 				tmppass_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi)
 				for i0 in range(1,self._mass_nbins+1):
-					#if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4) or (i0 < 5 and ipt == 5):
-					# For 4 pt bins	switch to
                                         if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 < 5 and ipt == 4):
 						tmppass_inPtBin.SetBinContent(i0,0);
-					#print '!!!!!'
-					#print h.GetName()
-					#print ih
-					#if ((ih == 1 or ih==2 or ih==4) and (i0 > 10 and ipt == 5)):
-					#	tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
                         for ih,h in enumerate(self._hfail):
                                 tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
 				for i0 in range(1,self._mass_nbins+1):
-					#if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 > 51 and ipt == 4) or (i0 < 5 and ipt == 5):
 					if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 < 5 and ipt == 4):
 						tmpfail_inPtBin.SetBinContent(i0,0);
-					#if ((ih == 1 or ih==2 or ih==4) and (i0 > 10 and ipt == 5)):
-					#	tmppass_inPtBin.SetBinContent(i0,0);
                                 hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
 			# make RooDataset, RooPdfs, and histograms
@@ -109,8 +99,8 @@ class dazsleRhalphabetBuilder:
 			lParHists = self.makeRhalph([hfail_inPtBin[0],hfail_inPtBin[1],hfail_inPtBin[2],hfail_inPtBin[4]],[hpass_inPtBin[0],hpass_inPtBin[1],hpass_inPtBin[2],hpass_inPtBin[4]],pPt,"cat"+str(ipt))			
 			
 			# #Get signals and SM backgrounds
-			lPHists=[pHists[0],pHists[1],pHists[2]]
-			lFHists=[pHists[3],pHists[4],pHists[5]]
+			lPHists=[pHists[0],pHists[1],pHists[2],pHists[3]]
+			lFHists=[pHists[4],pHists[5],pHists[6],pHists[7]]
 			lPHists.extend(self.getSignals(hpass_inPtBin,hfail_inPtBin,"cat"+str(ipt))[0])
 			lFHists.extend(self.getSignals(hpass_inPtBin,hfail_inPtBin,"cat"+str(ipt))[1])
 			# #Write to file
@@ -270,7 +260,7 @@ class dazsleRhalphabetBuilder:
 
 		## find out which to make global
 		## RooDataHist (data), then RooAbsPdf (qcd,ewk), then RooHistPdf of each electroweak
-		return ([lPData,lFData],[lTotP,lTotF,lEWKP,lEWKF],[lW[4],lZ[4],ltop[4],lW[5],lZ[5],ltop[5]])
+		return ([lPData,lFData],[lTotP,lTotF,lEWKP,lEWKF],[lW[4],lZ[4],ltop[4],lQCD[4],lW[5],lZ[5],ltop[5],lQCD[5]])
 
 	def rooTheHistFunc(self,iH,iLabel="w",iBin="_cat0"):
 
@@ -353,13 +343,12 @@ class dazsleRhalphabetBuilder:
 				tmph_unmatched = self._inputfile.Get(process+"_"+cat+"_unmatched");
 				tmph_mass_matched = proj("cat",str(ipt),tmph_matched,self._mass_nbins,self._mass_lo,self._mass_hi);
 				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
+
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 29 and int(ipt) == 1) or (i0 > 36 and int(ipt) == 2) or (i0 > 44 and int(ipt) == 3) or (i0 > 51 and int(ipt) == 4) or (i0 < 5 and int(ipt) == 5):
+					if (i0 > 29 and int(ipt) == 1) or (i0 > 36 and int(ipt) == 2) or (i0 > 44 and int(ipt) == 3) or ( i0 < 5 and int(ipt) == 4):
 						tmph_mass_matched.SetBinContent(i0,0);
 						tmph_mass_unmatched.SetBinContent(i0,0);
-					if ((process=='wqq' or process=='zqq') and (i0 > 10 and int(ipt) == 5)):
-						tmph_mass_matched.SetBinContent(i0,0);
-                                                tmph_mass_unmatched.SetBinContent(i0,0);
+					
 				#####
 				# smear/shift the matched
 				hist_container = hist( [mass],[tmph_mass_matched] );	
@@ -398,13 +387,9 @@ class dazsleRhalphabetBuilder:
 				self._outfile_validation.cd();
 				for h in hout:
 					for i0 in range(1,self._mass_nbins+1):
-						#if (i0 > 29 and int(ipt) == 1) or (i0 > 36 and int(ipt) == 2) or (i0 > 44 and int(ipt) == 3) or (i0 > 51 and int(ipt) == 4) or (i0 < 5 and int(ipt) == 5):
 						if (i0 > 29 and int(ipt) == 1) or (i0 > 36 and int(ipt) == 2) or (i0 > 44 and int(ipt) == 3) or ( i0 < 5 and int(ipt) == 4):
 							h.SetBinContent(i0,0);
-						#if ((process=='wqq' or process=='zqq') and (i0 > 10 and int(ipt) == 5)):
-						#	h.SetBinContent(i0,0);
-                                                #        h.SetBinContent(i0,0);
-
+						
 					h.Write();
 					tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
 					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
@@ -441,13 +426,13 @@ def main(options,args):
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
 	f = r.TFile(options.input);
-	(hpass,hfail) = loadHistograms(f,options.pseudo);
+	(hpass,hfail) = loadHistograms(f,options.pseudo,options.pseudo15);
 
 	# Build the workspacees
 	dazsleRhalphabetBuilder(hpass,hfail,f);
 
 ##-------------------------------------------------------------------------------------
-def loadHistograms(f,pseudo):
+def loadHistograms(f,pseudo,pseudo15):
 
 	hpass = [];
 	hfail = [];
@@ -463,16 +448,21 @@ def loadHistograms(f,pseudo):
 	lHP4 = f.Get("tqq_pass")
 	lHF4 = f.Get("tqq_fail")
 	if pseudo:
-		#lHP0 = lHP3.Clone("qcd_pass")
+		lHP0 = lHP3.Clone("qcd_pass")
 		lHF0 = lHF3.Clone("qcd_fail")
 		lHF0.Add(lHF1)
 		lHF0.Add(lHF2)
 		lHF0.Add(lHF4)
-		lHP0 = lHF3.Clone("qcd_pass");
-		lHP0.Scale(0.05);
 		lHP0.Add(lHP1)
 		lHP0.Add(lHP2)
 		lHP0.Add(lHP4)
+	if pseudo15:
+		lHF0 = lHF3.Clone("qcd_fail")
+		lHF0.Add(lHF1)
+		lHF0.Add(lHF2)
+		lHF0.Add(lHF4)
+		lHP0 = lHF0.Clone("qcd_pass");
+		lHP0.Scale(0.05);
 
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])
@@ -502,8 +492,9 @@ if __name__ == '__main__':
 	parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
 	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
-	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
-	parser.add_option('--input', dest='input', default = 'hist_1DZqq.root',help='directory with data', metavar='idir')
+	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='data = MC', metavar='isData')
+        parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
+	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoB5eff-15-pt5006007008001000.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
 

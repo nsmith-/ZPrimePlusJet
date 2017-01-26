@@ -1,0 +1,195 @@
+Combination of card_rhalphabet_cat1.txt  card_rhalphabet_cat2.txt  card_rhalphabet_cat3.txt  card_rhalphabet_cat4.txt
+imax 8 number of bins
+jmax 4 number of processes minus 1
+kmax 12 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *              ch1_fail_cat1  base.root w_fail_cat1:$PROCESS_fail_cat1 w_fail_cat1:$PROCESS_fail_cat1_$SYSTEMATIC
+shapes *              ch1_pass_cat1  base.root w_pass_cat1:$PROCESS_pass_cat1 w_pass_cat1:$PROCESS_pass_cat1_$SYSTEMATIC
+shapes *              ch2_fail_cat2  base.root w_fail_cat2:$PROCESS_fail_cat2 w_fail_cat2:$PROCESS_fail_cat2_$SYSTEMATIC
+shapes *              ch2_pass_cat2  base.root w_pass_cat2:$PROCESS_pass_cat2 w_pass_cat2:$PROCESS_pass_cat2_$SYSTEMATIC
+shapes *              ch3_fail_cat3  base.root w_fail_cat3:$PROCESS_fail_cat3 w_fail_cat3:$PROCESS_fail_cat3_$SYSTEMATIC
+shapes *              ch3_pass_cat3  base.root w_pass_cat3:$PROCESS_pass_cat3 w_pass_cat3:$PROCESS_pass_cat3_$SYSTEMATIC
+shapes *              ch4_fail_cat4  base.root w_fail_cat4:$PROCESS_fail_cat4 w_fail_cat4:$PROCESS_fail_cat4_$SYSTEMATIC
+shapes *              ch4_pass_cat4  base.root w_pass_cat4:$PROCESS_pass_cat4 w_pass_cat4:$PROCESS_pass_cat4_$SYSTEMATIC
+----------------------------------------------------------------------------------------------------------------------------------
+bin          ch1_pass_cat1  ch1_fail_cat1  ch2_pass_cat2  ch2_fail_cat2  ch3_pass_cat3  ch3_fail_cat3  ch4_pass_cat4  ch4_fail_cat4
+observation  -1.0           -1.0           -1.0           -1.0           -1.0           -1.0           -1.0           -1.0         
+----------------------------------------------------------------------------------------------------------------------------------
+bin                               ch1_pass_cat1  ch1_pass_cat1  ch1_pass_cat1  ch1_pass_cat1  ch1_pass_cat1  ch1_fail_cat1  ch1_fail_cat1  ch1_fail_cat1  ch1_fail_cat1  ch1_fail_cat1  ch2_pass_cat2  ch2_pass_cat2  ch2_pass_cat2  ch2_pass_cat2  ch2_pass_cat2  ch2_fail_cat2  ch2_fail_cat2  ch2_fail_cat2  ch2_fail_cat2  ch2_fail_cat2  ch3_pass_cat3  ch3_pass_cat3  ch3_pass_cat3  ch3_pass_cat3  ch3_pass_cat3  ch3_fail_cat3  ch3_fail_cat3  ch3_fail_cat3  ch3_fail_cat3  ch3_fail_cat3  ch4_pass_cat4  ch4_pass_cat4  ch4_pass_cat4  ch4_pass_cat4  ch4_pass_cat4  ch4_fail_cat4  ch4_fail_cat4  ch4_fail_cat4  ch4_fail_cat4  ch4_fail_cat4
+process                           zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq            zqq100         qcd            tqq            wqq            zqq          
+process                           0              1              2              3              4              0              1              2              3              4              0              1              2              3              4              0              1              2              3              4              0              1              2              3              4              0              1              2              3              4              0              1              2              3              4              0              1              2              3              4            
+rate                              -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1             -1           
+----------------------------------------------------------------------------------------------------------------------------------
+eveto                   lnN       1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005        
+jecs                    lnN       1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02         
+lumi                    lnN       1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05           1.05           -              -              1.05           1.05         
+muveto                  lnN       1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005          1.005          -              1.005          1.005          1.005        
+scale                   shape     1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0          
+smear                   shape     1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0            1.0            -              -              1.0            1.0          
+trigger                 lnN       1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02           1.02           -              1.02           1.02           1.02         
+tteffSF                 lnN       -              -              1.3            -              -              -              -              0.9            -              -              -              -              1.3            -              -              -              -              0.9            -              -              -              -              1.3            -              -              -              -              0.9            -              -              -              -              1.3            -              -              -              -              0.9            -              -            
+ttnormSF                lnN       -              -              1.1            -              -              -              -              1.1            -              -              -              -              1.1            -              -              -              -              1.1            -              -              -              -              1.1            -              -              -              -              1.1            -              -              -              -              1.1            -              -              -              -              1.1            -              -            
+veff                    lnN       0.8            -              -              0.8            0.8            1.012          -              -              1.012          1.012          0.8            -              -              0.8            0.8            1.012          -              -              1.012          1.012          0.8            -              -              0.8            0.8            1.012          -              -              1.012          1.012          0.8            -              -              0.8            0.8            1.012          -              -              1.012          1.012        
+znormE                  lnN       -              -              -              1.15           1.15           -              -              -              1.15           1.15           -              -              -              1.15           1.15           -              -              -              1.15           1.15           -              -              -              1.15           1.15           -              -              -              1.15           1.15           -              -              -              1.15           1.15           -              -              -              1.15           1.15         
+znormQ                  lnN       1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1            1.1            -              -              1.1            1.1          
+qcd_fail_cat4_Bin31  flatParam
+qcd_fail_cat2_Bin12  flatParam
+qcd_fail_cat2_Bin13  flatParam
+qcd_fail_cat2_Bin10  flatParam
+qcd_fail_cat2_Bin11  flatParam
+qcd_fail_cat2_Bin16  flatParam
+p1r2          flatParam
+p1r1          flatParam
+qcd_fail_cat2_Bin15  flatParam
+qcd_fail_cat2_Bin18  flatParam
+qcd_fail_cat2_Bin19  flatParam
+qcd_fail_cat3_Bin1  flatParam
+qcd_fail_cat4_Bin2  flatParam
+qcd_fail_cat4_Bin3  flatParam
+qcd_fail_cat4_Bin1  flatParam
+qcd_fail_cat4_Bin6  flatParam
+qcd_fail_cat4_Bin7  flatParam
+qcd_fail_cat4_Bin4  flatParam
+qcd_fail_cat4_Bin5  flatParam
+qcd_fail_cat4_Bin21  flatParam
+qcd_fail_cat4_Bin8  flatParam
+qcd_fail_cat4_Bin9  flatParam
+qcd_fail_cat3_Bin6  flatParam
+qcd_fail_cat3_Bin5  flatParam
+qcd_fail_cat3_Bin4  flatParam
+qcd_fail_cat3_Bin13  flatParam
+qcd_fail_cat3_Bin12  flatParam
+qcd_fail_cat3_Bin11  flatParam
+qcd_fail_cat3_Bin10  flatParam
+qcd_fail_cat3_Bin17  flatParam
+qcd_fail_cat3_Bin16  flatParam
+qcd_fail_cat3_Bin15  flatParam
+qcd_fail_cat3_Bin14  flatParam
+qcd_fail_cat3_Bin19  flatParam
+qcd_fail_cat3_Bin18  flatParam
+qcd_fail_cat2_Bin8  flatParam
+qcd_fail_cat2_Bin9  flatParam
+qcd_fail_cat2_Bin1  flatParam
+qcd_fail_cat2_Bin2  flatParam
+qcd_fail_cat2_Bin3  flatParam
+qcd_fail_cat2_Bin4  flatParam
+qcd_fail_cat2_Bin5  flatParam
+qcd_fail_cat2_Bin6  flatParam
+qcd_fail_cat2_Bin7  flatParam
+p3r1          flatParam
+p3r0          flatParam
+p3r3          flatParam
+p3r2          flatParam
+qcd_fail_cat4_Bin25  flatParam
+qcd_fail_cat4_Bin24  flatParam
+qcd_fail_cat3_Bin35  flatParam
+qcd_fail_cat3_Bin34  flatParam
+qcd_fail_cat3_Bin36  flatParam
+qcd_fail_cat3_Bin31  flatParam
+qcd_fail_cat3_Bin30  flatParam
+qcd_fail_cat3_Bin33  flatParam
+qcd_fail_cat3_Bin32  flatParam
+qcd_fail_cat4_Bin27  flatParam
+qcd_fail_cat4_Bin26  flatParam
+qcd_fail_cat4_Bin10  flatParam
+qcd_fail_cat4_Bin11  flatParam
+qcd_fail_cat4_Bin12  flatParam
+qcd_fail_cat4_Bin13  flatParam
+qcd_fail_cat4_Bin14  flatParam
+qcd_fail_cat4_Bin15  flatParam
+qcd_fail_cat4_Bin16  flatParam
+qcd_fail_cat4_Bin17  flatParam
+qcd_fail_cat4_Bin18  flatParam
+qcd_fail_cat4_Bin19  flatParam
+qcd_fail_cat3_Bin28  flatParam
+qcd_fail_cat3_Bin29  flatParam
+qcd_fail_cat3_Bin22  flatParam
+qcd_fail_cat3_Bin23  flatParam
+qcd_fail_cat3_Bin20  flatParam
+qcd_fail_cat3_Bin21  flatParam
+qcd_fail_cat3_Bin26  flatParam
+qcd_fail_cat3_Bin27  flatParam
+qcd_fail_cat3_Bin24  flatParam
+qcd_fail_cat3_Bin25  flatParam
+p0r2          flatParam
+p0r3          flatParam
+p0r0          flatParam
+p0r1          flatParam
+qcdeff        flatParam
+p2r0          flatParam
+p2r1          flatParam
+p2r2          flatParam
+p2r3          flatParam
+qcd_fail_cat4_Bin20  flatParam
+qcd_fail_cat3_Bin2  flatParam
+qcd_fail_cat1_Bin33  flatParam
+qcd_fail_cat1_Bin32  flatParam
+qcd_fail_cat1_Bin31  flatParam
+qcd_fail_cat1_Bin30  flatParam
+qcd_fail_cat3_Bin7  flatParam
+qcd_fail_cat1_Bin36  flatParam
+qcd_fail_cat1_Bin35  flatParam
+qcd_fail_cat1_Bin34  flatParam
+qcd_fail_cat3_Bin9  flatParam
+qcd_fail_cat3_Bin8  flatParam
+qcd_fail_cat4_Bin29  flatParam
+qcd_fail_cat4_Bin28  flatParam
+qcd_fail_cat4_Bin23  flatParam
+qcd_fail_cat4_Bin22  flatParam
+p1r3          flatParam
+qcd_fail_cat2_Bin17  flatParam
+qcd_fail_cat1_Bin20  flatParam
+qcd_fail_cat1_Bin21  flatParam
+qcd_fail_cat1_Bin22  flatParam
+qcd_fail_cat1_Bin23  flatParam
+qcd_fail_cat1_Bin24  flatParam
+qcd_fail_cat2_Bin14  flatParam
+qcd_fail_cat1_Bin26  flatParam
+qcd_fail_cat1_Bin27  flatParam
+qcd_fail_cat1_Bin28  flatParam
+qcd_fail_cat1_Bin29  flatParam
+qcd_fail_cat4_Bin30  flatParam
+p1r0          flatParam
+qcd_fail_cat4_Bin36  flatParam
+qcd_fail_cat4_Bin34  flatParam
+qcd_fail_cat4_Bin35  flatParam
+qcd_fail_cat2_Bin29  flatParam
+qcd_fail_cat2_Bin28  flatParam
+qcd_fail_cat2_Bin23  flatParam
+qcd_fail_cat2_Bin22  flatParam
+qcd_fail_cat2_Bin21  flatParam
+qcd_fail_cat2_Bin20  flatParam
+qcd_fail_cat2_Bin27  flatParam
+qcd_fail_cat2_Bin26  flatParam
+qcd_fail_cat2_Bin25  flatParam
+qcd_fail_cat2_Bin24  flatParam
+qcd_fail_cat3_Bin3  flatParam
+qcd_fail_cat1_Bin1  flatParam
+qcd_fail_cat1_Bin3  flatParam
+qcd_fail_cat1_Bin2  flatParam
+qcd_fail_cat1_Bin5  flatParam
+qcd_fail_cat1_Bin4  flatParam
+qcd_fail_cat1_Bin7  flatParam
+qcd_fail_cat1_Bin6  flatParam
+qcd_fail_cat1_Bin9  flatParam
+qcd_fail_cat1_Bin8  flatParam
+qcd_fail_cat1_Bin25  flatParam
+qcd_fail_cat1_Bin15  flatParam
+qcd_fail_cat1_Bin14  flatParam
+qcd_fail_cat1_Bin17  flatParam
+qcd_fail_cat1_Bin16  flatParam
+qcd_fail_cat1_Bin11  flatParam
+qcd_fail_cat1_Bin10  flatParam
+qcd_fail_cat1_Bin13  flatParam
+qcd_fail_cat1_Bin12  flatParam
+qcd_fail_cat1_Bin19  flatParam
+qcd_fail_cat1_Bin18  flatParam
+qcd_fail_cat4_Bin32  flatParam
+qcd_fail_cat4_Bin33  flatParam
+qcd_fail_cat2_Bin30  flatParam
+qcd_fail_cat2_Bin31  flatParam
+qcd_fail_cat2_Bin32  flatParam
+qcd_fail_cat2_Bin33  flatParam
+qcd_fail_cat2_Bin34  flatParam
+qcd_fail_cat2_Bin35  flatParam
+qcd_fail_cat2_Bin36  flatParam
