@@ -437,32 +437,50 @@ def loadHistograms(f,pseudo,pseudo15):
 	hpass = [];
 	hfail = [];
 
-	lHP0 = f.Get("data_obs_pass")
-	lHF0 = f.Get("data_obs_fail")
 	lHP1 = f.Get("wqq_pass")
+	print 'wqq_pass ', lHP1.Integral() 
 	lHF1 = f.Get("wqq_fail")
+	print 'wqq_fail ', lHF1.Integral()
 	lHP2 = f.Get("zqq_pass")
+        print 'zqq_pass ', lHP2.Integral()
 	lHF2 = f.Get("zqq_fail")
+        print 'zqq_fail ', lHF2.Integral()
 	lHP3 = f.Get("qcd_pass")
+        print 'qcd_pass ', lHP3.Integral()
 	lHF3 = f.Get("qcd_fail")
+        print 'qcd_fail ', lHF3.Integral()
 	lHP4 = f.Get("tqq_pass")
+        print 'tqq_pass ', lHP4.Integral()
 	lHF4 = f.Get("tqq_fail")
+        print 'tqq_fail ', lHF4.Integral()
+	print 'total mc pass ', lHP1.Integral()+lHP2.Integral()+lHP3.Integral()+lHP4.Integral()
+        print 'total mc fail ', lHF1.Integral()+lHF2.Integral()+lHF3.Integral()+lHF4.Integral()
+  
 	if pseudo:
-		lHP0 = lHP3.Clone("qcd_pass")
-		lHF0 = lHF3.Clone("qcd_fail")
+		lHP0 = lHP3.Clone("data_obs_pass")
+		lHF0 = lHF3.Clone("data_obs_fail")
 		lHF0.Add(lHF1)
 		lHF0.Add(lHF2)
 		lHF0.Add(lHF4)
 		lHP0.Add(lHP1)
 		lHP0.Add(lHP2)
 		lHP0.Add(lHP4)
-	if pseudo15:
-		lHF0 = lHF3.Clone("qcd_fail")
-		lHF0.Add(lHF1)
-		lHF0.Add(lHF2)
-		lHF0.Add(lHF4)
-		lHP0 = lHF0.Clone("qcd_pass");
+		print 'pass ', lHP0.Integral()
+		print 'fail ', lHF0.Integral()
+
+	elif pseudo15:
+		lHF0 = lHF3.Clone("data_obs_fail")
+		lHP0 = lHF3.Clone("data_obs_pass");
 		lHP0.Scale(0.05);
+		lHP0.Add(lHP1)
+		lHP0.Add(lHP2)
+		lHP0.Add(lHP4)
+		lHF0.Add(lHF1)
+                lHF0.Add(lHF2)
+                lHF0.Add(lHF4)
+	else:
+		lHP0 = f.Get("data_obs_pass")
+		lHF0 = f.Get("data_obs_fail")
 
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])
