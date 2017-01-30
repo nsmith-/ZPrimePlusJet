@@ -32,8 +32,8 @@ class dazsleRhalphabetBuilder:
 		self._outputName = "base.root";
 		self._outfile_validation = r.TFile("validation.root","RECREATE");
 
-		self._mass_nbins = 58;
-		self._mass_lo    = 40;
+		self._mass_nbins = 60;
+		self._mass_lo    = 30;
 		self._mass_hi    = 330;
 
 		print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
@@ -79,13 +79,13 @@ class dazsleRhalphabetBuilder:
 			for ih,h in enumerate(self._hpass):
 				tmppass_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi)
 				for i0 in range(1,self._mass_nbins+1):
-                                        if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 < 5 and ipt == 4):
+                                        if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or (i0 < 7 and ipt == 4):
 						tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
                         for ih,h in enumerate(self._hfail):
                                 tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 29 and ipt == 1) or (i0 > 36 and ipt == 2) or (i0 > 44 and ipt == 3) or (i0 < 5 and ipt == 4):
+					if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or (i0 < 7 and ipt == 4):
 						tmpfail_inPtBin.SetBinContent(i0,0);
                                 hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
@@ -107,9 +107,11 @@ class dazsleRhalphabetBuilder:
 			self.makeWorkspace(self._outputName,[pDatas[0]],lPHists,self._allVars,"pass_cat"+str(ipt),True)
 			self.makeWorkspace(self._outputName,[pDatas[1]],lFHists,self._allVars,"fail_cat"+str(ipt),True)
 
-		for ipt in range(1,self._nptbins+1):
-			for imass in range(1,self._mass_nbins):
-				print "qcd_fail_cat%i_Bin%i flatParam" % (ipt,imass);
+		self._outfile_validation.Write();
+		self._outfile_validation.Close();
+		# for ipt in range(1,self._nptbins+1):
+		# 	for imass in range(1,self._mass_nbins):
+		# 		print "qcd_fail_cat%i_Bin%i flatParam" % (ipt,imass);
 			
 	def makeRhalph(self,iHs,iHPs,iPt,iCat):
 		
@@ -320,7 +322,14 @@ class dazsleRhalphabetBuilder:
 
 		# get the pT bin
 		ipt = iCat[-1:];
-		print 'ipt'
+
+		sigMassesForInterpolation = [];
+		shapeForInterpolation_central = [];
+		shapeForInterpolation_scaleUp = [];
+		shapeForInterpolation_scaleDn = [];
+		shapeForInterpolation_smearUp = [];
+		shapeForInterpolation_smearDn = [];
+		self._outfile_validation.cd();			
 
 		for pFunc in iFuncs:
 			
@@ -335,7 +344,7 @@ class dazsleRhalphabetBuilder:
 				elif process == "zqq": mass = 91.;
 				else: mass = float(process[3:])
 
-				print process, mass;
+				print process, mass;			
 
 				####
 				# get the matched and unmatched hist
@@ -345,7 +354,7 @@ class dazsleRhalphabetBuilder:
 				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
 
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 29 and int(ipt) == 1) or (i0 > 36 and int(ipt) == 2) or (i0 > 44 and int(ipt) == 3) or ( i0 < 5 and int(ipt) == 4):
+					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
 						tmph_mass_matched.SetBinContent(i0,0);
 						tmph_mass_unmatched.SetBinContent(i0,0);
 					
@@ -384,10 +393,17 @@ class dazsleRhalphabetBuilder:
 				hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown");
 				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]];
 				
-				self._outfile_validation.cd();
+				if mass > 0 and mass != 80. and mass != 91. and mass != 250. and mass != 300.: 
+					sigMassesForInterpolation.append(mass);     
+					shapeForInterpolation_central.append(hmatched_new_central) 
+					shapeForInterpolation_scaleUp.append(hmatchedsys_shift[0]) 
+					shapeForInterpolation_scaleDn.append(hmatchedsys_shift[1])  
+					shapeForInterpolation_smearUp.append(hmatchedsys_smear[0])  
+					shapeForInterpolation_smearDn.append(hmatchedsys_smear[1])  
+
 				for h in hout:
 					for i0 in range(1,self._mass_nbins+1):
-						if (i0 > 29 and int(ipt) == 1) or (i0 > 36 and int(ipt) == 2) or (i0 > 44 and int(ipt) == 3) or ( i0 < 5 and int(ipt) == 4):
+						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
 							h.SetBinContent(i0,0);
 						
 					h.Write();
@@ -398,12 +414,46 @@ class dazsleRhalphabetBuilder:
 				
 				getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
 
-		self._outfile_validation.Write();
-		self._outfile_validation.Close();
+		# do the signal interpolation
+		print "---------------------------------------------------------------"
+		print len(sigMassesForInterpolation), sigMassesForInterpolation
+		print iCat
+		morphedHistContainer_central = hist(sigMassesForInterpolation,shapeForInterpolation_central);
+		morphedHistContainer_scaleUp = hist(sigMassesForInterpolation,shapeForInterpolation_scaleUp);
+		morphedHistContainer_scaleDn = hist(sigMassesForInterpolation,shapeForInterpolation_scaleDn);
+		morphedHistContainer_smearUp = hist(sigMassesForInterpolation,shapeForInterpolation_smearUp);
+		morphedHistContainer_smearDn = hist(sigMassesForInterpolation,shapeForInterpolation_smearDn);
+		interpolatedMasses = [60.0,90.0,110.0,135.0,165.0,180.0]
+		for m in interpolatedMasses:
+			htmp_central = morphedHistContainer_central.morph(m);
+			htmp_scaleUp = morphedHistContainer_scaleUp.morph(m);
+			htmp_scaleDn = morphedHistContainer_scaleDn.morph(m);
+			htmp_smearUp = morphedHistContainer_smearUp.morph(m);
+			htmp_smearDn = morphedHistContainer_smearDn.morph(m);
+			htmp_central.SetName("zqq%i_%s" % (int(m),iCat));
+			htmp_scaleUp.SetName("zqq%i_%s_scaleUp" % (int(m),iCat));
+			htmp_scaleDn.SetName("zqq%i_%s_scaleDn" % (int(m),iCat));
+			htmp_smearUp.SetName("zqq%i_%s_smearUp" % (int(m),iCat));
+			htmp_smearDn.SetName("zqq%i_%s_scaleDn" % (int(m),iCat));
+			htmp_central.Write();
+			htmp_scaleUp.Write();
+			htmp_scaleDn.Write();
+			htmp_smearUp.Write();
+			htmp_smearDn.Write();
+			tmprdh_central = RooDataHist(htmp_central.GetName(),htmp_central.GetName(),r.RooArgList(self._lMSD),htmp_central)
+			tmprdh_scaleUp = RooDataHist(htmp_scaleUp.GetName(),htmp_scaleUp.GetName(),r.RooArgList(self._lMSD),htmp_scaleUp)
+			tmprdh_scaleDn = RooDataHist(htmp_scaleDn.GetName(),htmp_scaleDn.GetName(),r.RooArgList(self._lMSD),htmp_scaleDn)
+			tmprdh_smearUp = RooDataHist(htmp_smearUp.GetName(),htmp_smearUp.GetName(),r.RooArgList(self._lMSD),htmp_smearUp)
+			tmprdh_smearDn = RooDataHist(htmp_smearDn.GetName(),htmp_smearDn.GetName(),r.RooArgList(self._lMSD),htmp_smearDn)
+			getattr(lW,'import')(tmprdh_central, r.RooFit.RecycleConflictNodes())
+			getattr(lW,'import')(tmprdh_scaleUp, r.RooFit.RecycleConflictNodes())
+			getattr(lW,'import')(tmprdh_scaleDn, r.RooFit.RecycleConflictNodes())
+			getattr(lW,'import')(tmprdh_smearUp, r.RooFit.RecycleConflictNodes())
+			getattr(lW,'import')(tmprdh_smearDn, r.RooFit.RecycleConflictNodes())
 
 		for pData in iDatas:
 			getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
-		
+
 		if iCat.find("pass_cat1") == -1:
 			lW.writeToFile(iOutput,False)
 		else:
@@ -511,7 +561,7 @@ if __name__ == '__main__':
 	parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='data = MC', metavar='isData')
-        parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
+	parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
 	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoB5eff-15-pt5006007008001000.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
