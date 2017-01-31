@@ -88,7 +88,7 @@ def main(options,args):
     if muonCR:
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
     else:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
     plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_pass_unmatched','h_msd_v_pt_ak8_topR6_fail_matched','h_msd_v_pt_ak8_topR6_fail_unmatched']
