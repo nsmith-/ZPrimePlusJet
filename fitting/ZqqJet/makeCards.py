@@ -34,7 +34,7 @@ def main(options,args):
 		print line.strip().split();
 		linel.append(line.strip());
 
-	for i in range(1,6):
+	for i in range(1,5):
 
 		tag = "cat"+str(i);
 		dctmp = open("cards/card_rhalphabet_%s.txt" % tag, 'w')
