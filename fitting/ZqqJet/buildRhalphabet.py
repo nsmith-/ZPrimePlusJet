@@ -292,27 +292,9 @@ class dazsleRhalphabetBuilder:
 		lFHists = [] 
 		lVars=[50,75,100,125,150,200,250,300]
 		for i0 in range(0,len(lVars)):
-			# lPHists.append(iHP[i0+4])
-			# lFHists.append(iHF[i0+4])
 			lSig = self.rooTheHistFunc([iHP[i0+5],iHF[i0+5]],"zqq"+str(lVars[i0]),iBin)
 			lPSigs.append(lSig[4])
 			lFSigs.append(lSig[5])
-		# lPHist = hist(lVars,lPHists)
-		# lFHist = hist(lVars,lFHists)
-		# masses=[50,60,75,90,100,112,125,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290]
-		# for i0 in range(0,len(masses)):
-		# 	pHP   = lPHist.morph(masses[i0])
-		# 	pHF   = lFHist.morph(masses[i0])
-		# 	for i1 in range(0,len(lVars)):
-		# 		if lVars[i1] == masses[i0]:
-		# 			pHP=iHP[i1+3]
-		# 			pHF=iHF[i1+3]
-		# 	lSig = self.rooTheHistFunc([pHP,pHF],"zqq"+str(masses[i0]),iBin)
-		# 	lPSigs.append(lSig[4])
-		# 	lFSigs.append(lSig[5])
-
-		# 	lSig[4].Print();
-		# 	lSig[5].Print();
 
 		return (lPSigs,lFSigs)		
 
@@ -402,6 +384,7 @@ class dazsleRhalphabetBuilder:
 					shapeForInterpolation_smearDn.append(hmatchedsys_smear[1])  
 
 				for h in hout:
+					print h.GetName()
 					for i0 in range(1,self._mass_nbins+1):
 						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
 							h.SetBinContent(i0,0);
@@ -432,24 +415,18 @@ class dazsleRhalphabetBuilder:
 			htmp_smearDn = morphedHistContainer_smearDn.morph(m);
 			htmp_central.SetName("zqq%i_%s" % (int(m),iCat));
 			htmp_scaleUp.SetName("zqq%i_%s_scaleUp" % (int(m),iCat));
-			htmp_scaleDn.SetName("zqq%i_%s_scaleDn" % (int(m),iCat));
+			htmp_scaleDn.SetName("zqq%i_%s_scaleDown" % (int(m),iCat));
 			htmp_smearUp.SetName("zqq%i_%s_smearUp" % (int(m),iCat));
-			htmp_smearDn.SetName("zqq%i_%s_scaleDn" % (int(m),iCat));
-			htmp_central.Write();
-			htmp_scaleUp.Write();
-			htmp_scaleDn.Write();
-			htmp_smearUp.Write();
-			htmp_smearDn.Write();
-			tmprdh_central = RooDataHist(htmp_central.GetName(),htmp_central.GetName(),r.RooArgList(self._lMSD),htmp_central)
-			tmprdh_scaleUp = RooDataHist(htmp_scaleUp.GetName(),htmp_scaleUp.GetName(),r.RooArgList(self._lMSD),htmp_scaleUp)
-			tmprdh_scaleDn = RooDataHist(htmp_scaleDn.GetName(),htmp_scaleDn.GetName(),r.RooArgList(self._lMSD),htmp_scaleDn)
-			tmprdh_smearUp = RooDataHist(htmp_smearUp.GetName(),htmp_smearUp.GetName(),r.RooArgList(self._lMSD),htmp_smearUp)
-			tmprdh_smearDn = RooDataHist(htmp_smearDn.GetName(),htmp_smearDn.GetName(),r.RooArgList(self._lMSD),htmp_smearDn)
-			getattr(lW,'import')(tmprdh_central, r.RooFit.RecycleConflictNodes())
-			getattr(lW,'import')(tmprdh_scaleUp, r.RooFit.RecycleConflictNodes())
-			getattr(lW,'import')(tmprdh_scaleDn, r.RooFit.RecycleConflictNodes())
-			getattr(lW,'import')(tmprdh_smearUp, r.RooFit.RecycleConflictNodes())
-			getattr(lW,'import')(tmprdh_smearDn, r.RooFit.RecycleConflictNodes())
+			htmp_smearDn.SetName("zqq%i_%s_smearDown" % (int(m),iCat));
+			hout = [htmp_central,htmp_scaleUp,htmp_scaleDn,htmp_smearUp,htmp_smearDn];
+			for h in hout:
+				print h.GetName()
+				for i0 in range(1,self._mass_nbins+1):
+					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
+						h.SetBinContent(i0,0);
+				h.Write();
+				tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+				getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
 
 		for pData in iDatas:
 			getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
@@ -531,6 +508,17 @@ def loadHistograms(f,pseudo,pseudo15):
 	else:
 		lHP0 = f.Get("data_obs_pass")
 		lHF0 = f.Get("data_obs_fail")
+
+	#lHP0.Smooth(10);
+        #lHP1.Smooth(10);
+        #lHP2.Smooth(10);
+        #lHP3.Smooth(10);
+        #lHP4.Smooth(10);
+        #lHF0.Smooth(10);
+        #lHF1.Smooth(10);
+        #lHF2.Smooth(10);
+        #lHF3.Smooth(10);
+        #lHF4.Smooth(10);
 
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])

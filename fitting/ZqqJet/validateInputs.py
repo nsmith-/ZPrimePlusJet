@@ -23,12 +23,12 @@ def main(options,args):
 	if not os.path.isdir("plots/mlfit"): os.mkdir( "plots/mlfit" );
 
 	# plot input histos
-	do2DHistInputs("histInputs/hist_1DZqq-dataReRecoB5eff-15-pt5006007008001000.root");
+	do2DHistInputs("histInputs/hist_1DZqq-dataReRecoB5eff-15-36binrho-sig-pt5006007008001000-qcd005.root");
 	#do2DHistInputs("histInputs/hist_1DZqq-dataReRecoB5eff-15.root");
 
 	# Load the input histograms
-	f = r.TFile("base.root");
-	fr  = r.TFile("ralphabase.root");
+	#f = r.TFile("base.root");
+	#fr  = r.TFile("ralphabase.root");
 
 	#wp = f.Get("w_pass_cat5");
 	#wf = f.Get("w_fail_cat5");
@@ -43,7 +43,7 @@ def main(options,args):
 	# wpr.Print();
 	# wfr.Print();
 
-	for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
+	#for i in range(5): drawCategory(f,fr,"cat"+str(i+1));
 
 ###############################################################
 
@@ -154,10 +154,18 @@ def do2DHistInputs(fn):
 	h2s.append(tot_pass);
 	h2s.append(tot_fail);
 
+	h2s.append( tf.Get("data_obs_pass") );
+        h2s.append( tf.Get("data_obs_fail") );
 	for h2 in h2s:
 		for ipt in range(h2.GetNbinsY()):
 			tmph1 = h2.ProjectionX( "px_" + h2.GetName() + str(ipt), ipt+1, ipt+1 );
 			makeCanvas(tmph1);
+	hqcdp = tf.Get("qcd_pass")
+	hqcdf = tf.Get("qcd_fail")
+	for ipt in range(hqcdf.GetNbinsY()):
+		tmph1 = hqcdf.ProjectionX( "px_" + hqcdf.GetName() + str(ipt), ipt+1, ipt+1 );
+		tmph2 = hqcdp.ProjectionX( "px_" + hqcdp.GetName() + str(ipt), ipt+1, ipt+1 );
+		makeCanvasPassFail(tmph1,tmph2)
 
 def makeCanvas(h):
 
@@ -167,6 +175,25 @@ def makeCanvas(h):
 	r.gPad.SetLogy();
 	c.SaveAs("plots/hinputs/"+h.GetName()+"_log.pdf");
 	
+def makeCanvasPassFail(hP,hF):
+
+	hP.Scale(1/hP.Integral())
+	hF.Scale(1/hF.Integral())
+	c = r.TCanvas("c","c",1000,800);
+	l = r.TLegend(0.75,0.6,0.9,0.85);
+        l.SetFillStyle(0);
+        l.SetBorderSize(0);
+        l.SetTextFont(42);
+        l.SetTextSize(0.035);
+        hP.SetLineColor(r.kRed);
+        l.AddEntry(hP,"QCD Pass","l")
+        l.AddEntry(hF,"QCD Fail","l")
+        hP.Draw("hist");
+        hF.Draw("hist sames");
+	l.Draw();
+        c.SaveAs("plots/hinputs/"+hP.GetName()+"PF.pdf");
+        r.gPad.SetLogy();
+        c.SaveAs("plots/hinputs/"+hP.GetName()+"PF_log.pdf");
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	parser = OptionParser()

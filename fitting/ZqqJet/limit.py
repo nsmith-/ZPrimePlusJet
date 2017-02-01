@@ -110,8 +110,8 @@ def goodness(base,ntoys,iLabel):
     return float(lPass)/float(len(nllToys))
 
 def bias(base,alt,ntoys,mu,iLabel):
-    os.system('combine -M GenerateOnly     %s --rMax 100 --rMin -100 --toysFrequentist -t %i --expectSignal %i --saveToys ' % (alt,ntoys,mu))
-    os.system('combine -M MaxLikelihoodFit %s --rMax 100 --rMin -100 -t %i --saveNLL --toysFile higgsCombineTest.GenerateOnly.mH120.123456.root' % (base,ntoys))
+    os.system('combine -M GenerateOnly     %s --rMax 5 --rMin -5 --toysFrequentist -t %i --expectSignal %i --saveToys ' % (alt,ntoys,mu))
+    os.system('combine -M MaxLikelihoodFit %s --rMax 5 --rMin -5 -t %i --saveNLL --toysFile higgsCombineTest.GenerateOnly.mH120.123456.root' % (base,ntoys))
     os.system('rm  higgsCombineTest.MaxLikelihoodFit.mH120.123456.root')
     os.system('mv  mlfit.root toys.root')
     plotgaus("toys.root",mu,"pull"+iLabel)
@@ -159,9 +159,9 @@ def generate(mass,toys):
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option('--mass'   ,action='store',type='int',dest='mass'   ,default=50, help='mass')
+    parser.add_option('--mass'   ,action='store',type='int',dest='mass'   ,default=100,help='mass')
     parser.add_option('--toys'   ,action='store',type='int',dest='toys'   ,default=100,help='mass')
-    parser.add_option('--sig'    ,action='store',type='int',dest='sig'    ,default=10 ,help='sig')
+    parser.add_option('--sig'    ,action='store',type='int',dest='sig'    ,default=1 ,help='sig')
     (options,args) = parser.parse_args()
     print options
 
@@ -170,11 +170,11 @@ if __name__ == "__main__":
 
     #setupMC('ZQQ_'+str(options.mass),options.mass,"mc")
     #setup('ZQQ_'+str(options.mass),options.mass,"ralpha","base")
-    os.chdir ('ZQQ_'+str(options.mass)+'_9bins')
+    os.chdir ('ZQQ_'+str(options.mass))
     #generate(options.mass,options.toys)
 
     #limit('cards_all.txt')
 
-    goodness('cards_all_zqq'+str(options.mass)+'.txt',options.toys,"goodness"+str(options.mass))
-    #bias('card_ralpha.txt','card_ralpha.txt',options.toys,options.sig,"fitbase"+str(options.mass))
+    #goodness('cards_all_zqq'+str(options.mass)+'.txt',options.toys,"goodness"+str(options.mass))
+    bias('cards_all_zqq%s.txt'%(str(options.mass)),'cards_all_qcd_zqq%s.txt'%(str(options.mass)),options.toys,options.sig,"fitbase"+str(options.mass))
     #plotmass('card_ralpha.txt',options.mass)

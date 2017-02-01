@@ -132,6 +132,7 @@ def load(iFile,iName,iNorm=True):
 def loadHist(iFile,iCat,iMass,iEWK=True,iS=True):
     lHists = []
     lFit = "shapes_fit_s/"+iCat+"/" if iS else "shapes_fit_b/"+iCat+"/"
+    #lFit = "shapes_prefit/"+iCat+"/" 
     lHists.append(load(iFile,lFit+"qcd"))
     lHists[0].SetFillColor(16)
     lHists[0].SetFillStyle(3001)
@@ -155,6 +156,7 @@ def loadData(iDataFile,iCat):
     #lW = iDataFile.Get("w_"+iCat)
     #lData = lW.data("data_obs_"+iCat).createHistogram("x")
     lData = load(iDataFile,"shapes_fit_s/"+str(iCat)+"/data",False)
+    #lData = load(iDataFile,"shapes_prefit/"+str(iCat)+"/data",False)
     lData.GetXaxis().SetTitle("m_{J} (GeV)")
     lData.SetMarkerStyle(20)
     return [lData]
