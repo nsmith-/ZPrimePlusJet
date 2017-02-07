@@ -14,7 +14,7 @@ def main(options,args):
     lumi = options.lumi
     muonCR = options.muonCR
 
-    fileName = 'hist_1DZbb.root'
+    fileName = 'hist_1DZbb_pt_scalesmear.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
@@ -114,19 +114,24 @@ def main(options,args):
     if muonCR:
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
     #else:
-        #dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100, lumi, True , False, '((triggerBits&2)&&passJson)')
+        #dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
 
     hall={}
-    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail'] #SR with tau21DDT < 0.55 && db >0.9, msd corrected
+
+    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_pass_unmatched','h_msd_v_pt_ak8_topR6_fail_matched','h_msd_v_pt_ak8_topR6_fail_unmatched'] #SR with tau21DDT < 0.55 && db >0.9, msd corrected
     #plots = ['h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail']  #SR with N2DDT @40% && db >0.9, msd corrected
     #plots = ['h_msd_v_pt_ak8_topR6_raw_pass','h_msd_v_pt_ak8_topR6_raw_fail'] #SR with tau21DDT < 0.55 && db >0.9
+    
     if options.bb:
         plots =  ['h_msd_v_pt_ak8_bbleading_topR6_pass','h_msd_v_pt_ak8_bbleading_topR6_fail']
     elif muonCR:
         plots =  ['h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail']
         
     for plot in plots:
-        tag = plot.split('_')[-1] # 'pass' or 'fail'            
+        tag = plot.split('_')[-1] # 'pass' or 'fail' or 'matched' or 'unmatched'
+        if 'matched' in tag:
+            tag = plot.split('_')[-2] + '_' +  plot.split('_')[-1] # 'pass_matched', 'pass_unmatched', etc.
+        
         
         for process, s in sigSamples.iteritems():
             hall['%s_%s'%(process,tag)] = getattr(s,plot)
