@@ -20,7 +20,7 @@ def main(options,args):
     odir = options.odir
     lumi = options.lumi
     
-    legname = {'ggHbb': 'ggH(b#bar{b}) N3LO + 0/1/2 merged',
+    legname = {#'ggHbb': 'ggH(b#bar{b}) N3LO + 0/1/2 merged',
 	       'ggHbbp': 'ggH(b#bar{b})',
                'VBFHbb':'VBF H(b#bar{b})',
 	       'ZHbb': ' Z(q#bar{q})H(b#bar{b})',
@@ -30,17 +30,19 @@ def main(options,args):
 	       'Phibb': ' Phi(125)(b#bar{b})'}
 
         
-    tfiles = {'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_ptw_1000pb_weighted.root'],#amcatnloFXFX_pythia8_1000pb_weighted.root'],
-       	      'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-              'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_0_1000pb_weighted.root'],
-	      'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-	      'ZnnHbb': [idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root'],#idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
-	      'WHbb' : [idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root'],#idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-	      'tthbb' : [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-	      'Phibb':[idir+'/Spin0_ggPhi12j_g1_125_Scalar_13TeV_madgraph_0_1000pb_weighted.root']
+    tfiles = {#'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_ptw_1000pb_weighted.root'],#amcatnloFXFX_pythia8_1000pb_weighted.root'],
+	       'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+               'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root'],
+               'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+               'WHbb' : [idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+               'tthbb' : [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+	       'ZnnHbb': [idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			  idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+	       'Phibb':[idir+'/Spin0_ggPhi12j_g1_125_Scalar_13TeV_madgraph_1000pb_weighted.root']
                }
 
-    color = {'ggHbb': ROOT.kBlack,
+    color = {#'ggHbb': ROOT.kBlack,
 	     'ggHbbp': ROOT.kBlue+2,
              'VBFHbb': ROOT.kAzure+3,
 	     'ZnnHbb': ROOT.kPink+5,
@@ -50,7 +52,7 @@ def main(options,args):
 	     'Phibb':ROOT.kRed-2
                }
 
-    style = {'ggHbb': 1,
+    style = {#'ggHbb': 1,
 	     'ggHbbp': 1,
              'VBFHbb': 2,
 	     'ZHbb': 1,
@@ -62,7 +64,7 @@ def main(options,args):
         
     print "Signals... "
     sigSamples = {}
-    sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi ) 
+    #sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi ) 
     sigSamples['ggHbbp']  = sampleContainer('ggHbbp',tfiles['ggHbbp']  , 1, lumi)
     sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi) 
     sigSamples['ZHbb'] = sampleContainer('ZHbb',tfiles['ZHbb'], 1, lumi ) 	
