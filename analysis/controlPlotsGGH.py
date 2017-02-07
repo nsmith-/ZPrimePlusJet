@@ -86,7 +86,7 @@ def main(options,args,outputExists):
                              idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root',
                              idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root']
+              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
               'Wlnu': [idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
