@@ -104,7 +104,7 @@ def main(options,args,outputExists):
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb250': [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'data': [
-			   idir+'/JetHTRun2016G_23Sep2016_v1.root',
+	#		   idir+'/JetHTRun2016G_23Sep2016_v1.root',
 			   idir+'/JetHTRun2016H_PromptReco_v2.root',
                            idir+'/JetHTRun2016H_PromptReco_v3.root',
                            idir+'/JetHTRun2016G_23Sep2016_v1_v2.root',
@@ -196,7 +196,7 @@ def main(options,args,outputExists):
                  'h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2_pass',
                  'h_msd_ak8_topR3_pass','h_msd_ak8_topR4_pass','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5_pass','h_msd_ak8_topR7_pass',
                  'h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
-                 'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail','h_msd_v_pt_ak8_topR6_N2_fail','h_msd_v_pt_ak8_topR6_N2_pass',
+                 'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail','h_msd_ak8_topR6_N2_fail','h_msd_ak8_topR6_N2_pass',
 		 #'h_msd_ak8_topR6_pass_0p4','h_msd_ak8_topR6_fail_0p4',
 		 #'h_msd_ak8_topR6_pass_0p45','h_msd_ak8_topR6_fail_0p45',
 		 #'h_msd_ak8_topR6_pass_0p5','h_msd_ak8_topR6_fail_0p5',
@@ -219,7 +219,7 @@ def main(options,args,outputExists):
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 100, lumi)
         if isData and muonCR:
             bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
             bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
