@@ -51,8 +51,8 @@ class sampleContainer:
 
         # set branch statuses and addresses
         self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_phi','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
-                          ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8CHSjet0_doublecsv','d',-999),('AK8CHSjet1_doublecsv','d',-999),
-			  ('kfactor','f',0),('AK8CHSjet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
+                          ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8Puppijet0_doublecsv','d',-999),('AK8Puppijet1_doublecsv','d',-999),
+			  ('kfactor','f',0),('AK8Puppijet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
                           ('nAK4PuppijetsLPt50dR08_0','i',-999),('nAK4PuppijetsMPt50dR08_0','i',-999),('nAK4PuppijetsTPt50dR08_0','i',-999),
                           ('nAK4PuppijetsLPt100dR08_0','i',-999),('nAK4PuppijetsMPt100dR08_0','i',-999),('nAK4PuppijetsTPt100dR08_ 0','i',-999),
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
@@ -364,15 +364,15 @@ class sampleContainer:
             if jpt_8 < self._trans_h2ddt.GetYaxis().GetBinLowEdge( 1 ): cur_pt_index = 1
             jtN2b1sdddt_8 = jtN2b1sd_8 - self._trans_h2ddt.GetBinContent(cur_rho_index,cur_pt_index)
 
-            jdb_8 = self.AK8CHSjet0_doublecsv[0]
-            if self.AK8CHSjet1_doublecsv[0] > 1:
+            jdb_8 = self.AK8Puppijet0_doublecsv[0]
+            if self.AK8Puppijet1_doublecsv[0] > 1:
                 jdb_8_sub1=-99
             else:
-                jdb_8_sub1 = self.AK8CHSjet1_doublecsv[0]
-            if self.AK8CHSjet2_doublecsv[0] > 1:
+                jdb_8_sub1 = self.AK8Puppijet1_doublecsv[0]
+            if self.AK8Puppijet2_doublecsv[0] > 1:
                 jdb_8_sub2=-99
             else:
-                jdb_8_sub2 = self.AK8CHSjet2_doublecsv[0]
+                jdb_8_sub2 = self.AK8Puppijet2_doublecsv[0]
             
             n_4 = self.nAK4PuppijetsPt30[0]
             n_fwd_4 =  self.nAK4PuppijetsfwdPt30[0]
@@ -820,7 +820,6 @@ class sampleContainer:
     		recoCorr = corrRECO_cen.Eval( puppipt )
     	else: 
 		recoCorr = corrRECO_for.Eval( puppipt );
-	print(genCorr,recoCorr)
 	totalWeight = genCorr*recoCorr
   	return totalWeight
 
