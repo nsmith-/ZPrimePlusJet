@@ -103,24 +103,27 @@ def main(options,args,outputExists):
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb250': [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-              'data': [idir+'/JetHTRun2016B_PromptReco_v2_resub.root',
-                       idir+'/JetHTRun2016C_PromptReco_v2.root',
-                       idir+'/JetHTRun2016D_PromptReco_v2.root',
-                       idir+'/JetHTRun2016E_PromptReco_v2.root',
-                       idir+'/JetHTRun2016F_PromptReco_v1.root',
-                       idir+'/JetHTRun2016G_PromptReco_v1.root',
-                       idir+'/JetHTRun2016H_PromptReco_v2.root']
-              'muon': [idir+'SingleMuonRun2016B_23Sep2016_v1_0.root', 
-                       idir+'SingleMuonRun2016B_23Sep2016_v3_0.root',
-                       idir+'SingleMuonRun2016B_23Sep2016_v3_1.root',
-                       idir+'SingleMuonRun2016C_23Sep2016_v1_0.root',
-                       idir+'SingleMuonRun2016D_23Sep2016_v1_0.root',
-                       idir+'SingleMuonRun2016E_23Sep2016_v1_0.root',
-                       idir+'SingleMuonRun2016F_23Sep2016_v1_0.root',
-                       idir+'SingleMuonRun2016G_23Sep2016_v1_0.root',
-                       idir+'SingleMuonRun2016H_PromptReco_v1_0.root',
-                       idir+'SingleMuonRun2016H_PromptReco_v2_0.root',
-                       idir+'SingleMuonRun2016H_PromptReco_v3_0.root']
+              'data': [
+			   idir+'/JetHTRun2016G_23Sep2016_v1.root',
+                           idir+'/JetHTRun2016H_PromptReco_v3.root',
+                           idir+'/JetHTRun2016G_23Sep2016_v1_v2.root',
+                           idir+'/JetHTRun2016B_23Sep2016_v1.root',
+                           idir+'/JetHTRun2016H_PromptReco_v1.root',
+                           idir+'/JetHTRun2016C_23Sep2016_v1.root']
+
+              'muon': [ 
+		       idir+'/SingleMuonRun2016H_PromptReco_v1.root',
+                       idir+'/SingleMuonRun2016H_PromptReco_v3.root',
+                       idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
+                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root']
+
+
             }
 
     color = {'ggHbb': ROOT.kAzure+1,
