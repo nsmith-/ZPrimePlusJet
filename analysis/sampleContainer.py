@@ -33,6 +33,28 @@ class sampleContainer:
         if isData:
             self._lumi = 1
         self._fillCA15 = fillCA15
+	 #based on https://github.com/thaarres/PuppiSoftdropMassCorr Summer16 
+        self.corrGEN = ROOT.TF1("corrGEN","[0]+[1]*pow(x*[2],-[3])",200,3500)
+        self.corrGEN.SetParameter(0,1.00626)
+        self.corrGEN.SetParameter(1, -1.06161)
+        self.corrGEN.SetParameter(2,0.0799900)
+        self.corrGEN.SetParameter(3,1.20454)
+
+        self.corrRECO_cen = ROOT.TF1("corrRECO_cen","[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)",200,3500)
+        self.corrRECO_cen.SetParameter(0,1.09302)
+        self.corrRECO_cen.SetParameter(1,-0.000150068)
+        self.corrRECO_cen.SetParameter(2,3.44866e-07)
+        self.corrRECO_cen.SetParameter(3,-2.68100e-10)
+        self.corrRECO_cen.SetParameter(4,8.67440e-14)
+        self.corrRECO_cen.SetParameter(5,-1.00114e-17)
+
+        self.corrRECO_for = ROOT.TF1("corrRECO_for","[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)",200,3500)
+        self.corrRECO_for.SetParameter(0,1.27212)
+        self.corrRECO_for.SetParameter(1,-0.000571640)
+        self.corrRECO_for.SetParameter(2,8.37289e-07)
+        self.corrRECO_for.SetParameter(3,-5.20433e-10)
+        self.corrRECO_for.SetParameter(4,1.45375e-13)
+        self.corrRECO_for.SetParameter(5,-1.50389e-17)	
 
 	#f_puppi= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/puppiCorr.root","read")
   	#self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
@@ -791,35 +813,13 @@ class sampleContainer:
         genCorr  = 1.
         recoCorr = 1.
         totalWeight = 1.
-	#based on https://github.com/thaarres/PuppiSoftdropMassCorr Summer16 
-	corrGEN = ROOT.TF1("corrGEN","[0]+[1]*pow(x*[2],-[3])",200,3500)
-	corrGEN.SetParameter(0,1.00626)
-	corrGEN.SetParameter(1, -1.06161)
-	corrGEN.SetParameter(2,0.0799900)
-	corrGEN.SetParameter(3,1.20454)
-
-	corrRECO_cen = ROOT.TF1("corrRECO_cen","[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)",200,3500)
-	corrRECO_cen.SetParameter(0,1.09302)
-	corrRECO_cen.SetParameter(1,-0.000150068)
-	corrRECO_cen.SetParameter(2,3.44866e-07)
-	corrRECO_cen.SetParameter(3,-2.68100e-10)
-	corrRECO_cen.SetParameter(4,8.67440e-14)
-	corrRECO_cen.SetParameter(5,-1.00114e-17)
-
-        corrRECO_for = ROOT.TF1("corrRECO_for","[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)",200,3500)
-        corrRECO_for.SetParameter(0,1.27212)
-        corrRECO_for.SetParameter(1,-0.000571640)
-        corrRECO_for.SetParameter(2,8.37289e-07)
-        corrRECO_for.SetParameter(3,-5.20433e-10)
-        corrRECO_for.SetParameter(4,1.45375e-13)
-        corrRECO_for.SetParameter(5,-1.50389e-17)
 
 
-        genCorr =  corrGEN.Eval( puppipt )
+        genCorr =  self.corrGEN.Eval( puppipt )
   	if( abs(puppieta)  < 1.3 ):
-    		recoCorr = corrRECO_cen.Eval( puppipt )
+    		recoCorr = self.corrRECO_cen.Eval( puppipt )
     	else: 
-		recoCorr = corrRECO_for.Eval( puppipt );
+		recoCorr = self.corrRECO_for.Eval( puppipt );
 	totalWeight = genCorr*recoCorr
   	return totalWeight
 
