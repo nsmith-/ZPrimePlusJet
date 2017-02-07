@@ -38,8 +38,10 @@ def main(options,args,outputExists):
 	       'ttHbb': 't#bar{t}H(b#bar{b})',
                'Diboson': 'VV(4q)',
                'SingleTop': 'single-t',
-               'DY': 'Z+jets',
-               'W': 'W+jets',
+               'DY': 'Z(qq)+jets',
+               'W': 'W(qq)+jets',
+               'DYll': 'Z(ll)+jets',
+               'Wlnu': 'W(l#nu)+jets',
                'TTbar': 't#bar{t}+jets',        
                'TTbar1Mu': 't#bar{t}+jets, 1#mu',  
                'TTbar1Ele': 't#bar{t}+jets, 1e',        
@@ -79,12 +81,13 @@ def main(options,args,outputExists):
                           idir+'/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
               'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
               'SingleTop':  [idir+'/ST_t_channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root',
                              idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root',
-                     idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
+              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'Wlnu': [idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
@@ -98,35 +101,29 @@ def main(options,args,outputExists):
                       idir+'/QCD_HT700to1000_13TeV_1000pb_weighted.root',
                       idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT1500to2000_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT2000toInf_13TeV_ext_1000pb_weighted.root',],
+                      idir+'/QCD_HT2000toInf_13TeV_ext_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb250': [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-              'data': [
-	#		   idir+'/JetHTRun2016G_23Sep2016_v1.root',
-			   idir+'/JetHTRun2016H_PromptReco_v2.root',
-                           idir+'/JetHTRun2016H_PromptReco_v3.root',
-                           idir+'/JetHTRun2016G_23Sep2016_v1_v2.root',
-                           idir+'/JetHTRun2016B_23Sep2016_v1.root',
-			   idir+'/JetHTRun2016B_23Sep2016_v3.root',
-                           idir+'/JetHTRun2016H_PromptReco_v1.root',
-			   idir+'/JetHTRun2016D_23Sep2016_v1.root',
-                           idir+'/JetHTRun2016C_23Sep2016_v1.root',
-			   idir+'/JetHTRun2016E_23Sep2016_v1.root',
-			   idir+'/JetHTRun2016F_23Sep2016_v1.root'],
-
-              'muon': [ 
-		       idir+'/SingleMuonRun2016H_PromptReco_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v3.root',
-                       idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
+              'data': [idir+'/JetHTRun2016B_23Sep2016_v1.root',
+                       idir+'/JetHTRun2016B_23Sep2016_v3.root',
+                       idir+'/JetHTRun2016C_23Sep2016_v1.root',
+                       idir+'/JetHTRun2016D_23Sep2016_v1.root',
+                       idir+'/JetHTRun2016E_23Sep2016_v1.root',
+                       idir+'/JetHTRun2016F_23Sep2016_v1.root',
+                       idir+'/JetHTRun2016G_23Sep2016_v1_v2.root',
+                       idir+'/JetHTRun2016H_PromptReco_v2.root',
+                       idir+'/JetHTRun2016H_PromptReco_v3.root'],
+              'muon': [idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root',
                        idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root']
+                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
+                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
+                       idir+'/SingleMuonRun2016H_PromptReco_v3.root']
 
 
             }
@@ -142,8 +139,10 @@ def main(options,args,outputExists):
 		     'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
-             'DY':  ROOT.kRed+1,
-             'W':  ROOT.kGreen+2,
+             'DY':  ROOT.kRed+2,
+             'DYll':  ROOT.kRed+1,
+             'W':  ROOT.kGreen+3,
+             'Wlnu':  ROOT.kGreen+2,
              'TTbar':  ROOT.kGray,
              'TTbar1Mu':  ROOT.kViolet,
              'TTbar1Ele':  ROOT.kSpring,
@@ -167,7 +166,9 @@ def main(options,args,outputExists):
              'Diboson': 1,
              'SingleTop': 1,
              'DY': 1,
+             'DYll': 1,
              'W': 1,
+             'Wlnu': 1,
              'TTbar': 1,
              'TTbar1Mu': 1,
              'TTbar1Ele': 1,
@@ -184,7 +185,8 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = ['h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
-                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4','h_msd_ak8_topR6_N2_pass']                 
+                 'h_msd_ak8_muCR4','h_pt_mu_muCR4','h_eta_mu_muCR4','h_pt_ak8_muCR4','h_eta_ak8_muCR4','h_dbtag_ak8_muCR4','h_t21ddt_ak8_muCR4',
+                 'h_msd_ak8_topR6_N2_pass','h_msd_ak8_topR6_N2_fail']                 
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:	
@@ -221,6 +223,8 @@ def main(options,args,outputExists):
         bkgSamples = {}    
         bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 100, lumi)
         if isData and muonCR:
+            bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, lumi)
+            bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, lumi)
             bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
             bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
             bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
@@ -286,7 +290,7 @@ def main(options,args,outputExists):
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
         if isData and muonCR:
-            bkgSamples.extend(['TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
+            bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
         else:        
             bkgSamples.extend(['TTbar'])
             
