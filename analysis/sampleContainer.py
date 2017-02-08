@@ -33,11 +33,33 @@ class sampleContainer:
         if isData:
             self._lumi = 1
         self._fillCA15 = fillCA15
+	 #based on https://github.com/thaarres/PuppiSoftdropMassCorr Summer16 
+        self.corrGEN = ROOT.TF1("corrGEN","[0]+[1]*pow(x*[2],-[3])",200,3500)
+        self.corrGEN.SetParameter(0,1.00626)
+        self.corrGEN.SetParameter(1, -1.06161)
+        self.corrGEN.SetParameter(2,0.0799900)
+        self.corrGEN.SetParameter(3,1.20454)
 
-	f_puppi= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/puppiCorr.root","read")
-  	self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
-  	self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
-  	self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
+        self.corrRECO_cen = ROOT.TF1("corrRECO_cen","[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)",200,3500)
+        self.corrRECO_cen.SetParameter(0,1.09302)
+        self.corrRECO_cen.SetParameter(1,-0.000150068)
+        self.corrRECO_cen.SetParameter(2,3.44866e-07)
+        self.corrRECO_cen.SetParameter(3,-2.68100e-10)
+        self.corrRECO_cen.SetParameter(4,8.67440e-14)
+        self.corrRECO_cen.SetParameter(5,-1.00114e-17)
+
+        self.corrRECO_for = ROOT.TF1("corrRECO_for","[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)",200,3500)
+        self.corrRECO_for.SetParameter(0,1.27212)
+        self.corrRECO_for.SetParameter(1,-0.000571640)
+        self.corrRECO_for.SetParameter(2,8.37289e-07)
+        self.corrRECO_for.SetParameter(3,-5.20433e-10)
+        self.corrRECO_for.SetParameter(4,1.45375e-13)
+        self.corrRECO_for.SetParameter(5,-1.50389e-17)	
+
+	#f_puppi= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/puppiCorr.root","read")
+  	#self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
+  	#self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
+  	#self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 	
 	#f_pu= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_Jan11.root","read")
         #self._puw      = f_pu.Get("puw")
@@ -51,8 +73,8 @@ class sampleContainer:
 
         # set branch statuses and addresses
         self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_phi','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
-                          ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8CHSjet0_doublecsv','d',-999),('AK8CHSjet1_doublecsv','d',-999),
-			  ('kfactor','f',0),('AK8CHSjet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
+                          ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8Puppijet0_doublecsv','d',-999),('AK8Puppijet1_doublecsv','d',-999),
+			  ('kfactor','f',0),('AK8Puppijet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
                           ('nAK4PuppijetsLPt50dR08_0','i',-999),('nAK4PuppijetsMPt50dR08_0','i',-999),('nAK4PuppijetsTPt50dR08_0','i',-999),
                           ('nAK4PuppijetsLPt100dR08_0','i',-999),('nAK4PuppijetsMPt100dR08_0','i',-999),('nAK4PuppijetsTPt100dR08_ 0','i',-999),
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
@@ -343,7 +365,7 @@ class sampleContainer:
 
             jpt_8  = self.AK8Puppijet0_pt[0]
             jeta_8  = self.AK8Puppijet0_eta[0]
-            jmsd_8 = self.AK8Puppijet0_msd[0]*self.PUPPIweight(jpt_8,jeta_8)
+	    jmsd_8 = self.AK8Puppijet0_msd[0]*self.PUPPIweight(jpt_8,jeta_8)
             jphi_8  = self.AK8Puppijet0_phi[0]
             jpt_8_sub1  = self.AK8Puppijet1_pt[0]
             jpt_8_sub2  = self.AK8Puppijet2_pt[0]
@@ -364,15 +386,15 @@ class sampleContainer:
             if jpt_8 < self._trans_h2ddt.GetYaxis().GetBinLowEdge( 1 ): cur_pt_index = 1
             jtN2b1sdddt_8 = jtN2b1sd_8 - self._trans_h2ddt.GetBinContent(cur_rho_index,cur_pt_index)
 
-            jdb_8 = self.AK8CHSjet0_doublecsv[0]
-            if self.AK8CHSjet1_doublecsv[0] > 1:
+            jdb_8 = self.AK8Puppijet0_doublecsv[0]
+            if self.AK8Puppijet1_doublecsv[0] > 1:
                 jdb_8_sub1=-99
             else:
-                jdb_8_sub1 = self.AK8CHSjet1_doublecsv[0]
-            if self.AK8CHSjet2_doublecsv[0] > 1:
+                jdb_8_sub1 = self.AK8Puppijet1_doublecsv[0]
+            if self.AK8Puppijet2_doublecsv[0] > 1:
                 jdb_8_sub2=-99
             else:
-                jdb_8_sub2 = self.AK8CHSjet2_doublecsv[0]
+                jdb_8_sub2 = self.AK8Puppijet2_doublecsv[0]
             
             n_4 = self.nAK4PuppijetsPt30[0]
             n_fwd_4 =  self.nAK4PuppijetsfwdPt30[0]
@@ -791,11 +813,13 @@ class sampleContainer:
         genCorr  = 1.
         recoCorr = 1.
         totalWeight = 1.
-        genCorr =  self._puppisd_corrGEN.Eval( puppipt )
+
+
+        genCorr =  self.corrGEN.Eval( puppipt )
   	if( abs(puppieta)  < 1.3 ):
-    		recoCorr = self._puppisd_corrRECO_cen.Eval( puppipt )
+    		recoCorr = self.corrRECO_cen.Eval( puppipt )
     	else: 
-		recoCorr = self._puppisd_corrRECO_for.Eval( puppipt );
+		recoCorr = self.corrRECO_for.Eval( puppipt );
 	totalWeight = genCorr*recoCorr
   	return totalWeight
 

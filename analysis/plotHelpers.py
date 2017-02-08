@@ -663,7 +663,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     nevt=[]
     hstack = ROOT.THStack("hstack","hstack")
     for name, h in (sorted(hb.iteritems(),key=customSort)):
-	print name
+    	print name
     #for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
