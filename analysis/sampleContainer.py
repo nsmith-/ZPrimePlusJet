@@ -14,6 +14,9 @@ PTCUT = 500.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
+METCUT = 180
+MASSCUT = 40
+NJETCUT = 5
 #########################################################################################################
 class sampleContainer:
 
@@ -71,10 +74,43 @@ class sampleContainer:
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
 
+        # get trigger efficiency object
+        
+        f_trig = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RUNTriggerEfficiencies_SingleMuon_Run2016_V2p1_v03.root","read")
+        self._trig_denom = f_trig.Get("DijetTriggerEfficiencySeveralTriggers/jet1SoftDropMassjet1PtDenom_cutJet")
+        self._trig_numer = f_trig.Get("DijetTriggerEfficiencySeveralTriggers/jet1SoftDropMassjet1PtPassing_cutJet")
+        self._trig_denom.SetDirectory(0)
+        self._trig_numer.SetDirectory(0)
+        self._trig_eff = ROOT.TEfficiency()
+        if (ROOT.TEfficiency.CheckConsistency(self._trig_numer,self._trig_denom)):
+            self._trig_eff = ROOT.TEfficiency(self._trig_numer,self._trig_denom)
+            self._trig_eff.SetDirectory(0)
+        f_trig.Close()
+
+        # get muon trigger efficiency object
+        
+        f_mutrig_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_Period4.root","read")
+        self._mutrig_eff_GH = f_mutrig_GH.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
+        self._mutrig_eff_GH.SetDirectory(0)
+        f_mutrig_GH.Close()
+        
+        f_mutrig_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF.root","read")
+        self._mutrig_eff_BCDEF = f_mutrig_BCDEF.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
+        self._mutrig_eff_BCDEF.SetDirectory(0)
+        f_mutrig_BCDEF.Close()
+        
         # set branch statuses and addresses
-        self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_phi','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
-                          ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),('AK8Puppijet0_doublecsv','d',-999),('AK8Puppijet1_doublecsv','d',-999),
-			  ('kfactor','f',0),('AK8Puppijet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),('nAK4PuppijetsPt30dR08_0','i',-999),('nAK4PuppijetsfwdPt30','i',-999),
+        self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),
+                          ('AK8Puppijet0_pt_JERUp','d',-999),('AK8Puppijet0_pt_JERDown','d',-999),
+                          ('AK8Puppijet0_pt_JESUp','d',-999),('AK8Puppijet0_pt_JESDown','d',-999),
+                          ('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_phi','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
+                          ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),
+                          ('AK8Puppijet0_doublecsv','d',-999),('AK8Puppijet1_doublecsv','d',-999),
+                          ('kfactor','f',0),('AK8Puppijet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),
+                          ('nAK4PuppijetsPt30dR08_0','i',-999),
+                          ('nAK4PuppijetsPt30dR08jesUp_0','i',-999),('nAK4PuppijetsPt30dR08jesDown_0','i',-999),
+                          ('nAK4PuppijetsPt30dR08jerUp_0','i',-999),('nAK4PuppijetsPt30dR08jerDown_0','i',-999),
+                          ('nAK4PuppijetsfwdPt30','i',-999),
                           ('nAK4PuppijetsLPt50dR08_0','i',-999),('nAK4PuppijetsMPt50dR08_0','i',-999),('nAK4PuppijetsTPt50dR08_0','i',-999),
                           ('nAK4PuppijetsLPt100dR08_0','i',-999),('nAK4PuppijetsMPt100dR08_0','i',-999),('nAK4PuppijetsTPt100dR08_ 0','i',-999),
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
@@ -85,14 +121,18 @@ class sampleContainer:
                           ('nAK4PuppijetsLPt100dR08_2','i',-999),('nAK4PuppijetsMPt100dR08_2','i',-999),('nAK4PuppijetsTPt100dR08_ 1','i',-999),
                           ('nAK4PuppijetsLPt150dR08_2','i',-999),('nAK4PuppijetsMPt150dR08_2','i',-999),('nAK4PuppijetsTPt150dR08_2','i',-999),
                           ('AK8Puppijet1_pt','d',-999),('AK8Puppijet2_pt','d',-999),('AK8Puppijet1_tau21','d',-999),('AK8Puppijet2_tau21','d',-999),                        
-                          ('AK8Puppijet0_ratioCA15_04','d',-999),('pfmet','f',-999),('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
-                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('npv','i',1),('npu','i',1), 
+                          ('AK8Puppijet0_ratioCA15_04','d',-999),
+                          ('pfmet','f',-999),('pfmetphi','f',-999),('puppet','f',-999),('puppetphi','f',-999),
+                          ('MetXCorrjesUp','d',-999),('MetXCorrjesDown','d',-999),('MetYCorrjesUp','d',-999),('MetYCorrjesDown','d',-999),
+                          ('MetXCorrjerUp','d',-999),('MetXCorrjerDown','d',-999),('MetYCorrjerUp','d',-999),('MetYCorrjerDown','d',-999),
+                          ('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
+                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),
+                          ('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('npv','i',1),('npu','i',1), 
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
                           ('AK8Puppijet0_isTightVJet','i',0),
                           ('AK8Puppijet1_isTightVJet','i',0),
                           ('AK8Puppijet2_isTightVJet','i',0),('AK4Puppijet3_pt','f',0),('AK4Puppijet2_pt','f',0),('AK4Puppijet1_pt','f',0),('AK4Puppijet0_pt','f',0),
-			  ('AK4Puppijet3_eta','f',0),('AK4Puppijet2_eta','f',0),('AK4Puppijet1_eta','f',0),('AK4Puppijet0_eta','f',0)
-
+                          ('AK4Puppijet3_eta','f',0),('AK4Puppijet2_eta','f',0),('AK4Puppijet1_eta','f',0),('AK4Puppijet0_eta','f',0)
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
@@ -115,8 +155,8 @@ class sampleContainer:
         histos1d = {
         'h_Cuts'               :["h_"+self._name+"_Cuts","; Cut ", 8, 0, 8],
         'h_n_ak4'              :["h_"+self._name+"_n_ak4","; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],     
-	'h_npv'              :["h_"+self._name+"_npv","; number of PV;;", 100, 0, 100],
-	'h_ht'			:["h_"+self._name+"_ht","; HT (GeV);;",50,300,2100],
+        'h_npv'              :["h_"+self._name+"_npv","; number of PV;;", 100, 0, 100],
+        'h_ht'			:["h_"+self._name+"_ht","; HT (GeV);;",50,300,2100],
         'h_pt_bbleading'       :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} (GeV);", 50, 300, 2100],
         'h_bb_bbleading'       :["h_"+self._name+"_bb_bbleading","; double b-tag ;", 40, -1, 1],
         'h_msd_bbleading'      :["h_"+self._name+"_msd_bbleading","AK8 m_{SD}^{PUPPI} (GeV);", 30, 40, 250],
@@ -139,7 +179,7 @@ class sampleContainer:
         'h_pt_ak8_sub2'        :["h_"+self._name+"_pt_ak8_sub2","; AK8 3rd leading p_{T} (GeV);", 50, 300, 2100],
         'h_pt_ak8_dbtagCut'    :["h_"+self._name+"_pt_ak8_dbtagCut","; AK8 leading p_{T} (GeV);", 45, 300, 2100],
         'h_msd_ak8'            :["h_"+self._name+"_msd_ak8","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-	'h_msd_ak8_raw'            :["h_"+self._name+"_msd_ak8_raw","; AK8 m_{SD}^{PUPPI} no correction (GeV);", 23,40,201],
+        'h_msd_ak8_raw'            :["h_"+self._name+"_msd_ak8_raw","; AK8 m_{SD}^{PUPPI} no correction (GeV);", 23,40,201],
         'h_msd_ak8_inc'        :["h_"+self._name+"_msd_ak8_inc","; AK8 m_{SD}^{PUPPI} (GeV);", 100,0,500],
         'h_msd_ak8_dbtagCut'   :["h_"+self._name+"_msd_ak8_dbtagCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_t21ddtCut'  :["h_"+self._name+"_msd_ak8_t21ddtCut","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
@@ -160,16 +200,32 @@ class sampleContainer:
         'h_msd_ak8_topR4_pass' :["h_"+self._name+"_msd_ak8_topR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR5_pass' :["h_"+self._name+"_msd_ak8_topR5_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_pass' :["h_"+self._name+"_msd_ak8_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-	'h_msd_ak8_topR6_N2_pass' :["h_"+self._name+"_msd_ak8_topR6_N2_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_pass_JESUp' :["h_"+self._name+"_msd_ak8_topR6_pass_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_pass_JESDown' :["h_"+self._name+"_msd_ak8_topR6_pass_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_pass_JERUp' :["h_"+self._name+"_msd_ak8_topR6_pass_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_pass_JERDown' :["h_"+self._name+"_msd_ak8_topR6_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_pass' :["h_"+self._name+"_msd_ak8_topR6_N2_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_pass_JESUp' :["h_"+self._name+"_msd_ak8_topR6_N2_pass_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_pass_JESDown' :["h_"+self._name+"_msd_ak8_topR6_N2_pass_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_pass_JERUp' :["h_"+self._name+"_msd_ak8_topR6_N2_pass_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_pass_JERDown' :["h_"+self._name+"_msd_ak8_topR6_N2_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR7_pass' :["h_"+self._name+"_msd_ak8_topR7_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR2_fail' :["h_"+self._name+"_msd_ak8_topR2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR3_fail' :["h_"+self._name+"_msd_ak8_topR3_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR4_fail' :["h_"+self._name+"_msd_ak8_topR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR5_fail' :["h_"+self._name+"_msd_ak8_topR5_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_fail' :["h_"+self._name+"_msd_ak8_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-	'h_msd_ak8_topR6_N2_fail' :["h_"+self._name+"_msd_ak8_topR6_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-	'h_msd_ak8_raw_SR_fail' :["h_"+self._name+"_msd_ak8_raw_SR_fail","; AK8 m_{SD}^{PUPPI} no corr (GeV);", 23,40,201],
-	'h_msd_ak8_raw_SR_pass' :["h_"+self._name+"_msd_ak8_raw_SR_pass","; AK8 m_{SD}^{PUPPI} no corr (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_fail_JESUp' :["h_"+self._name+"_msd_ak8_topR6_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_fail_JESDown' :["h_"+self._name+"_msd_ak8_topR6_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_fail_JERUp' :["h_"+self._name+"_msd_ak8_topR6_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_fail_JERDown' :["h_"+self._name+"_msd_ak8_topR6_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_fail' :["h_"+self._name+"_msd_ak8_topR6_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_fail_JESUp' :["h_"+self._name+"_msd_ak8_topR6_N2_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_fail_JESDown' :["h_"+self._name+"_msd_ak8_topR6_N2_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_fail_JERUp' :["h_"+self._name+"_msd_ak8_topR6_N2_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_topR6_N2_fail_JERDown' :["h_"+self._name+"_msd_ak8_topR6_N2_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_raw_SR_fail' :["h_"+self._name+"_msd_ak8_raw_SR_fail","; AK8 m_{SD}^{PUPPI} no corr (GeV);", 23,40,201],
+        'h_msd_ak8_raw_SR_pass' :["h_"+self._name+"_msd_ak8_raw_SR_pass","; AK8 m_{SD}^{PUPPI} no corr (GeV);", 23,40,201],
         'h_msd_ak8_topR7_fail' :["h_"+self._name+"_msd_ak8_topR7_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_0p6_pass' :["h_"+self._name+"_msd_ak8_topR6_0p6_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_topR6_0p6_fail' :["h_"+self._name+"_msd_ak8_topR6_0p6_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
@@ -212,7 +268,25 @@ class sampleContainer:
         'h_t21ddt_ak8_muCR4'   :["h_"+self._name+"_t21ddt_ak8_muCR4","; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
         'h_msd_ak8_muCR4'      :["h_"+self._name+"_msd_ak8_muCR4","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_pass' :["h_"+self._name+"_msd_ak8_muCR4_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_JESUp' :["h_"+self._name+"_msd_ak8_muCR4_pass_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_JESDown' :["h_"+self._name+"_msd_ak8_muCR4_pass_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_JERUp' :["h_"+self._name+"_msd_ak8_muCR4_pass_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail' :["h_"+self._name+"_msd_ak8_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_JESUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_JESDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_JERUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_JESUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_JESDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_JERUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_JESUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_JESDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_JERUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
         'h_msd_ak8_muCR5'      :["h_"+self._name+"_msd_ak8_muCR5","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR6'      :["h_"+self._name+"_msd_ak8_muCR6","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
@@ -245,16 +319,32 @@ class sampleContainer:
         'h_msd_v_pt_ak8_topR4_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR4_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR5_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR5_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-	'h_msd_v_pt_ak8_topR6_N2_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_pass_JESUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass_JESUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_pass_JESDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass_JESDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_pass_JERUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass_JERUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_pass_JERDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_pass_JESUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_JESUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_pass_JESDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_JESDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_pass_JERUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_JERUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_pass_JERDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR7_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR7_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR2_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR2_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR3_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR3_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR4_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR4_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR5_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR5_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-	'h_msd_v_pt_ak8_topR6_N2_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_fail_JESUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_fail_JESDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_fail_JERUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_fail_JERDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail_JESUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail_JESDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail_JERUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail_JERDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_raw_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_raw_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-	'h_msd_v_pt_ak8_topR6_raw_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_raw_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_raw_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_raw_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR7_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR7_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],            
         'h_msd_v_pt_ak8_bbleading_topR6_pass' :["h_"+self._name+"_msd_v_pt_ak8_bbleading_topR6_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_bbleading_topR6_fail' :["h_"+self._name+"_msd_v_pt_ak8_bbleading_topR6_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
@@ -286,19 +376,19 @@ class sampleContainer:
         'h_msd_v_pt_ak8_topR6_0p75_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p75_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p75_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p75_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	
-	'h_msd_v_pt_ak8_topR6_0p91_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p91_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_0p91_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p91_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p91_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p91_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	
-	'h_msd_v_pt_ak8_topR6_0p92_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p92_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_0p92_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p92_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p92_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p92_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	
-	'h_msd_v_pt_ak8_topR6_0p93_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_0p93_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p93_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p93_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 
-	'h_msd_v_pt_ak8_topR6_0p94_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p94_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_0p94_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p94_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p94_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p94_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
 	
-	'h_msd_v_pt_ak8_topR6_0p95_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p95_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_0p95_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p95_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_0p95_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR6_0p95_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
 
 
@@ -350,22 +440,35 @@ class sampleContainer:
             puweight = self.puWeight[0] #corrected 
             #puWeight = self._puw.GetBinContent(self._puw.FindBin(self.npu[0]));
             fbweight = self.scale1fb[0] * self._lumi
-            vjetsKF = self.kfactor[0] #==1 for not V+jets events
-            weight = puweight*fbweight*self._sf*vjetsKF
+            vjetsKF = self.kfactor[0] #==1 for not V+jets events            
+            # trigger weight
+            massForTrig =  min(self.AK8Puppijet0_msd[0], 300. )
+            ptForTrig =  max(200., min(self.AK8Puppijet0_pt[0]  , 800. ))
+            trigweight = self._trig_eff.GetEfficiency(self._trig_eff.FindFixBin(massForTrig,ptForTrig))
+            trigweightUp = trigweight + self._trig_eff.GetEfficiencyErrorUp(self._trig_eff.FindFixBin(massForTrig,ptForTrig))
+            trigweightDown = trigweight - self._trig_eff.GetEfficiencyErrorLow(self._trig_eff.FindFixBin(massForTrig,ptForTrig))            
+            if trigweight<=0 or trigweightDown<=0 or trigweightUp<=0:
+                print 'trigweights are %f, %f, %f, setting all to 1'%(trigweight,trigweightUp,trigweightDown)
+                trigweight = 1
+                trigweightDown = 1
+                trigweightUp = 1                            
+            weight = puweight*fbweight*self._sf*vjetsKF*trigweight
+            weight_triggerUp = weight = puweight*fbweight*self._sf*vjetsKF*trigweightUp
+            weight_triggerDown = weight = puweight*fbweight*self._sf*vjetsKF*trigweightDown
 
             if self._isData:
                 weight = 1
 
-            # Trigger (for JetHT triggerBits& 2 or in this case triggerBits!=1 )
-            #if self._isData and self._tt.triggerBits !=1: continue
-
 
             ##### AK8 info
             jmsd_8_raw = self.AK8Puppijet0_msd[0]
-
-            jpt_8  = self.AK8Puppijet0_pt[0]
+            jpt_8  = self.AK8Puppijet0_pt[0]            
+            jpt_8_JERUp  = self.AK8Puppijet0_pt_JERUp[0]
+            jpt_8_JERDown  = self.AK8Puppijet0_pt_JERDown[0]
+            jpt_8_JESUp  = self.AK8Puppijet0_pt_JESUp[0]
+            jpt_8_JESDown  = self.AK8Puppijet0_pt_JESDown[0]
             jeta_8  = self.AK8Puppijet0_eta[0]
-	    jmsd_8 = self.AK8Puppijet0_msd[0]*self.PUPPIweight(jpt_8,jeta_8)
+            jmsd_8 = self.AK8Puppijet0_msd[0]*self.PUPPIweight(jpt_8,jeta_8)
             jphi_8  = self.AK8Puppijet0_phi[0]
             jpt_8_sub1  = self.AK8Puppijet1_pt[0]
             jpt_8_sub2  = self.AK8Puppijet2_pt[0]
@@ -399,6 +502,15 @@ class sampleContainer:
             n_4 = self.nAK4PuppijetsPt30[0]
             n_fwd_4 =  self.nAK4PuppijetsfwdPt30[0]
             n_dR0p8_4 = self.nAK4PuppijetsPt30dR08_0[0]
+            # due to bug, don't use jet counting JER/JES Up/Down for now
+            #n_dR0p8_4_JERUp = self.nAK4PuppijetsPt30dR08jerUp_0[0]
+            #n_dR0p8_4_JERDown = self.nAK4PuppijetsPt30dR08jerDown_0[0]
+            #n_dR0p8_4_JESUp = self.nAK4PuppijetsPt30dR08jesUp_0[0]
+            #n_dR0p8_4_JESDown = self.nAK4PuppijetsPt30dR08jesDown_0[0]            
+            n_dR0p8_4_JERUp = n_dR0p8_4
+            n_dR0p8_4_JERDown = n_dR0p8_4
+            n_dR0p8_4_JESUp = n_dR0p8_4
+            n_dR0p8_4_JESDown = n_dR0p8_4
             n_LdR0p8_4 = self.nAK4PuppijetsLPt50dR08_0[0]
             n_MdR0p8_4 = self.nAK4PuppijetsMPt50dR08_0[0]
             n_TdR0p8_4 = self.nAK4PuppijetsTPt50dR08_0[0]
@@ -409,7 +521,15 @@ class sampleContainer:
             n_MPt150dR0p8_4 = self.nAK4PuppijetsMPt150dR08_0[0]
             n_TPt150dR0p8_4 = self.nAK4PuppijetsTPt150dR08_0[0]
 
-            met = self.pfmet[0]
+            met = self.puppet[0]
+            metphi = self.puppetphi[0]
+            met_x = met*ROOT.TMath.Cos(metphi)
+            met_y = met*ROOT.TMath.Sin(metphi)
+            met_JESUp =   ROOT.TMath.Sqrt( (met_x + self.MetXCorrjesUp[0]  )*(met_x + self.MetXCorrjesUp[0]  ) + (met_y + self.MetYCorrjesUp[0]  )*(met_y + self.MetYCorrjesUp[0]) )
+            met_JESDown = ROOT.TMath.Sqrt( (met_x + self.MetXCorrjesDown[0])*(met_x + self.MetXCorrjesDown[0]) + (met_y + self.MetYCorrjesDown[0])*(met_y + self.MetYCorrjesDown[0]) )
+            met_JERUp =   ROOT.TMath.Sqrt( (met_x + self.MetXCorrjerUp[0]  )*(met_x + self.MetXCorrjerUp[0]  ) + (met_y + self.MetYCorrjerUp[0]  )*(met_y + self.MetYCorrjerUp[0]) )
+            met_JERDown = ROOT.TMath.Sqrt( (met_x + self.MetXCorrjerDown[0])*(met_x + self.MetXCorrjerDown[0]) + (met_y + self.MetYCorrjerDown[0])*(met_y + self.MetYCorrjerDown[0]) )
+            
             ratioCA15_04 = self.AK8Puppijet0_ratioCA15_04[0]
 
             ntau = self.ntau[0]
@@ -503,7 +623,7 @@ class sampleContainer:
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
                 if a > 0 : continue
                 a = a+1                
-                if i[1] > PTCUT  and i[0] > 40 and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and i[4] < T21DDTCUT and i[5]:
+                if i[1] > PTCUT  and i[0] > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and i[4] < T21DDTCUT and i[5]:
                     if i[2] > DBTAGCUT:
                         self.h_msd_ak8_bbleading_muCR4_pass.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_muCR4_pass.Fill( i[0], i[1], weight)
@@ -513,15 +633,15 @@ class sampleContainer:
                
             if jpt_8 > PTCUT:
                 cut[3]=cut[3]+1
-            if jpt_8 > PTCUT and jmsd_8 > 40:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT:
                 cut[4]=cut[4]+1
-            if jpt_8 >PTCUT and jmsd_8 > 40 and isTightVJet:
+            if jpt_8 >PTCUT and jmsd_8 > MASSCUT and isTightVJet:
                 cut[5]=cut[5]+1
-            if jpt_8 > PTCUT and jmsd_8 > 40 and isTightVJet and neleLoose==0 and nmuLoose==0:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose==0 and nmuLoose==0:
                 cut[0]=cut[0]+1
-            if jpt_8 > PTCUT and jmsd_8 > 40 and isTightVJet and neleLoose==0 and nmuLoose==0 and ntau==0:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose==0 and nmuLoose==0 and ntau==0:
                 cut[1]=cut[1]+1
-            if jpt_8 > PTCUT and jmsd_8 > 40 and isTightVJet and neleLoose==0 and nmuLoose==0 and ntau==0 and nphoLoose==0:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose==0 and nmuLoose==0 and ntau==0 and nphoLoose==0:
                 cut[2]=cut[2]+1
                         
             if jpt_8 > PTCUT:           
@@ -536,13 +656,13 @@ class sampleContainer:
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
                 if a > 0 : continue
                 a = a+1
-                if i[2] > DBTAGCUT and i[0]> 40 and i[1]>PTCUT:
+                if i[2] > DBTAGCUT and i[0]> MASSCUT and i[1]>PTCUT:
                     self.h_msd_bbleading.Fill( i[0], weight )
                     #print sorted(bb_idx, key=lambda bbtag: bbtag[2],reverse=True)
                     self.h_pt_bbleading.Fill( i[1], weight )
                     #print(i[0],i[1],i[2])
                     self.h_bb_bbleading.Fill( i[2], weight )
-                if i[1] > PTCUT and i[0] > 40 and met < 180 and n_dR0p8_4 < 5 and i[3] < 2 and i[4] < T21DDTCUT and n_fwd_4 < 3 and i[5]:
+                if i[1] > PTCUT and i[0] > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and i[3] < 2 and i[4] < T21DDTCUT and n_fwd_4 < 3 and i[5]:
                     if i[2] > DBTAGCUT:
                         self.h_msd_ak8_bbleading_topR6_pass.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_topR6_pass.Fill( i[0], i[1], weight)
@@ -550,7 +670,7 @@ class sampleContainer:
                         self.h_msd_ak8_bbleading_topR6_fail.Fill( i[0], weight )
                         self.h_msd_v_pt_ak8_bbleading_topR6_fail.Fill( i[0], i[1], weight)
                     
-            if jpt_8 > PTCUT and jmsd_8 > 40: 
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT: 
                 self.h_pt_ak8.Fill( jpt_8, weight )
                 self.h_eta_ak8.Fill( jeta_8, weight )
                 self.h_pt_ak8_sub1.Fill( jpt_8_sub1, weight )
@@ -581,38 +701,38 @@ class sampleContainer:
                 self.h_isolationCA15.Fill(    ratioCA15_04 , weight )
                 self.h_met.Fill(met, weight)
 
-            if jpt_8 > PTCUT and jt21P_8 < T21DDTCUT and jmsd_8 > 40:
+            if jpt_8 > PTCUT and jt21P_8 < T21DDTCUT and jmsd_8 > MASSCUT:
                 self.h_msd_ak8_t21ddtCut.Fill( jmsd_8, weight )
 	        self.h_t32_ak8_t21ddtCut.Fill( jt32_8, weight )
 
-            if jpt_8 > PTCUT and jtN2b1sdddt_8 < 0 and jmsd_8 > 40:
+            if jpt_8 > PTCUT and jtN2b1sdddt_8 < 0 and jmsd_8 > MASSCUT:
                 self.h_msd_ak8_N2Cut.Fill( jmsd_8, weight )
 
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and isTightVJet:
                 self.h_msd_ak8_topR1.Fill( jmsd_8, weight )
                 self.h_msd_v_pt_ak8_topR1.Fill( jmsd_8, jpt_8, weight )
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR2_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR2_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR2_fail.Fill( jmsd_8, jpt_8, weight )
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 <5 and n_TdR0p8_4 < 3 and jt21P_8 < 0.4 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P_8 < 0.4 and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR3_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR3_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR3_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR3_fail.Fill( jmsd_8, jpt_8, weight )
-            if jpt_8 > PTCUT and jmsd_8 > 40 and jt21P_8 < 0.4 and jt32_8 > 0.7 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and jt21P_8 < 0.4 and jt32_8 > 0.7 and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR4_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR4_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR4_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR4_fail.Fill( jmsd_8, jpt_8, weight )                    
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and jt21P_8 < T21DDTCUT and n_fwd_4 < 3 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_MPt100dR0p8_4 < 2 and jt21P_8 < T21DDTCUT and n_fwd_4 < 3 and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR5_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR5_pass.Fill( jmsd_8, jpt_8, weight ) 
@@ -620,16 +740,16 @@ class sampleContainer:
                     self.h_msd_ak8_topR5_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR5_fail.Fill( jmsd_8, jpt_8, weight )
                      
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and isTightVJet:
                 cut[6]=cut[6]+1
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet:
                 cut[7]=cut[7]+1
-            #if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2:  cut[8]=cut[8]+1
-            #if jpt_8 > 500 and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5 and n_MPt100dR0p8_4 < 2 and n_fwd_4 < 3: cut[9]=cut[9]+1
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < T21DDTCUT  and isTightVJet:
+            #if jpt_8 > 500 and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_MPt100dR0p8_4 < 2:  cut[8]=cut[8]+1
+            #if jpt_8 > 500 and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_MPt100dR0p8_4 < 2 and n_fwd_4 < 3: cut[9]=cut[9]+1
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < T21DDTCUT  and isTightVJet:
                 #cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
-                    cut[9]=cut[9]+1
+                    #cut[9]=cut[9]+1
                     self.h_msd_ak8_topR6_pass.Fill( jmsd_8, weight )
                     self.h_msd_ak8_raw_SR_pass.Fill( jmsd_8_raw, weight )
                     self.h_msd_v_pt_ak8_topR6_pass.Fill( jmsd_8, jpt_8, weight ) 
@@ -649,9 +769,10 @@ class sampleContainer:
                         self.h_msd_v_pt_ak8_topR6_fail_matched.Fill( jmsd_8, jpt_8, weight )
                     else:
                         self.h_msd_v_pt_ak8_topR6_fail_unmatched.Fill( jmsd_8, jpt_8, weight )        
-            if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jtN2b1sdddt_8 < 0  and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jtN2b1sdddt_8 < 0  and isTightVJet:
                 cut[8]=cut[8]+1
                 if jdb_8 > DBTAGCUT:
+                    cut[9]=cut[9]+1
                     self.h_msd_ak8_topR6_N2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_pass.Fill( jmsd_8, jpt_8, weight )                                
                     # for signal morphing             
@@ -666,9 +787,30 @@ class sampleContainer:
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_topR6_N2_fail_matched.Fill( jmsd_8, jpt_8, weight )
                     else:
-                        self.h_msd_v_pt_ak8_topR6_N2_fail_unmatched.Fill( jmsd_8, jpt_8, weight )  
+                        self.h_msd_v_pt_ak8_topR6_N2_fail_unmatched.Fill( jmsd_8, jpt_8, weight )
+
+
+            for syst in ['JESUp','JESDown','JERUp','JERDown']:                
+                if eval('jpt_8_%s'%syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s'%syst) < METCUT and eval('n_dR0p8_4_%s'%syst) < NJETCUT  and jt21P_8 < T21DDTCUT  and isTightVJet:
+                    if jdb_8 > DBTAGCUT:
+                        (getattr(self,'h_msd_ak8_topR6_pass_%s'%syst)).Fill( jmsd_8, weight )
+                        (getattr(self,'h_msd_v_pt_ak8_topR6_pass_%s'%syst)).Fill( jmsd_8, eval('jpt_8_%s'%syst), weight )                    
+                    else:
+                        (getattr(self,'h_msd_ak8_topR6_fail_%s'%syst)).Fill( jmsd_8, weight )
+                        (getattr(self,'h_msd_v_pt_ak8_topR6_fail_%s'%syst)).Fill( jmsd_8, eval('jpt_8_%s'%syst), weight )
+                if eval('jpt_8_%s'%syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s'%syst) < METCUT and eval('n_dR0p8_4_%s'%syst) < NJETCUT  and jtN2b1sdddt_8 < 0  and isTightVJet:
+                    if jdb_8 > DBTAGCUT:
+                        (getattr(self,'h_msd_ak8_topR6_N2_pass_%s'%syst)).Fill( jmsd_8, weight )
+                        (getattr(self,'h_msd_v_pt_ak8_topR6_N2_pass_%s'%syst)).Fill( jmsd_8, eval('jpt_8_%s'%syst), weight )               
+                    else:
+                        (getattr(self,'h_msd_ak8_topR6_N2_fail_%s'%syst)).Fill( jmsd_8, weight )
+                        (getattr(self,'h_msd_v_pt_ak8_topR6_N2_fail_%s'%syst)).Fill( jmsd_8, eval('jpt_8_%s'%syst), weight )
+                    
+            
 
 	  ###Double-b optimization for ggH
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jtN2b1sdddt_8 < 0  and isTightVJet:
+      
 		if jdb_8 > 0.91:
     		    self.h_msd_v_pt_ak8_topR6_0p91_pass.Fill( jmsd_8, jpt_8, weight )
 		else:
@@ -692,49 +834,49 @@ class sampleContainer:
 
 
 	  #######tau21 optimization for ggH 
-	    if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.4  and isTightVJet:
+	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.4  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p4_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p4_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_0p4_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p4_fail.Fill( jmsd_8, jpt_8, weight )
-	    if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.45  and isTightVJet:
+	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.45  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p45_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p45_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_0p45_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p45_fail.Fill( jmsd_8, jpt_8, weight )
-	    if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.5  and isTightVJet:
+	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.5  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p5_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p5_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_0p5_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p5_fail.Fill( jmsd_8, jpt_8, weight )
-	    if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.6  and isTightVJet:
+	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.6  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p6_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p6_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_0p6_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p6_fail.Fill( jmsd_8, jpt_8, weight )
-	    if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.65  and isTightVJet:
+	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.65  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p65_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p65_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_0p65_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p65_fail.Fill( jmsd_8, jpt_8, weight )
-	    if jpt_8 > PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.7  and isTightVJet:
+	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.7  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p7_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p7_pass.Fill( jmsd_8, jpt_8, weight )
                 else:
                     self.h_msd_ak8_topR6_0p7_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p7_fail.Fill( jmsd_8, jpt_8, weight )
-	    if jpt_8 >PTCUT and jmsd_8 > 40 and met < 180 and n_dR0p8_4 < 5  and jt21P_8 < 0.75  and isTightVJet:
+	    if jpt_8 >PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT  and jt21P_8 < 0.75  and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR6_0p75_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_0p75_pass.Fill( jmsd_8, jpt_8, weight )
@@ -745,7 +887,7 @@ class sampleContainer:
 
 	 ################################
 	
-            if jpt_8 > PTCUT and jmsd_8 > 40 and jpt_8_sub1 < 300 and met < 180 and n_dR0p8_4 < 5 and n_TdR0p8_4 < 3 and jt21P_8 < 0.4 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and jpt_8_sub1 < 300 and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P_8 < 0.4 and isTightVJet:
                 if jdb_8 > DBTAGCUT:
                     self.h_msd_ak8_topR7_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR7_pass.Fill( jmsd_8, jpt_8, weight ) 
@@ -753,7 +895,7 @@ class sampleContainer:
                     self.h_msd_ak8_topR7_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR7_fail.Fill( jmsd_8, jpt_8, weight ) 
 
-            if jpt_8 > PTCUT and jdb_8 > DBTAGCUT and jmsd_8 > 40:
+            if jpt_8 > PTCUT and jdb_8 > DBTAGCUT and jmsd_8 > MASSCUT:
                 self.h_msd_ak8_dbtagCut.Fill( jmsd_8, weight )
                 self.h_pt_ak8_dbtagCut.Fill( jpt_8, weight )
 
