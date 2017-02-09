@@ -10,7 +10,7 @@ import pdb
 import sys
 import time
 import warnings
-PTCUT = 500.
+PTCUT = 450.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
@@ -66,7 +66,7 @@ class sampleContainer:
 
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff.root","read")
+        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root","read")
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
@@ -231,7 +231,7 @@ class sampleContainer:
         for i in range(0,24):	
             msd_binBoundaries.append(40.+i*7)
 	print(msd_binBoundaries)
-        pt_binBoundaries = [500,550,600,675,800,1000]
+        pt_binBoundaries = [450,500,550,600,675,800,1000]
 
         histos2d_fix = {
         'h_rhop_v_t21_ak8'          :["h_"+self._name+"_rhop_v_t21_ak8","; AK8 rho^{DDT}; AK8 <#tau_{21}>",15,-5,10,25,0,1.5],
@@ -801,7 +801,7 @@ class sampleContainer:
         a_Cuts.SetBinLabel(7, "njet<5");
         #a_Cuts.SetBinLabel(9, "nb jet <2");
         #a_Cuts.SetBinLabel(10, "njet fwd <3");
-        a_Cuts.SetBinLabel(8, "#tau_{21}^{DDT}<0.55");
+        a_Cuts.SetBinLabel(8, "N2^{DDT}<0");
 
         self.h_rhop_v_t21_ak8_Px = self.h_rhop_v_t21_ak8.ProfileX()
         self.h_rhop_v_t21_ca15_Px = self.h_rhop_v_t21_ca15.ProfileX()
