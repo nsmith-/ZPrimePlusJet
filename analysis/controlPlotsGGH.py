@@ -198,7 +198,7 @@ def main(options,args,outputExists):
                  'h_n_ak4_dR0p8','h_isolationCA15','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_msd_ak8_topR1','h_msd_ak8_topR2_pass',
                  'h_msd_ak8_topR3_pass','h_msd_ak8_topR4_pass','h_met','h_t32_ak8_t21ddtCut','h_msd_ak8_topR5_pass','h_msd_ak8_topR7_pass',
                  'h_msd_ak8_muCR1','h_msd_ak8_muCR2','h_msd_ak8_muCR3','h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail','h_msd_ak8_muCR5','h_msd_ak8_muCR6',
-                 'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail','h_msd_ak8_topR6_N2_fail','h_msd_ak8_topR6_N2_pass',
+                 'h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail','h_msd_ak8_topR6_N2_fail','h_msd_ak8_topR6_N2_pass','h_msd_ak8_raw',
 		 #'h_msd_ak8_topR6_pass_0p4','h_msd_ak8_topR6_fail_0p4',
 		 #'h_msd_ak8_topR6_pass_0p45','h_msd_ak8_topR6_fail_0p45',
 		 #'h_msd_ak8_topR6_pass_0p5','h_msd_ak8_topR6_fail_0p5',
