@@ -107,7 +107,7 @@ def main(options,args,outputExists):
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb250': [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-              'data': [idir+'JetHTRun2016B_23Sep2016_v1_v2',
+              'data': [idir+'JetHTRun2016B_23Sep2016_v1',
                        idir+'JetHTRun2016B_23Sep2016_v3_0',
                        idir+'JetHTRun2016B_23Sep2016_v3_1',
                        idir+'JetHTRun2016B_23Sep2016_v3_2',
