@@ -91,7 +91,7 @@ def main(options,args,outputExists):
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-                     idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
+                     #idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
               'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
@@ -99,10 +99,10 @@ def main(options,args,outputExists):
                       idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT700to1000_13TeV_1000pb_weighted.root',
+                      idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT2000toInf_13TeV_ext_1000pb_weighted.root'],
+                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
@@ -186,7 +186,7 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainer('test',tfiles['ggHbb'], 100, lumi)
+        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
@@ -196,7 +196,7 @@ def main(options,args,outputExists):
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:
-        testSample = sampleContainer('test',tfiles['ggHbb'], 100, lumi)
+        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
