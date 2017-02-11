@@ -31,9 +31,10 @@ def main(options,args):
 
         
     tfiles = {#'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_ptw_1000pb_weighted.root'],#amcatnloFXFX_pythia8_1000pb_weighted.root'],
-	       'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-               'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root'],
-               'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+	       'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
+               'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
+               'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
                'WHbb' : [idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                         idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
                'tthbb' : [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
@@ -120,7 +121,8 @@ def main(options,args):
 'h_msd_bbleading',
 'h_msd_ak8_inc',
 'h_msd_ak8_raw',
-'h_msd_ak8_topR6_N2_pass'
+'h_msd_ak8_topR6_N2_pass',
+'h_msd_ak8_topR6_N2_fail'
 ]
 #'h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_pt_ak8_dbtagCut','h_msd_ak8_dbtagCut','h_t21_ak8','h_t32_ak8','h_msd_ak8_t21ddtCut','h_msd_ak8_N2Cut','h_met']
     for plot in plots:
