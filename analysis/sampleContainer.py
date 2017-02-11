@@ -664,6 +664,14 @@ class sampleContainer:
                 if jdb_8 > 0.7 and jt21P_8 < T21DDTCUT:
                     self.h_msd_ak8_muCR6.Fill( jmsd_8, weight_mu )
 
+                    
+            for syst in ['JESUp','JESDown','JERUp','JERDown']:                
+                if eval('jpt_8_%s'%syst) > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and jtN2b1sdddt_8 < 0:
+                    if jdb_8 > DBTAGCUT:
+                        (getattr(self,'h_msd_ak8_muCR4_N2_pass_%s'%syst)).Fill( jmsd_8, weight )           
+                    else:
+                        (getattr(self,'h_msd_ak8_muCR4_N2_fail_%s'%syst)).Fill( jmsd_8, weight )
+
             jmsd_8_sub1 = self.AK8Puppijet1_msd[0]
             jmsd_8_sub2 = self.AK8Puppijet2_msd[0]
             n_MPt100dR0p8_4_sub1 = self.nAK4PuppijetsMPt100dR08_1[0]
