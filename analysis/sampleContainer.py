@@ -29,7 +29,7 @@ class sampleContainer:
         self._sf = sf
         self._lumi = lumi        
         warnings.filterwarnings( action='ignore', category=RuntimeWarning, message='creating converter.*' )
-        self._cutFormula = ROOT.TTreeFormula("cutFormula",cutFormula,self._tt)
+        self._cutFormula = ROOT.TTreeFormula("cutFormula","("+cutFormula+")&&(AK8Puppijet0_pt>%f)"%PTCUT,self._tt)
         self._isData = isData
         #print lumi 
         #print self._NEv.GetBinContent(1)
