@@ -8,6 +8,7 @@ import sys
 import time
 import array
 import glob
+import os
 from plotHelpers import *
 from sampleContainer import *
 #
@@ -80,7 +81,7 @@ def main(options,args,outputExists):
 		       idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'ttHbb':  [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'Diboson': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
-                          idir+'/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
+                          idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
               'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
               'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
@@ -109,43 +110,43 @@ def main(options,args,outputExists):
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb250': [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-              'data': [idir+'JetHTRun2016B_23Sep2016_v1',
-                       idir+'JetHTRun2016B_23Sep2016_v3_0',
-                       idir+'JetHTRun2016B_23Sep2016_v3_1',
-                       idir+'JetHTRun2016B_23Sep2016_v3_2',
-                       idir+'JetHTRun2016B_23Sep2016_v3_3',
-                       idir+'JetHTRun2016B_23Sep2016_v3_4',
-                       idir+'JetHTRun2016B_23Sep2016_v3_5',
-                       idir+'JetHTRun2016B_23Sep2016_v3_6',
-                       idir+'JetHTRun2016B_23Sep2016_v3_7',
-                       idir+'JetHTRun2016B_23Sep2016_v3_8',
-                       idir+'JetHTRun2016B_23Sep2016_v3_9',
-                       idir+'JetHTRun2016B_23Sep2016_v3_10',
-                       idir+'JetHTRun2016B_23Sep2016_v3_11',
-                       idir+'JetHTRun2016B_23Sep2016_v3_12',
-                       idir+'JetHTRun2016B_23Sep2016_v3_13',
-                       idir+'JetHTRun2016B_23Sep2016_v3_14',
-                       idir+'JetHTRun2016C_23Sep2016_v1_v2',
-                       idir+'JetHTRun2016D_23Sep2016_v1_0',
-                       idir+'JetHTRun2016D_23Sep2016_v1_1',
-                       idir+'JetHTRun2016D_23Sep2016_v1_2',
-                       idir+'JetHTRun2016D_23Sep2016_v1_3',
-                       idir+'JetHTRun2016D_23Sep2016_v1_4',
-                       idir+'JetHTRun2016D_23Sep2016_v1_5',
-                       idir+'JetHTRun2016D_23Sep2016_v1_6',
-                       idir+'JetHTRun2016D_23Sep2016_v1_7',
-                       idir+'JetHTRun2016E_23Sep2016_v1_0',
-                       idir+'JetHTRun2016E_23Sep2016_v1_1',
-                       idir+'JetHTRun2016E_23Sep2016_v1_2',
-                       idir+'JetHTRun2016E_23Sep2016_v1_3',
-                       idir+'JetHTRun2016E_23Sep2016_v1_4',
-                       idir+'JetHTRun2016E_23Sep2016_v1_5',
-                       idir+'JetHTRun2016E_23Sep2016_v1_6',
-                       idir+'JetHTRun2016E_23Sep2016_v1_7',
-                       idir+'JetHTRun2016F_23Sep2016_v1',
-                       idir+'JetHTRun2016G_23Sep2016_v1_v2',
-                       idir+'JetHTRun2016H_PromptReco_v2',
-                       idir+'JetHTRun2016H_PromptReco_v3'],
+              'data': [idir+'JetHTRun2016B_23Sep2016_v1.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_0.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_1.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_2.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_3.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_4.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_5.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_6.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_7.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_8.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_9.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_10.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_11.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_12.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_13.root',
+                       idir+'JetHTRun2016B_23Sep2016_v3_14.root',
+                       idir+'JetHTRun2016C_23Sep2016_v1_v2.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_0.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_1.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_2.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_3.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_4.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_5.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_6.root',
+                       idir+'JetHTRun2016D_23Sep2016_v1_7.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_0.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_1.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_2.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_3.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_4.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_5.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_6.root',
+                       idir+'JetHTRun2016E_23Sep2016_v1_7.root',
+                       idir+'JetHTRun2016F_23Sep2016_v1.root',
+                       idir+'JetHTRun2016G_23Sep2016_v1_v2.root',
+                       idir+'JetHTRun2016H_PromptReco_v2.root',
+                       idir+'JetHTRun2016H_PromptReco_v3.root'],
               'muon': [idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
                        idir+'/SingleMuonRun2016B_23Sep2016_v3.root',
                        idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
@@ -235,6 +236,12 @@ def main(options,args,outputExists):
                 pass
             
     if not outputExists: 
+        samples = ['ggHbb','VBFHbb','VHbb','ttHbb','QCD','SingleTop','Diboson','W','Wlnu','DY','TTbar','muon','data']                      
+        for s in samples:
+            for tfile in tfiles[s]:
+                if not os.path.isfile(tfile):
+                    print 'error: %s does not exist'%tfile                 
+                    sys.exit()
         print "Signals... "
         sigSamples = {}
         sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
