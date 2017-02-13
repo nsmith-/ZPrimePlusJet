@@ -833,8 +833,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     dataInt = integral
     dataErr = error[0]
 
-    kTTbar = (dataInt-otherInt)/ttbarInt
-    kTTbarErr = kTTbar*sqrt(pow(sqrt(dataErr*dataErr + otherErr*otherErr)/(dataInt-otherInt),2.) + pow(ttbarErr/ttbarInt,2.))
+    kTTbar = 1
+    kTTbarErr = 1
+    if ttbarInt>0 and dataInt-otherInt>0:
+	    kTTbar = (dataInt-otherInt)/ttbarInt
+	    kTTbarErr = kTTbar*sqrt(pow(sqrt(dataErr*dataErr + otherErr*otherErr)/(dataInt-otherInt),2.) + pow(ttbarErr/ttbarInt,2.))
 
     print 'kTTbar', kTTbar, '+/-', kTTbarErr
     
