@@ -624,7 +624,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 		s.SetMaximum(1.5*maxval)
          	s.SetMinimum(0.01)
 	 	if unitnorm : 
-			s.SetMaximum(10.)
+			s.SetMaximum(100.)
 			s.DrawNormalized("hist")
                 else: s.Draw("hist")
          else : 	

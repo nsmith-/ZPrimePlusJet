@@ -40,7 +40,7 @@ class dazsleRhalphabetBuilder:
 
 		#polynomial order for fit
 		self._poly_lNP = 3; # 1 means linear, 2 means quadratic
-		self._poly_lNR = 3;
+		self._poly_lNR = 4;
 		# self._poly_lNRP =2;
 
 		self._nptbins = hpass[0].GetYaxis().GetNbins();
@@ -78,14 +78,18 @@ class dazsleRhalphabetBuilder:
 			hfail_inPtBin = [];
 			for ih,h in enumerate(self._hpass):
 				tmppass_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi)
+				if ih==2:# or ih==2:
+					print 'WWWWW'
+					print h.GetName()
+					if i0 > 18: tmppass_inPtBin.SetBinContent(i0,0);
 				for i0 in range(1,self._mass_nbins+1):
-                                        if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or (i0 < 7 and ipt == 4):
+                                        if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or ((i0 < 7 or i0 > 100) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
                         for ih,h in enumerate(self._hfail):
                                 tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or (i0 < 7 and ipt == 4):
+					if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or ((i0 < 7 or i0 > 100) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmpfail_inPtBin.SetBinContent(i0,0);
                                 hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
@@ -144,7 +148,7 @@ class dazsleRhalphabetBuilder:
 			if pSum < 0: pSum = 0
 
 			#5 sigma range + 10 events
-			pUnc = math.sqrt(pSum)*5+10
+			pUnc = math.sqrt(pSum)*25+10
 			#Define the failing category
 			pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,max(pSum-pUnc,0),max(pSum+pUnc,0))
 			#Now define the passing cateogry based on the failing (make sure it can't go negative)
@@ -230,7 +234,7 @@ class dazsleRhalphabetBuilder:
                                pVar = iLabel1+str(i1)+iLabel0+str(i0);
                                pXMin = iXMin0
                                pXMax = iXMax0
-                               pVal  = math.pow(10,-i1)
+                               pVal  = math.pow(10,-(i1+i0*0.5))
                                pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin*pVal,pXMax*pVal)
                                print pVar,pVal,"!!!!!!!!!!"
                                iVars.append(pRooVar)
@@ -336,7 +340,13 @@ class dazsleRhalphabetBuilder:
 				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
 
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
+					print '!!!!!!!!! YYY'
+					print pFunc.GetName()
+					if 'pass' in pFunc.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"): 
+						if i0 >18: 
+							tmph_mass_matched.SetBinContent(i0,0);
+							tmph_mass_unmatched.SetBinContent(i0,0);
+					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						tmph_mass_matched.SetBinContent(i0,0);
 						tmph_mass_unmatched.SetBinContent(i0,0);
 					
@@ -344,20 +354,20 @@ class dazsleRhalphabetBuilder:
 				# smear/shift the matched
 				hist_container = hist( [mass],[tmph_mass_matched] );	
 				mass_shift = 0.99;
-				mass_shift_unc = 0.03;
+				mass_shift_unc = 0.15; # This is 5 sigma shift!  Change the card accordingly
 				res_shift = 1.094;
 				res_shift_unc = 0.123;
 				# get new central value
 				shift_val = mass - mass*mass_shift;
 				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val);
 				# get new central value and new smeared value
-				smear_val = res_shift - 1;
+				smear_val = res_shift - 1.;
 				tmp_smeared_h = hist_container.smear( tmp_shifted_h[0], smear_val)
 				hmatched_new_central = tmp_smeared_h[0];
-				if smear_val <= 0: hmatched_new_central = tmp_smeared_h[1];
+				if smear_val <= 0.: hmatched_new_central = tmp_smeared_h[1];
 				# get shift up/down
 				shift_unc = mass*mass_shift*mass_shift_unc;
-				hmatchedsys_shift = hist_container.shift( hmatched_new_central, mass*mass_shift_unc);
+				hmatchedsys_shift = hist_container.shift( hmatched_new_central, shift_unc);
 				# get res up/down
 				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc);	
 
@@ -386,7 +396,10 @@ class dazsleRhalphabetBuilder:
 				for h in hout:
 					print h.GetName()
 					for i0 in range(1,self._mass_nbins+1):
-						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
+						if 'pass' in h.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"):
+							if i0 >18:
+								h.SetBinContent(i0,0);
+						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 							h.SetBinContent(i0,0);
 						
 					h.Write();
@@ -422,7 +435,7 @@ class dazsleRhalphabetBuilder:
 			for h in hout:
 				print h.GetName()
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( i0 < 7 and int(ipt) == 4):
+					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( (i0 < 7 or i0 > 56) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						h.SetBinContent(i0,0);
 				h.Write();
 				tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
@@ -477,8 +490,10 @@ def loadHistograms(f,pseudo,pseudo15):
 	lHF3 = f.Get("qcd_fail")
         print 'qcd_fail ', lHF3.Integral()
 	lHP4 = f.Get("tqq_pass")
+	lHP4.Scale(0.749*0.98)
         print 'tqq_pass ', lHP4.Integral()
 	lHF4 = f.Get("tqq_fail")
+	lHF4.Scale(0.749)
         print 'tqq_fail ', lHF4.Integral()
 	print 'total mc pass ', lHP1.Integral()+lHP2.Integral()+lHP3.Integral()+lHP4.Integral()
         print 'total mc fail ', lHF1.Integral()+lHF2.Integral()+lHF3.Integral()+lHF4.Integral()
@@ -550,7 +565,7 @@ if __name__ == '__main__':
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='data = MC', metavar='isData')
 	parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
-	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoB5eff-15-pt5006007008001000.root',help='directory with data', metavar='idir')
+	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoB5eff-344-Gridv12-sig-pt5006007008009001000.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
 

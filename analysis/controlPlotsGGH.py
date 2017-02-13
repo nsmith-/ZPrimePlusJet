@@ -8,6 +8,7 @@ import sys
 import time
 import array
 import glob
+import os
 from plotHelpers import *
 from sampleContainer import *
 #
@@ -236,6 +237,12 @@ def main(options,args,outputExists):
                 pass
             
     if not outputExists: 
+        samples = ['ggHbb','VBFHbb','VHbb','ttHbb','QCD','SingleTop','Diboson','W','Wlnu','DY','TTbar','muon','data']                      
+        for s in samples:
+            for tfile in tfiles[s]:
+                if not os.path.isfile(tfile):
+                    print 'error: %s does not exist'%tfile                 
+                    sys.exit()
         print "Signals... "
         sigSamples = {}
         sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
