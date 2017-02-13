@@ -95,6 +95,10 @@ class sampleContainer:
 
         # get muon trigger efficiency object
         
+        lumi_GH = 16.146
+        lumi_BCDEF = 19.721
+        lumi_total = lumi_GH + lumi_BCDEF
+        
         f_mutrig_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_Period4.root","read")
         self._mutrig_eff_GH = f_mutrig_GH.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff_GH.Sumw2()
@@ -107,13 +111,45 @@ class sampleContainer:
         self._mutrig_eff_BCDEF.SetDirectory(0)
         f_mutrig_BCDEF.Close()
 
-        lumi_GH = 16.146
-        lumi_BCDEF = 19.721
-        
-        lumi_total = lumi_GH + lumi_BCDEF
-        self._mutrig_eff = self._mutrig_eff_GH.Clone('pt_abseta_DATA_ave')
+        self._mutrig_eff = self._mutrig_eff_GH.Clone('pt_abseta_DATA_mutrig_ave')
         self._mutrig_eff.Scale(lumi_GH/lumi_total)        
         self._mutrig_eff.Add(self._mutrig_eff_BCDEF,lumi_BCDEF/lumi_total)
+        
+        # get muon ID efficiency object
+        
+        f_muid_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_GH.root","read")
+        self._muid_eff_GH = f_muid_GH.Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA")
+        self._muid_eff_GH.Sumw2()
+        self._muid_eff_GH.SetDirectory(0)
+        f_muid_GH.Close()
+        
+        f_muid_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_BCDEF.root","read")
+        self._muid_eff_BCDEF = f_muid_BCDEF.Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA")
+        self._muid_eff_BCDEF.Sumw2()
+        self._muid_eff_BCDEF.SetDirectory(0)
+        f_muid_BCDEF.Close()
+        
+        self._muid_eff = self._muid_eff_GH.Clone('pt_abseta_DATA_muid_ave')
+        self._muid_eff.Scale(lumi_GH/lumi_total)        
+        self._muid_eff.Add(self._muid_eff_BCDEF,lumi_BCDEF/lumi_total)
+        
+        # get muon ISO efficiency object
+        
+        f_muiso_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_ISO_GH.root","read")
+        self._muiso_eff_GH = f_muiso_GH.Get("LooseISO_LooseID_pt_eta/efficienciesDATA/pt_abseta_DATA")
+        self._muiso_eff_GH.Sumw2()
+        self._muiso_eff_GH.SetDirectory(0)
+        f_muiso_GH.Close()
+        
+        f_muiso_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_ISO_BCDEF.root","read")
+        self._muiso_eff_BCDEF = f_muiso_BCDEF.Get("LooseISO_LooseID_pt_eta/efficienciesDATA/pt_abseta_DATA")
+        self._muiso_eff_BCDEF.Sumw2()
+        self._muiso_eff_BCDEF.SetDirectory(0)
+        f_muiso_BCDEF.Close()
+        
+        self._muiso_eff = self._muiso_eff_GH.Clone('pt_abseta_DATA_muiso_ave')
+        self._muiso_eff.Scale(lumi_GH/lumi_total)        
+        self._muiso_eff.Add(self._muiso_eff_BCDEF,lumi_BCDEF/lumi_total)
     
         # set branch statuses and addresses
         self._branches = [('AK8Puppijet0_msd','d',-999),('AK8Puppijet0_pt','d',-999),
@@ -289,13 +325,21 @@ class sampleContainer:
         'h_msd_ak8_muCR4_pass_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_pass_mutriggerUp' :["h_"+self._name+"_msd_ak8_muCR4_pass_mutriggerUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_pass_mutriggerDown' :["h_"+self._name+"_msd_ak8_muCR4_pass_mutriggerDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_muidUp' :["h_"+self._name+"_msd_ak8_muCR4_pass_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_muidDown' :["h_"+self._name+"_msd_ak8_muCR4_pass_muidDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_muisoUp' :["h_"+self._name+"_msd_ak8_muCR4_pass_muisoUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_pass_muisoDown' :["h_"+self._name+"_msd_ak8_muCR4_pass_muisoDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail' :["h_"+self._name+"_msd_ak8_muCR4_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail_JESUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail_JESDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail_JERUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_JERUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],  
         'h_msd_ak8_muCR4_fail_mutriggerUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_mutriggerUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-        'h_msd_ak8_muCR4_fail_mutriggerDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_mutriggerDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
+        'h_msd_ak8_muCR4_fail_mutriggerDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_mutriggerDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],  
+        'h_msd_ak8_muCR4_fail_muidUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_muidDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
+        'h_msd_ak8_muCR4_fail_muisoUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_muisoDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
         'h_pt_mu_muCR4_N2'        :["h_"+self._name+"_pt_mu_muCR4_N2","; leading muon p_{T} (GeV);", 50, 30, 500],    
         'h_eta_mu_muCR4_N2'       :["h_"+self._name+"_eta_mu_muCR4_N2","; leading muon #eta;", 50, -2.5, 2.5],           
         'h_pt_ak8_muCR4_N2'       :["h_"+self._name+"_pt_ak8_muCR4_N2","; AK8 leading p_{T} (GeV);", 50, 300, 2100],     
@@ -498,6 +542,10 @@ class sampleContainer:
                 trigweight = 1
                 trigweightDown = 1
                 trigweightUp = 1
+                    
+            weight = puweight*fbweight*self._sf*vjetsKF*trigweight
+            weight_triggerUp = puweight*fbweight*self._sf*vjetsKF*trigweightUp
+            weight_triggerDown = puweight*fbweight*self._sf*vjetsKF*trigweightDown            
                 
             mutrigweight = 1
             mutrigweightDown = 1
@@ -513,14 +561,46 @@ class sampleContainer:
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
+                        
+            muidweight = 1
+            muidweightDown = 1
+            muidweightUp = 1
+            if self.nmuLoose[0]> 0:
+                muPtForId = max(20.,min(self.vmuoLoose0_pt[0],100.))
+                muEtaForId = min(abs(self.vmuoLoose0_eta[0]),2.3)
+                muidweight = self._muid_eff.GetBinContent(self._muid_eff.FindBin(muPtForId,muEtaForId))
+                muidweightUp = muidweight + self._muid_eff.GetBinError(self._muid_eff.FindBin(muPtForId,muEtaForId))
+                muidweightDown = muidweight - self._muid_eff.GetBinError(self._muid_eff.FindBin(muPtForId,muEtaForId))
+                if muidweight<=0 or muidweightDown<=0 or muidweightUp<=0:
+                    print 'muidweights are %f, %f, %f, setting all to 1'%(muidweight,muidweightUp,muidweightDown)
+                    muidweight = 1
+                    muidweightDown = 1
+                    muidweightUp = 1
+
                     
-            weight = puweight*fbweight*self._sf*vjetsKF*trigweight
-            weight_triggerUp = puweight*fbweight*self._sf*vjetsKF*trigweightUp
-            weight_triggerDown = puweight*fbweight*self._sf*vjetsKF*trigweightDown
-            
-            weight_mu = puweight*fbweight*self._sf*vjetsKF*mutrigweight
-            weight_mutriggerUp = puweight*fbweight*self._sf*vjetsKF*mutrigweightUp
-            weight_mutriggerDown = puweight*fbweight*self._sf*vjetsKF*mutrigweightDown
+            muisoweight = 1
+            muisoweightDown = 1
+            muisoweightUp = 1
+            if self.nmuLoose[0]> 0:
+                muPtForIso = max(20.,min(self.vmuoLoose0_pt[0],100.))
+                muEtaForIso = min(abs(self.vmuoLoose0_eta[0]),2.3)
+                muisoweight = self._muiso_eff.GetBinContent(self._muiso_eff.FindBin(muPtForIso,muEtaForIso))
+                muisoweightUp = muisoweight + self._muiso_eff.GetBinError(self._muiso_eff.FindBin(muPtForIso,muEtaForIso))
+                muisoweightDown = muisoweight - self._muiso_eff.GetBinError(self._muiso_eff.FindBin(muPtForIso,muEtaForIso))
+                if muisoweight<=0 or muisoweightDown<=0 or muisoweightUp<=0:
+                    print 'muisoweights are %f, %f, %f, setting all to 1'%(muisoweight,muisoweightUp,muisoweightDown)
+                    muisoweight = 1
+                    muisoweightDown = 1
+                    muisoweightUp = 1
+                                
+                                
+            weight_mu = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweight
+            weight_mutriggerUp = puweight*fbweight*self._sf*vjetsKF*mutrigweightUp*muidweight*muisoweight
+            weight_mutriggerDown = puweight*fbweight*self._sf*vjetsKF*mutrigweightDown*muidweight*muisoweight
+            weight_muidUp = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweightUp*muisoweight
+            weight_muidDown = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweightDown*muisoweight
+            weight_muisoUp = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweightUp
+            weight_muisoDown = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweightDown
 
 	    weight_pu_up=puweight_up*fbweight*self._sf*vjetsKF*trigweight
 	    weight_pu_down=puweight_down*fbweight*self._sf*vjetsKF*trigweight
@@ -529,6 +609,12 @@ class sampleContainer:
             if self._isData:
                 weight = 1
                 weight_mu = 1
+                weight_mutriggerUp = 1
+                weight_mutriggerDown = 1
+                weight_muidUp = 1
+                weight_muidDown = 1
+                weight_muisoUp = 1
+                weight_muisoDown = 1
 
 
             ##### AK8 info
@@ -670,11 +756,19 @@ class sampleContainer:
                         self.h_msd_v_pt_ak8_muCR4_N2_pass.Fill( jmsd_8, jpt_8, weight_mu )
                         self.h_msd_ak8_muCR4_N2_pass_mutriggerUp.Fill( jmsd_8, weight_mutriggerUp )
                         self.h_msd_ak8_muCR4_N2_pass_mutriggerDown.Fill( jmsd_8, weight_mutriggerDown )
+                        self.h_msd_ak8_muCR4_N2_pass_muidUp.Fill( jmsd_8, weight_muidUp )
+                        self.h_msd_ak8_muCR4_N2_pass_muidDown.Fill( jmsd_8, weight_muidDown )
+                        self.h_msd_ak8_muCR4_N2_pass_muisoUp.Fill( jmsd_8, weight_muisoUp )
+                        self.h_msd_ak8_muCR4_N2_pass_muisoDown.Fill( jmsd_8, weight_muisoDown )
                     else:
                         self.h_msd_ak8_muCR4_N2_fail.Fill( jmsd_8, weight_mu )
                         self.h_msd_v_pt_ak8_muCR4_N2_fail.Fill( jmsd_8, jpt_8, weight_mu )       
                         self.h_msd_ak8_muCR4_N2_fail_mutriggerUp.Fill( jmsd_8, weight_mutriggerUp )  
-                        self.h_msd_ak8_muCR4_N2_fail_mutriggerDown.Fill( jmsd_8, weight_mutriggerDown )                           
+                        self.h_msd_ak8_muCR4_N2_fail_mutriggerDown.Fill( jmsd_8, weight_mutriggerDown )     
+                        self.h_msd_ak8_muCR4_N2_fail_muidUp.Fill( jmsd_8, weight_muidUp )  
+                        self.h_msd_ak8_muCR4_N2_fail_muidDown.Fill( jmsd_8, weight_muidDown )          
+                        self.h_msd_ak8_muCR4_N2_fail_muisoUp.Fill( jmsd_8, weight_muisoUp )  
+                        self.h_msd_ak8_muCR4_N2_fail_muisoDown.Fill( jmsd_8, weight_muisoDown )                                    
                 if jdb_8 > 0.7 and jt21P_8 < 0.4:
                     self.h_msd_ak8_muCR5.Fill( jmsd_8, weight_mu )
                 if jdb_8 > 0.7 and jt21P_8 < T21DDTCUT:
