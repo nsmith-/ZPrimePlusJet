@@ -16,9 +16,9 @@ def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canv
         c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)	
     else:
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
+#        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
         c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
-        canvases.append(c)	
+#        canvases.append(c)	
         canvases.append(c1)
 ##############################################################################
 def main(options,args,outputExists):
@@ -80,7 +80,7 @@ def main(options,args,outputExists):
 		       idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'ttHbb':  [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'Diboson': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
-                          idir+'/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
+                          idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
               'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
               'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
@@ -170,8 +170,8 @@ def main(options,args,outputExists):
 		     'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
-             'DY':  ROOT.kRed+2,
-             'DYll':  ROOT.kRed+1,
+             'DY':  ROOT.kRed,
+             'DYll':  ROOT.kRed-3,
              'W':  ROOT.kGreen+3,
              'Wlnu':  ROOT.kGreen+2,
              'TTbar':  ROOT.kGray,
@@ -226,6 +226,7 @@ def main(options,args,outputExists):
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:
+	plots = []
         testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
         for attr in dir(testSample):
             try:
@@ -247,7 +248,7 @@ def main(options,args,outputExists):
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 100, lumi)
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, lumi)
             bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, lumi)
