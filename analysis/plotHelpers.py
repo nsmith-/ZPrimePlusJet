@@ -694,7 +694,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
-	h.Scale(100)
+	#h.Scale(100)
     
         
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
