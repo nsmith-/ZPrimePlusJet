@@ -118,19 +118,37 @@ def main(options,args):
 
     hall={}
 
-    plots =  ['h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail', 'h_msd_v_pt_ak8_topR6_pass_matched','h_msd_v_pt_ak8_topR6_pass_unmatched','h_msd_v_pt_ak8_topR6_fail_matched','h_msd_v_pt_ak8_topR6_fail_unmatched'] #SR with tau21DDT < 0.55 && db >0.9, msd corrected
-    #plots = ['h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail']  #SR with N2DDT @40% && db >0.9, msd corrected
-    #plots = ['h_msd_v_pt_ak8_topR6_raw_pass','h_msd_v_pt_ak8_topR6_raw_fail'] #SR with tau21DDT < 0.55 && db >0.9
+    plots =  ['h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail', #SR with N2DDT @ 26% && db > 0.9, msd corrected
+              'h_msd_v_pt_ak8_topR6_N2_pass_matched','h_msd_v_pt_ak8_topR6_N2_pass_unmatched', #matched and unmatached for mass up/down
+              'h_msd_v_pt_ak8_topR6_N2_fail_matched','h_msd_v_pt_ak8_topR6_N2_fail_unmatched', #matched and unmatached for mass up/down
+              'h_msd_v_pt_ak8_topR6_N2_pass_JESUp','h_msd_v_pt_ak8_topR6_N2_pass_JESDown', #JES up/down
+              'h_msd_v_pt_ak8_topR6_N2_fail_JESUp','h_msd_v_pt_ak8_topR6_N2_fail_JESDown', #JES up/down
+              'h_msd_v_pt_ak8_topR6_N2_pass_JERUp','h_msd_v_pt_ak8_topR6_N2_pass_JERDown', #JER up/down
+              'h_msd_v_pt_ak8_topR6_N2_fail_JERUp','h_msd_v_pt_ak8_topR6_N2_fail_JERDown', #JER up/down
+              'h_msd_v_pt_ak8_topR6_N2_pass_triggerUp','h_msd_v_pt_ak8_topR6_N2_pass_triggerDown', #trigger up/down
+              'h_msd_v_pt_ak8_topR6_N2_fail_triggerUp','h_msd_v_pt_ak8_topR6_N2_fail_triggerDown', #trigger up/down              
+              ] 
     
     if options.bb:
         plots =  ['h_msd_v_pt_ak8_bbleading_topR6_pass','h_msd_v_pt_ak8_bbleading_topR6_fail']
     elif muonCR:
-        plots =  ['h_msd_ak8_muCR4_pass','h_msd_ak8_muCR4_fail']
+        plots =  ['h_msd_ak8_muCR4_N2_pass','h_msd_ak8_muCR4_N2_fail',
+                  'h_msd_ak8_muCR4_N2_pass_JESUp','h_msd_ak8_muCR4_N2_pass_JESDown',
+                  'h_msd_ak8_muCR4_N2_fail_JESUp','h_msd_ak8_muCR4_N2_fail_JESDown',
+                  'h_msd_ak8_muCR4_N2_pass_JERUp','h_msd_ak8_muCR4_N2_pass_JERDown',
+                  'h_msd_ak8_muCR4_N2_fail_JERUp','h_msd_ak8_muCR4_N2_fail_JERDown',
+                  'h_msd_ak8_muCR4_N2_pass_mutriggerUp','h_msd_ak8_muCR4_N2_pass_mutriggerDown',
+                  'h_msd_ak8_muCR4_N2_fail_mutriggerUp','h_msd_ak8_muCR4_N2_fail_mutriggerDown',
+                  'h_msd_ak8_muCR4_N2_pass_muidUp','h_msd_ak8_muCR4_N2_pass_muidDown',
+                  'h_msd_ak8_muCR4_N2_fail_muidUp','h_msd_ak8_muCR4_N2_fail_muidDown',
+                  'h_msd_ak8_muCR4_N2_pass_muisoUp','h_msd_ak8_muCR4_N2_pass_muisoDown',
+                  'h_msd_ak8_muCR4_N2_fail_muisoUp','h_msd_ak8_muCR4_N2_fail_muisoDown',
+                  ]
         
     for plot in plots:
-        tag = plot.split('_')[-1] # 'pass' or 'fail' or 'matched' or 'unmatched'
-        if 'matched' in tag:
-            tag = plot.split('_')[-2] + '_' +  plot.split('_')[-1] # 'pass_matched', 'pass_unmatched', etc.
+        tag = plot.split('_')[-1] # 'pass' or 'fail' or systematicName
+        if tag not in ['pass', 'fail']:
+            tag = plot.split('_')[-2] + '_' +  plot.split('_')[-1] # 'pass_systematicName', 'pass_systmaticName', etc.
         
         
         for process, s in sigSamples.iteritems():
