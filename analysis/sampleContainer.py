@@ -64,8 +64,10 @@ class sampleContainer:
   	#self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
   	#self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 	
-	#f_pu= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_Jan11.root","read")
-        #self._puw      = f_pu.Get("puw")
+	f_pu= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root","read")
+        self._puw      = f_pu.Get("puw")
+        self._puw_up   = f_pu.Get("puw_p")
+        self._puw_down   = f_pu.Get("puw_m")
 
 
         # get histogram for transform
@@ -402,6 +404,13 @@ class sampleContainer:
         'h_msd_v_pt_ak8_topR6_N2_pass_JERDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_N2_pass_triggerUp' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_triggerUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR6_N2_pass_triggerDown' :["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_triggerDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+      
+ 	'h_msd_v_pt_ak8_topR6_N2_pass_PuUp':["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_PuUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_pass_PuDown':["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_pass_PuDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail_PuUp':["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail_PuUp","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        'h_msd_v_pt_ak8_topR6_N2_fail_PuDown':["h_"+self._name+"_msd_v_pt_ak8_topR6_N2_fail_PuDown","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+
+    
         'h_msd_v_pt_ak8_topR7_pass' :["h_"+self._name+"_msd_v_pt_ak8_topR7_pass","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR2_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR2_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
         'h_msd_v_pt_ak8_topR3_fail' :["h_"+self._name+"_msd_v_pt_ak8_topR3_fail","; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
@@ -515,8 +524,11 @@ class sampleContainer:
                 sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
                 sys.stdout.flush()
             
-            puweight = self.puWeight[0] #corrected 
-            #puWeight = self._puw.GetBinContent(self._puw.FindBin(self.npu[0]));
+            #puweight = self.puWeight[0] #corrected 
+            puweight = self._puw.GetBinContent(self._puw.FindBin(self.npu[0]));
+	    puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(self.npu[0]));
+	    puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(self.npu[0]));
+	    #print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
             vjetsKF = self.kfactor[0] #==1 for not V+jets events            
             # trigger weight
@@ -589,6 +601,10 @@ class sampleContainer:
             weight_muidDown = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweightDown*muisoweight
             weight_muisoUp = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweightUp
             weight_muisoDown = puweight*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweightDown
+
+	    weight_pu_up=puweight_up*fbweight*self._sf*vjetsKF*trigweight
+	    weight_pu_down=puweight_down*fbweight*self._sf*vjetsKF*trigweight
+
 
             if self._isData:
                 weight = 1
@@ -949,6 +965,11 @@ class sampleContainer:
                     cut[9]=cut[9]+1
                     self.h_msd_ak8_topR6_N2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_pass.Fill( jmsd_8, jpt_8, weight )                                
+		    self.h_msd_v_pt_ak8_topR6_N2_fail_triggerUp.Fill(jmsd_8, jpt_8,weight_triggerUp)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_triggerDown.Fill(jmsd_8, jpt_8,weight_triggerDown)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_PuDown.Fill(jmsd_8, jpt_8,weight_pu_down)
+
                     # for signal morphing             
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_topR6_N2_pass_matched.Fill( jmsd_8, jpt_8, weight )
@@ -957,6 +978,11 @@ class sampleContainer:
                 else:
                     self.h_msd_ak8_topR6_N2_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_fail.Fill( jmsd_8, jpt_8, weight )
+	            self.h_msd_v_pt_ak8_topR6_N2_pass_triggerUp.Fill(jmsd_8, jpt_8,weight_triggerUp)
+                    self.h_msd_v_pt_ak8_topR6_N2_pass_triggerDown.Fill(jmsd_8, jpt_8,weight_triggerDown)
+                    self.h_msd_v_pt_ak8_topR6_N2_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                    self.h_msd_v_pt_ak8_topR6_N2_pass_PuDown.Fill(jmsd_8, jpt_8,weight_pu_down)
+
                     # for signal morphing             
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_topR6_N2_fail_matched.Fill( jmsd_8, jpt_8, weight )
