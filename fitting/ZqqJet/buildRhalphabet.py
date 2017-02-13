@@ -342,7 +342,7 @@ class dazsleRhalphabetBuilder:
 				for i0 in range(1,self._mass_nbins+1):
 					print '!!!!!!!!! YYY'
 					print pFunc.GetName()
-					if 'pass' in pFunc.GetName() and (process == "zqq"): # or process == "zqq"): 
+					if 'pass' in pFunc.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"): 
 						if i0 >18: 
 							tmph_mass_matched.SetBinContent(i0,0);
 							tmph_mass_unmatched.SetBinContent(i0,0);
@@ -354,20 +354,20 @@ class dazsleRhalphabetBuilder:
 				# smear/shift the matched
 				hist_container = hist( [mass],[tmph_mass_matched] );	
 				mass_shift = 0.99;
-				mass_shift_unc = 0.03;
+				mass_shift_unc = 0.15; # This is 5 sigma shift!  Change the card accordingly
 				res_shift = 1.094;
 				res_shift_unc = 0.123;
 				# get new central value
 				shift_val = mass - mass*mass_shift;
 				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val);
 				# get new central value and new smeared value
-				smear_val = res_shift - 1;
+				smear_val = res_shift - 1.;
 				tmp_smeared_h = hist_container.smear( tmp_shifted_h[0], smear_val)
 				hmatched_new_central = tmp_smeared_h[0];
-				if smear_val <= 0: hmatched_new_central = tmp_smeared_h[1];
+				if smear_val <= 0.: hmatched_new_central = tmp_smeared_h[1];
 				# get shift up/down
 				shift_unc = mass*mass_shift*mass_shift_unc;
-				hmatchedsys_shift = hist_container.shift( hmatched_new_central, mass*mass_shift_unc);
+				hmatchedsys_shift = hist_container.shift( hmatched_new_central, shift_unc);
 				# get res up/down
 				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc);	
 
@@ -396,7 +396,7 @@ class dazsleRhalphabetBuilder:
 				for h in hout:
 					print h.GetName()
 					for i0 in range(1,self._mass_nbins+1):
-						if 'pass' in h.GetName() and (process == "zqq"): # or process == "zqq"):
+						if 'pass' in h.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"):
 							if i0 >18:
 								h.SetBinContent(i0,0);
 						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
