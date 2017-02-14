@@ -540,10 +540,11 @@ class sampleContainer:
                 sys.stdout.write("\r[" + "="*int(20*i/nent) + " " + str(round(100.*i/nent,0)) + "% done")
                 sys.stdout.flush()
             
-            #puweight = self.puWeight[0] #corrected 
-            puweight = self._puw.GetBinContent(self._puw.FindBin(self.npu[0]))
-            puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(self.npu[0]))
-            puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(self.npu[0]))
+            #puweight = self.puWeight[0] #corrected
+            nPuForWeight = min(self.npu[0],49.5)
+            puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
+            puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
+            puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             #print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
             vjetsKF = self.kfactor[0] #==1 for not V+jets events            
