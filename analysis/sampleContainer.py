@@ -23,7 +23,8 @@ class sampleContainer:
     def __init__( self ,name, fn, sf = 1, lumi = 1, isData = False, fillCA15=False, cutFormula='1'):
         self._name = name
         self._fn = fn
-        self._tf = ROOT.TFile.Open(self._fn[0])
+        if len(fn)>0:
+            self._tf = ROOT.TFile.Open(self._fn[0])
         self._tt = ROOT.TChain('otree')
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
@@ -507,7 +508,8 @@ class sampleContainer:
             (getattr(self, key)).Sumw2()
 
         # loop
-        self.loop()
+        if len(fn)>0:
+            self.loop()
 
     
 

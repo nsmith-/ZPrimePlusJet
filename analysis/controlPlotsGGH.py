@@ -217,21 +217,21 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
+        testSample = sampleContainer('test',[], 1, lumi)
         for attr in dir(testSample):
             try:
-                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
                     plots.append(attr)
             except:
                 pass
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:
-	plots = []
-        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
+        plots = []
+        testSample = sampleContainer('test',[], 1, lumi)
         for attr in dir(testSample):
             try:
-                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
                     plots.append(attr)
             except:
                 pass
@@ -293,6 +293,23 @@ def main(options,args,outputExists):
                 hall_byproc['data'] = {}
 
         for plot in plots:
+            for process, s in sigSamples.iteritems():
+                hall_byproc[process][plot] = getattr(s,plot)
+            for process, s in bkgSamples.iteritems():
+                hall_byproc[process][plot] = getattr(s,plot)
+            if isData:
+                if muonCR:      
+                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
+                else:
+                    hall_byproc['data'][plot] = getattr(dataSample,plot)
+            
+        ofile.cd()
+        for proc, hDict in hall_byproc.iteritems():
+            for plot, h in hDict.iteritems():
+                h.Write()
+        ofile.Close()
+        
+        for plot in plots:
             hs = {}
             hb = {}
             hall={}
@@ -300,25 +317,12 @@ def main(options,args,outputExists):
             for process, s in sigSamples.iteritems():
                 hs[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
             for process, s in bkgSamples.iteritems():
                 hb[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
             if isData:
                 hd = getattr(dataSample,plot)          
-                if muonCR:      
-                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
-                else:
-                    hall_byproc['data'][plot] = getattr(dataSample,plot)
-    
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
-            
-        ofile.cd()
-        for proc, hDict in hall_byproc.iteritems():
-            for plot, h in hDict.iteritems():
-                h.Write()
-        ofile.Close()
     
     else:        
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
