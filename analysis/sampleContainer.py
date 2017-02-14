@@ -973,10 +973,10 @@ class sampleContainer:
                     cut[9]=cut[9]+1
                     self.h_msd_ak8_topR6_N2_pass.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_pass.Fill( jmsd_8, jpt_8, weight )                                
-		    self.h_msd_v_pt_ak8_topR6_N2_fail_triggerUp.Fill(jmsd_8, jpt_8,weight_triggerUp)
-                    self.h_msd_v_pt_ak8_topR6_N2_fail_triggerDown.Fill(jmsd_8, jpt_8,weight_triggerDown)
-                    self.h_msd_v_pt_ak8_topR6_N2_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                    self.h_msd_v_pt_ak8_topR6_N2_fail_PuDown.Fill(jmsd_8, jpt_8,weight_pu_down)
+		    self.h_msd_v_pt_ak8_topR6_N2_pass_triggerUp.Fill(jmsd_8, jpt_8,weight_triggerUp)
+                    self.h_msd_v_pt_ak8_topR6_N2_pass_triggerDown.Fill(jmsd_8, jpt_8,weight_triggerDown)
+                    self.h_msd_v_pt_ak8_topR6_N2_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                    self.h_msd_v_pt_ak8_topR6_N2_pass_PuDown.Fill(jmsd_8, jpt_8,weight_pu_down)
 
                     # for signal morphing             
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
