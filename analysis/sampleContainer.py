@@ -29,7 +29,7 @@ class sampleContainer:
         self._sf = sf
         self._lumi = lumi        
         warnings.filterwarnings( action='ignore', category=RuntimeWarning, message='creating converter.*' )
-        self._cutFormula = ROOT.TTreeFormula("cutFormula","("+cutFormula+")&&(AK8Puppijet0_pt>%f)"%PTCUT,self._tt)
+        self._cutFormula = ROOT.TTreeFormula("cutFormula","("+cutFormula+")&&(AK8Puppijet0_pt>%f||AK8Puppijet0_pt_JESDown>%f||AK8Puppijet0_pt_JESUp>%f||AK8Puppijet0_pt_JERUp>%f||AK8Puppijet0_pt_JERDown>%f)"%(PTCUT,PTCUT,PTCUT,PTCUT,PTCUT),self._tt)
         self._isData = isData
         #print lumi 
         #print self._NEv.GetBinContent(1)
@@ -337,9 +337,9 @@ class sampleContainer:
         'h_msd_ak8_muCR4_fail_mutriggerUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_mutriggerUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_fail_mutriggerDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_mutriggerDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],  
         'h_msd_ak8_muCR4_fail_muidUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-        'h_msd_ak8_muCR4_fail_muidDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
-        'h_msd_ak8_muCR4_fail_muisoUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
-        'h_msd_ak8_muCR4_fail_muisoDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
+        'h_msd_ak8_muCR4_fail_muidDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_muidDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
+        'h_msd_ak8_muCR4_fail_muisoUp' :["h_"+self._name+"_msd_ak8_muCR4_fail_muisoUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_fail_muisoDown' :["h_"+self._name+"_msd_ak8_muCR4_fail_muisoDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],      
         'h_pt_mu_muCR4_N2'        :["h_"+self._name+"_pt_mu_muCR4_N2","; leading muon p_{T} (GeV);", 50, 30, 500],    
         'h_eta_mu_muCR4_N2'       :["h_"+self._name+"_eta_mu_muCR4_N2","; leading muon #eta;", 50, -2.5, 2.5],           
         'h_pt_ak8_muCR4_N2'       :["h_"+self._name+"_pt_ak8_muCR4_N2","; AK8 leading p_{T} (GeV);", 50, 300, 2100],     
@@ -354,6 +354,10 @@ class sampleContainer:
         'h_msd_ak8_muCR4_N2_pass_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_pass_mutriggerUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_mutriggerUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_pass_mutriggerDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_mutriggerDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_muidUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_muidDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_muidDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_muisoUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_muisoUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_pass_muisoDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_pass_muisoDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_fail' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_fail_JESUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JESUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_fail_JESDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JESDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
@@ -361,6 +365,10 @@ class sampleContainer:
         'h_msd_ak8_muCR4_N2_fail_JERDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_JERDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_fail_mutriggerUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_mutriggerUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR4_N2_fail_mutriggerDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_mutriggerDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_muidUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_muidUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_muidDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_muidDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_muisoUp' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_muisoUp","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
+        'h_msd_ak8_muCR4_N2_fail_muisoDown' :["h_"+self._name+"_msd_ak8_muCR4_N2_fail_muisoDown","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         
         'h_msd_ak8_muCR5'      :["h_"+self._name+"_msd_ak8_muCR5","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
         'h_msd_ak8_muCR6'      :["h_"+self._name+"_msd_ak8_muCR6","; AK8 m_{SD}^{PUPPI} (GeV);", 23,40,201],
