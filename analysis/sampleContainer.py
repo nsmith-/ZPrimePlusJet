@@ -1154,7 +1154,7 @@ class sampleContainer:
         a_Cuts.SetBinLabel(4, "lep veto")
         a_Cuts.SetBinLabel(5, "#tau veto")
         # a_Cuts.SetBinLabel(6, "#gamma veto")
-        _Cuts.SetBinLabel(1, "p_{T} cut")
+        a_Cuts.SetBinLabel(1, "p_{T} cut")
         a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV")
         a_Cuts.SetBinLabel(3, "tight ID")
         a_Cuts.SetBinLabel(6, "MET<180")
