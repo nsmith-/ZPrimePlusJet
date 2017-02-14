@@ -178,7 +178,7 @@ class sampleContainer:
                           ('MetXCorrjesUp','d',-999),('MetXCorrjesDown','d',-999),('MetYCorrjesUp','d',-999),('MetYCorrjesDown','d',-999),
                           ('MetXCorrjerUp','d',-999),('MetXCorrjerDown','d',-999),('MetYCorrjerUp','d',-999),('MetYCorrjerDown','d',-999),
                           ('neleLoose','i',-999),('nmuLoose','i',-999),('ntau','i',-999),('nphoLoose','i',-999),
-                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),
+                          ('triggerBits','i',1),('passJson','i',1),('vmuoLoose0_pt','d',-999),('vmuoLoose0_eta','d',-999),('vmuoLoose0_phi','d',-999),
                           ('AK8Puppijet1_msd','d',-999),('AK8Puppijet2_msd','d',-999),('npv','i',1),('npu','i',1), 
                           ('nAK4PuppijetsLPt150dR08_0','i',-999),('nAK4PuppijetsMPt150dR08_0','i',-999),('nAK4PuppijetsTPt150dR08_0','i',-999),
                           ('AK8Puppijet0_isTightVJet','i',0),
@@ -714,6 +714,7 @@ class sampleContainer:
             # muon info
             vmuoLoose0_pt = self.vmuoLoose0_pt[0]
             vmuoLoose0_eta = self.vmuoLoose0_eta[0]
+            vmuoLoose0_phi = self.vmuoLoose0_phi[0]
 
             self.h_npv.Fill(self.npv[0],weight)
             
@@ -733,7 +734,7 @@ class sampleContainer:
             
             # Single Muon Control Region 1 (inclusive)
             #if jpt_8 > PTCUT and jmsd_8 > MASSCUT and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
-            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet:
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and abs(vmuoLoose0_phi-jphi_8)>2.*ROOT.TMath.Pi()/3.:
                 ht_ =0.
                 if(abs(self.AK4Puppijet0_eta[0])<2.4 and self.AK4Puppijet0_pt[0]>30): ht_=ht_+self.AK4Puppijet0_pt[0] 
                 if(abs(self.AK4Puppijet1_eta[0])<2.4 and self.AK4Puppijet1_pt[0]>30): ht_=ht_+self.AK4Puppijet1_pt[0]
@@ -796,7 +797,7 @@ class sampleContainer:
 
                     
             for syst in ['JESUp','JESDown','JERUp','JERDown']:                
-                if eval('jpt_8_%s'%syst) > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and jtN2b1sdddt_8 < 0:
+                if eval('jpt_8_%s'%syst) > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(vmuoLoose0_phi-jphi_8)>2.*ROOT.TMath.Pi()/3.:
                     if jdb_8 > DBTAGCUT:
                         (getattr(self,'h_msd_ak8_muCR4_N2_pass_%s'%syst)).Fill( jmsd_8, weight )           
                     else:
