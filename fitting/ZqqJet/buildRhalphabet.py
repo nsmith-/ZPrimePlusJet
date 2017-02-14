@@ -342,10 +342,10 @@ class dazsleRhalphabetBuilder:
 				for i0 in range(1,self._mass_nbins+1):
 					print '!!!!!!!!! YYY'
 					print pFunc.GetName()
-					if 'pass' in pFunc.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"): 
-						if i0 >18: 
-							tmph_mass_matched.SetBinContent(i0,0);
-							tmph_mass_unmatched.SetBinContent(i0,0);
+					#if 'pass' in pFunc.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"): 
+					#	if i0 >18: 
+					#		tmph_mass_matched.SetBinContent(i0,0);
+					#               tmph_mass_unmatched.SetBinContent(i0,0);
 					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						tmph_mass_matched.SetBinContent(i0,0);
 						tmph_mass_unmatched.SetBinContent(i0,0);
@@ -396,9 +396,9 @@ class dazsleRhalphabetBuilder:
 				for h in hout:
 					print h.GetName()
 					for i0 in range(1,self._mass_nbins+1):
-						if 'pass' in h.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"):
-							if i0 >18:
-								h.SetBinContent(i0,0);
+						#if 'pass' in h.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"):
+							#if i0 >18:
+							#	h.SetBinContent(i0,0);
 						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 							h.SetBinContent(i0,0);
 						
