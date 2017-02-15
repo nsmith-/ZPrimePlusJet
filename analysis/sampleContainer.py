@@ -11,6 +11,7 @@ import sys
 import time
 import warnings
 PTCUT = 450.
+PTCUTMUCR = 400.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
@@ -30,7 +31,7 @@ class sampleContainer:
         self._sf = sf
         self._lumi = lumi        
         warnings.filterwarnings( action='ignore', category=RuntimeWarning, message='creating converter.*' )
-        self._cutFormula = ROOT.TTreeFormula("cutFormula","("+cutFormula+")&&(AK8Puppijet0_pt>%f||AK8Puppijet0_pt_JESDown>%f||AK8Puppijet0_pt_JESUp>%f||AK8Puppijet0_pt_JERUp>%f||AK8Puppijet0_pt_JERDown>%f)"%(PTCUT,PTCUT,PTCUT,PTCUT,PTCUT),self._tt)
+        self._cutFormula = ROOT.TTreeFormula("cutFormula","("+cutFormula+")&&(AK8Puppijet0_pt>%f||AK8Puppijet0_pt_JESDown>%f||AK8Puppijet0_pt_JESUp>%f||AK8Puppijet0_pt_JERUp>%f||AK8Puppijet0_pt_JERDown>%f)"%(PTCUTMUCR,PTCUTMUCR,PTCUTMUCR,PTCUTMUCR,PTCUTMUCR),self._tt)
         self._isData = isData
         #print lumi 
         #print self._NEv.GetBinContent(1)
@@ -548,8 +549,8 @@ class sampleContainer:
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             #print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
-            if self._name=='tqq' or 'TTbar' in self._name:
-                fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
+            #if self._name=='tqq' or 'TTbar' in self._name:
+            #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
             vjetsKF = self.kfactor[0] #==1 for not V+jets events            
             # trigger weight
             massForTrig =  min(self.AK8Puppijet0_msd[0], 300. )
@@ -641,7 +642,7 @@ class sampleContainer:
                 weight_muisoUp = 1
                 weight_muisoDown = 1
                 weight_mu_pu_up = 1
-                weight_mu_pu_down
+                weight_mu_pu_down = 1
 
 
             ##### AK8 info
@@ -745,7 +746,7 @@ class sampleContainer:
             
             # Single Muon Control Region 1 (inclusive)
             #if jpt_8 > PTCUT and jmsd_8 > MASSCUT and nmuLoose>=1 and neleLoose==0 and nphoLoose==0 and ntau==0 and vmuoLoose0_pt>50 and isTightVJet:
-            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and abs(vmuoLoose0_phi-jphi_8)>2.*ROOT.TMath.Pi()/3.:
+            if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and abs(vmuoLoose0_phi-jphi_8)>2.*ROOT.TMath.Pi()/3. and n_MdR0p8_4 >= 1:
                 ht_ =0.
                 if(abs(self.AK4Puppijet0_eta[0])<2.4 and self.AK4Puppijet0_pt[0]>30): ht_=ht_+self.AK4Puppijet0_pt[0] 
                 if(abs(self.AK4Puppijet1_eta[0])<2.4 and self.AK4Puppijet1_pt[0]>30): ht_=ht_+self.AK4Puppijet1_pt[0]
@@ -808,7 +809,7 @@ class sampleContainer:
 
                     
             for syst in ['JESUp','JESDown','JERUp','JERDown']:                
-                if eval('jpt_8_%s'%syst) > PTCUT and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(vmuoLoose0_phi-jphi_8)>2.*ROOT.TMath.Pi()/3.:
+                if eval('jpt_8_%s'%syst) > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(vmuoLoose0_phi-jphi_8)>2.*ROOT.TMath.Pi()/3. and n_MdR0p8_4 >= 1:
                     if jdb_8 > DBTAGCUT:
                         (getattr(self,'h_msd_ak8_muCR4_N2_pass_%s'%syst)).Fill( jmsd_8, weight )           
                     else:
@@ -845,7 +846,7 @@ class sampleContainer:
             for i in sorted(bb_idx, key=lambda bbtag: bbtag[2], reverse=True):
                 if a > 0 : continue
                 a = a+1                
-                if i[1] > PTCUT  and i[0] > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and i[4] < T21DDTCUT and i[5]:
+                if i[1] > PTCUTMUCR  and i[0] > MASSCUT and nmuLoose==1 and neleLoose==0 and ntau==0 and vmuoLoose0_pt>MUONPTCUT and abs(vmuoLoose0_eta)<2.1 and i[4] < T21DDTCUT and i[5]:
                     if i[2] > DBTAGCUT:
                         self.h_msd_ak8_bbleading_muCR4_pass.Fill( i[0], weight_mu )
                         self.h_msd_v_pt_ak8_bbleading_muCR4_pass.Fill( i[0], i[1], weight_mu )
@@ -1010,10 +1011,10 @@ class sampleContainer:
                 else:
                     self.h_msd_ak8_topR6_N2_fail.Fill( jmsd_8, weight )
                     self.h_msd_v_pt_ak8_topR6_N2_fail.Fill( jmsd_8, jpt_8, weight )
-                    self.h_msd_v_pt_ak8_topR6_N2_pass_triggerUp.Fill(jmsd_8, jpt_8,weight_triggerUp)
-                    self.h_msd_v_pt_ak8_topR6_N2_pass_triggerDown.Fill(jmsd_8, jpt_8,weight_triggerDown)
-                    self.h_msd_v_pt_ak8_topR6_N2_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                    self.h_msd_v_pt_ak8_topR6_N2_pass_PuDown.Fill(jmsd_8, jpt_8,weight_pu_down)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_triggerUp.Fill(jmsd_8, jpt_8,weight_triggerUp)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_triggerDown.Fill(jmsd_8, jpt_8,weight_triggerDown)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                    self.h_msd_v_pt_ak8_topR6_N2_fail_PuDown.Fill(jmsd_8, jpt_8,weight_pu_down)
 
                     # for signal morphing             
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:

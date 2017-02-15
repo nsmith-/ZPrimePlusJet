@@ -145,7 +145,7 @@ class dazsleRhalphabetBuilder:
         self._lEffQCD.setConstant(False)
 
         polyArray = []
-        self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-3,3)
+        self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-30,30)
         print polyArray
 
         #Now build the function
@@ -411,7 +411,7 @@ class dazsleRhalphabetBuilder:
             cat = pFunc.GetName().split('_')[1]
             mass = 0
             systematics = ['JES','JER','trigger']
-            if iSyst and ( 'wqq' in process or 'zqq' in process or 'hqq' in process ):
+            if iSyst and ( 'tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process ):
 				# get systematic histograms
                 hout = []
                 for syst in systematics:
@@ -505,7 +505,7 @@ class dazsleRhalphabetBuilder:
 
             
         self._outfile_validation.Write()
-        self._outfile_validation.Close()
+        #self._outfile_validation.Close()
         
         if iCat.find("pass_cat1") == -1:
             lW.writeToFile(iOutput,False)
