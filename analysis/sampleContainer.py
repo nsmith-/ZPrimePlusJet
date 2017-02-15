@@ -213,7 +213,7 @@ class sampleContainer:
         'h_pt_bbleading'       :["h_"+self._name+"_pt_bbleading","; AK8 leading p_{T} (GeV);", 50, 300, 2100],
         'h_bb_bbleading'       :["h_"+self._name+"_bb_bbleading","; double b-tag ;", 40, -1, 1],
         'h_msd_bbleading'      :["h_"+self._name+"_msd_bbleading","AK8 m_{SD}^{PUPPI} (GeV);", 30, 40, 250],
-        'h_n_ak4_fwd'          :["h_"+self._name+"_n_ak4fwd","; AK4 n_{jets}, p_{T} > 30 GeV, 2.5<|#eta|<4.5;", 20, 0, 20],
+        'h_n_ak4fwd'          :["h_"+self._name+"_n_ak4fwd","; AK4 n_{jets}, p_{T} > 30 GeV, 2.5<|#eta|<4.5;", 20, 0, 20],
         'h_n_ak4L'             :["h_"+self._name+"_n_ak4L","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 40 GeV;", 20, 0, 20],
         'h_n_ak4L100'          :["h_"+self._name+"_n_ak4L100","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 100 GeV;", 10, 0, 10],
         'h_n_ak4L150'          :["h_"+self._name+"_n_ak4L150","; AK4 n_{L b-tags}, #DeltaR > 0.8, p_{T} > 150 GeV;", 10, 0, 10],

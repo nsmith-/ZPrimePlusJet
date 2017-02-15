@@ -99,12 +99,12 @@ def main(options,args,outputExists):
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
               'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
@@ -320,7 +320,7 @@ def main(options,args,outputExists):
                 hb[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
             if isData:
-                hd = getattr(dataSample,plot)          
+                hd = getattr(dataSample,plot)
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
     
         ofile.Close()
@@ -348,7 +348,7 @@ def main(options,args,outputExists):
                 hd = ofile.Get(plot.replace('h_','h_muon_'))
             elif isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
-                
+            print plot
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
 

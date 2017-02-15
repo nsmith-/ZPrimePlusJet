@@ -53,15 +53,15 @@ def main(options,args):
                      idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root'],
               #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
-              'tqq':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
+              'tqq':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default                      
               'qcd': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT700to1000_13TeV_1000pb_weighted.root',
+                      idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root',],
+                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
@@ -126,7 +126,7 @@ def main(options,args):
     sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 100, lumi)
+    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, lumi)
     bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, lumi)
     bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, lumi)
     bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
@@ -137,7 +137,7 @@ def main(options,args):
     if muonCR:
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
     else:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 100000, lumi, True , False, '((triggerBits&2)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
 
 
     hall={}
