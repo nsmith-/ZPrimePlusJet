@@ -307,7 +307,6 @@ def main(options,args,outputExists):
         for proc, hDict in hall_byproc.iteritems():
             for plot, h in hDict.iteritems():
                 h.Write()
-        ofile.Close()
         
         for plot in plots:
             hs = {}
@@ -324,6 +323,7 @@ def main(options,args,outputExists):
                 hd = getattr(dataSample,plot)          
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
     
+        ofile.Close()
     else:        
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
