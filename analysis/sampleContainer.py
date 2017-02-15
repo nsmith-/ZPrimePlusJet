@@ -562,7 +562,9 @@ class sampleContainer:
                     
             weight = puweight*fbweight*self._sf*vjetsKF*trigweight
             weight_triggerUp = puweight*fbweight*self._sf*vjetsKF*trigweightUp
-            weight_triggerDown = puweight*fbweight*self._sf*vjetsKF*trigweightDown            
+            weight_triggerDown = puweight*fbweight*self._sf*vjetsKF*trigweightDown 
+            weight_pu_up = puweight_up*fbweight*self._sf*vjetsKF*trigweight
+            weight_pu_down = puweight_down*fbweight*self._sf*vjetsKF*trigweight
                 
             mutrigweight = 1
             mutrigweightDown = 1
@@ -621,12 +623,13 @@ class sampleContainer:
             weight_mu_pu_up = puweight_up*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweight
             weight_mu_pu_down = puweight_down*fbweight*self._sf*vjetsKF*mutrigweight*muidweight*muisoweight
 
-            weight_pu_up = puweight_up*fbweight*self._sf*vjetsKF*trigweight
-            weight_pu_down = puweight_down*fbweight*self._sf*vjetsKF*trigweight
-    
 
             if self._isData:
-                weight = 1
+                weight = 1                
+                weight_triggerUp = 1
+                weight_triggerDown = 1
+                weight_pu_up = 1
+                weight_pu_down = 1
                 weight_mu = 1
                 weight_mutriggerUp = 1
                 weight_mutriggerDown = 1
@@ -634,6 +637,8 @@ class sampleContainer:
                 weight_muidDown = 1
                 weight_muisoUp = 1
                 weight_muisoDown = 1
+                weight_mu_pu_up = 1
+                weight_mu_pu_down
 
 
             ##### AK8 info
