@@ -44,7 +44,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             muidErrs['%s_%s'%(proc,box)] = 1.01
             jesErrs['%s_%s'%(proc,box)] = 1.02
             jerErrs['%s_%s'%(proc,box)] = 1.02
-            if proc=='wqq' or proc=='zqq':
+            if proc=='wqq' or proc=='zqq' or proc=='wlnu':
                 znormQErrs['%s_%s'%(proc,box)] = 1.1
                 znormEWErrs['%s_%s'%(proc,box)] = 1.15
             else:
@@ -145,7 +145,7 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','hqq125','whqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq']
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu']
 
     
     tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_wlnu.root','read')

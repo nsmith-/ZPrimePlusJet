@@ -624,7 +624,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 		s.SetMaximum(1.5*maxval)
          	s.SetMinimum(0.01)
 	 	if unitnorm : 
-			s.SetMaximum(10.)
+			s.SetMaximum(100.)
 			s.DrawNormalized("hist")
                 else: s.Draw("hist")
          else : 	
@@ -694,7 +694,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
-	h.Scale(100)
+	#h.Scale(100)
     
         
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
@@ -833,8 +833,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     dataInt = integral
     dataErr = error[0]
 
-    kTTbar = (dataInt-otherInt)/ttbarInt
-    kTTbarErr = kTTbar*sqrt(pow(sqrt(dataErr*dataErr + otherErr*otherErr)/(dataInt-otherInt),2.) + pow(ttbarErr/ttbarInt,2.))
+    kTTbar = 1
+    kTTbarErr = 1
+    if ttbarInt>0 and dataInt-otherInt>0:
+	    kTTbar = (dataInt-otherInt)/ttbarInt
+	    kTTbarErr = kTTbar*sqrt(pow(sqrt(dataErr*dataErr + otherErr*otherErr)/(dataInt-otherInt),2.) + pow(ttbarErr/ttbarInt,2.))
 
     print 'kTTbar', kTTbar, '+/-', kTTbarErr
     

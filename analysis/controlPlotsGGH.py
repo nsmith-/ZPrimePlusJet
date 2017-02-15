@@ -17,9 +17,9 @@ def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canv
         c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)	
     else:
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
+#        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
         c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
-        canvases.append(c)	
+#        canvases.append(c)	
         canvases.append(c1)
 ##############################################################################
 def main(options,args,outputExists):
@@ -81,7 +81,7 @@ def main(options,args,outputExists):
 		       idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'ttHbb':  [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'Diboson': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
-                          idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',
+                          idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
               'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
               'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
@@ -94,17 +94,17 @@ def main(options,args,outputExists):
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-                     #idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
               'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
@@ -171,8 +171,8 @@ def main(options,args,outputExists):
 		     'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
-             'DY':  ROOT.kRed+2,
-             'DYll':  ROOT.kRed+1,
+             'DY':  ROOT.kRed,
+             'DYll':  ROOT.kRed-3,
              'W':  ROOT.kGreen+3,
              'Wlnu':  ROOT.kGreen+2,
              'TTbar':  ROOT.kGray,
@@ -217,20 +217,21 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
+        testSample = sampleContainer('test',[], 1, lumi)
         for attr in dir(testSample):
             try:
-                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
                     plots.append(attr)
             except:
                 pass
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:
-        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
+        plots = []
+        testSample = sampleContainer('test',[], 1, lumi)
         for attr in dir(testSample):
             try:
-                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
                     plots.append(attr)
             except:
                 pass
@@ -254,7 +255,7 @@ def main(options,args,outputExists):
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 100, lumi)
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, lumi)
             bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, lumi)
@@ -292,6 +293,22 @@ def main(options,args,outputExists):
                 hall_byproc['data'] = {}
 
         for plot in plots:
+            for process, s in sigSamples.iteritems():
+                hall_byproc[process][plot] = getattr(s,plot)
+            for process, s in bkgSamples.iteritems():
+                hall_byproc[process][plot] = getattr(s,plot)
+            if isData:
+                if muonCR:      
+                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
+                else:
+                    hall_byproc['data'][plot] = getattr(dataSample,plot)
+            
+        ofile.cd()
+        for proc, hDict in hall_byproc.iteritems():
+            for plot, h in hDict.iteritems():
+                h.Write()
+        
+        for plot in plots:
             hs = {}
             hb = {}
             hall={}
@@ -299,26 +316,14 @@ def main(options,args,outputExists):
             for process, s in sigSamples.iteritems():
                 hs[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
             for process, s in bkgSamples.iteritems():
                 hb[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
             if isData:
-                hd = getattr(dataSample,plot)          
-                if muonCR:      
-                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
-                else:
-                    hall_byproc['data'][plot] = getattr(dataSample,plot)
-    
+                hd = getattr(dataSample,plot)
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
-            
-        ofile.cd()
-        for proc, hDict in hall_byproc.iteritems():
-            for plot, h in hDict.iteritems():
-                h.Write()
-        ofile.Close()
     
+        ofile.Close()
     else:        
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
@@ -343,7 +348,7 @@ def main(options,args,outputExists):
                 hd = ofile.Get(plot.replace('h_','h_muon_'))
             elif isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
-                
+            print plot
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
 
