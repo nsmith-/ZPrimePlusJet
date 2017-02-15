@@ -910,7 +910,7 @@ class sampleContainer:
                 self.h_n2b1sdddt_ak8.Fill(jtN2b1sdddt_8,weight)
                 self.h_n_ak4.Fill( n_4 , weight )
                 self.h_n_ak4_dR0p8.Fill( n_dR0p8_4, weight )
-                self.h_n_ak4_fwd.Fill( n_fwd_4  , weight )
+                self.h_n_ak4fwd.Fill( n_fwd_4  , weight )
                 self.h_n_ak4L.Fill(    n_LdR0p8_4, weight )
                 self.h_n_ak4L100.Fill(    n_LPt100dR0p8_4, weight )
                 self.h_n_ak4M.Fill(    n_MdR0p8_4    , weight )
