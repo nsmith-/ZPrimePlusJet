@@ -189,7 +189,8 @@ class sampleContainer:
                           ]
         if not self._isData:
             self._branches.extend( [ ('genMuFromW','i',-999),('genEleFromW','i',-999),('genTauFromW','i',-999) ] )
-            self._branches.extend( [ ('genVPt','f',-999),('genVEta','f',-999),('genVPhi','f',-999), ('genVMass','f',-999), ] )
+            self._branches.extend( [ ('genVPt','f',-999),('genVEta','f',-999),('genVPhi','f',-999), ('genVMass','f',-999),
+                                     ('topPtWeight','f',-999), ('topPt','f',-999), ('antitopPt','f',-999)] )
 
         if self._fillCA15:
             self._branches.extend( [ ('CA15Puppijet0_msd','d',-999),('CA15Puppijet0_pt','d',-999),('CA15Puppijet0_tau21','d',-999) ] )
@@ -547,6 +548,8 @@ class sampleContainer:
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             #print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
+            if self._name=='tqq' or 'TTbar' in self._name:
+                fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
             vjetsKF = self.kfactor[0] #==1 for not V+jets events            
             # trigger weight
             massForTrig =  min(self.AK8Puppijet0_msd[0], 300. )
