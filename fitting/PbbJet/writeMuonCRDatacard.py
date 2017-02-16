@@ -25,6 +25,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     znormQErrs = {}
     mutriggerErrs = {}
     muidErrs = {}
+    muisoErrs = {}
     jesErrs = {}
     jerErrs = {}
     for proc in sigs+bkgs:
@@ -33,18 +34,19 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             error = array.array('d',[0.0])
             rate = histoDict['%s_%s'%(proc,box)].IntegralAndError(1,histoDict['%s_%s'%(proc,box)].GetNbinsX(),error)
             rates['%s_%s'%(proc,box)]  = rate
-            lumiErrs['%s_%s'%(proc,box)] = 1.05            
+            lumiErrs['%s_%s'%(proc,box)] = 1.026
             if proc=='wqq' or proc=='zqq' or 'hqq' in proc:
                 veffErrs['%s_%s'%(proc,box)] = 1.2
-                bbeffErrs['%s_%s'%(proc,box)] = 1.01
+                bbeffErrs['%s_%s'%(proc,box)] = 1.1
             else:
                 veffErrs['%s_%s'%(proc,box)] = 1.
                 bbeffErrs['%s_%s'%(proc,box)] = 1.
-            mutriggerErrs['%s_%s'%(proc,box)] = 1.01
-            muidErrs['%s_%s'%(proc,box)] = 1.01
-            jesErrs['%s_%s'%(proc,box)] = 1.02
-            jerErrs['%s_%s'%(proc,box)] = 1.02
-            if proc=='wqq' or proc=='zqq':
+            mutriggerErrs['%s_%s'%(proc,box)] = 1
+            muidErrs['%s_%s'%(proc,box)] = 1
+            muisoErrs['%s_%s'%(proc,box)] = 1
+            jesErrs['%s_%s'%(proc,box)] = 1
+            jerErrs['%s_%s'%(proc,box)] = 1
+            if proc=='wqq' or proc=='zqq' or proc=='wlnu':
                 znormQErrs['%s_%s'%(proc,box)] = 1.1
                 znormEWErrs['%s_%s'%(proc,box)] = 1.15
             else:
@@ -76,10 +78,11 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     bbeffString = 'bbeff\tlnN'
     znormEWString = 'znormEW\tlnN'
     znormQString = 'znormQ\tlnN'    
-    mutriggerString = 'mutrigger\tlnN'    
-    muidString = 'muid\tlnN'    
-    jesString = 'jes\tlnN'    
-    jerString = 'jer\tlnN'  
+    muidString = 'muid\tshape'   
+    muisoString = 'muiso\tshape'   
+    mutriggerString = 'mutrigger\tshape'  
+    jesString = 'JES\tshape'    
+    jerString = 'JER\tshape'  
     mcStatErrString = {}
     for proc in sigs+bkgs:
         for box in boxes:
@@ -101,6 +104,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             znormQString += '\t%.3f'%znormQErrs['%s_%s'%(proc,box)]
             mutriggerString += '\t%.3f'%mutriggerErrs['%s_%s'%(proc,box)]
             muidString += '\t%.3f'%muidErrs['%s_%s'%(proc,box)]
+            muisoString += '\t%.3f'%muisoErrs['%s_%s'%(proc,box)]
             jesString += '\t%.3f'%jesErrs['%s_%s'%(proc,box)]
             jerString += '\t%.3f'%jerErrs['%s_%s'%(proc,box)]
             for proc1 in sigs+bkgs:
@@ -111,7 +115,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
                         mcStatErrString['%s_%s'%(proc1,box1)] += '\t-'
             
     binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n';
-    veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; mutriggerString+='\n'; muidString+='\n';   
+    veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; mutriggerString+='\n'; muidString+='\n'; muisoString+='\n'; 
     jesString+='\n'; jerString+='\n';      
     for proc in (sigs+bkgs):
         for box in boxes:
@@ -120,7 +124,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     datacard+=binString+processString+processNumberString+rateString+divider
 
     # now nuisances
-    datacard+=lumiString+veffString+bbeffString+znormEWString+znormQString+mutriggerString+muidString+jesString+jerString
+    datacard+=lumiString+veffString+bbeffString+znormEWString+znormQString+mutriggerString+muidString+muisoString+jesString+jerString
 
     for proc in (sigs+bkgs):
         for box in boxes:
@@ -145,7 +149,8 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','hqq125','whqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq']
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu']
+    systs = ['JER','JES','mutrigger','muid','muiso']
 
     
     tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_wlnu.root','read')
@@ -157,6 +162,13 @@ def main(options, args):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
+            for syst in systs:
+                if proc!='data_obs':
+                    print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst))
+                    print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
+                
     
     outFile = 'datacard_muonCR.root'
     

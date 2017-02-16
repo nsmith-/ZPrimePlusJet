@@ -94,17 +94,17 @@ def main(options,args,outputExists):
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-                     #idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
               'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
@@ -217,21 +217,21 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
+        testSample = sampleContainer('test',[], 1, lumi)
         for attr in dir(testSample):
             try:
-                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
                     plots.append(attr)
             except:
                 pass
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:
-	plots = []
-        testSample = sampleContainer('test',tfiles['ggHbb'], 1, lumi)
+        plots = []
+        testSample = sampleContainer('test',[], 1, lumi)
         for attr in dir(testSample):
             try:
-                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1'):
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
                     plots.append(attr)
             except:
                 pass
@@ -293,6 +293,22 @@ def main(options,args,outputExists):
                 hall_byproc['data'] = {}
 
         for plot in plots:
+            for process, s in sigSamples.iteritems():
+                hall_byproc[process][plot] = getattr(s,plot)
+            for process, s in bkgSamples.iteritems():
+                hall_byproc[process][plot] = getattr(s,plot)
+            if isData:
+                if muonCR:      
+                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
+                else:
+                    hall_byproc['data'][plot] = getattr(dataSample,plot)
+            
+        ofile.cd()
+        for proc, hDict in hall_byproc.iteritems():
+            for plot, h in hDict.iteritems():
+                h.Write()
+        
+        for plot in plots:
             hs = {}
             hb = {}
             hall={}
@@ -300,26 +316,14 @@ def main(options,args,outputExists):
             for process, s in sigSamples.iteritems():
                 hs[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
             for process, s in bkgSamples.iteritems():
                 hb[process] = getattr(s,plot)
                 hall[process] = getattr(s,plot)
-                hall_byproc[process][plot] = getattr(s,plot)
             if isData:
-                hd = getattr(dataSample,plot)          
-                if muonCR:      
-                    hall_byproc['muon'][plot] = getattr(dataSample,plot)
-                else:
-                    hall_byproc['data'][plot] = getattr(dataSample,plot)
-    
+                hd = getattr(dataSample,plot)
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
-            
-        ofile.cd()
-        for proc, hDict in hall_byproc.iteritems():
-            for plot, h in hDict.iteritems():
-                h.Write()
-        ofile.Close()
     
+        ofile.Close()
     else:        
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
@@ -344,7 +348,7 @@ def main(options,args,outputExists):
                 hd = ofile.Get(plot.replace('h_','h_muon_'))
             elif isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
-                
+            print plot
             makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
 

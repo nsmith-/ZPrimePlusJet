@@ -145,7 +145,7 @@ class dazsleRhalphabetBuilder:
         self._lEffQCD.setConstant(False)
 
         polyArray = []
-        self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-3,3)
+        self.buildPolynomialArray(polyArray,self._poly_lNP,self._poly_lNR,"p","r",-30,30)
         print polyArray
 
         #Now build the function
@@ -172,8 +172,8 @@ class dazsleRhalphabetBuilder:
 
             print lName+"_fail_"+iCat+"_Bin"+str(i0), pSum
 
-            #5 sigma range + 10 events
-            pUnc = math.sqrt(pSum)*5+10
+            #10 sigma range + 10 events
+            pUnc = math.sqrt(pSum)*10+10
             #Define the failing category
             #pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,max(pSum-pUnc,0),max(pSum+pUnc,0))
             pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,0,max(pSum+pUnc,0))
@@ -397,7 +397,7 @@ class dazsleRhalphabetBuilder:
         return (lPSigs,lFSigs)
 
 
-    def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
+    def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True,iSyst=True):
 
         lW = r.RooWorkspace("w_"+str(iCat))
 
@@ -410,6 +410,33 @@ class dazsleRhalphabetBuilder:
             process = pFunc.GetName().split('_')[0]
             cat = pFunc.GetName().split('_')[1]
             mass = 0
+            systematics = ['JES','JER','trigger']
+            if iSyst and ( 'tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process ):
+				# get systematic histograms
+                hout = []
+                for syst in systematics:
+                    tmph_up = self._inputfile.Get(process+'_'+cat+'_'+syst+'Up')
+                    tmph_down = self._inputfile.Get(process+'_'+cat+'_'+syst+'Down')
+                    tmph_mass_up = proj('cat',str(ipt),tmph_up,self._mass_nbins,self._mass_lo,self._mass_hi)
+                    tmph_mass_down = proj('cat',str(ipt),tmph_down,self._mass_nbins,self._mass_lo,self._mass_hi)                    
+                    tmph_mass_up.SetName(pFunc.GetName()+'_'+syst+'Up')                
+                    tmph_mass_down.SetName(pFunc.GetName()+'_'+syst+'Down')              
+                    hout.append(tmph_mass_up)
+                    hout.append(tmph_mass_down)
+                # blind if necessary and output to workspace
+                for h in hout:
+				   if self._blind:
+				      for i in range(1,h.GetNbinsX()+1):
+				         if h.GetXaxis().GetBinCenter(i) > BLIND_LO and h.GetXaxis().GetBinCenter(i) < BLIND_HI:
+				            print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
+				            h.SetBinContent(i,0.)
+				   tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+				   getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+                   # validation 
+				   self._outfile_validation.cd()
+				   h.Write()
+
+                
             if iShift and ( 'wqq' in process or 'zqq' in process or 'hqq' in process ):
 				if process == 'wqq': mass = 80.
 				elif process == 'zqq': mass = 91.
@@ -424,9 +451,9 @@ class dazsleRhalphabetBuilder:
 				# smear/shift the matched
 				hist_container = hist( [mass],[tmph_mass_matched] )
 				mass_shift = 0.99
-				mass_shift_unc = 0.03
+				mass_shift_unc = 0.03*2. #(2 sigma shift)
 				res_shift = 1.094
-				res_shift_unc = 0.123
+				res_shift_unc = 0.123*2. #(2 sigma shift) 
 				# get new central value
 				shift_val = mass - mass*mass_shift
 				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val)
@@ -454,8 +481,7 @@ class dazsleRhalphabetBuilder:
 				hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown")
                 
 				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]]
-
-                
+                                
                 # blind if necessary and output to workspace   
 				for h in hout:
 				   if self._blind:
@@ -479,7 +505,7 @@ class dazsleRhalphabetBuilder:
 
             
         self._outfile_validation.Write()
-        self._outfile_validation.Close()
+        #self._outfile_validation.Close()
         
         if iCat.find("pass_cat1") == -1:
             lW.writeToFile(iOutput,False)
