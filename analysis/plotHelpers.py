@@ -806,7 +806,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     return c
 
 
-def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=False):
     ttbarInt = 0
     ttbarErr = 0
     ttbarErr2 = 0
@@ -868,6 +868,22 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     allMC=hstack.GetStack().Last().Clone()
     maxval = max(hd.GetMaximum(),maxval)
     
+    fullmc = hstack.GetStack().Last();
+
+    # normalize MC to data
+    if normalize:
+    	scalefactor = hd.Integral()/fullmc.Integral();
+    	print "data/mc scale factor = ", scalefactor
+    	for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()): h.Scale( scalefactor );
+    hstack2 = ROOT.THStack("hstack2","hstack2");
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):	
+	hstack2.Add(h);
+	h.SetFillColor(color[name])
+        h.SetLineColor(1)
+        h.SetLineStyle(1)
+        h.SetLineWidth(1)
+        h.SetFillStyle(1001)
+    
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         h.SetLineColor(color[name])
         h.SetLineStyle(style[name])
@@ -901,17 +917,15 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     oben.Draw()
     unten.Draw()
     oben.cd()
-
-    fullmc = hstack.GetStack().Last()
-    hstack.Draw('hist')
-    hstack.SetMaximum(2.*maxval)
-    hstack.GetYaxis().SetTitle('Events')
-    hstack.GetYaxis().SetTitleOffset(1.0)	
-    hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
-    hstack.Draw('hist')
+    hstack2.Draw('hist')
+    hstack2.SetMaximum(2.*maxval)
+    hstack2.GetYaxis().SetTitle('Events')
+    hstack2.GetYaxis().SetTitleOffset(1.0)	
+    hstack2.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+    hstack2.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
-    hstack.SetMinimum(1e-1)
+    hstack2.SetMinimum(1e-1)
     hd.Draw('pesames');
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
@@ -927,11 +941,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
-
+    allMC2=hstack2.GetStack().Last().Clone()
     unten.cd()
-    ratio= getRatio(hd,allMC)
-    ksScore = hd.KolmogorovTest( allMC )
-    chiScore = hd.Chi2Test( allMC , "UWCHI2/NDF")
+    ratio= getRatio(hd,allMC2)
+    ksScore = hd.KolmogorovTest( allMC2 )
+    chiScore = hd.Chi2Test( allMC2 , "UWCHI2/NDF")
     print ksScore
     print chiScore
     ratio.SetStats(0)
