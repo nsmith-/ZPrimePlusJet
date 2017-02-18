@@ -13,7 +13,7 @@ r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHigg
 
 
 # including other directories
-sys.path.insert(0, '../.')
+#sys.path.insert(0, '../.')
 from tools import *
 from hist import *
 
@@ -22,7 +22,8 @@ MASS_LO = 40
 MASS_HI = 201
 BLIND_LO = 110
 BLIND_HI = 131
-
+RHO_LO = -6
+RHO_HI = -2.1
 ##############################################################################
 ##############################################################################
 #### B E G I N N I N G   O F   C L A S S
@@ -45,7 +46,9 @@ class dazsleRhalphabetBuilder:
         self._mass_lo    = MASS_LO
         self._mass_hi    = MASS_HI
         self._mass_blind_lo = BLIND_LO
-        self._mass_blind_hi = BLIND_HI
+        self._mass_blind_hi = BLIND_HI        
+        self._rho_lo = RHO_LO
+        self._rho_hi = RHO_HI
         # self._mass_nbins = hpass[0].GetXaxis().GetNbins();
         # self._mass_lo    = hpass[0].GetXaxis().GetBinLowEdge( 1 );
         # self._mass_hi    = hpass[0].GetXaxis().GetBinUpEdge( self._mass_nbins );
@@ -124,8 +127,8 @@ class dazsleRhalphabetBuilder:
             lPHists.extend(self.getSignals(hpass_inPtBin,hfail_inPtBin,"cat"+str(ipt))[0])
             lFHists.extend(self.getSignals(hpass_inPtBin,hfail_inPtBin,"cat"+str(ipt))[1])
             # #Write to file
-            self.makeWorkspace(self._outputName,[pDatas[0]],lPHists,self._allVars,"pass_cat"+str(ipt),True)
-            self.makeWorkspace(self._outputName,[pDatas[1]],lFHists,self._allVars,"fail_cat"+str(ipt),True)
+            self.makeWorkspace(self._outputName,[pDatas[0]],lPHists,self._allVars,"pass_cat"+str(ipt),True,True,pPt)
+            self.makeWorkspace(self._outputName,[pDatas[1]],lFHists,self._allVars,"fail_cat"+str(ipt),True,True,pPt)
 
         
         for ipt in range(1,self._nptbins+1):
@@ -397,13 +400,13 @@ class dazsleRhalphabetBuilder:
         return (lPSigs,lFSigs)
 
 
-    def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True,iSyst=True):
+    def makeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True,iSyst=True,ptVal=500):
 
         lW = r.RooWorkspace("w_"+str(iCat))
 
-		# get the pT bin
+        # get the pT bin
         ipt = iCat[-1:]
-        
+
         for pFunc in iFuncs:
             pFunc.Print()            
             ptbin = ipt
@@ -412,7 +415,7 @@ class dazsleRhalphabetBuilder:
             mass = 0
             systematics = ['JES','JER','trigger']
             if iSyst and ( 'tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process ):
-				# get systematic histograms
+                # get systematic histograms
                 hout = []
                 for syst in systematics:
                     tmph_up = self._inputfile.Get(process+'_'+cat+'_'+syst+'Up')
@@ -425,77 +428,85 @@ class dazsleRhalphabetBuilder:
                     hout.append(tmph_mass_down)
                 # blind if necessary and output to workspace
                 for h in hout:
-				   if self._blind:
-				      for i in range(1,h.GetNbinsX()+1):
-				         if h.GetXaxis().GetBinCenter(i) > BLIND_LO and h.GetXaxis().GetBinCenter(i) < BLIND_HI:
-				            print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
-				            h.SetBinContent(i,0.)
-				   tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
-				   getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
-                   # validation 
-				   self._outfile_validation.cd()
-				   h.Write()
+                    for i in range(1,h.GetNbinsX()+1):
+                        massVal = h.GetXaxis().GetBinCenter(i)
+                        rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)           
+                        if self._blind and massVal > BLIND_LO and massVal < BLIND_HI:
+                            print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
+                            h.SetBinContent(i,0.)
+                        if rhoVal < RHO_LO or rhoVal > RHO_HI:
+                            print "removing rho = %.2f for %s, ptVal = %.2f, mass bin [%i,%i]"%(rhoVal,h.GetName(),ptVal,h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
+                            h.SetBinContent(i,0.)
+                    tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+                    getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+                    # validation
+                    self._outfile_validation.cd()
+                    h.Write()
 
-                
+
             if iShift and ( 'wqq' in process or 'zqq' in process or 'hqq' in process ):
-				if process == 'wqq': mass = 80.
-				elif process == 'zqq': mass = 91.
-				else: mass = float(process[-3:]) # hqq125 -> 125
-            
-				# get the matched and unmatched hist
-				tmph_matched = self._inputfile.Get(process+'_'+cat+'_matched')
-				tmph_unmatched = self._inputfile.Get(process+'_'+cat+'_unmatched')
-				tmph_mass_matched = proj('cat',str(ipt),tmph_matched,self._mass_nbins,self._mass_lo,self._mass_hi)
-				tmph_mass_unmatched = proj('cat',str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi)
-                
-				# smear/shift the matched
-				hist_container = hist( [mass],[tmph_mass_matched] )
-				mass_shift = 0.99
-				mass_shift_unc = 0.03*2. #(2 sigma shift)
-				res_shift = 1.094
-				res_shift_unc = 0.123*2. #(2 sigma shift) 
-				# get new central value
-				shift_val = mass - mass*mass_shift
-				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val)
-				# get new central value and new smeared value
-				smear_val = res_shift - 1
-				tmp_smeared_h = hist_container.smear( tmp_shifted_h[0], smear_val)
-				hmatched_new_central = tmp_smeared_h[0]
-				if smear_val <= 0: hmatched_new_central = tmp_smeared_h[1]
-				# get shift up/down
-				shift_unc = mass*mass_shift*mass_shift_unc
-				hmatchedsys_shift = hist_container.shift( hmatched_new_central, mass*mass_shift_unc)
-				# get res up/down
-				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc)
-                        
-				# add back the unmatched 
-				hmatched_new_central.Add(tmph_mass_unmatched)
-				hmatchedsys_shift[0].Add(tmph_mass_unmatched)
-				hmatchedsys_shift[1].Add(tmph_mass_unmatched)
-				hmatchedsys_smear[0].Add(tmph_mass_unmatched)
-				hmatchedsys_smear[1].Add(tmph_mass_unmatched)
-				hmatched_new_central.SetName(pFunc.GetName())
-				hmatchedsys_shift[0].SetName(pFunc.GetName()+"_scaleUp")
-				hmatchedsys_shift[1].SetName(pFunc.GetName()+"_scaleDown")
-				hmatchedsys_smear[0].SetName(pFunc.GetName()+"_smearUp")
-				hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown")
-                
-				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]]
-                                
-                # blind if necessary and output to workspace   
-				for h in hout:
-				   if self._blind:
-				      for i in range(1,h.GetNbinsX()+1):
-				         if h.GetXaxis().GetBinCenter(i) > BLIND_LO and h.GetXaxis().GetBinCenter(i) < BLIND_HI:
-				            print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
-				            h.SetBinContent(i,0.)
-				   tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
-				   getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
-                   # validation 
-				   self._outfile_validation.cd()
-				   h.Write()
+                if process == 'wqq': mass = 80.
+                elif process == 'zqq': mass = 91.
+                else: mass = float(process[-3:]) # hqq125 -> 125
 
-                
+                # get the matched and unmatched hist
+                tmph_matched = self._inputfile.Get(process+'_'+cat+'_matched')
+                tmph_unmatched = self._inputfile.Get(process+'_'+cat+'_unmatched')
+                tmph_mass_matched = proj('cat',str(ipt),tmph_matched,self._mass_nbins,self._mass_lo,self._mass_hi)
+                tmph_mass_unmatched = proj('cat',str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi)
+
+                # smear/shift the matched
+                hist_container = hist( [mass],[tmph_mass_matched] )
+                mass_shift = 0.99
+                mass_shift_unc = 0.03*2. #(2 sigma shift)
+                res_shift = 1.094
+                res_shift_unc = 0.123*2. #(2 sigma shift) 
+                # get new central value
+                shift_val = mass - mass*mass_shift
+                tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val)
+                # get new central value and new smeared value
+                smear_val = res_shift - 1
+                tmp_smeared_h = hist_container.smear( tmp_shifted_h[0], smear_val)
+                hmatched_new_central = tmp_smeared_h[0]
+                if smear_val <= 0: hmatched_new_central = tmp_smeared_h[1]
+                # get shift up/down
+                shift_unc = mass*mass_shift*mass_shift_unc
+                hmatchedsys_shift = hist_container.shift( hmatched_new_central, mass*mass_shift_unc)
+                # get res up/down
+                hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc)
+
+                # add back the unmatched 
+                hmatched_new_central.Add(tmph_mass_unmatched)
+                hmatchedsys_shift[0].Add(tmph_mass_unmatched)
+                hmatchedsys_shift[1].Add(tmph_mass_unmatched)
+                hmatchedsys_smear[0].Add(tmph_mass_unmatched)
+                hmatchedsys_smear[1].Add(tmph_mass_unmatched)
+                hmatched_new_central.SetName(pFunc.GetName())
+                hmatchedsys_shift[0].SetName(pFunc.GetName()+"_scaleUp")
+                hmatchedsys_shift[1].SetName(pFunc.GetName()+"_scaleDown")
+                hmatchedsys_smear[0].SetName(pFunc.GetName()+"_smearUp")
+                hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown")
+
+                hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]]
+                # blind if necessary and output to workspace
+                for h in hout:
+                    for i in range(1,h.GetNbinsX()+1):
+                        massVal = h.GetXaxis().GetBinCenter(i)
+                        rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
+                        if self._blind and massVal > BLIND_LO and massVal < BLIND_HI:
+                            print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
+                            h.SetBinContent(i,0.)
+                        if rhoVal < RHO_LO or rhoVal > RHO_HI:
+                            print "removing rho = %.2f for %s, ptVal = %.2f, mass bin [%i,%i]"%(rhoVal,h.GetName(),ptVal,h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
+                            
+                            h.SetBinContent(i,0.)
+                    tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+                    getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+                    # validation
+                    self._outfile_validation.cd()
+                    h.Write()
+
+
             else: 
                 getattr(lW,'import')(pFunc, r.RooFit.RecycleConflictNodes())
 
@@ -503,10 +514,10 @@ class dazsleRhalphabetBuilder:
             pData.Print()
             getattr(lW,'import')(pData, r.RooFit.RecycleConflictNodes())
 
-            
+
         self._outfile_validation.Write()
         #self._outfile_validation.Close()
-        
+
         if iCat.find("pass_cat1") == -1:
             lW.writeToFile(iOutput,False)
         else:
@@ -610,13 +621,17 @@ def loadHistograms(f,pseudo,blind,useQCD,scale):
     hfail.extend(hfail_sig)
     
     for lH in (hpass+hfail):
-        if blind:            
-            for i in range(1,lH.GetNbinsX()+1):
-                for j in range(1,lH.GetNbinsY()+1):
-                    if lH.GetXaxis().GetBinCenter(i) > BLIND_LO and lH.GetXaxis().GetBinCenter(i) < BLIND_HI:
-                        print "blinding signal region for %s, mass bin [%i,%i] "%(lH.GetName(),lH.GetXaxis().GetBinLowEdge(i),lH.GetXaxis().GetBinUpEdge(i))
+        for i in range(1,lH.GetNbinsX()+1):
+            for j in range(1,lH.GetNbinsY()+1):
+                    massVal = lH.GetXaxis().GetBinCenter(i)
+                    ptVal = lH.GetYaxis().GetBinLowEdge(j)+lH.GetYaxis().GetBinWidth(j)*0.3
+                    rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)            
+                    if blind and massVal > BLIND_LO and massVal < BLIND_HI:
+                        print "blinding signal region for %s, mass bin [%i,%i]"%(lH.GetName(),lH.GetXaxis().GetBinLowEdge(i),lH.GetXaxis().GetBinUpEdge(i))
                         lH.SetBinContent(i,j,0.)
-                        print lH.GetBinContent(i,j)
+                    if rhoVal < RHO_LO or rhoVal > RHO_HI:
+                        print "removing rho = %.2f for %s, pt bin [%i, %i], mass bin [%i,%i]"%(rhoVal,lH.GetName(),lH.GetYaxis().GetBinLowEdge(j),lH.GetYaxis().GetBinUpEdge(j),lH.GetXaxis().GetBinLowEdge(i),lH.GetXaxis().GetBinUpEdge(i))
+                        lH.SetBinContent(i,j,0.)                        
         lH.SetDirectory(0)	
 
     # print "lengths = ", len(hpass), len(hfail)
