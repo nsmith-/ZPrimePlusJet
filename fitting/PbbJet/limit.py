@@ -2,7 +2,7 @@
 import ROOT as r,sys,math,array,os
 from optparse import OptionParser
 
-sys.path.insert(0, '../.')
+#sys.path.insert(0, '$ZPRIMEPLUSJET_BASE/fitting/')
 from tools import *
 
 def end():
@@ -42,9 +42,12 @@ def plotftest(iToys,iCentral,prob,iLabel,options):
     if options.method=='FTest':
         lH = r.TH1F(iLabel+"hist",iLabel+"hist",70,0,max(max(iToys),iCentral)+1)
         lH_cut = r.TH1F(iLabel+"hist",iLabel+"hist",70,0,max(max(iToys),iCentral)+1)
-    else:
+    elif options.method=='GoodnessOfFit' and options.algo=='saturated':
         lH = r.TH1F(iLabel+"hist",iLabel+"hist",70,0,max(max(iToys),iCentral)+100)
         lH_cut = r.TH1F(iLabel+"hist",iLabel+"hist",70,0,max(max(iToys),iCentral)+100)
+    elif options.method=='GoodnessOfFit' and options.algo=='KS':
+        lH = r.TH1F(iLabel+"hist",iLabel+"hist",70,0,max(max(iToys),iCentral)+0.05)
+        lH_cut = r.TH1F(iLabel+"hist",iLabel+"hist",70,0,max(max(iToys),iCentral)+0.05)
     
     if options.method=='FTest':
         lH.GetXaxis().SetTitle("F = #frac{-2log(#lambda_{1}/#lambda_{2})/(p_{2}-p_{1})}{-2log#lambda_{2}/(n-p_{2})}")
@@ -52,8 +55,12 @@ def plotftest(iToys,iCentral,prob,iLabel,options):
         lH.GetXaxis().SetTitleOffset(2)
         lH.GetYaxis().SetTitle("Pseudodatasets")
         lH.GetYaxis().SetTitleOffset(0.85)
-    else:        
+    elif options.method=='GoodnessOfFit' and options.algo=='saturated':
         lH.GetXaxis().SetTitle("-2log#lambda")  
+        lH.GetYaxis().SetTitle("Pseudodatasets")
+        lH.GetYaxis().SetTitleOffset(0.85)
+    elif options.method=='GoodnessOfFit' and options.algo=='KS':
+        lH.GetXaxis().SetTitle("KS")  
         lH.GetYaxis().SetTitle("Pseudodatasets")
         lH.GetYaxis().SetTitleOffset(0.85)
     for val in iToys:
@@ -77,12 +84,12 @@ def plotftest(iToys,iCentral,prob,iLabel,options):
         fdist.SetParameter(2,options.n-options.p2)
         fdist.Draw('same')
         #lH.Fit(fdist,'mle')
-    else:        
+    elif options.method=='GoodnessOfFit' and options.algo=='saturated':
         chi2_func = r.TF1('chisqpdf','[0]*ROOT::Math::chisquared_pdf(x,[1])',0,max(max(iToys),iCentral)+100)
         chi2_func.SetParameter(0,lH.Integral())
         chi2_func.SetParameter(1,50)
         chi2_func.Draw('same')
-        lH.Fit(chi2_func,"mle")
+        lH.Fit(chi2_func,"mle")        
     lH.Draw("pezsame")
     lLine.Draw()
         
@@ -96,8 +103,8 @@ def plotftest(iToys,iCentral,prob,iLabel,options):
     tLeg.AddEntry(lH_cut,"p-value = %.2f"%(1-prob),"f")
     if options.method=='FTest':
         #tLeg.AddEntry(fdist,"f-dist fit, ndf = (%.1f #pm %.1f, %.1f #pm %.1f) "%(fdist.GetParameter(1),fdist.GetParError(1),fdist.GetParameter(2),fdist.GetParError(2)),"l")
-        tLeg.AddEntry(fdist,"F-dist, ndf = (%.0f, %.0f) "%(fdist.GetParameter(1),fdist.GetParameter(2)),"l")
-    else:
+        tLeg.AddEntry(fdist,"F-dist, ndf = (%.0f, %.0f) "%(fdist.GetParameter(1),fdist.GetParameter(2)),"l")        
+    elif options.method=='GoodnessOfFit' and options.algo=='saturated':
         tLeg.AddEntry(chi2_func,"#chi^{2} fit, ndf = %.1f #pm %.1f"%(chi2_func.GetParameter(1),chi2_func.GetParError(1)),"l")
             
     tLeg.Draw("same")
@@ -191,11 +198,11 @@ def ftest(base,alt,ntoys,iLabel,options):
 
 def goodness(base,ntoys,iLabel,options):
     if not options.justPlot:
-        os.system('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm saturated --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF -n %s'% (base,base.replace('.txt','')))
+        os.system('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm %s --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF -n %s'% (base,options.algo,base.replace('.txt','')))
         os.system('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/goodbase.root'%(base.replace('.txt',''),options.odir))
         os.system('combine -M GenerateOnly %s --rMax 50 --rMin -50 --toysFrequentist -t %i --expectSignal 0 --saveToys --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,base.replace('.txt','')))
         os.system('cp higgsCombine%s.GenerateOnly.mH120.123456.root %s/'%(base.replace('.txt',''),options.odir))        
-        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --fixedSignalStrength 0 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,options.odir,base.replace('.txt',''),base.replace('.txt','')))
+        os.system('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --fixedSignalStrength 0 --algorithm %s --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,options.odir,base.replace('.txt',''),options.algo,base.replace('.txt','')))
         os.system('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/goodtoys.root'%(base.replace('.txt',''),options.odir))
     nllBase=goodnessVals('%s/goodbase.root'%options.odir)
     nllToys=goodnessVals('%s/goodtoys.root'%options.odir)
@@ -272,6 +279,8 @@ if __name__ == "__main__":
     parser.add_option('--datacard-alt'   ,action='store',type='string',dest='datacardAlt'   ,default='card_rhalphabet_alt.txt', help='alternative datacard name')
     parser.add_option('-M','--method'   ,dest='method'   ,default='GoodnessOfFit', 
                       choices=['GoodnessOfFit','FTest','Asymptotic','Bias','MaxLikelihoodFit'],help='combine method to use')
+    parser.add_option('-a','--algo'   ,dest='algo'   ,default='saturated', 
+                      choices=['saturated','KS'],help='GOF algo  to use')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots and output toys', metavar='odir')
     parser.add_option('--just-plot', action='store_true', dest='justPlot', default=False, help='just plot')
     parser.add_option('--data', action='store_true', dest='isData', default=False, help='is data')
