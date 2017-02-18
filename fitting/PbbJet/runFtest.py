@@ -43,8 +43,8 @@ if __name__ == "__main__":
     exec_me('python buildRhalphabetHbb.py -i %s --scale %f -o %s --nr %i --np %i --blind '%(options.ifile, options.scale, cardsDir2, options.NR2, options.NP2),options.dryRun )
     exec_me('python makeCardsHbb.py -o %s'%cardsDir1,options.dryRun)
     exec_me('python makeCardsHbb.py -o %s'%cardsDir2,options.dryRun)
-    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt > card_rhalphabet_r%ip%i.txt'%(cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,options.NR1, options.NP1),options.dryRun)
-    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt > card_rhalphabet_r%ip%i.txt'%(cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,options.NR2, options.NP2),options.dryRun)
+    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > card_rhalphabet_r%ip%i.txt'%(cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,options.NR1, options.NP1),options.dryRun)
+    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > card_rhalphabet_r%ip%i.txt'%(cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,options.NR2, options.NP2),options.dryRun)
     p1 = int((options.NR1+1)*(options.NP1+1))
     p2 = int((options.NR2+1)*(options.NP2+1))
     
