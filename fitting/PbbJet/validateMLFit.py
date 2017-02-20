@@ -96,8 +96,11 @@ def main(options,args):
 
         pars = []
         for p in lParams:
-            print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError()
-            pars.append(rfr.floatParsFinal().find(p).getVal())
+            if rfr.floatParsFinal().find(p):
+                print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError()
+                pars.append(rfr.floatParsFinal().find(p).getVal())
+            else:
+                pars.append(0)
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
         else:
