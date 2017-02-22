@@ -43,8 +43,8 @@ def main(options,args):
             exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -S 0'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_data_nosys')),options.dryRun)
         else:
             dataTag = 'asimov'
-            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov')),options.dryRun)
-            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 -S 0'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov_nosys')),options.dryRun)
+            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 --expectSignal %f'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov'),options.r),options.dryRun)
+            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 -S 0 --expectSignal %f'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov_nosys'),options.r),options.dryRun)
 
     tfileWithSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.txt','_%s'%dataTag)))
     limitWithSys = tfileWithSys.Get('limit')    
@@ -153,8 +153,8 @@ def main(options,args):
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
     
-    d.Print(odir+"/deltaLL.pdf")
-    d.Print(odir+"/deltaLL.C")
+    d.Print(odir+"/deltaLL_%s_r%f.pdf"%(dataTag,options.r))
+    d.Print(odir+"/deltaLL_%s_r%f.C"%(dataTag,options.r))
 
     print "stat+sys:  r < %f"%rLimit
     print "stat-only: r < %f"%rLimitNoSys
@@ -166,6 +166,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
+    parser.add_option('-r','--r',dest='r', default=0 ,type='float',help='default value of r (for asimov)')
     parser.add_option('--rMin',dest='rMin', default=0 ,type='float',help='minimum of r (signal strength) in profile likelihood plot')
     parser.add_option('--rMax',dest='rMax', default=20,type='float',help='maximum of r (signal strength) in profile likelihood plot')  
     parser.add_option('-d','--datacard'   ,action='store',type='string',dest='datacard'   ,default='card_rhalphabet.txt', help='datacard name')  
