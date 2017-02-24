@@ -55,7 +55,7 @@ class dazsleRhalphabetBuilder:
 		self._lRho    = r.RooFormulaVar("rho","log(x*x/pt/pt)",r.RooArgList(self._lMSD,self._lPt))
 
 		self._lEff    = r.RooRealVar("veff"      ,"veff"      ,0.5 ,0.,1.0)
-		self._lEffQCD = r.RooRealVar("qcdeff"    ,"qcdeff"   ,0.1,0.,10.)
+		self._lEffQCD = r.RooRealVar("qcdeff"    ,"qcdeff"    ,0.1 ,0.,1.0)
 		self._lDM     = r.RooRealVar("dm","dm", 0.,-10,10)
 		self._lShift  = r.RooFormulaVar("shift",self._lMSD.GetName()+"-dm",r.RooArgList(self._lMSD,self._lDM)) 
 
@@ -78,18 +78,14 @@ class dazsleRhalphabetBuilder:
 			hfail_inPtBin = [];
 			for ih,h in enumerate(self._hpass):
 				tmppass_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi)
-				if ih==2:# or ih==2:
-					print 'WWWWW'
-					print h.GetName()
-					if i0 > 18: tmppass_inPtBin.SetBinContent(i0,0);
 				for i0 in range(1,self._mass_nbins+1):
-                                        if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or ((i0 < 7 or i0 > 100) and ipt == 4) or (i0 < 7 and ipt == 5):
+					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 0) and ipt == 2) or ((i0 > 46 or i0 < 0) and ipt == 3) or ((i0 > 56 or i0 < 7) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
                         for ih,h in enumerate(self._hfail):
                                 tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 31 and ipt == 1) or (i0 > 38 and ipt == 2) or (i0 > 46 and ipt == 3) or ((i0 < 7 or i0 > 100) and ipt == 4) or (i0 < 7 and ipt == 5):
+					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 0) and ipt == 2) or ((i0 > 46 or i0 < 0) and ipt == 3) or ((i0 > 56 or i0 < 7 ) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmpfail_inPtBin.SetBinContent(i0,0);
                                 hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
@@ -139,7 +135,6 @@ class dazsleRhalphabetBuilder:
 		lFailBins = r.RooArgList()
 		
 		for i0 in range(1,self._mass_nbins+1):
-
 			self._lMSD.setVal(iHs[0].GetXaxis().GetBinCenter(i0)) 
 			lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polyArray)
 			pSum = 0
@@ -148,7 +143,7 @@ class dazsleRhalphabetBuilder:
 			if pSum < 0: pSum = 0
 
 			#5 sigma range + 10 events
-			pUnc = math.sqrt(pSum)*25+10
+			pUnc = math.sqrt(pSum)*10+100
 			#Define the failing category
 			pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,max(pSum-pUnc,0),max(pSum+pUnc,0))
 			#Now define the passing cateogry based on the failing (make sure it can't go negative)
@@ -164,9 +159,9 @@ class dazsleRhalphabetBuilder:
 
 			#If the number of events in the failing is small remove the bin from being free in the fit
 			if pSum < 5 and pSumP < 5:
-				pFail = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSum ,0.,max(pSum,0.1))
+				pFail = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSum ,-0.1,max(pSum,0.1))
 				pFail.setConstant(True)
-				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSumP,0.,max(pSumP,0.1))
+				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSumP,-0.1,max(pSumP,0.1))
 				pPass.setConstant(True)
 
 			#Add bins to the array
@@ -234,7 +229,10 @@ class dazsleRhalphabetBuilder:
                                pVar = iLabel1+str(i1)+iLabel0+str(i0);
                                pXMin = iXMin0
                                pXMax = iXMax0
-                               pVal  = math.pow(10,-(i1+i0*0.5))
+                               #pVal  = math.pow(10,-min(i1,2))
+                               pVal  = math.pow(10,-i1-i0)
+			       if i1 == 0:
+				       pVal  = math.pow(10,-i1-min(int(i0*0.5),1))
                                pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin*pVal,pXMax*pVal)
                                print pVar,pVal,"!!!!!!!!!!"
                                iVars.append(pRooVar)
@@ -323,7 +321,6 @@ class dazsleRhalphabetBuilder:
 			process = pFunc.GetName().split("_")[0];
 			cat     = pFunc.GetName().split("_")[1];
 			mass    = 0.;
-
 			if iShift and ("wqq" in process or "zqq" in process):
 
 				if process == "wqq": mass = 80.;
@@ -340,16 +337,9 @@ class dazsleRhalphabetBuilder:
 				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
 
 				for i0 in range(1,self._mass_nbins+1):
-<<<<<<< Updated upstream
 					print '!!!!!!!!! YYY'
 					print pFunc.GetName()
-					#if 'pass' in pFunc.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"): 
-					#	if i0 >18: 
-					#		tmph_mass_matched.SetBinContent(i0,0);
-					#               tmph_mass_unmatched.SetBinContent(i0,0);
-=======
->>>>>>> Stashed changes
-					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
+					if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 0) and int(ipt) == 2) or ((i0 > 46 or i0 < 0) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						tmph_mass_matched.SetBinContent(i0,0);
 						tmph_mass_unmatched.SetBinContent(i0,0);
 					
@@ -365,7 +355,7 @@ class dazsleRhalphabetBuilder:
 				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val);
 				# get new central value and new smeared value
 				smear_val = res_shift - 1.;
-				tmp_smeared_h = hist_container.smear( tmp_shifted_h[0], smear_val)
+				tmp_smeared_h =  hist_container.smear( tmp_shifted_h[0], smear_val)
 				hmatched_new_central = tmp_smeared_h[0];
 				if smear_val <= 0.: hmatched_new_central = tmp_smeared_h[1];
 				# get shift up/down
@@ -373,7 +363,6 @@ class dazsleRhalphabetBuilder:
 				hmatchedsys_shift = hist_container.shift( hmatched_new_central, shift_unc);
 				# get res up/down
 				hmatchedsys_smear = hist_container.smear( hmatched_new_central, res_shift_unc);	
-
 				#####
 				# add back the unmatched 
 				hmatched_new_central.Add(tmph_mass_unmatched);
@@ -387,7 +376,7 @@ class dazsleRhalphabetBuilder:
 				hmatchedsys_smear[0].SetName(pFunc.GetName()+"_smearUp");
 				hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown");
 				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]];
-				
+	
 				if mass > 0 and mass != 80. and mass != 91. and mass != 250. and mass != 300.: 
 					sigMassesForInterpolation.append(mass);     
 					shapeForInterpolation_central.append(hmatched_new_central) 
@@ -399,13 +388,7 @@ class dazsleRhalphabetBuilder:
 				for h in hout:
 					print h.GetName()
 					for i0 in range(1,self._mass_nbins+1):
-<<<<<<< Updated upstream
-						#if 'pass' in h.GetName() and (process == "zqq" or process == "wqq"): # or process == "zqq"):
-							#if i0 >18:
-							#	h.SetBinContent(i0,0);
-=======
->>>>>>> Stashed changes
-						if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or (i0 < 7 and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
+						if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 0) and int(ipt) == 2) or ((i0 > 46 or i0 < 0) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 							h.SetBinContent(i0,0);
 						
 					h.Write();
@@ -413,9 +396,8 @@ class dazsleRhalphabetBuilder:
 					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
 
 			else: 
-				
 				getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
-
+				
 		# do the signal interpolation
 		print "---------------------------------------------------------------"
 		print len(sigMassesForInterpolation), sigMassesForInterpolation
@@ -571,7 +553,7 @@ if __name__ == '__main__':
 	parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='data = MC', metavar='isData')
 	parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
-	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoB5eff-344-Gridv12-sig-pt5006007008009001000.root',help='directory with data', metavar='idir')
+	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
 
