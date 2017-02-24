@@ -44,8 +44,8 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             mutriggerErrs['%s_%s'%(proc,box)] = 1
             muidErrs['%s_%s'%(proc,box)] = 1
             muisoErrs['%s_%s'%(proc,box)] = 1
-            jesErrs['%s_%s'%(proc,box)] = 1
-            jerErrs['%s_%s'%(proc,box)] = 1
+            #jesErrs['%s_%s'%(proc,box)] = 1
+            #jerErrs['%s_%s'%(proc,box)] = 1
             if proc=='wqq' or proc=='zqq' or proc=='wlnu':
                 znormQErrs['%s_%s'%(proc,box)] = 1.1
                 znormEWErrs['%s_%s'%(proc,box)] = 1.15
@@ -57,6 +57,17 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
                 mcStatErrs['%s_%s'%(proc,box)] = 1.0+(error[0]/rate)
             else:
                 mcStatErrs['%s_%s'%(proc,box)] = 1.0
+                
+            if rate>0:
+                rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral()
+                rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral()
+                rateJERUp = histoDict['%s_%s_JERUp'%(proc,box)].Integral()
+                rateJERDown = histoDict['%s_%s_JERDown'%(proc,box)].Integral()
+                jesErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
+                jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate)
+            else:
+                jesErrs['%s_%s'%(proc,box)] =  1.0
+                jerErrs['%s_%s'%(proc,box)] =  1.0
 
     divider = '------------------------------------------------------------\n'
     datacard = 'imax 2 number of channels\n' + \
@@ -81,8 +92,10 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     muidString = 'muid\tshape'   
     muisoString = 'muiso\tshape'   
     mutriggerString = 'mutrigger\tshape'  
-    jesString = 'JES\tshape'    
-    jerString = 'JER\tshape'  
+    #jesString = 'JES\tshape'    
+    #jerString = 'JER\tshape'
+    jesString = 'JES\tlnN'
+    jerString = 'JER\tlnN'
     mcStatErrString = {}
     for proc in sigs+bkgs:
         for box in boxes:
@@ -148,12 +161,12 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
 def main(options, args):
     
     boxes = ['pass', 'fail']
-    sigs = ['tthqq125','hqq125','whqq125','zhqq125','vbfhqq125']
+    sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu']
     systs = ['JER','JES','mutrigger','muid','muiso']
 
     
-    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_wlnu.root','read')
+    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR.root','read')
     
     histoDict = {}
     datahistDict = {}
@@ -175,9 +188,13 @@ def main(options, args):
     outputFile = rt.TFile.Open(options.odir+'/'+outFile,'recreate')
     outputFile.cd()
     w = rt.RooWorkspace('w_muonCR')
+    #w.factory('y[40,40,201]')
+    #w.var('y').setBins(1)
     w.factory('x[40,40,201]')
     w.var('x').setBins(23)
     for key, histo in histoDict.iteritems():
+        histo.Rebin(23)
+        #ds = rt.RooDataHist(key,key,rt.RooArgList(w.var('y')),histo)
         ds = rt.RooDataHist(key,key,rt.RooArgList(w.var('x')),histo)
         getattr(w,'import')(ds)
     w.Write()
