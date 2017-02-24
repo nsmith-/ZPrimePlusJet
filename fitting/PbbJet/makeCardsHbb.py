@@ -71,8 +71,12 @@ def main(options,args):
 
         for box in boxes:
             for proc in sigs+bkgs:
-                jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
-                jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
+                if proc=='qcd':
+                    jesString += ' -'
+                    jerString += ' -'
+                else:
+                    jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
+                    jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
 
         tag = "cat"+str(i)
         dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
