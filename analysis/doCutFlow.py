@@ -29,47 +29,52 @@ def main(options,args):
                'TTbar': 't#bar{t}+jets',        
                'QCD': 'QCD',
                }
-
-    tfiles = {'Hbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
-                      idir+'/VBFHToBB_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
-                      idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
-                      idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
-                      #idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-              'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-              #'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
-              'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_0_1000pb_weighted.root'],
-              'VHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',
-                       idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_0_1000pb_weighted.root',],
-                       #idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'ttHbb':  [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_0_1000pb_weighted.root'],
-              'Diboson': [idir+'/WWTo4Q_13TeV_powheg_0_1000pb_weighted.root',
-                          #idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
-                          idir+'/WZ_13TeV_pythia8_0_1000pb_weighted.root'],
-              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_0_1000pb_weighted.root'],
-                #ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
-              'SingleTop':  [idir+'/ST_t_channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_0_1000pb_weighted.root',
-                             idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_0_1000pb_weighted.root',
-                             idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_0_1000pb_weighted.root',
-                             idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_0_1000pb_weighted.root'],
-              #'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_0_1000pb_weighted.root'],
-              #       idir+'WJetsToLNu_HT_100To200_13TeV_ext_1000pb_weighted.root',
-              #       idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
-              #       idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
-              #       idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-              #       idir+'/WJetsToLNu_HT_800To1200_13TeV_all_1000pb_weighted.root',
-              #      idir+'/WJetsToLNu_HT_1200To2500_13TeV_all_1000pb_weighted.root'],
-              #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
-              'TTbar':  [idir+'/TT_powheg_0_1000pb_weighted.root'], #Powheg is the new default
+    tfiles = {'Hbb':   [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root',
+                        idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root',
+                        idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+              'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
+                        # idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+              'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
+              'VHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                        idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+              'ttHbb':  [idir+'/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'Diboson': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
+                          idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
+                          idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
+              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
+              'SingleTop':  [idir+'/ST_t_channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
+                             idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
+                             idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root',
+                             idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root'],
+              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'Wlnu': [idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
+                     idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
+                    idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
+                    idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
+              'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT200to300_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT700to1000_13TeV_ext_0_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_ext_0_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT2000toInf_13TeV_ext_0_1000pb_weighted.root',],
+                      idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
+
             }
 
     color = {'ggHbb': ROOT.kRed+1,
@@ -106,8 +111,8 @@ def main(options,args):
     #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 100, lumi)
-    bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
+    bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1000, lumi)
+    bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 10, lumi)
     #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
 
     ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')

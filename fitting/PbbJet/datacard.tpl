@@ -16,22 +16,20 @@ process tthqq125 whqq125 hqq125 zhqq125 vbfhqq125 zqq wqq qcd tqq tthqq125 whqq1
 process -4 -3 -2 -1 0 1 2 3 4 -4 -3 -2 -1 0 1 2 3 4 
 rate -1 -1 -1 -1 -1 -1 -1 1.0 -1 -1 -1 -1 -1 -1 -1 -1 1.0 -1 
 ----------------------------------------------------------------------------------------------------------------------------------
-lumi lnN 1.05 1.05 1.05 1.05 1.05 1.05 1.05 - 1.05 1.05 1.05 1.05 1.05 1.05 1.05 1.05 - 1.05
+lumi lnN 1.026 1.026 1.026 1.026 1.026 1.026 1.026 - 1.026 1.026 1.026 1.026 1.026 1.026 1.026 1.026 - 1.026
 veff lnN 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - - 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - -
-bbeff lnN 1.01 1.01 1.01 1.01 1.01 - - - - 1.01 1.01 1.01 1.01 1.01 - - - -
+bbeff lnN 1.1 1.1 1.1 1.1 1.1 - - - - 1.1 1.1 1.1 1.1 1.1 - - - -
 znormQ lnN - - - - - 1.1 1.1 - - - - - - - 1.1 1.1 - -
 znormEW lnN - - - - - 1.15 1.15 - - - - - - - 1.15 1.15 - -
-jes lnN 1.02 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02 1.02 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02
-jer lnN 1.02 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02 1.02 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02
-trigger lnN 1.02 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02 1.02 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02
+JES shape 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
+JER shape 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
+trigger shape 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
 muveto lnN 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005
 eleveto lnN 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005
-#scale shape 0.2 0.2 0.2 - - 0.2 0.2 0.2 - -
-#smear shape - 1.0 1.0 - - - 1.0 1.0 - -
-#tqqnormSF lnN - - - - - - - - 1.06 - - - - - - - - 1.06
-#tqqeffSF lnN - - - - - - - - 1.29 - - - - - - - - 0.9935
+scale shape 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - -
+smear shape 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - -
 tqqpassCATXnorm rateParam pass_CATX tqq (@0*@1) tqqnormSF,tqqeffSF
-tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*0.0845)/(1.0-0.0845)) tqqnormSF,tqqeffSF
+tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*5.523909e-02)/(1.0-5.523909e-02)) tqqnormSF,tqqeffSF
 tqqnormSF extArg 1.0 [0.0,10.0]
 tqqeffSF extArg 1.0 [0.0,10.0]
 r1p0 flatParam
@@ -42,11 +40,4 @@ r2p1 flatParam
 r0p2 flatParam
 r1p2 flatParam
 r2p2 flatParam
-r3p2 flatParam
-r3p1 flatParam
-r3p0 flatParam
-r0p3 flatParam
-r1p3 flatParam
-r2p3 flatParam
-r3p3 flatParam
 qcdeff flatParam

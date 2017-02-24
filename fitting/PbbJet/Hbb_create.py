@@ -59,7 +59,7 @@ def main(options,args):
                       idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
+                      idir+'/QCD_HT1000to1500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],

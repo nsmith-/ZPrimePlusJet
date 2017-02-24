@@ -11,9 +11,12 @@ import time
 import array
 
 # including other directories
-sys.path.insert(0, '../.')
+#sys.path.insert(0, '../.')
 from tools import *
 
+msd_binBoundaries=[]
+for i in range(0,24): msd_binBoundaries.append(40+i*7)
+pt_binBoundaries = [450,500,550,600,675,800,1000]    
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
@@ -30,7 +33,7 @@ def main(options,args):
     shapes = ['wqq','zqq','tqq','qcd','hqq125','zhqq125','whqq125','tthqq125','vbfhqq125','data']	
 
 
-    for i in range(5):
+    for i in range(len(pt_binBoundaries)-1):
         (tmppass,tmpfail) = plotCategory(fml,fd,i+1,options.fit)
         histograms_pass_all[i] = {}
         histograms_fail_all[i] = {}
@@ -41,9 +44,6 @@ def main(options,args):
                 if shape in hist.GetName(): histograms_fail_all[i][shape] = hist
                 
 
-    msd_binBoundaries=[]
-    for i in range(0,24): msd_binBoundaries.append(40+i*7)
-    pt_binBoundaries = [500,550,600,675,800,1000]    
     pass_2d = {}
     fail_2d = {}
     for shape in shapes:
@@ -67,7 +67,7 @@ def main(options,args):
     for shape in shapes:
         histograms_pass_summed[shape] = histograms_pass_all[0][shape].Clone(shape+'_pass_sum')
         histograms_fail_summed[shape] = histograms_fail_all[0][shape].Clone(shape+'_fail_sum')
-        for i in range(1,5):
+        for i in range(1,len(pt_binBoundaries)-1):
             histograms_pass_summed[shape].Add(histograms_pass_all[i][shape])
             histograms_fail_summed[shape].Add(histograms_fail_all[i][shape])
 
@@ -96,8 +96,11 @@ def main(options,args):
 
         pars = []
         for p in lParams:
-            print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError()
-            pars.append(rfr.floatParsFinal().find(p).getVal())
+            if rfr.floatParsFinal().find(p):
+                print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError()
+                pars.append(rfr.floatParsFinal().find(p).getVal())
+            else:
+                pars.append(0)
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
         else:
@@ -259,10 +262,24 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     p22.SetGrid()
 
     iRatio = data.Clone('iRatio%s'%tag)
+    for i in range(iRatio.GetNbinsX()):            
+        if htot.GetBinContent(i+1) > 0:
+            iRatio.SetBinContent( i+1, data.GetBinContent(i+1)/htot.GetBinContent(i+1) )
+            iRatio.SetBinError( i+1, data.GetBinError(i+1)/htot.GetBinContent(i+1) )
+        iRatioGraph = r.TGraphAsymmErrors(iRatio)        
+    alpha = 1-0.6827
+    for i in range(0,iRatioGraph.GetN()):
+        N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)
+        L = 0
+        if N!=0:
+            L = r.Math.gamma_quantile(alpha/2,N,1.)
+        U = r.Math.gamma_quantile_c(alpha/2,N+1,1)
+        iRatioGraph.SetPointEYlow(i, (N-L)/htot.GetBinContent(i+1))
+        iRatioGraph.SetPointEYhigh(i, (U-N)/htot.GetBinContent(i+1))
+        iRatioGraph.SetPoint(i, iRatioGraph.GetX()[i], N/htot.GetBinContent(i+1) )
     
     data.GetXaxis().SetTitleOffset(100)
     data.GetXaxis().SetLabelOffset(100)
-    iRatio.Divide(htot)
     iRatio.SetTitle("; m_{SD}^{PUPPI} (GeV); Data/Prediction")
     iRatio.SetMaximum(1.5)
     iRatio.SetMinimum(0.)
@@ -293,7 +310,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     iOneWithErrorsLine.SetFillStyle(0)
     iOneWithErrorsLine.Draw("hist sames")
     iOneWithErrors.Draw("e2 sames")
-    iRatio.Draw("pezsames")
+    iRatioGraph.Draw("pezsames")
 
     sigHist = hsig.Clone('sigHist%s'%tag)
     sigHist.Add(htot)
@@ -427,6 +444,6 @@ if __name__ == '__main__':
 	r.gStyle.SetPaintTextFormat("1.1f")
 	r.gStyle.SetOptFit(0000)
 	r.gROOT.SetBatch()
-        r.gStyle.SetPalette(r.kBird)	
+    #r.gStyle.SetPalette(r.kBird)	
 	main(options,args)
 ##-------------------------------------------------------------------------------------
