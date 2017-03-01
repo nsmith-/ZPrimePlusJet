@@ -29,7 +29,7 @@ eleveto lnN 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 
 scale shape 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - -
 smear shape 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - -
 tqqpassCATXnorm rateParam pass_CATX tqq (@0*@1) tqqnormSF,tqqeffSF
-tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*0.0845)/(1.0-0.0845)) tqqnormSF,tqqeffSF
+tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*5.523909e-02)/(1.0-5.523909e-02)) tqqnormSF,tqqeffSF
 tqqnormSF extArg 1.0 [0.0,10.0]
 tqqeffSF extArg 1.0 [0.0,10.0]
 r1p0 flatParam
