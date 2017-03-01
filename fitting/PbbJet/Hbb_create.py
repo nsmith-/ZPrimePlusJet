@@ -106,15 +106,15 @@ def main(options,args):
             }
 
     if muonCR:
-        tfiles['data_obs'] = [idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root',
-                       idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v3.root']
+        tfiles['data_obs'] = [idir+'/SingleMuonRun2016B_03Feb2017_ver1_v1.root',
+                       idir+'/SingleMuonRun2016B_03Feb2017_ver2_v2.root',
+                       idir+'/SingleMuonRun2016C_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016D_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016E_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016F_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016G_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver2_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver3_v1.root']
         
     
     print "Signals... "
@@ -150,7 +150,9 @@ def main(options,args):
               'h_msd_v_pt_ak8_topR6_N2_pass_JERUp','h_msd_v_pt_ak8_topR6_N2_pass_JERDown', #JER up/down
               'h_msd_v_pt_ak8_topR6_N2_fail_JERUp','h_msd_v_pt_ak8_topR6_N2_fail_JERDown', #JER up/down
               'h_msd_v_pt_ak8_topR6_N2_pass_triggerUp','h_msd_v_pt_ak8_topR6_N2_pass_triggerDown', #trigger up/down
-              'h_msd_v_pt_ak8_topR6_N2_fail_triggerUp','h_msd_v_pt_ak8_topR6_N2_fail_triggerDown', #trigger up/down              
+              'h_msd_v_pt_ak8_topR6_N2_fail_triggerUp','h_msd_v_pt_ak8_topR6_N2_fail_triggerDown', #trigger up/down   
+              'h_msd_v_pt_ak8_topR6_N2_pass_PuUp','h_msd_v_pt_ak8_topR6_N2_pass_PuDown', #Pu up/down
+              'h_msd_v_pt_ak8_topR6_N2_fail_PuUp','h_msd_v_pt_ak8_topR6_N2_fail_PuDown', #trigger up/down             
               ] 
     
     if options.bb:
@@ -167,6 +169,8 @@ def main(options,args):
                   'h_msd_ak8_muCR4_N2_fail_muidUp','h_msd_ak8_muCR4_N2_fail_muidDown',
                   'h_msd_ak8_muCR4_N2_pass_muisoUp','h_msd_ak8_muCR4_N2_pass_muisoDown',
                   'h_msd_ak8_muCR4_N2_fail_muisoUp','h_msd_ak8_muCR4_N2_fail_muisoDown',
+                  'h_msd_ak8_muCR4_N2_pass_PuUp','h_msd_ak8_muCR4_N2_pass_PuDown',
+                  'h_msd_ak8_muCR4_N2_fail_PuUp','h_msd_ak8_muCR4_N2_fail_PuDown',
                   ]
         
     for plot in plots:

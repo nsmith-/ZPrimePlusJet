@@ -8,8 +8,8 @@ import math
 import sys
 import time
 import array
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 
 
 # including other directories
@@ -413,20 +413,51 @@ class dazsleRhalphabetBuilder:
             process = pFunc.GetName().split('_')[0]
             cat = pFunc.GetName().split('_')[1]
             mass = 0
-            systematics = ['JES','JER','trigger']
+            systematics = ['JES','JER','trigger','mcstat']
             if iSyst and ( 'tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process ):
                 # get systematic histograms
                 hout = []
+                histDict = {}
                 for syst in systematics:
-                    tmph_up = self._inputfile.Get(process+'_'+cat+'_'+syst+'Up')
-                    tmph_down = self._inputfile.Get(process+'_'+cat+'_'+syst+'Down')
-                    tmph_mass_up = proj('cat',str(ipt),tmph_up,self._mass_nbins,self._mass_lo,self._mass_hi)
-                    tmph_mass_down = proj('cat',str(ipt),tmph_down,self._mass_nbins,self._mass_lo,self._mass_hi)                    
-                    tmph_mass_up.SetName(pFunc.GetName()+'_'+syst+'Up')                
-                    tmph_mass_down.SetName(pFunc.GetName()+'_'+syst+'Down')              
-                    hout.append(tmph_mass_up)
-                    hout.append(tmph_mass_down)
-                # blind if necessary and output to workspace
+                    if syst=='mcstat':
+                        tmph = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat)
+                        tmph_up = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat+'_'+syst+'Up')
+                        tmph_down = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat+'_'+syst+'Down')
+                        tmph_mass = proj('cat',str(ipt),tmph,self._mass_nbins,self._mass_lo,self._mass_hi)      
+                        tmph_mass_up = proj('cat',str(ipt),tmph_up,self._mass_nbins,self._mass_lo,self._mass_hi)
+                        tmph_mass_down = proj('cat',str(ipt),tmph_down,self._mass_nbins,self._mass_lo,self._mass_hi)
+                        for i in range(1,tmph_mass_up.GetNbinsX()+1):
+                            mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
+                            mcstatdown = max(0.,tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))
+                            tmph_mass_up.SetBinContent(i,mcstatup)
+                            tmph_mass_down.SetBinContent(i,mcstatdown)                     
+                        tmph_mass.SetName(pFunc.GetName())                      
+                        tmph_mass_up.SetName(pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+syst+'Up')                
+                        tmph_mass_down.SetName(pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+syst+'Down')
+                        histDict[pFunc.GetName()] = tmph_mass
+                        histDict[pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+syst+'Up'] = tmph_mass_up
+                        histDict[pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+syst+'Down'] = tmph_mass_down
+                        if 'tqq' in process: 
+                            hout.append(tmph_mass)                          
+                        #hout.append(tmph_mass_up)
+                        #hout.append(tmph_mass_down)                   
+                    else:                        
+                        tmph_up = self._inputfile.Get(process+'_'+cat+'_'+syst+'Up')
+                        tmph_down = self._inputfile.Get(process+'_'+cat+'_'+syst+'Down')
+                        tmph_mass_up = proj('cat',str(ipt),tmph_up,self._mass_nbins,self._mass_lo,self._mass_hi)
+                        tmph_mass_down = proj('cat',str(ipt),tmph_down,self._mass_nbins,self._mass_lo,self._mass_hi)                    
+                        tmph_mass_up.SetName(pFunc.GetName()+'_'+syst+'Up')                
+                        tmph_mass_down.SetName(pFunc.GetName()+'_'+syst+'Down')              
+                        hout.append(tmph_mass_up)
+                        hout.append(tmph_mass_down)
+                uncorrelate(histDict,'mcstat')
+                for key, myhist in histDict.iteritems():
+                    if 'mcstat' in key:
+                        print key
+                        hout.append(myhist)
+                #print hout
+                #sys.exit()
+                # blind if necessary and output to workspace                
                 for h in hout:
                     for i in range(1,h.GetNbinsX()+1):
                         massVal = h.GetXaxis().GetBinCenter(i)
@@ -434,9 +465,11 @@ class dazsleRhalphabetBuilder:
                         if self._blind and massVal > BLIND_LO and massVal < BLIND_HI:
                             print "blinding signal region for %s, mass bin [%i,%i] "%(h.GetName(),h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i,0.)
+                            h.SetBinError(i,0.)
                         if rhoVal < RHO_LO or rhoVal > RHO_HI:
                             print "removing rho = %.2f for %s, ptVal = %.2f, mass bin [%i,%i]"%(rhoVal,h.GetName(),ptVal,h.GetXaxis().GetBinLowEdge(i),h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i,0.)
+                            h.SetBinError(i,0.)
                     tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
                     getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                     # validation
@@ -457,10 +490,22 @@ class dazsleRhalphabetBuilder:
 
                 # smear/shift the matched
                 hist_container = hist( [mass],[tmph_mass_matched] )
-                mass_shift = 0.99
-                mass_shift_unc = 0.03*2. #(2 sigma shift)
-                res_shift = 1.094
-                res_shift_unc = 0.123*2. #(2 sigma shift) 
+                #mass_shift = 0.99
+                #mass_shift_unc = 0.03*2. #(2 sigma shift)
+                #res_shift = 1.094
+                #res_shift_unc = 0.123*2. #(2 sigma shift)
+                m_data = 82.657
+                m_data_err = 0.313
+                m_mc = 82.548
+                m_mc_err = 0.191
+                s_data = 8.701
+                s_data_err = 0.433
+                s_mc = 8.027
+                s_mc_err = 0.607
+                mass_shift = m_data/m_mc
+                mass_shift_unc = math.sqrt((m_data_err/m_data)*(m_data_err/m_data) + (m_mc_err/m_mc)*(m_mc_err/m_mc)) * 10. #(10 sigma shift)
+                res_shift = s_data/s_mc
+                res_shift_unc = math.sqrt((s_data_err/s_data)*(s_data_err/s_data) + (s_mc_err/s_mc)*(s_mc_err/s_mc)) * 2. #(2 sigma shift)
                 # get new central value
                 shift_val = mass - mass*mass_shift
                 tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val)
@@ -558,6 +603,8 @@ def loadHistograms(f,pseudo,blind,useQCD,scale):
         if bkg=='qcd':
             qcd_fail = f.Get('qcd_fail')
             qcd_fail.Scale(1./scale)
+            qcd_fail.SetBinContent(13,4,(qcd_fail.GetBinContent(12,4)+qcd_fail.GetBinContent(14,4))/2.) # REMOVE HIGH WEIGHT EVENT BIN
+            qcd_fail.SetBinError(13,4,(qcd_fail.GetBinError(12,4)+qcd_fail.GetBinError(14,4))/2.) # REMOVE HIGH WEIGHT EVENT BIN
             if useQCD:
                 qcd_pass = f.Get('qcd_pass')
                 qcd_pass.Scale(1./scale)

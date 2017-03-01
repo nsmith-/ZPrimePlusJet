@@ -61,13 +61,73 @@ class hist:
         lHPdf = self.histpdf(iH,lShift)
         lDM.setVal(1.+iScale)
         lUp = lHPdf.createHistogram("x")
-        lUp.SetTitle(lHPdf.GetName()+"_scaleUp")
-        lUp.SetName (lHPdf.GetName()+"_scaleUp")
+        lUp.SetTitle(lHPdf.GetName()+"_smearUp")
+        lUp.SetName (lHPdf.GetName()+"_smearUp")
         lUp.Scale(iH.Integral())
                 
         lDM.setVal(1.-iScale)
         lDown = lHPdf.createHistogram("x")
-        lDown.SetTitle(lHPdf.GetName()+"_scaleDown")
-        lDown.SetName (lHPdf.GetName()+"_scaleDown")
+        lDown.SetTitle(lHPdf.GetName()+"_smearDown")
+        lDown.SetName (lHPdf.GetName()+"_smearDown")
         lDown.Scale(iH.Integral())
         return [lUp,lDown]
+
+def uncorrelate(hists, sysName, suppressLevel=None):
+    """Replaces each histogram whose name contains 'sysName' with many copies that represent uncorrelated bin-by-bin systematics.
+    suppressLevel: if provided, new histograms will only be created for bins that differ from nominal by a fractional amount greater than suppressLevel."""
+    #get all histograms that match the input string
+    toUncorrelate = [name for name in hists if sysName in name]
+    print "Treating the following distributions as uncorrelated for",sysName,": "
+    for name in toUncorrelate: print name
+    
+    #get names of individual systematics
+    systNames = []
+    for name in toUncorrelate:
+        systName = name.replace("Up","").replace("Down","")
+        if systName not in systNames:
+            systNames.append(systName)
+
+    for name in systNames:
+        print("Uncorrelating "+name)
+        #get histogram with central values
+        centerName = name.split("_")[:-1]
+        centerName = '_'.join(centerName)
+        #get up and down variants
+        upName = name+'Up'
+        downName = name+'Down'
+        uncName = name.split("_")[-1]
+        print("Central values taken from "+centerName)
+        #for each bin create a new histogram in which that bin is up/down and the rest are centered
+        for b in range(1,hists[centerName].GetNbinsX()+1):
+            newHistUpName = centerName+"_"+uncName+str(b)+"Up"
+            newHistDownName = centerName+"_"+uncName+str(b)+"Down"
+
+            #check level of agreement with the nominal
+            if suppressLevel is not None:
+                #get percent difference from nominal
+                if hists[centerName].GetBinContent(b) > 0:
+                    percDifferenceUp = abs(hists[upName].GetBinContent(b)-hists[centerName].GetBinContent(b))/hists[centerName].GetBinContent(b)
+                    percDifferenceDown = abs(hists[downName].GetBinContent(b)-hists[centerName].GetBinContent(b))/hists[centerName].GetBinContent(b)
+                    percDifference = max(percDifferenceUp, percDifferenceDown)
+                    if percDifference <= suppressLevel: 
+                        #print "Suppressing nuisance in bin",b,"(agrees at",percDifference,"level)"
+                        continue
+                elif hists[upName].GetBinContent(b) == hists[centerName].GetBinContent(b) and hists[downName].GetBinContent(b) == hists[centerName].GetBinContent(b): 
+                        #print "Suppressing nuisance in bin",b,"because there is no change from the nominal"
+                        continue
+
+            #new up histogram
+            hists[newHistUpName] = hists[centerName].Clone(newHistUpName)
+            hists[newHistUpName].SetDirectory(0)
+            hists[newHistUpName].SetBinContent(b, hists[upName].GetBinContent(b)) #new hist has the unperturbed value in every bin except one
+            hists[newHistUpName].SetBinError(b, hists[upName].GetBinError(b))
+
+            #new down histogram
+            hists[newHistDownName] = hists[centerName].Clone(newHistDownName)
+            hists[newHistDownName].SetDirectory(0)
+            hists[newHistDownName].SetBinContent(b, hists[downName].GetBinContent(b)) #new hist has the unperturbed value in every bin except one
+            hists[newHistDownName].SetBinError(b, hists[downName].GetBinError(b))
+
+        #remove the original histogram
+        del hists[upName]
+        del hists[downName]

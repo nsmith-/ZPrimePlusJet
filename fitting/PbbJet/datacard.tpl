@@ -21,12 +21,12 @@ veff lnN 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - - 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - -
 bbeff lnN 1.1 1.1 1.1 1.1 1.1 - - - - 1.1 1.1 1.1 1.1 1.1 - - - -
 znormQ lnN - - - - - 1.1 1.1 - - - - - - - 1.1 1.1 - -
 znormEW lnN - - - - - 1.15 1.15 - - - - - - - 1.15 1.15 - -
-JES shape 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
-JER shape 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
+JES lnN 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
+JER lnN 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
 trigger shape 1 1 1 1 1 1 1 - 1 1 1 1 1 1 1 1 - 1
 muveto lnN 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005
 eleveto lnN 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005
-scale shape 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - -
+scale shape 0.1 0.1 0.1 0.1 0.1 0.1 0.1 - - 0.1 0.1 0.1 0.1 0.1 0.1 0.1 - -
 smear shape 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - -
 tqqpassCATXnorm rateParam pass_CATX tqq (@0*@1) tqqnormSF,tqqeffSF
 tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*5.523909e-02)/(1.0-5.523909e-02)) tqqnormSF,tqqeffSF
@@ -37,7 +37,4 @@ r2p0 flatParam
 r0p1 flatParam
 r1p1 flatParam
 r2p1 flatParam
-r0p2 flatParam
-r1p2 flatParam
-r2p2 flatParam
 qcdeff flatParam

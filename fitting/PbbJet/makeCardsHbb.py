@@ -15,6 +15,10 @@ sys.path.insert(0, '../.')
 from tools import *
 
 
+BLIND_LO = 110
+BLIND_HI = 131
+RHO_LO = -6
+RHO_HI = -2.1
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
@@ -26,7 +30,8 @@ def main(options,args):
 
     nBkgd = len(bkgs)
     nSig = len(sigs)
-
+    numberOfMassBins = 23    
+    numberOfPtBins = 6
 
     histoDict = {}
 
@@ -41,17 +46,17 @@ def main(options,args):
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
     dctpl = open("datacard.tpl")
-    numberOfMassBins = 23
 
     linel = [];
     for line in dctpl: 
         print line.strip().split()
         linel.append(line.strip())
 
-    for i in range(1,6+1):
+    for i in range(1,numberOfPtBins+1):
 
         jesErrs = {}
         jerErrs = {}
+        mcstatErrs = {}
         for box in boxes:
             for proc in (sigs+bkgs):
                 rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
@@ -65,10 +70,19 @@ def main(options,args):
                 else:
                     jesErrs['%s_%s'%(proc,box)] =  1.0
                     jerErrs['%s_%s'%(proc,box)] =  1.0
+                for j in range(1,numberOfMassBins):
+                    mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
+                        
 
         jesString = 'JES lnN'
         jerString = 'JER lnN'
-
+        mcStatStrings = {}
+        mcStatGroupString = 'mcstat group =' 
+        for box in boxes:
+            for proc in sigs+bkgs:
+                for j in range(1,numberOfMassBins):
+                    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
+                    
         for box in boxes:
             for proc in sigs+bkgs:
                 if proc=='qcd':
@@ -77,6 +91,13 @@ def main(options,args):
                 else:
                     jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
+                for j in range(1,numberOfMassBins):
+                    for box1 in boxes:                    
+                        for proc1 in sigs+bkgs:                            
+                            if proc1==proc and box1==box:
+                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%d'% mcstatErrs['%s_%s'%(proc,box),i,j]
+                            else:                        
+                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
         tag = "cat"+str(i)
         dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
@@ -90,8 +111,25 @@ def main(options,args):
             if "CATX" in l:
                 newline = l.replace('CATX',tag)
             dctmp.write(newline + "\n")
+        for box in boxes:
+            for proc in sigs+bkgs:
+                for j in range(1,numberOfMassBins):                    
+                    # if stat. unc. is greater than 10% 
+                    #if histoDict['%s_%s'%(proc,box)].GetBinError(j,i) > 0.1*histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) and proc!='qcd':
+                    if histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) > 0 and proc!='qcd':
+                        massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(j)
+                        ptVal = histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinLowEdge(i) + 0.3*(histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinWidth(i))
+                        rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
+                        if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
+                            dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
+                            print 'include %s%scat%imcstat%i'%(proc,box,i,j)
+                            mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
+                        else:
+                            print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
+                        
         for im in range(numberOfMassBins):
             dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
+        dctmp.write(mcStatGroupString + "\n")
 
 
 ###############################################################
@@ -106,6 +144,7 @@ if __name__ == '__main__':
     parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
     parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory to write cards', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
+    parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
 
     (options, args) = parser.parse_args()
 

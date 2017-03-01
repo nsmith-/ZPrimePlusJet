@@ -97,7 +97,7 @@ def main(options,args,outputExists):
                      idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
-              'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
+              'TTbar':  [idir+'/TT_powheg_1000pb_weighted_v1204.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
                       idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
@@ -147,15 +147,15 @@ def main(options,args,outputExists):
                        idir+'JetHTRun2016G_23Sep2016_v1_v2.root',
                        idir+'JetHTRun2016H_PromptReco_v2.root',
                        idir+'JetHTRun2016H_PromptReco_v3.root'],
-              'muon': [idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root',
-                       idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v3.root']
+              'muon': [idir+'/SingleMuonRun2016B_03Feb2017_ver1_v1.root',
+                       idir+'/SingleMuonRun2016B_03Feb2017_ver2_v2.root',
+                       idir+'/SingleMuonRun2016C_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016D_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016E_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016F_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016G_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver2_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver3_v1.root']
 
 
             }
