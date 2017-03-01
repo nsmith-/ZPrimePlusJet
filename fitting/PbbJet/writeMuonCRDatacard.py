@@ -193,7 +193,7 @@ def main(options, args):
     w.factory('x[40,40,201]')
     w.var('x').setBins(23)
     for key, histo in histoDict.iteritems():
-        histo.Rebin(23)
+        #histo.Rebin(23)
         #ds = rt.RooDataHist(key,key,rt.RooArgList(w.var('y')),histo)
         ds = rt.RooDataHist(key,key,rt.RooArgList(w.var('x')),histo)
         getattr(w,'import')(ds)
