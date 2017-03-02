@@ -8,6 +8,35 @@ import time
 import array
 import os
 
+RHO_LO = -6
+RHO_HI = -2.1
+BB_SF = 0.91
+BB_SF_ERR = 0.03
+V_SF = 0.993
+V_SF_ERR = 0.043
+def getSF(process,cat,f):
+    if 'hqq' in process:
+        if 'pass' in cat:
+            return V_SF*BB_SF
+        else:
+            passInt = f.Get(process+'_pass').Integral()
+            failInt = f.Get(process+'_fail').Integral()
+            if failInt > 0:
+                return V_SF*(1.+(1.-BB_SF)*passInt/failInt)
+            else:
+                return V_SF                
+    elif 'wqq' in process or 'zqq' in process:
+        if 'pass' in cat:
+            return BB_SF
+        else:
+            passInt = f.Get(process+'_pass').Integral()
+            failInt = f.Get(process+'_fail').Integral()
+            if failInt > 0:
+                return (1.+(1.-BB_SF)*passInt/failInt)
+            else:
+                return 1.
+    else:
+        return 1.
 def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     obsRate = {}
     for box in boxes:
@@ -36,8 +65,17 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             rates['%s_%s'%(proc,box)]  = rate
             lumiErrs['%s_%s'%(proc,box)] = 1.026
             if proc=='wqq' or proc=='zqq' or 'hqq' in proc:
-                veffErrs['%s_%s'%(proc,box)] = 1.2
-                bbeffErrs['%s_%s'%(proc,box)] = 1.1
+                veffErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
+                if box=='pass':
+                    bbeffErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR/BB_SF
+                else:
+                    ratePass = histoDict['%s_%s'%(proc,'pass')].Integral()
+                    rateFail = histoDict['%s_%s'%(proc,'fail')].Integral()
+                    if rateFail>0:
+                        bbeffErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
+                    else:
+                        bbeffErrs['%s_%s'%(proc,box)] = 1.0
+                    
             else:
                 veffErrs['%s_%s'%(proc,box)] = 1.
                 bbeffErrs['%s_%s'%(proc,box)] = 1.
@@ -87,8 +125,8 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     lumiString = 'lumi\tlnN'
     veffString = 'veff\tlnN'
     bbeffString = 'bbeff\tlnN'
-    znormEWString = 'znormEW\tlnN'
-    znormQString = 'znormQ\tlnN'    
+    znormEWString = 'znormEWmuonCR\tlnN'
+    znormQString = 'znormQmuonCR\tlnN'    
     muidString = 'muid\tshape'   
     muisoString = 'muiso\tshape'   
     mutriggerString = 'mutrigger\tshape'  
@@ -99,7 +137,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     mcStatErrString = {}
     for proc in sigs+bkgs:
         for box in boxes:
-            mcStatErrString['%s_%s'%(proc,box)] = '%s_%s_muonCR_mcstat\tlnN'%(proc,box)
+            mcStatErrString['%s_%s'%(proc,box)] = '%s%smuonCRmcstat\tlnN'%(proc,box)
 
     for box in boxes:
         i = -1
@@ -174,13 +212,17 @@ def main(options, args):
     for proc in (bkgs+sigs+['data_obs']):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
-            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
+            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box)).Clone()
+            histoDict['%s_%s'%(proc,box)].Scale(getSF(proc,box,tfile))
             for syst in systs:
                 if proc!='data_obs':
                     print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst))
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst)).Clone()
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(getSF(proc,box,tfile))
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst)).Clone()
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(getSF(proc,box,tfile))
+                    
                 
     
     outFile = 'datacard_muonCR.root'

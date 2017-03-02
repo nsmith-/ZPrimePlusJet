@@ -19,6 +19,10 @@ BLIND_LO = 110
 BLIND_HI = 131
 RHO_LO = -6
 RHO_HI = -2.1
+BB_SF = 0.91
+BB_SF_ERR = 0.03
+V_SF = 0.993
+V_SF_ERR = 0.043
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
@@ -39,6 +43,7 @@ def main(options,args):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
+                
             for syst in systs:
                 print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
                 histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst))
@@ -56,6 +61,8 @@ def main(options,args):
 
         jesErrs = {}
         jerErrs = {}
+        bbErrs = {}
+        vErrs = {}
         mcstatErrs = {}
         for box in boxes:
             for proc in (sigs+bkgs):
@@ -70,12 +77,27 @@ def main(options,args):
                 else:
                     jesErrs['%s_%s'%(proc,box)] =  1.0
                     jerErrs['%s_%s'%(proc,box)] =  1.0
+                    
+                vErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
+                if box=='pass':
+                    bbErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR/BB_SF
+                else:
+                    ratePass = histoDict['%s_%s'%(proc,'pass')].Integral()
+                    rateFail = histoDict['%s_%s'%(proc,'fail')].Integral()
+                    if rateFail>0:
+                        bbErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
+                    else:
+                        bbErrs['%s_%s'%(proc,box)] = 1.0
+                        
+                    
                 for j in range(1,numberOfMassBins):
                     mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                         
 
         jesString = 'JES lnN'
         jerString = 'JER lnN'
+        bbString = 'bbeff lnN'
+        vString = 'veff lnN'
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group =' 
         for box in boxes:
@@ -91,6 +113,14 @@ def main(options,args):
                 else:
                     jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
+                if proc in ['qcd','tqq','wqq','zqq']:
+                    bbString += ' -'
+                else:
+                    bbString += ' %.3f'%bbErrs['%s_%s'%(proc,box)]
+                if proc in ['qcd','tqq']:
+                    vString += ' -'
+                else:
+                    vString += ' %.3f'%vErrs['%s_%s'%(proc,box)]
                 for j in range(1,numberOfMassBins):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
@@ -106,6 +136,10 @@ def main(options,args):
                 newline = jesString
             elif 'JER' in l:
                 newline = jerString
+            elif 'bbeff' in l:
+                newline = bbString
+            elif 'veff' in l:
+                newline = vString
             else:
                 newline = l
             if "CATX" in l:
