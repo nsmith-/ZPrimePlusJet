@@ -82,12 +82,12 @@ class dazsleRhalphabetBuilder:
 					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 4) and ipt == 2) or ((i0 > 46 or i0 < 5) and ipt == 3) or ((i0 > 56 or i0 < 7) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
-                        for ih,h in enumerate(self._hfail):
-                                tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
+			for ih,h in enumerate(self._hfail):
+				tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
 				for i0 in range(1,self._mass_nbins+1):
 					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 4) and ipt == 2) or ((i0 > 46 or i0 < 5) and ipt == 3) or ((i0 > 56 or i0 < 7 ) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmpfail_inPtBin.SetBinContent(i0,0);
-                                hfail_inPtBin.append( tmpfail_inPtBin ) 
+				hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
 			# make RooDataset, RooPdfs, and histograms
 			curptbincenter = self._hpass[0].GetYaxis().GetBinCenter(ipt);
@@ -160,7 +160,7 @@ class dazsleRhalphabetBuilder:
 			# print pPass.GetName();
 			pSumP = 0
 			for i1 in range(0,len(iHPs)):
-			        pSumP = pSumP + iHPs[i1].GetBinContent(i0) if i1 == 0 else pSumP - iHPs[i1].GetBinContent(i0); # subtract W/Z from data 
+					pSumP = pSumP + iHPs[i1].GetBinContent(i0) if i1 == 0 else pSumP - iHPs[i1].GetBinContent(i0); # subtract W/Z from data 
 			if pSumP < 0: pSumP = 0
 
 			#If the number of events in the failing is small remove the bin from being free in the fit
@@ -234,18 +234,17 @@ class dazsleRhalphabetBuilder:
 		lFit  = r.RooFitResult(lFile.Get("fit_b"))
 		self._lEffQCD.setVal(lFit.floatParsFinal().find("qcdeff").getVal())
 		for i0 in range(iNVar0+1):
-                       for i1 in range(iNVar1+1):
-                               pVar = iLabel1+str(i1)+iLabel0+str(i0);
-                               pXMin = iXMin0
-                               pXMax = iXMax0
-                               pVal  = math.pow(10,-min(i1,2))
-                               #pVal  = math.pow(10,-i1-i0)
-			       if i1 == 0:
-				       pVal  = math.pow(10,-i1-min(int(i0*0.5),1))
-			       pCent = 0 if pVar == "p0r0" else lFit.floatParsFinal().find(pVar).getVal()
-                               pRooVar = r.RooRealVar(pVar,pVar,pCent,pXMin*pVal,pXMax*pVal)
-                               print pVar,pVal,"!!!!!!!!!!"
-                               iVars.append(pRooVar)
+			for i1 in range(iNVar1+1):
+				pVar = iLabel1+str(i1)+iLabel0+str(i0);
+				pXMin = iXMin0
+				pXMax = iXMax0
+				pVal  = math.pow(10,-min(i1,2))
+				#pVal  = math.pow(10,-i1-i0)
+				if i1 == 0: pVal  = math.pow(10,-i1-min(int(i0*0.5),1))
+				pCent = 0 if pVar == "p0r0" else lFit.floatParsFinal().find(pVar).getVal()
+				pRooVar = r.RooRealVar(pVar,pVar,pCent,pXMin*pVal,pXMax*pVal)
+				print pVar,pVal,"!!!!!!!!!!"
+				iVars.append(pRooVar)
 		lFile.Close()
 
 	def workspaceInputs(self, iHP,iHF,iBin,iPt):
@@ -332,6 +331,43 @@ class dazsleRhalphabetBuilder:
 			process = pFunc.GetName().split("_")[0];
 			cat     = pFunc.GetName().split("_")[1];
 			mass    = 0.;
+
+			#### bbb
+			hout = [];
+			histDict = {}
+			if 'tqq' in process or 'wqq' in process or 'zqq' in process: 
+				tmph = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat)
+				tmph_up = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat+'_'+'mcstatUp')
+				tmph_down = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat+'_'+'mcstatDown')
+				# tmph.Scale(getSF(process,cat,self._inputfile))
+				# tmph_up.Scale(getSF(process,cat,self._inputfile))
+				# tmph_down.Scale(getSF(process,cat,self._inputfile))
+				tmph_mass = proj('cat',str(ipt),tmph,self._mass_nbins,self._mass_lo,self._mass_hi)      
+				tmph_mass_up = proj('cat',str(ipt),tmph_up,self._mass_nbins,self._mass_lo,self._mass_hi)
+				tmph_mass_down = proj('cat',str(ipt),tmph_down,self._mass_nbins,self._mass_lo,self._mass_hi)
+				for i in range(1,tmph_mass_up.GetNbinsX()+1):
+					mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
+					mcstatdown = max(0.,tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))
+					tmph_mass_up.SetBinContent(i,mcstatup)
+					tmph_mass_down.SetBinContent(i,mcstatdown)                     
+				tmph_mass.SetName(pFunc.GetName())                      
+				tmph_mass_up.SetName(pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatUp')                
+				tmph_mass_down.SetName(pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatDown')
+				histDict[pFunc.GetName()] = tmph_mass
+				histDict[pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatUp'] = tmph_mass_up
+				histDict[pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatDown'] = tmph_mass_down
+				uncorrelate(histDict,'mcstat')
+				for key, myhist in histDict.iteritems():
+					if 'mcstat' in key:
+						print key
+						hout.append(myhist)
+				for h in hout:
+					tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+					# validation
+					self._outfile_validation.cd()
+					h.Write()
+
 			if iShift and ("wqq" in process or "zqq" in process):
 
 				if process == "wqq": mass = 80.;
@@ -495,17 +531,17 @@ def loadHistograms(f,f1,pseudo,pseudo15):
 	print 'wqq_fail ', lHF1.Integral()
 	lHP2 = f1.Get("zqq_pass")
 	lHP2.Scale(0.88)
-        print 'zqq_pass ', lHP2.Integral()
+	print 'zqq_pass ', lHP2.Integral()
 	lHF2 = f1.Get("zqq_fail")
 	lHF2.Scale(1./0.88)
-        print 'zqq_fail ', lHF2.Integral()
+	print 'zqq_fail ', lHF2.Integral()
 	lHP3 = f.Get("qcd_pass")
-        print 'qcd_pass ', lHP3.Integral()
+	print 'qcd_pass ', lHP3.Integral()
 	lHF3 = f.Get("qcd_fail")
-        print 'qcd_fail ', lHF3.Integral()
+	print 'qcd_fail ', lHF3.Integral()
 	lHP4 = f.Get("tqq_pass")
 	lHP4.Scale(0.83)
-        print 'tqq_pass ', lHP4.Integral()
+	print 'tqq_pass ', lHP4.Integral()
 	lHF4 = f.Get("tqq_fail")
 	#lHF4.Scale(1./0.83)
 	scale=[1.0,0.8,0.75,0.7,0.6,0.5,0.5]
@@ -521,7 +557,7 @@ def loadHistograms(f,f1,pseudo,pseudo15):
 	
 	print 'tqq_fail ', lHF4.Integral()
 	print 'total mc pass ', lHP1.Integral()+lHP2.Integral()+lHP3.Integral()+lHP4.Integral()
-        print 'total mc fail ', lHF1.Integral()+lHF2.Integral()+lHF3.Integral()+lHF4.Integral()
+	print 'total mc fail ', lHF1.Integral()+lHF2.Integral()+lHF3.Integral()+lHF4.Integral()
   
 	if pseudo:
 		lHP0 = lHP3.Clone("data_obs_pass")
@@ -543,22 +579,22 @@ def loadHistograms(f,f1,pseudo,pseudo15):
 		lHP0.Add(lHP2)
 		lHP0.Add(lHP4)
 		lHF0.Add(lHF1)
-                lHF0.Add(lHF2)
-                lHF0.Add(lHF4)
+		lHF0.Add(lHF2)
+		lHF0.Add(lHF4)
 	else:
 		lHP0 = f.Get("data_obs_pass")
 		lHF0 = f.Get("data_obs_fail")
 
 	#lHP0.Smooth(10);
-        #lHP1.Smooth(10);
-        #lHP2.Smooth(10);
-        #lHP3.Smooth(10);
-        #lHP4.Smooth(10);
-        #lHF0.Smooth(10);
-        #lHF1.Smooth(10);
-        #lHF2.Smooth(10);
-        #lHF3.Smooth(10);
-        #lHF4.Smooth(10);
+		#lHP1.Smooth(10);
+		#lHP2.Smooth(10);
+		#lHP3.Smooth(10);
+		#lHP4.Smooth(10);
+		#lHF0.Smooth(10);
+		#lHF1.Smooth(10);
+		#lHF2.Smooth(10);
+		#lHF3.Smooth(10);
+		#lHF4.Smooth(10);
 
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])
