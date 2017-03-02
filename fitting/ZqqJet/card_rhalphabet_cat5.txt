@@ -1,0 +1,101 @@
+imax 2
+jmax *
+kmax *
+---------------
+shapes *    * base.root   w_$CHANNEL:$PROCESS_$CHANNEL            w_$CHANNEL:$PROCESS_$CHANNEL_$SYSTEMATIC
+shapes qcd  * ralphabase_34_pt.root w_$CHANNEL:$PROCESS_$CHANNEL
+---------------
+bin          pass_cat5 fail_cat5
+observation -1         -1
+------------------------------
+bin          pass_cat5	pass_cat5  pass_cat5 pass_cat5 pass_cat5 fail_cat5  fail_cat5  fail_cat5	fail_cat5   fail_cat5
+process      zqq100	wqq        zqq	  tqq   qcd       zqq100	  wqq        zqq	tqq   qcd
+process      0		1	   2   	     3   4      0	  1	     2		3 4
+rate         -1		-1         -1  	-1     1         -1	  -1	-1     -1		1
+--------------------------------
+lumi    lnN   1.023     1.023	1.023	-  -	    1.023	  1.023	     1.023	- -
+scale   shape 0.03	0.03   	0.03  	-  -        0.03	  0.03       0.03	- -
+scalept shape 0.12	0.12   	0.12    -  -        0.12	  0.12       0.12	- -
+smear   shape 1.0	1.0 	1.0     -  -        1.0		  1.0	     1.0	- -
+veff    lnN   0.91	0.91 	0.91    -   	-        1.006	  1.006	     1.006	- -
+znormQ  lnN   1.1	1.1 	1.1     -   -       1.1    	  1.1	     1.1	- -
+znormE5  lnN   -	1.35 	1.35     -   -        -		  1.35	     1.35	- -
+wznormE5 lnN   -	1.15 	-        -   -        -		  1.15	     -	- -
+jecs    lnN  1.02   1.02    1.02   1.02  -   1.02   1.02    1.02   1.02  -
+trigger lnN  1.02   1.02    1.02   1.02  -   1.02   1.02    1.02   1.02  -
+muveto  lnN  1.005  1.005   1.005  1.005 -   1.005  1.005   1.005  1.005 -
+eveto   lnN  1.005  1.005   1.005  1.005 -   1.005  1.005   1.005  1.005 -
+ttnormSF lnN  -      -       -      1.1   -   -      -       -      1.1   -
+#toppt    lnN  -      -       -      1.15  -   -      -       -      1.15   -
+tteffSF  lnN  -      -       -      1.1   -   -      -       -      0.97   -
+-------------------------------
+qcdeff  flatParam
+p1r0  flatParam
+p2r0  flatParam
+p3r0  flatParam
+p0r1  flatParam
+p1r1  flatParam
+p2r1  flatParam
+p3r1  flatParam
+p0r2  flatParam
+p1r2  flatParam
+p2r2  flatParam
+p3r2  flatParam
+p0r3  flatParam
+p1r3  flatParam
+p2r3  flatParam
+p3r3  flatParam
+qcd_fail_cat5_Bin7 flatParam 
+qcd_fail_cat5_Bin8 flatParam 
+qcd_fail_cat5_Bin9 flatParam 
+qcd_fail_cat5_Bin10 flatParam 
+qcd_fail_cat5_Bin11 flatParam 
+qcd_fail_cat5_Bin12 flatParam 
+qcd_fail_cat5_Bin13 flatParam 
+qcd_fail_cat5_Bin14 flatParam 
+qcd_fail_cat5_Bin15 flatParam 
+qcd_fail_cat5_Bin16 flatParam 
+qcd_fail_cat5_Bin17 flatParam 
+qcd_fail_cat5_Bin18 flatParam 
+qcd_fail_cat5_Bin19 flatParam 
+qcd_fail_cat5_Bin20 flatParam 
+qcd_fail_cat5_Bin21 flatParam 
+qcd_fail_cat5_Bin22 flatParam 
+qcd_fail_cat5_Bin23 flatParam 
+qcd_fail_cat5_Bin24 flatParam 
+qcd_fail_cat5_Bin25 flatParam 
+qcd_fail_cat5_Bin26 flatParam 
+qcd_fail_cat5_Bin27 flatParam 
+qcd_fail_cat5_Bin28 flatParam 
+qcd_fail_cat5_Bin29 flatParam 
+qcd_fail_cat5_Bin30 flatParam 
+qcd_fail_cat5_Bin31 flatParam 
+qcd_fail_cat5_Bin32 flatParam 
+qcd_fail_cat5_Bin33 flatParam 
+qcd_fail_cat5_Bin34 flatParam 
+qcd_fail_cat5_Bin35 flatParam 
+qcd_fail_cat5_Bin36 flatParam 
+qcd_fail_cat5_Bin37 flatParam 
+qcd_fail_cat5_Bin38 flatParam 
+qcd_fail_cat5_Bin39 flatParam 
+qcd_fail_cat5_Bin40 flatParam 
+qcd_fail_cat5_Bin41 flatParam 
+qcd_fail_cat5_Bin42 flatParam 
+qcd_fail_cat5_Bin43 flatParam 
+qcd_fail_cat5_Bin44 flatParam 
+qcd_fail_cat5_Bin45 flatParam 
+qcd_fail_cat5_Bin46 flatParam 
+qcd_fail_cat5_Bin47 flatParam 
+qcd_fail_cat5_Bin48 flatParam 
+qcd_fail_cat5_Bin49 flatParam 
+qcd_fail_cat5_Bin50 flatParam 
+qcd_fail_cat5_Bin51 flatParam 
+qcd_fail_cat5_Bin52 flatParam 
+qcd_fail_cat5_Bin53 flatParam 
+qcd_fail_cat5_Bin54 flatParam 
+qcd_fail_cat5_Bin55 flatParam 
+qcd_fail_cat5_Bin56 flatParam 
+qcd_fail_cat5_Bin57 flatParam 
+qcd_fail_cat5_Bin58 flatParam 
+qcd_fail_cat5_Bin59 flatParam 
+qcd_fail_cat5_Bin60 flatParam 
