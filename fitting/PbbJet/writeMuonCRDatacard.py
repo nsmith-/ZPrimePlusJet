@@ -52,6 +52,8 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     bbeffErrs = {}
     znormEWErrs = {}
     znormQErrs = {}
+    wnormEWErrs = {}
+    wnormQErrs = {}
     mutriggerErrs = {}
     muidErrs = {}
     muisoErrs = {}
@@ -84,7 +86,13 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             muisoErrs['%s_%s'%(proc,box)] = 1
             #jesErrs['%s_%s'%(proc,box)] = 1
             #jerErrs['%s_%s'%(proc,box)] = 1
-            if proc=='wqq' or proc=='zqq' or proc=='wlnu':
+            if proc=='wqq':
+                wnormQErrs['%s_%s'%(proc,box)] = 1.1
+                wnormEWErrs['%s_%s'%(proc,box)] = 1.15
+            else:
+                wnormQErrs['%s_%s'%(proc,box)] = 1.
+                wnormEWErrs['%s_%s'%(proc,box)] = 1.
+            if proc=='zqq':
                 znormQErrs['%s_%s'%(proc,box)] = 1.1
                 znormEWErrs['%s_%s'%(proc,box)] = 1.15
             else:
@@ -200,11 +208,11 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu']
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
     systs = ['JER','JES','mutrigger','muid','muiso']
 
     
-    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR.root','read')
+    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_fixed.root','read')
     
     histoDict = {}
     datahistDict = {}

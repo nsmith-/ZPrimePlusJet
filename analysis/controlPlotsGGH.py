@@ -83,13 +83,13 @@ def main(options,args,outputExists):
               'Diboson': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
                           idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
-              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
               'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
               'SingleTop':  [idir+'/ST_t_channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root',
                              idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
               'Wlnu': [idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
@@ -255,6 +255,8 @@ def main(options,args,outputExists):
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
+        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
+        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
         bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, lumi)
@@ -268,8 +270,6 @@ def main(options,args,outputExists):
             bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
         bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
         bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, lumi)
-        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
-        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
         #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
 
         if isData:

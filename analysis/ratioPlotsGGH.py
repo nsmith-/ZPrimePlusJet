@@ -20,27 +20,27 @@ def makePlots(hb,style,odir,lumi,ofile,canvases):
     for i in range(0,24):	
         msd_binBoundaries.append(40.+i*7)
     ptBinBoundaries = []
-    ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinLowEdge(1))
-    for j in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsY()+1):
-        hist_pass = ROOT.TH1F('h_QCD_msd_ak8_topR6_pass_cat%i'%j, 'h_QCD_msd_ak8_topR6_pass_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
-        hist_fail = ROOT.TH1F('h_QCD_msd_ak8_topR6_fail_cat%i'%j, 'h_QCD_msd_ak8_topR6_fail_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
-        hist_pass.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetXaxis().GetTitle())
-        hist_fail.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetXaxis().GetTitle())
-        ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetYaxis().GetBinUpEdge(j))
-        for i in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetNbinsX()+1):
-            hist_pass.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinContent(i,j))
-            hist_pass.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].GetBinError(i,j))
-            hist_fail.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinContent(i,j))
-            hist_fail.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].GetBinError(i,j))
+    ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].GetYaxis().GetBinLowEdge(1))
+    for j in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetNbinsY()+1):
+        hist_pass = ROOT.TH1F('h_QCD_msd_ak8_topR6_N2_pass_cat%i'%j, 'h_QCD_msd_ak8_topR6_N2_pass_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
+        hist_fail = ROOT.TH1F('h_QCD_msd_ak8_topR6_N2_fail_cat%i'%j, 'h_QCD_msd_ak8_topR6_N2_fail_cat%i'%j, len(msd_binBoundaries)-1, array.array('d',msd_binBoundaries))
+        hist_pass.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].GetXaxis().GetTitle())
+        hist_fail.GetXaxis().SetTitle(hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetXaxis().GetTitle())
+        ptBinBoundaries.append(hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].GetYaxis().GetBinUpEdge(j))
+        for i in range(1,hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetNbinsX()+1):
+            hist_pass.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].GetBinContent(i,j))
+            hist_pass.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].GetBinError(i,j))
+            hist_fail.SetBinContent(i,hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(i,j))
+            hist_fail.SetBinError(i,hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(i,j))
         hist_pass_cat.append(hist_pass)
         hist_fail_cat.append(hist_fail)
 
-    c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_fail'],hb['QCD']['h_msd_ak8_topR6_pass'],['QCD fail, p_{T} > %i GeV'%ptBinBoundaries[0],'QCD pass, p_{T} > %i GeV'%ptBinBoundaries[0]],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6',odir,lumi,ofile)
+    c = makeCanvasRatio(hb['QCD']['h_msd_ak8_topR6_N2_fail'],hb['QCD']['h_msd_ak8_topR6_N2_pass'],['QCD fail, p_{T} > %i GeV'%ptBinBoundaries[0],'QCD pass, p_{T} > %i GeV'%ptBinBoundaries[0]],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_N2',odir,lumi,ofile)
     canvases.append(c)	
-    c1, f2params = makeCanvasRatio2D(hb['QCD']['h_msd_v_pt_ak8_topR6_fail'],hb['QCD']['h_msd_v_pt_ak8_topR6_pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6',odir,lumi,ofile)
+    c1, f2params = makeCanvasRatio2D(hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'],hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6_N2',odir,lumi,ofile)
     canvases.append(c1)
     for i in range(1,len(ptBinBoundaries)):
-        c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params)
+        c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_N2_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params)
         canvases.append(c)
     
 ##############################################################################
@@ -106,13 +106,14 @@ def main(options,args,outputExists):
               'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
               #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
               'TTbar':  [idir+'/TT_13TeV_powheg_pythia8_ext_1000pb_weighted.root'], #Powheg is the new default
-              'QCD': [idir+'/QCD_HT200to300_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_ext_1000pb_weighted.root',
+              'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
+                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
                       idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT2000toInf_13TeV_ext_1000pb_weighted.root',],                      
+                      idir+'/QCD_HT1000to1500_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
+                      idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],                
               'Phibb50': [idir+'/DMSpin0_ggPhibb1j_50_1000pb_weighted.root'],
               'Phibb75': [idir+'/DMSpin0_ggPhibb1j_75_1000pb_weighted.root'],
               'Phibb150': [idir+'/DMSpin0_ggPhibb1j_150_1000pb_weighted.root'],
@@ -181,7 +182,7 @@ def main(options,args,outputExists):
 
         
     canvases = []
-    plots = ['h_msd_ak8_topR6_pass','h_msd_ak8_topR6_fail','h_msd_v_pt_ak8_topR6_pass','h_msd_v_pt_ak8_topR6_fail']
+    plots = ['h_msd_ak8_topR6_N2_pass','h_msd_ak8_topR6_N2_fail','h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail']
 
     if not outputExists: 
         print "Backgrounds..."
@@ -211,6 +212,8 @@ def main(options,args,outputExists):
     else:
         
         ofile = ROOT.TFile.Open(odir+'/Ratios_1000pb_weighted.root','read')
+
+        
         
         hb = {}
         for process in ['QCD']:
@@ -218,10 +221,33 @@ def main(options,args,outputExists):
             for plot in plots:
                 hb[process][plot] = ofile.Get(plot.replace('h_','h_%s_'%process))
                 
-        hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_pass'].Integral())
-        hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_fail'].Integral())
-        hb['QCD']['h_msd_ak8_topR6_pass'].Scale(1./hb['QCD']['h_msd_ak8_topR6_pass'].Integral())
-        hb['QCD']['h_msd_ak8_topR6_fail'].Scale(1./hb['QCD']['h_msd_ak8_topR6_fail'].Integral())
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(23,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(23,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(22,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(22,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(21,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(21,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(20,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(20,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(19,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(19,1,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(23,2,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(23,2,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(22,2,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(22,2,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(21,2,0)
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(21,2,0)
+
+        # fix high bin
+        ave = (hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(12,4)+hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(14,4))/2.
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(13,4,ave)
+        ave = (hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(12,4)+hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(14,4))/2.
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinError(13,4,ave)
+                
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].Integral())
+        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].Integral())
+        hb['QCD']['h_msd_ak8_topR6_N2_pass'].Scale(1./hb['QCD']['h_msd_ak8_topR6_N2_pass'].Integral())
+        hb['QCD']['h_msd_ak8_topR6_N2_fail'].Scale(1./hb['QCD']['h_msd_ak8_topR6_N2_fail'].Integral())
                 
         makePlots(hb,style,odir,lumi,ofile,canvases)
         
@@ -250,6 +276,7 @@ if __name__ == '__main__':
     ROOT.gStyle.SetPaintTextFormat("1.1f")
     ROOT.gStyle.SetOptFit(0000)
     ROOT.gStyle.SetPalette(ROOT.kBird)
+    #ROOT.gStyle.SetPalette(1)
     ROOT.gROOT.SetBatch()
 
     ## stops = [0.0000, 0.1250, 0.2500, 0.3750, 0.5000, 0.6250, 0.7500, 0.8750, 1.0000]
