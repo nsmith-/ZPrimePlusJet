@@ -384,7 +384,6 @@ class dazsleRhalphabetBuilder:
 				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
 
 				for i0 in range(1,self._mass_nbins+1):
-					print '!!!!!!!!! YYY'
 					print pFunc.GetName()
 					if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 4) and int(ipt) == 2) or ((i0 > 46 or i0 < 5) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						tmph_mass_matched.SetBinContent(i0,0);
@@ -521,7 +520,7 @@ def loadHistograms(f,f1,pseudo,pseudo15):
 
 	hpass = [];
 	hfail = [];
-	f2   = r.TFile("histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv1340WP-sig-pt5006007008009001000_msd_st.root")
+	f2   = r.TFile("histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd_st.root")
 
 	lHP1 = f1.Get("wqq_pass")
 	lHP1.Scale(0.88)
@@ -627,7 +626,7 @@ if __name__ == '__main__':
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='data = MC', metavar='isData')
 	parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
 	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd.root',help='directory with data', metavar='idir')
-	parser.add_option('--input2', dest='input2', default='histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv1340WP-sig-pt5006007008009001000_msd_corrfactor.root',help='directory with data', metavar='idir')
+	parser.add_option('--input2', dest='input2', default='histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd_WZsignals.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
 
