@@ -52,8 +52,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     bbeffErrs = {}
     znormEWErrs = {}
     znormQErrs = {}
-    wnormEWErrs = {}
-    wnormQErrs = {}
+    wznormEWErrs = {}
     mutriggerErrs = {}
     muidErrs = {}
     muisoErrs = {}
@@ -87,12 +86,10 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             #jesErrs['%s_%s'%(proc,box)] = 1
             #jerErrs['%s_%s'%(proc,box)] = 1
             if proc=='wqq':
-                wnormQErrs['%s_%s'%(proc,box)] = 1.1
-                wnormEWErrs['%s_%s'%(proc,box)] = 1.15
+                wznormEWErrs['%s_%s'%(proc,box)] = 1.05
             else:
-                wnormQErrs['%s_%s'%(proc,box)] = 1.
-                wnormEWErrs['%s_%s'%(proc,box)] = 1.
-            if proc=='zqq':
+                wznormEWErrs['%s_%s'%(proc,box)] = 1.
+            if proc=='zqq' or proc=='wqq':
                 znormQErrs['%s_%s'%(proc,box)] = 1.1
                 znormEWErrs['%s_%s'%(proc,box)] = 1.15
             else:
@@ -117,7 +114,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
 
     divider = '------------------------------------------------------------\n'
     datacard = 'imax 2 number of channels\n' + \
-      'jmax %i number of processes minus 1\n'%(nBkgd+nSig-1) + \
+       'jmax * number of processes minus 1\n' + \
       'kmax * number of nuisance parameters\n' + \
       divider + \
       'bin fail_muonCR pass_muonCR\n' + \
@@ -134,7 +131,8 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     veffString = 'veff\tlnN'
     bbeffString = 'bbeff\tlnN'
     znormEWString = 'znormEWmuonCR\tlnN'
-    znormQString = 'znormQmuonCR\tlnN'    
+    znormQString = 'znormQ\tlnN'    
+    wznormEWString = 'wznormEWmuonCR\tlnN'
     muidString = 'muid\tshape'   
     muisoString = 'muiso\tshape'   
     mutriggerString = 'mutrigger\tshape'  
@@ -161,6 +159,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             bbeffString += '\t%.3f'%bbeffErrs['%s_%s'%(proc,box)]
             znormEWString += '\t%.3f'%znormEWErrs['%s_%s'%(proc,box)]
             znormQString += '\t%.3f'%znormQErrs['%s_%s'%(proc,box)]
+            wznormEWString += '\t%.3f'%wznormEWErrs['%s_%s'%(proc,box)]
             mutriggerString += '\t%.3f'%mutriggerErrs['%s_%s'%(proc,box)]
             muidString += '\t%.3f'%muidErrs['%s_%s'%(proc,box)]
             muisoString += '\t%.3f'%muisoErrs['%s_%s'%(proc,box)]
@@ -174,7 +173,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
                         mcStatErrString['%s_%s'%(proc1,box1)] += '\t-'
             
     binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n';
-    veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; mutriggerString+='\n'; muidString+='\n'; muisoString+='\n'; 
+    veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; wznormEWString+='\n'; mutriggerString+='\n'; muidString+='\n'; muisoString+='\n'; 
     jesString+='\n'; jerString+='\n';      
     for proc in (sigs+bkgs):
         for box in boxes:
@@ -183,7 +182,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     datacard+=binString+processString+processNumberString+rateString+divider
 
     # now nuisances
-    datacard+=lumiString+veffString+bbeffString+znormEWString+znormQString+mutriggerString+muidString+muisoString+jesString+jerString
+    datacard+=lumiString+veffString+bbeffString+znormEWString+znormQString+wznormEWString+mutriggerString+muidString+muisoString+jesString+jerString
 
     for proc in (sigs+bkgs):
         for box in boxes:
@@ -209,6 +208,8 @@ def main(options, args):
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
+    #sigs = ['zqq','wqq']
+    #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','vvqq','stqq','wlnu','zll']
     systs = ['JER','JES','mutrigger','muid','muiso']
 
     

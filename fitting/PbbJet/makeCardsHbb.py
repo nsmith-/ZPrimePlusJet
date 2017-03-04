@@ -51,6 +51,7 @@ def main(options,args):
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
     dctpl = open("datacard.tpl")
+    #dctpl = open("datacardZbb.tpl")
 
     linel = [];
     for line in dctpl: 
@@ -148,18 +149,20 @@ def main(options,args):
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins):                    
-                    # if stat. unc. is greater than 10% 
-                    #if histoDict['%s_%s'%(proc,box)].GetBinError(j,i) > 0.1*histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) and proc!='qcd':
-                    if histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) > 0 and proc!='qcd':
+                    # if stat. unc. is greater than 50% 
+                    if histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) > 0 and histoDict['%s_%s'%(proc,box)].GetBinError(j,i) > 0.5*histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) and proc!='qcd':
+                    #if histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) > 0 and proc!='qcd':
                         massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(j)
                         ptVal = histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinLowEdge(i) + 0.3*(histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinWidth(i))
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
                         if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
                             dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
-                            print 'include %s%scat%imcstat%i'%(proc,box,i,j)
+                            #print 'include %s%scat%imcstat%i'%(proc,box,i,j)
                             mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
                         else:
                             print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
+                    else:
+                        print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
                         
         for im in range(numberOfMassBins):
             dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))

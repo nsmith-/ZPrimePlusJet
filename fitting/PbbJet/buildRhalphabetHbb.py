@@ -269,12 +269,15 @@ class dazsleRhalphabetBuilder:
                                 lNCount=lNCount+1
                         pLabel="Var_Pol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))+"_"+str(pRVar)
                         pPol = r.RooPolyVar(pLabel,pLabel,lPt,lTmpArray)
-                        print pPol.Print()
-                        lRhoArray.add(pPol);
+                        pPol.Print()
+                        lRhoArray.add(pPol)
                         self._allVars.append(pPol)
 
                 lLabel="Var_RhoPol_Bin_"+str(round(iPt,2))+"_"+str(round(iRho,3))
                 lRhoPol = r.RooPolyVar(lLabel,lLabel,lRho,lRhoArray)
+                lRhoPol.Print()
+                lPt.Print()
+                lRho.Print()
                 self._allVars.extend([lPt,lRho,lRhoPol])
                 return lRhoPol
 
