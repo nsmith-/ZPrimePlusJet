@@ -38,22 +38,23 @@ def main(options,args):
               'vvqq': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
                           idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
-              'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'zqq': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
                 #ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
               'stqq':  [idir+'/ST_t_channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root',
                              idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root'],
               #'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
-              'wqq':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'wqq':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
               'wlnu':[idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root'],
+              'zll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
               #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
-              'tqq':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default                      
+              'tqq':  [idir+'/TT_powheg_1000pb_weighted_v1204.root'], #Powheg is the new default                      
               'qcd': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
                       idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
@@ -106,15 +107,15 @@ def main(options,args):
             }
 
     if muonCR:
-        tfiles['data_obs'] = [idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root',
-                       idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v3.root']
+        tfiles['data_obs'] = [idir+'/SingleMuonRun2016B_03Feb2017_ver1_v1.root',
+                       idir+'/SingleMuonRun2016B_03Feb2017_ver2_v2.root',
+                       idir+'/SingleMuonRun2016C_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016D_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016E_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016F_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016G_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver2_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver3_v1.root']
         
     
     print "Signals... "
@@ -126,12 +127,13 @@ def main(options,args):
     sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
     print "Backgrounds..."
     bkgSamples = {}    
+    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
+    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
     bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, lumi)
     bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, lumi)
     bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, lumi)
-    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
     bkgSamples['wlnu'] = sampleContainer('wlnu',tfiles['wlnu'], 1, lumi)
-    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
+    bkgSamples['zll'] = sampleContainer('zll',tfiles['zll'], 1, lumi)
     bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
     print "Data..."
     if muonCR:
@@ -150,7 +152,9 @@ def main(options,args):
               'h_msd_v_pt_ak8_topR6_N2_pass_JERUp','h_msd_v_pt_ak8_topR6_N2_pass_JERDown', #JER up/down
               'h_msd_v_pt_ak8_topR6_N2_fail_JERUp','h_msd_v_pt_ak8_topR6_N2_fail_JERDown', #JER up/down
               'h_msd_v_pt_ak8_topR6_N2_pass_triggerUp','h_msd_v_pt_ak8_topR6_N2_pass_triggerDown', #trigger up/down
-              'h_msd_v_pt_ak8_topR6_N2_fail_triggerUp','h_msd_v_pt_ak8_topR6_N2_fail_triggerDown', #trigger up/down              
+              'h_msd_v_pt_ak8_topR6_N2_fail_triggerUp','h_msd_v_pt_ak8_topR6_N2_fail_triggerDown', #trigger up/down   
+              'h_msd_v_pt_ak8_topR6_N2_pass_PuUp','h_msd_v_pt_ak8_topR6_N2_pass_PuDown', #Pu up/downxf
+              'h_msd_v_pt_ak8_topR6_N2_fail_PuUp','h_msd_v_pt_ak8_topR6_N2_fail_PuDown', #trigger up/down             
               ] 
     
     if options.bb:
@@ -167,6 +171,8 @@ def main(options,args):
                   'h_msd_ak8_muCR4_N2_fail_muidUp','h_msd_ak8_muCR4_N2_fail_muidDown',
                   'h_msd_ak8_muCR4_N2_pass_muisoUp','h_msd_ak8_muCR4_N2_pass_muisoDown',
                   'h_msd_ak8_muCR4_N2_fail_muisoUp','h_msd_ak8_muCR4_N2_fail_muisoDown',
+                  'h_msd_ak8_muCR4_N2_pass_PuUp','h_msd_ak8_muCR4_N2_pass_PuDown',
+                  'h_msd_ak8_muCR4_N2_fail_PuUp','h_msd_ak8_muCR4_N2_fail_PuDown',
                   ]
         
     for plot in plots:

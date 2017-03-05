@@ -83,13 +83,13 @@ def main(options,args,outputExists):
               'Diboson': [idir+'/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
                           idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                           idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
-              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
               'DYll': [idir+'/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
               'SingleTop':  [idir+'/ST_t_channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_t_channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV_powhegV2_madspin_1000pb_weighted.root',
                              idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root',
                              idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_powheg_pythia8_TuneCUETP8M2T4_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
+              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
               'Wlnu': [idir+'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
                      idir+'/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
@@ -97,7 +97,7 @@ def main(options,args,outputExists):
                      idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
-              'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
+              'TTbar':  [idir+'/TT_powheg_1000pb_weighted_v1204.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
                       idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
@@ -147,15 +147,15 @@ def main(options,args,outputExists):
                        idir+'JetHTRun2016G_23Sep2016_v1_v2.root',
                        idir+'JetHTRun2016H_PromptReco_v2.root',
                        idir+'JetHTRun2016H_PromptReco_v3.root'],
-              'muon': [idir+'/SingleMuonRun2016B_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016B_23Sep2016_v3.root',
-                       idir+'/SingleMuonRun2016C_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016D_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016E_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016F_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016G_23Sep2016_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v3.root']
+              'muon': [idir+'/SingleMuonRun2016B_03Feb2017_ver1_v1.root',
+                       idir+'/SingleMuonRun2016B_03Feb2017_ver2_v2.root',
+                       idir+'/SingleMuonRun2016C_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016D_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016E_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016F_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016G_03Feb2017_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver2_v1.root',
+                       idir+'/SingleMuonRun2016H_03Feb2017_ver3_v1.root']
 
 
             }
@@ -255,6 +255,8 @@ def main(options,args,outputExists):
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
+        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
+        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
         bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, lumi)
@@ -268,8 +270,6 @@ def main(options,args,outputExists):
             bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
         bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
         bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, lumi)
-        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
-        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
         #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
 
         if isData:

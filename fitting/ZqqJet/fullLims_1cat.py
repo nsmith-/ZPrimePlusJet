@@ -106,8 +106,15 @@ def main():
 	# masses = [      100,      110, 125, 135, 150, 165, 180, 200, 250, 300];
 	# sXSgb1 = [1.394e+05,4.481e+04,2.641e+04,1.939e+04,1.462e+04,9976,7870,5707,4254,3233,2320,1131, 620]
 	# masses = [       50,       75,       90,      100,      110, 125, 135, 150, 165, 180, 200, 250, 300];
-	sXSgb1 = [1.394e+05,8.419e+04,4.481e+04,2.641e+04,1.939e+04,1.462e+04,7870,5707,4254,3233,2320,1131]#, 620]
-	masses = [       50,       60,       75,       90,      100,      110, 135, 150, 165, 180, 200, 250]#, 300];
+	bsXSgb1 = [1.394e+05,8.419e+04,4.481e+04,2.641e+04,1.939e+04,1.462e+04,7870,5707,4254,3233,2320,1131, 620]
+	bmasses = [       50,       60,       75,       90,      100,      110, 135, 150, 165, 180, 200, 250, 300]
+	masses = []
+	sXSgb1 = []
+	lGraph = ROOT.TGraph(len(bmasses),array('d',bmasses),array('d',bsXSgb1))
+	for x in range(50,300,5):
+		masses.append(x)
+		sXSgb1.append(lGraph.Eval(x))
+
 	#sXSgb1 = [1.394e+05,4.481e+04,1.939e+04,9976,5707,2320,1131,620]
 	#masses = [       50,       75,      100, 125, 150, 200, 250,300];
 	#sXSgb1 = [1.394e+05,4.481e+04,1.939e+04,9976,5707,2320]
@@ -223,13 +230,13 @@ def main():
 	#--------------------------------
 	#--------------------------------
 	# PLOTTING
-	lowlim = 75;
+	lowlim = 50;
 
 	txta = ROOT.TLatex(0.16,0.92,"CMS");
 	txta.SetNDC();
-	txtb = ROOT.TLatex(0.20,0.92,"Preliminary");
+	txtb = ROOT.TLatex(0.24,0.92,"Preliminary");
 	txtb.SetNDC(); txtb.SetTextFont(52);
-	txtc = ROOT.TLatex(0.68,0.92,"2.3 fb^{-1} (13 TeV)");
+	txtc = ROOT.TLatex(0.68,0.92,"35.8 fb^{-1} (13 TeV)");
 	txtc.SetNDC(); txtc.SetTextFont(42); txtc.SetTextSize(0.04);
 	txtd = ROOT.TLatex(0.60,0.80,"g_{B} = 1 or g_{q} = 1/6");
 	txtd.SetNDC(); txtd.SetTextFont(42); txtd.SetTextSize(0.04);
@@ -258,14 +265,14 @@ def main():
 	legbb.AddEntry(gr_xs_gb1d0,"theory, g_{B} = 0.5","l")	
 
 	can_mu = ROOT.TCanvas("can_mu","can_mu",1200,800);
-	hrl = can_mu.DrawFrame(lowlim,0,320,8);
+	hrl = can_mu.DrawFrame(lowlim,0,320,3);
 	hrl.GetYaxis().SetTitle("#mu = #sigma_{95%CL}/#sigma_{th}");
 	hrl.GetYaxis().SetTitleOffset(0.85);
 	hrl.GetXaxis().SetTitle("Z\' mass (GeV)");
 	gr_mu_2sigma.Draw('f');
 	gr_mu_1sigma.Draw('fsames');
-	gr_mu_obs.Draw('lsames');
-	gr_mu_exp.Draw('lsames');
+	gr_mu_obs.Draw('Csames');
+	gr_mu_exp.Draw('Csames');
 
 	txta.Draw();
 	txtb.Draw();
@@ -276,14 +283,14 @@ def main():
 	can_mu.SaveAs('plots/mu.pdf');
 
 	can_XS = ROOT.TCanvas("can_XS","can_XS",1000,800);
-	hrlxs = can_mu.DrawFrame(lowlim,1000,320,100000);
+	hrlxs = can_mu.DrawFrame(lowlim,50,320,100000) ;
 	hrlxs.GetYaxis().SetTitle("#sigma_{95% CL} (pb)");
 	hrlxs.GetYaxis().SetTitleOffset(0.85);
 	hrlxs.GetXaxis().SetTitle("Z\' mass (GeV)");
 	gr_xs_2sigma.Draw('f');
 	gr_xs_1sigma.Draw('fsames');
-	gr_xs_obs.Draw('lsames');
-	gr_xs_exp.Draw('lsames');
+	gr_xs_obs.Draw('Csames');
+	gr_xs_exp.Draw('Csames');
 	gr_xs_gb0d5.Draw("lsames");
 	gr_xs_gb1d0.Draw("lsames");
 
@@ -350,15 +357,15 @@ def main():
 
 
 	can_gB = ROOT.TCanvas("can_gB","can_gB",900,800);
-	hrl = can_gB.DrawFrame(lowlim,0,650,5);
+	hrl = can_gB.DrawFrame(lowlim,0,650,2);
 	hrl.GetYaxis().SetTitle("coupling, g_{B}");
 	hrl.GetYaxis().SetTitleOffset(0.85);
 	hrl.GetXaxis().SetTitle("Z\' mass (GeV)");
 	
 	gr_gB_2sigma.Draw('f');
 	gr_gB_1sigma.Draw('fsames');
-	gr_gB_obs.Draw('lsames');
-	gr_gB_exp.Draw('lsames');
+	gr_gB_obs.Draw('csames');
+	gr_gB_exp.Draw('csames');
 
 	gr_UA2.Draw("csames")
 	gr_CDFRun1.Draw("csames")
@@ -384,7 +391,7 @@ def main():
 	#####
 
 	can_gB2 = ROOT.TCanvas("can_gB2","can_gB2",1000,800);
-	hrl2 = can_gB.DrawFrame(30,0.2,801,3);
+	hrl2 = can_gB.DrawFrame(30,0.2,801,1.5);
 	hrl2.GetYaxis().SetTitle("coupling, g_{B}");
 	hrl2.GetYaxis().SetTitleOffset(0.85);	
 	hrl2.GetXaxis().SetTitle("Z\' mass (GeV)");

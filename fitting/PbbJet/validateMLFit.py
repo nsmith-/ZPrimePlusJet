@@ -16,7 +16,10 @@ from tools import *
 
 msd_binBoundaries=[]
 for i in range(0,24): msd_binBoundaries.append(40+i*7)
-pt_binBoundaries = [450,500,550,600,675,800,1000]    
+pt_binBoundaries = [450,500,550,600,675,800,1000]
+
+RHO_LO = -6
+RHO_HI = -2.1
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
@@ -62,6 +65,14 @@ def main(options,args):
         fail_2d_data_subtract.Add(fail_2d[shape],-1)
     ratio_2d_data_subtract = pass_2d_data_subtract.Clone('ratio_2d_subtract')
     ratio_2d_data_subtract.Divide(fail_2d_data_subtract)
+    
+    for i in range(1,ratio_2d_data_subtract.GetNbinsX()+1):
+        for j in range(1,ratio_2d_data_subtract.GetNbinsY()+1):
+            massVal = ratio_2d_data_subtract.GetXaxis().GetBinCenter(i)
+            ptVal = ratio_2d_data_subtract.GetYaxis().GetBinLowEdge(j)+ratio_2d_data_subtract.GetYaxis().GetBinWidth(j)*0.3
+            rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)       
+            if rhoVal < RHO_LO or rhoVal > RHO_HI:
+                ratio_2d_data_subtract.SetBinContent(i,j,0)
         
 
     for shape in shapes:
@@ -93,6 +104,15 @@ def main(options,args):
         lParams.append("r2p0") 
         lParams.append("r2p1")
         lParams.append("r2p2")
+        
+        #lParams.append("r1p0")
+        #lParams.append("r2p0")
+        #lParams.append("r0p1")
+        #lParams.append("r1p1")
+        #lParams.append("r2p1")
+        #lParams.append("r0p2") 
+        #lParams.append("r1p2")
+        #lParams.append("r2p2")
 
         pars = []
         for p in lParams:
@@ -100,6 +120,7 @@ def main(options,args):
                 print p,"=",rfr.floatParsFinal().find(p).getVal(),"+/-",rfr.floatParsFinal().find(p).getError()
                 pars.append(rfr.floatParsFinal().find(p).getVal())
             else:
+                print p, "not found"
                 pars.append(0)
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
@@ -144,6 +165,10 @@ def plotCategory(fml,fd,index,fittype):
         curnorm_fail = rrv_fail.getVal()
         rrv_pass = r.RooRealVar(rags.find("cat%i_pass_cat%i/%s" % (index,index,ish)))
         curnorm_pass = rrv_pass.getVal()
+        #if ish=='qcd' and index==4:
+        #    histograms_fail[i].SetBinContent(13,(histograms_fail[i].GetBinContent(12)+histograms_fail[i].GetBinContent(14))/2.)
+        #    histograms_pass[i].SetBinContent(13,(histograms_pass[i].GetBinContent(12)+histograms_pass[i].GetBinContent(14))/2.)
+            
 
         #print ish, curnorm_fail, curnorm_pass, index
         if curnorm_fail > 0.: histograms_fail[i].Scale(curnorm_fail/histograms_fail[i].Integral())
@@ -158,6 +183,8 @@ def plotCategory(fml,fd,index,fittype):
     data_fail = rdhf.createHistogram("data_fail_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()))
     data_pass = rdhp.createHistogram("data_pass_cat"+str(index)+"_"+fittype,rrv,r.RooFit.Binning(histograms_pass[0].GetNbinsX()))
 
+    #if index==4:
+    #    data_fail.SetBinContent(13,(data_fail.GetBinContent(12)+data_fail.GetBinContent(14))/2.)
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
 
@@ -246,7 +273,10 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     tag2 = r.TLatex(0.15,0.92,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    if options.isData:
+        tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    else:
+        tag3 = r.TLatex(0.25,0.92,"Simulation Preliminary")        
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
@@ -382,7 +412,8 @@ def makeTF(pars,ratio):
     
     f2params = array.array('d',pars)
     npar = len(f2params)
-    f2 = r.TF2("f2",fun2, 40+3.5, 201-3.5, 500+25, 1000-100, npar)
+    print ratio.GetYaxis().GetXmax()
+    f2 = r.TF2("f2",fun2, ratio.GetXaxis().GetXmin()+3.5, ratio.GetXaxis().GetXmin()-3.5, ratio.GetYaxis().GetXmin()+25., ratio.GetYaxis().GetXmax()-100., npar)
     f2.SetParameters(f2params)
 
     c = r.TCanvas("cTF","cTF",1000,800)
@@ -391,6 +422,15 @@ def makeTF(pars,ratio):
     c.SetFrameFillStyle(1000)
     c.SetFrameFillColor(0)
     ratio.Draw('surf1')
+    #f2.FixParameter(0,0.00265721471909)
+    #f2.FixParameter(1,0.000107581411605)
+    #f2.FixParameter(2,0)
+    #f2.FixParameter(3,-0.0106388614502)
+    #f2.FixParameter(4,-0.670514254909 )
+    #f2.FixParameter(5,0)
+    #f2.FixParameter(6,-4.91702552097)
+    #f2.FixParameter(7,0.000234083688387)
+    #f2.FixParameter(8,0)
     #ratio.Fit('f2','RN')
     f2.Draw("surf fb bb same")
 
@@ -405,7 +445,10 @@ def makeTF(pars,ratio):
     tag2 = r.TLatex(0.15,0.92,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    if options.isData:
+        tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    else:
+        tag3 = r.TLatex(0.25,0.92,"Simulation Preliminary")
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
@@ -416,8 +459,9 @@ def makeTF(pars,ratio):
 
     c.SaveAs(options.odir+"/mlfit/tf.pdf")
     c.SaveAs(options.odir+"/mlfit/tf.C")
-
     
+    #raw_input("Press Enter to continue...")
+
     #for i in range(0,360):        
     #    r.gPad.SetPhi(30+270+i)
     #    r.gPad.Modified()
@@ -431,7 +475,7 @@ if __name__ == '__main__':
 	parser.add_option('-i','--idir', dest='idir', default = 'cards/',help='directory with data', metavar='idir')
 	parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory for plots', metavar='odir')
 	parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_s or fit_b', metavar='fit')
-	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
+	parser.add_option('--data', action='store_true', dest='isData', default =False,help='is data', metavar='isData')
 
 	(options, args) = parser.parse_args()
 
@@ -443,7 +487,7 @@ if __name__ == '__main__':
 	r.gStyle.SetPalette(1)
 	r.gStyle.SetPaintTextFormat("1.1f")
 	r.gStyle.SetOptFit(0000)
-	r.gROOT.SetBatch()
+	#r.gROOT.SetBatch()
     #r.gStyle.SetPalette(r.kBird)	
 	main(options,args)
 ##-------------------------------------------------------------------------------------

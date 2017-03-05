@@ -79,15 +79,15 @@ class dazsleRhalphabetBuilder:
 			for ih,h in enumerate(self._hpass):
 				tmppass_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi)
 				for i0 in range(1,self._mass_nbins+1):
-					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 0) and ipt == 2) or ((i0 > 46 or i0 < 0) and ipt == 3) or ((i0 > 56 or i0 < 7) and ipt == 4) or (i0 < 7 and ipt == 5):
+					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 4) and ipt == 2) or ((i0 > 46 or i0 < 5) and ipt == 3) or ((i0 > 56 or i0 < 7) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmppass_inPtBin.SetBinContent(i0,0);
 				hpass_inPtBin.append( tmppass_inPtBin )
-                        for ih,h in enumerate(self._hfail):
-                                tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
+			for ih,h in enumerate(self._hfail):
+				tmpfail_inPtBin = proj("cat",str(ipt),h,self._mass_nbins,self._mass_lo,self._mass_hi); 
 				for i0 in range(1,self._mass_nbins+1):
-					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 0) and ipt == 2) or ((i0 > 46 or i0 < 0) and ipt == 3) or ((i0 > 56 or i0 < 7 ) and ipt == 4) or (i0 < 7 and ipt == 5):
+					if ((i0 > 31 or i0 < 0) and ipt == 1) or ((i0 > 38 or i0 < 4) and ipt == 2) or ((i0 > 46 or i0 < 5) and ipt == 3) or ((i0 > 56 or i0 < 7 ) and ipt == 4) or (i0 < 7 and ipt == 5):
 						tmpfail_inPtBin.SetBinContent(i0,0);
-                                hfail_inPtBin.append( tmpfail_inPtBin ) 
+				hfail_inPtBin.append( tmpfail_inPtBin ) 
 			
 			# make RooDataset, RooPdfs, and histograms
 			curptbincenter = self._hpass[0].GetYaxis().GetBinCenter(ipt);
@@ -138,12 +138,18 @@ class dazsleRhalphabetBuilder:
 			self._lMSD.setVal(iHs[0].GetXaxis().GetBinCenter(i0)) 
 			lPass = self.buildRooPolyArray(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polyArray)
 			pSum = 0
+			pRes = 0
+
 			for i1 in range(0,len(iHs)):
 				pSum = pSum + iHs[i1].GetBinContent(i0) if i1 == 0 else pSum - iHs[i1].GetBinContent(i0); # subtract W/Z from data
+				if i1 > 0 : pRes += iHs[i1].GetBinContent(i0)
 			if pSum < 0: pSum = 0
 
 			#5 sigma range + 10 events
-			pUnc = math.sqrt(pSum)*10+100
+			pUnc = math.sqrt(pSum)*10+10
+			#pUnc = math.sqrt(pSum)*3+10
+			pUnc += pRes
+
 			#Define the failing category
 			pFail = r.RooRealVar(lName+"_fail_"+iCat+"_Bin"+str(i0),lName+"_fail_"+iCat+"_Bin"+str(i0),pSum,max(pSum-pUnc,0),max(pSum+pUnc,0))
 			#Now define the passing cateogry based on the failing (make sure it can't go negative)
@@ -154,14 +160,14 @@ class dazsleRhalphabetBuilder:
 			# print pPass.GetName();
 			pSumP = 0
 			for i1 in range(0,len(iHPs)):
-			        pSumP = pSumP + iHPs[i1].GetBinContent(i0) if i1 == 0 else pSumP - iHPs[i1].GetBinContent(i0); # subtract W/Z from data 
+					pSumP = pSumP + iHPs[i1].GetBinContent(i0) if i1 == 0 else pSumP - iHPs[i1].GetBinContent(i0); # subtract W/Z from data 
 			if pSumP < 0: pSumP = 0
 
 			#If the number of events in the failing is small remove the bin from being free in the fit
 			if pSum < 5 and pSumP < 5:
-				pFail = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSum ,-0.1,max(pSum,0.1))
+				pFail = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSum ,0.,max(pSum,0.1))
 				pFail.setConstant(True)
-				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSumP,-0.1,max(pSumP,0.1))
+				pPass = r.RooRealVar(lName+"_pass_"+iCat+"_Bin"+str(i0),lName+"_pass_"+iCat+"_Bin"+str(i0),pSumP,0.,max(pSumP,0.1))
 				pPass.setConstant(True)
 
 			#Add bins to the array
@@ -223,19 +229,23 @@ class dazsleRhalphabetBuilder:
 		## (p0r0 + p1r0 * pT + p2r0 * pT^2 + ...) + 
 		## (p0r1 + p1r1 * pT + p2r1 * pT^2 + ...) * rho + 
 		## (p0r2 + p1r2 * pT + p2r2 * pT^2 + ...) * rho^2 + ...
-		
+		#Set to the background only
+		lFile = r.TFile("mlfit.root")
+		lFit  = r.RooFitResult(lFile.Get("fit_b"))
+		self._lEffQCD.setVal(lFit.floatParsFinal().find("qcdeff").getVal())
 		for i0 in range(iNVar0+1):
-                       for i1 in range(iNVar1+1):
-                               pVar = iLabel1+str(i1)+iLabel0+str(i0);
-                               pXMin = iXMin0
-                               pXMax = iXMax0
-                               #pVal  = math.pow(10,-min(i1,2))
-                               pVal  = math.pow(10,-i1-i0)
-			       if i1 == 0:
-				       pVal  = math.pow(10,-i1-min(int(i0*0.5),1))
-                               pRooVar = r.RooRealVar(pVar,pVar,0.0,pXMin*pVal,pXMax*pVal)
-                               print pVar,pVal,"!!!!!!!!!!"
-                               iVars.append(pRooVar)
+			for i1 in range(iNVar1+1):
+				pVar = iLabel1+str(i1)+iLabel0+str(i0);
+				pXMin = iXMin0
+				pXMax = iXMax0
+				pVal  = math.pow(10,-min(i1,2))
+				#pVal  = math.pow(10,-i1-i0)
+				if i1 == 0: pVal  = math.pow(10,-i1-min(int(i0*0.5),1))
+				pCent = 0 if pVar == "p0r0" else lFit.floatParsFinal().find(pVar).getVal()
+				pRooVar = r.RooRealVar(pVar,pVar,pCent,pXMin*pVal,pXMax*pVal)
+				print pVar,pVal,"!!!!!!!!!!"
+				iVars.append(pRooVar)
+		lFile.Close()
 
 	def workspaceInputs(self, iHP,iHF,iBin,iPt):
 		
@@ -321,6 +331,43 @@ class dazsleRhalphabetBuilder:
 			process = pFunc.GetName().split("_")[0];
 			cat     = pFunc.GetName().split("_")[1];
 			mass    = 0.;
+
+			#### bbb
+			hout = [];
+			histDict = {}
+			if 'tqq' in process or 'wqq' in process or 'zqq' in process: 
+				tmph = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat)
+				tmph_up = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat+'_'+'mcstatUp')
+				tmph_down = self._inputfile.Get(process+'_'+cat).Clone(process+'_'+cat+'_'+'mcstatDown')
+				# tmph.Scale(getSF(process,cat,self._inputfile))
+				# tmph_up.Scale(getSF(process,cat,self._inputfile))
+				# tmph_down.Scale(getSF(process,cat,self._inputfile))
+				tmph_mass = proj('cat',str(ipt),tmph,self._mass_nbins,self._mass_lo,self._mass_hi)      
+				tmph_mass_up = proj('cat',str(ipt),tmph_up,self._mass_nbins,self._mass_lo,self._mass_hi)
+				tmph_mass_down = proj('cat',str(ipt),tmph_down,self._mass_nbins,self._mass_lo,self._mass_hi)
+				for i in range(1,tmph_mass_up.GetNbinsX()+1):
+					mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
+					mcstatdown = max(0.,tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))
+					tmph_mass_up.SetBinContent(i,mcstatup)
+					tmph_mass_down.SetBinContent(i,mcstatdown)                     
+				tmph_mass.SetName(pFunc.GetName())                      
+				tmph_mass_up.SetName(pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatUp')                
+				tmph_mass_down.SetName(pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatDown')
+				histDict[pFunc.GetName()] = tmph_mass
+				histDict[pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatUp'] = tmph_mass_up
+				histDict[pFunc.GetName()+'_'+pFunc.GetName().replace('_','')+'mcstatDown'] = tmph_mass_down
+				uncorrelate(histDict,'mcstat')
+				for key, myhist in histDict.iteritems():
+					if 'mcstat' in key:
+						print key
+						hout.append(myhist)
+				for h in hout:
+					tmprdh = r.RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
+					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+					# validation
+					self._outfile_validation.cd()
+					h.Write()
+
 			if iShift and ("wqq" in process or "zqq" in process):
 
 				if process == "wqq": mass = 80.;
@@ -337,25 +384,24 @@ class dazsleRhalphabetBuilder:
 				tmph_mass_unmatched = proj("cat",str(ipt),tmph_unmatched,self._mass_nbins,self._mass_lo,self._mass_hi);
 
 				for i0 in range(1,self._mass_nbins+1):
-					print '!!!!!!!!! YYY'
 					print pFunc.GetName()
-					if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 0) and int(ipt) == 2) or ((i0 > 46 or i0 < 0) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
+					if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 4) and int(ipt) == 2) or ((i0 > 46 or i0 < 5) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						tmph_mass_matched.SetBinContent(i0,0);
 						tmph_mass_unmatched.SetBinContent(i0,0);
 					
 				#####
 				# smear/shift the matched
 				hist_container = hist( [mass],[tmph_mass_matched] );	
-				mass_shift = 0.99;
+				mass_shift = 1.0;
 				mass_shift_unc = 0.15; # This is 5 sigma shift!  Change the card accordingly
-				res_shift = 1.094;
-				res_shift_unc = 0.123;
+				res_shift = 1.10;
+				res_shift_unc = 0.1;
 				# get new central value
 				shift_val = mass - mass*mass_shift;
 				tmp_shifted_h = hist_container.shift( tmph_mass_matched, shift_val);
 				# get new central value and new smeared value
 				smear_val = res_shift - 1.;
-				tmp_smeared_h =  hist_container.smear( tmp_shifted_h[0], smear_val)
+				tmp_smeared_h =  hist_container.smear( tmp_shifted_h[0] , smear_val)
 				hmatched_new_central = tmp_smeared_h[0];
 				if smear_val <= 0.: hmatched_new_central = tmp_smeared_h[1];
 				# get shift up/down
@@ -377,7 +423,7 @@ class dazsleRhalphabetBuilder:
 				hmatchedsys_smear[1].SetName(pFunc.GetName()+"_smearDown");
 				hout = [hmatched_new_central,hmatchedsys_shift[0],hmatchedsys_shift[1],hmatchedsys_smear[0],hmatchedsys_smear[1]];
 	
-				if mass > 0 and mass != 80. and mass != 91. and mass != 250. and mass != 300.: 
+				if mass > 0 and mass != 80. and mass != 91.:# and mass != 250. and mass != 300.: 
 					sigMassesForInterpolation.append(mass);     
 					shapeForInterpolation_central.append(hmatched_new_central) 
 					shapeForInterpolation_scaleUp.append(hmatchedsys_shift[0]) 
@@ -388,12 +434,16 @@ class dazsleRhalphabetBuilder:
 				for h in hout:
 					print h.GetName()
 					for i0 in range(1,self._mass_nbins+1):
-						if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 0) and int(ipt) == 2) or ((i0 > 46 or i0 < 0) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
+						if ((i0 > 31 or i0 < 0) and int(ipt) == 1) or ((i0 > 38 or i0 < 4) and int(ipt) == 2) or ((i0 > 46 or i0 < 5) and int(ipt) == 3) or ((i0 > 56 or i0 < 7) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 							h.SetBinContent(i0,0);
 						
 					h.Write();
 					tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
 					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+					if h.GetName().find("scale") > -1:
+						pName=h.GetName().replace("scale","scalept")
+						tmprdh = RooDataHist(pName,pName,r.RooArgList(self._lMSD),h)
+						getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
 
 			else: 
 				getattr(lW,'import')(pFunc,r.RooFit.RecycleConflictNodes())
@@ -407,7 +457,8 @@ class dazsleRhalphabetBuilder:
 		morphedHistContainer_scaleDn = hist(sigMassesForInterpolation,shapeForInterpolation_scaleDn);
 		morphedHistContainer_smearUp = hist(sigMassesForInterpolation,shapeForInterpolation_smearUp);
 		morphedHistContainer_smearDn = hist(sigMassesForInterpolation,shapeForInterpolation_smearDn);
-		interpolatedMasses = [60.0,90.0,110.0,135.0,165.0,180.0]
+		interpolatedMasses = [55.,60.0,65.,70.,80.,85.,90.0,95.,105.,110.0,115.,120.,130.,135.0,140.,145.,155.,160.,165.0,170.,175.,180.0,185.,190.,195.,205.,210.,215.,220.,225.,230.,235.,240,245.,255.,260.,265.,270.,275.,280.,285.,290.,295.]
+		#interpolatedMasses = [195.,205.,210.,215.,220.,225.,230.,235.,240,245.,255.,260.,265.,270.,275.,280.,285.,290.,295.]
 		for m in interpolatedMasses:
 			htmp_central = morphedHistContainer_central.morph(m);
 			htmp_scaleUp = morphedHistContainer_scaleUp.morph(m);
@@ -415,7 +466,7 @@ class dazsleRhalphabetBuilder:
 			htmp_smearUp = morphedHistContainer_smearUp.morph(m);
 			htmp_smearDn = morphedHistContainer_smearDn.morph(m);
 			htmp_central.SetName("zqq%i_%s" % (int(m),iCat));
-			htmp_scaleUp.SetName("zqq%i_%s_scaleUp" % (int(m),iCat));
+			htmp_scaleUp.SetName("zqq%i_%s_scaleUp" % (int(m),iCat)); 
 			htmp_scaleDn.SetName("zqq%i_%s_scaleDown" % (int(m),iCat));
 			htmp_smearUp.SetName("zqq%i_%s_smearUp" % (int(m),iCat));
 			htmp_smearDn.SetName("zqq%i_%s_smearDown" % (int(m),iCat));
@@ -423,11 +474,15 @@ class dazsleRhalphabetBuilder:
 			for h in hout:
 				print h.GetName()
 				for i0 in range(1,self._mass_nbins+1):
-					if (i0 > 31 and int(ipt) == 1) or (i0 > 38 and int(ipt) == 2) or (i0 > 46 and int(ipt) == 3) or ( (i0 < 7 or i0 > 56) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
+					if (i0 > 31 and int(ipt) == 1) or ((i0 > 38 or i0 < 4) and int(ipt) == 2) or ((i0 > 46 or i0 < 5) and int(ipt) == 3) or ( (i0 < 7 or i0 > 56) and int(ipt) == 4) or ( i0 < 7 and int(ipt) == 5):
 						h.SetBinContent(i0,0);
 				h.Write();
 				tmprdh = RooDataHist(h.GetName(),h.GetName(),r.RooArgList(self._lMSD),h)
 				getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+				if h.GetName().find("scale") > -1:
+					pName=h.GetName().replace("scale","scalept")
+					tmprdh = RooDataHist(pName,pName,r.RooArgList(self._lMSD),h)
+					getattr(lW,'import')(tmprdh, r.RooFit.RecycleConflictNodes())
 
 		for pData in iDatas:
 			getattr(lW,'import')(pData,r.RooFit.RecycleConflictNodes())
@@ -453,38 +508,55 @@ def main(options,args):
 	# Load the input histograms
 	# 	- 2D histograms of pass and fail mass,pT distributions
 	# 	- for each MC sample and the data
-	f = r.TFile(options.input);
-	(hpass,hfail) = loadHistograms(f,options.pseudo,options.pseudo15);
+	f  = r.TFile(options.input);
+	f1 = r.TFile(options.input2);
+	(hpass,hfail) = loadHistograms(f,f1,options.pseudo,options.pseudo15);
 
 	# Build the workspacees
 	dazsleRhalphabetBuilder(hpass,hfail,f);
 
 ##-------------------------------------------------------------------------------------
-def loadHistograms(f,pseudo,pseudo15):
+def loadHistograms(f,f1,pseudo,pseudo15):
 
 	hpass = [];
 	hfail = [];
+	f2   = r.TFile("histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd_st.root")
 
-	lHP1 = f.Get("wqq_pass")
+	lHP1 = f1.Get("wqq_pass")
+	lHP1.Scale(0.88)
 	print 'wqq_pass ', lHP1.Integral() 
-	lHF1 = f.Get("wqq_fail")
+	lHF1 = f1.Get("wqq_fail")
+	lHF1.Scale(1./0.88)
 	print 'wqq_fail ', lHF1.Integral()
-	lHP2 = f.Get("zqq_pass")
-        print 'zqq_pass ', lHP2.Integral()
-	lHF2 = f.Get("zqq_fail")
-        print 'zqq_fail ', lHF2.Integral()
+	lHP2 = f1.Get("zqq_pass")
+	lHP2.Scale(0.88)
+	print 'zqq_pass ', lHP2.Integral()
+	lHF2 = f1.Get("zqq_fail")
+	lHF2.Scale(1./0.88)
+	print 'zqq_fail ', lHF2.Integral()
 	lHP3 = f.Get("qcd_pass")
-        print 'qcd_pass ', lHP3.Integral()
+	print 'qcd_pass ', lHP3.Integral()
 	lHF3 = f.Get("qcd_fail")
-        print 'qcd_fail ', lHF3.Integral()
+	print 'qcd_fail ', lHF3.Integral()
 	lHP4 = f.Get("tqq_pass")
-	lHP4.Scale(0.749*0.98)
-        print 'tqq_pass ', lHP4.Integral()
+	lHP4.Scale(0.83)
+	print 'tqq_pass ', lHP4.Integral()
 	lHF4 = f.Get("tqq_fail")
-	lHF4.Scale(0.749)
-        print 'tqq_fail ', lHF4.Integral()
+	#lHF4.Scale(1./0.83)
+	scale=[1.0,0.8,0.75,0.7,0.6,0.5,0.5]
+	for i0 in range(1,lHF4.GetNbinsX()+1):
+		for i1 in (1,lHF4.GetNbinsY()+1):
+			lHP4.SetBinContent(i0,i1,lHP4.GetBinContent(i0,i1)*scale[i1])
+			lHF4.SetBinContent(i0,i1,lHF4.GetBinContent(i0,i1)*scale[i1])
+
+	lTHP4 = f2.Get("stqq_pass")
+	lTHF4 = f2.Get("stqq_fail")
+	lHP4.Add(lTHP4)
+	lHF4.Add(lTHF4)
+	
+	print 'tqq_fail ', lHF4.Integral()
 	print 'total mc pass ', lHP1.Integral()+lHP2.Integral()+lHP3.Integral()+lHP4.Integral()
-        print 'total mc fail ', lHF1.Integral()+lHF2.Integral()+lHF3.Integral()+lHF4.Integral()
+	print 'total mc fail ', lHF1.Integral()+lHF2.Integral()+lHF3.Integral()+lHF4.Integral()
   
 	if pseudo:
 		lHP0 = lHP3.Clone("data_obs_pass")
@@ -506,22 +578,22 @@ def loadHistograms(f,pseudo,pseudo15):
 		lHP0.Add(lHP2)
 		lHP0.Add(lHP4)
 		lHF0.Add(lHF1)
-                lHF0.Add(lHF2)
-                lHF0.Add(lHF4)
+		lHF0.Add(lHF2)
+		lHF0.Add(lHF4)
 	else:
 		lHP0 = f.Get("data_obs_pass")
 		lHF0 = f.Get("data_obs_fail")
 
 	#lHP0.Smooth(10);
-        #lHP1.Smooth(10);
-        #lHP2.Smooth(10);
-        #lHP3.Smooth(10);
-        #lHP4.Smooth(10);
-        #lHF0.Smooth(10);
-        #lHF1.Smooth(10);
-        #lHF2.Smooth(10);
-        #lHF3.Smooth(10);
-        #lHF4.Smooth(10);
+		#lHP1.Smooth(10);
+		#lHP2.Smooth(10);
+		#lHP3.Smooth(10);
+		#lHP4.Smooth(10);
+		#lHF0.Smooth(10);
+		#lHF1.Smooth(10);
+		#lHF2.Smooth(10);
+		#lHF3.Smooth(10);
+		#lHF4.Smooth(10);
 
 	hpass.extend([lHP0,lHP1,lHP2])
 	hfail.extend([lHF0,lHF1,lHF2])
@@ -531,8 +603,8 @@ def loadHistograms(f,pseudo,pseudo15):
 	#signals
 	masses=[50,75,100,125,150,200,250,300]
 	for mass in masses:
-		hpass.append(f.Get("zqq"+str(mass)+"_pass"))
-		hfail.append(f.Get("zqq"+str(mass)+"_fail"))
+		hpass.append(f1.Get("zqq"+str(mass)+"_pass"))
+		hfail.append(f1.Get("zqq"+str(mass)+"_fail"))
 
 	for lH in (hpass+hfail):
 		lH.SetDirectory(0)	
@@ -554,6 +626,7 @@ if __name__ == '__main__':
 	parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='data = MC', metavar='isData')
 	parser.add_option('--pseudo15', action='store_true', dest='pseudo15', default =False,help='data = MC (fail) and fail*0.05 (pass)', metavar='isData')
 	parser.add_option('--input', dest='input', default = 'histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd.root',help='directory with data', metavar='idir')
+	parser.add_option('--input2', dest='input2', default='histInputs/hist_1DZqq-dataReRecoSpring165eff-3481-Gridv13-sig-pt5006007008009001000_msd_WZsignals.root',help='directory with data', metavar='idir')
 
 	(options, args) = parser.parse_args()
 

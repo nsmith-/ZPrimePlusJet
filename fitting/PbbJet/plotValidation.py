@@ -19,9 +19,10 @@ from array import array
 def main(options, args):
     tfile = rt.TFile.Open('validation.root')
     
-    bkgs = ['wqq','zqq']
+    bkgs = ['wqq','zqq','tqq']
     sigs = ['hqq125','tthqq125','whqq125','zhqq125']
     procdict = {}
+    procdict['tqq'] = 't#bar{t}'
     procdict['wqq'] = 'W(qq)'
     procdict['zqq'] = 'Z(qq)'
     procdict['hqq125'] = 'ggH(b#bar{b})'
@@ -30,7 +31,14 @@ def main(options, args):
     procdict['zhqq125'] = 'ZH(b#bar{b})'
     boxes = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
              'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
-    systs = ['JER','JES']
+    systs = ['JER','JES','scale','smear','trigger']
+    
+    numberOfMassBins = 23    
+    numberOfPtBins = 6
+    for box in boxes:
+        for proc in (bkgs+sigs):
+            for i in range(1,numberOfMassBins+1):
+                systs.append('%s%s%s%i'%(proc,box.replace('_',''),'mcstat',i))        
 
     shapes = {}
     
@@ -44,14 +52,22 @@ def main(options, args):
             tmph.GetXaxis().SetTitle('m_{SD} (GeV)')
             for syst in systs:
                 tmphUp = tfile.Get('%s_%s_%sUp'%(proc,box,syst))
+                try:
+                    if not tmphUp.InheritsFrom('TH1'):
+                        continue
+                except:
+                    continue
+                if 'mcstat' in syst:
+                    iBin = int(syst.split('mcstat')[-1])
+                    if tmphUp.GetBinContent(iBin)==0: continue
                 tmphUp.SetLineColor(rt.kBlue)
                 tmphUp.SetLineStyle(2)
                 tmphDown = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
                 tmphDown.SetLineColor(rt.kRed)
                 tmphDown.SetLineStyle(3)
-                tmph.Draw()
-                tmphUp.Draw("same")
-                tmphDown.Draw("same")    
+                tmph.Draw('hist')
+                tmphUp.Draw('histsame')
+                tmphDown.Draw('histsame')    
                 tLeg = rt.TLegend(0.2,0.6,0.44,0.89)
                 tLeg.SetLineColor(rt.kWhite)
                 tLeg.SetFillColor(rt.kWhite)
@@ -59,8 +75,13 @@ def main(options, args):
                 tLeg.SetTextFont(42)
                 tLeg.SetFillStyle(0)
                 tLeg.AddEntry(tmph,"%s, %s"%(procdict[proc],box.replace('_',', ')),"l")
-                tLeg.AddEntry(tmphUp,"%s +1#sigma"%(syst),"l")
-                tLeg.AddEntry(tmphDown,"%s -1#sigma"%(syst),"l")
+                nsigma = 1
+                if syst in ['scale']:
+                    nsigma = 10         
+                if syst in ['smear']:
+                    nsigma = 2                     
+                tLeg.AddEntry(tmphUp,"%s +%i#sigma"%(syst,nsigma),"l")
+                tLeg.AddEntry(tmphDown,"%s -%i#sigma"%(syst,nsigma),"l")
                 tLeg.Draw('same')
                 c.Print('%s/%s_%s_%s.pdf'%(options.odir,proc,box,syst))
                 c.Print('%s/%s_%s_%s.C'%(options.odir,proc,box,syst))

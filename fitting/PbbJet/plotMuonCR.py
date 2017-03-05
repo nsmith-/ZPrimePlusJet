@@ -17,6 +17,7 @@ def main(options, args):
     fml = rt.TFile.Open(options.idir+'/mlfit.root','read')
 
 
+    #bkgs = ['qcd','tqq','stqq','zqq','wqq','wlnu','vvqq','zll','total_background']
     bkgs = ['qcd','tqq','stqq','zqq','wqq','wlnu','vvqq','total_background']
     sigs = ['hqq125','tthqq125','whqq125','zhqq125']
     data = ['data']
@@ -89,9 +90,12 @@ def main(options, args):
 
         
         htot.SetLineColor(rt.kBlack)
-        htot.SetFillStyle(3004)
-        htot.SetFillColor(r.kGray+1)
-        htot.SetLineColor(r.kGray+2)
+        #htot.SetFillStyle(3004)
+        #htot.SetFillColor(r.kGray+1)
+        htot.SetFillStyle(3001)
+        htot.SetFillColor(4)
+        #htot.SetLineColor(r.kGray+2)
+        htot.SetLineColor(r.kBlue+1)        
         htot.SetMinimum(0)
         htot.SetMarkerSize(0)
         htot.SetMarkerColor(r.kGray+2)
@@ -129,7 +133,8 @@ def main(options, args):
         p22.Draw()
         p22.cd()
         p22.SetGrid()
-        iRatio = data.Clone('iRatio%s'%box)        
+        iRatio = data.Clone('iRatio%s'%box)
+        iRatio.SetLineColor(rt.kBlack)
         for i in range(iRatio.GetNbinsX()):            
             if htot.GetBinContent(i+1) > 0:
                 iRatio.SetBinContent( i+1, data.GetBinContent(i+1)/htot.GetBinContent(i+1) )
@@ -172,9 +177,12 @@ def main(options, args):
 
 
                 
-        iOneWithErrors.SetFillStyle(3004)
-        iOneWithErrors.SetFillColor(r.kGray+1)
-        iOneWithErrors.SetLineColor(r.kGray+2)
+        #iOneWithErrors.SetFillStyle(3004)
+        #iOneWithErrors.SetFillColor(r.kGray+1)
+        iOneWithErrors.SetFillStyle(3001)
+        iOneWithErrors.SetFillColor(4)
+        #iOneWithErrors.SetLineColor(r.kGray+2)
+        iOneWithErrors.SetLineColor(r.kBlue+1)
         iOneWithErrors.SetMarkerSize(0)
         iOneWithErrors.SetLineWidth(2)
         iRatio.Draw('pez')

@@ -160,7 +160,7 @@ class sampleContainer:
                           ('AK8Puppijet0_eta','d',-999),('AK8Puppijet0_phi','d',-999),('AK8Puppijet0_tau21','d',-999),('AK8Puppijet0_tau32','d',-999),
                           ('AK8Puppijet0_N2sdb1','d',-999),('puWeight','f',0),('scale1fb','f',0),
                           ('AK8Puppijet0_doublecsv','d',-999),('AK8Puppijet1_doublecsv','d',-999),
-                          ('kfactor','f',0),('AK8Puppijet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),
+                          ('kfactor','f',0),('kfactorNLO','f',0),('AK8Puppijet2_doublecsv','i',-999),('nAK4PuppijetsPt30','i',-999),
                           ('nAK4PuppijetsPt30dR08_0','i',-999),
                           ('nAK4PuppijetsPt30dR08jesUp_0','i',-999),('nAK4PuppijetsPt30dR08jesDown_0','i',-999),
                           ('nAK4PuppijetsPt30dR08jerUp_0','i',-999),('nAK4PuppijetsPt30dR08jerDown_0','i',-999),
@@ -551,7 +551,13 @@ class sampleContainer:
             fbweight = self.scale1fb[0] * self._lumi
             #if self._name=='tqq' or 'TTbar' in self._name:
             #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
-            vjetsKF = self.kfactor[0] #==1 for not V+jets events            
+            vjetsKF = 1.
+            if self._name=='wqq' or self._name=='W':
+                #print self._name
+                vjetsKF = self.kfactor[0]*self.kfactorNLO[0] #==1 for not V+jets events      
+            elif self._name=='zqq' or self._name=='DY':
+               #print self._name
+                vjetsKF = self.kfactor[0]*1.35 #==1 for not V+jets events        
             # trigger weight
             massForTrig =  min(self.AK8Puppijet0_msd[0], 300. )
             ptForTrig =  max(200., min(self.AK8Puppijet0_pt[0]  , 1000. ))
