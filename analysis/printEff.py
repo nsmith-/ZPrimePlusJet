@@ -52,8 +52,8 @@ class printEff:
 
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root","read")
-        self._trans_h2ddt = f_h2ddt.Get("h2ddt")
+        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/GridOutput_v13.root","read")
+        self._trans_h2ddt = f_h2ddt.Get("Rho2D")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
 	

@@ -30,7 +30,11 @@ def main(options,args):
 		'ww1000':[idir+'/BulkGravToWW_narrow_M_1000_13TeV_madgraph.root'],
 		'ww2000':[idir+'/BulkGravToWW_narrow_M_2000_13TeV_madgraph.root'],
 		'hh1000':[idir+'/BulkGravTohhTohbbhbb_narrow_M_1000_13TeV_madgraph.root'],
-		'ww1000h':[idir+'/BulkGravToWW_narrow_M_1000_13TeV_madgraph_herwigpp.root']
+		'ww1000h':[idir+'/BulkGravToWW_narrow_M_1000_13TeV_madgraph_herwigpp.root'],
+		'ww4000h':[idir+'/bulkWW4000_herwig.root'],
+		'ww4000':[idir+'/bulkWW4000.root'],
+		'ww600h':[idir+'/bulkWW600_herwig.root'],
+                'ww600':[idir+'/bulkWW600.root']
             }
 
     print "Signals... "
@@ -47,6 +51,10 @@ def main(options,args):
     sigSamples['ww2000h']  = printEff('ww2000h',tfiles['ww2000h']  , 1)
     sigSamples['ww1000']  = printEff('ww1000',tfiles['ww1000']  , 1)
     sigSamples['ww1000h']  = printEff('ww1000h',tfiles['ww1000h']  , 1)
+    sigSamples['ww4000']  = printEff('ww4000',tfiles['ww4000']  , 1)
+    sigSamples['ww4000h']  = printEff('ww4000h',tfiles['ww4000h']  , 1)
+    sigSamples['ww600']  = printEff('ww600',tfiles['ww600']  , 1)
+    sigSamples['ww600h']  = printEff('ww600h',tfiles['ww600h']  , 1)	
 
 
 ##----##----##----##----##----##----##
