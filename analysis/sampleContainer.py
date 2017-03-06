@@ -554,10 +554,10 @@ class sampleContainer:
             vjetsKF = 1.
             if self._name=='wqq' or self._name=='W':
                 #print self._name
-                vjetsKF = self.kfactor[0]*self.kfactorNLO[0] #==1 for not V+jets events      
+                vjetsKF = self.kfactor[0]*1.2 #==1 for not V+jets events      
             elif self._name=='zqq' or self._name=='DY':
                #print self._name
-                vjetsKF = self.kfactor[0]*1.35 #==1 for not V+jets events        
+                vjetsKF = self.kfactor[0]*1.15 #==1 for not V+jets events        
             # trigger weight
             massForTrig =  min(self.AK8Puppijet0_msd[0], 300. )
             ptForTrig =  max(200., min(self.AK8Puppijet0_pt[0]  , 1000. ))
