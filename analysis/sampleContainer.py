@@ -12,7 +12,6 @@ import time
 import warnings
 PTCUT = 450.
 PTCUTMUCR = 400.
-DBTAGCUTMIN = -999.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
@@ -22,7 +21,7 @@ NJETCUT = 5
 #########################################################################################################
 class sampleContainer:
 
-    def __init__( self ,name, fn, sf = 1, lumi = 1, isData = False, fillCA15=False, cutFormula='1'):
+    def __init__( self ,name, fn, sf = 1, DBTAGCUTMIN=-99., lumi = 1, isData = False, fillCA15=False, cutFormula='1'):
         self._name = name
         self._fn = fn
         if len(fn)>0:

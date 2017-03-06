@@ -13,6 +13,7 @@ def main(options,args):
     odir = options.odir
     lumi = options.lumi
     muonCR = options.muonCR
+    dbtagmin=options.dbtagmin
 
     fileName = 'hist_1DZbb_pt_scalesmear.root'
     if options.bb:
@@ -120,26 +121,26 @@ def main(options,args):
     
     print "Signals... "
     sigSamples = {}
-    sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, lumi)
-    sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, lumi)
-    sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, lumi)
-    sigSamples['whqq125']  = sampleContainer('whqq125',tfiles['whqq125']  , 1, lumi)
-    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
+    sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, dbtagmin, lumi)
+    sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, dbtagmin, lumi)
+    sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, dbtagmin, lumi)
+    sigSamples['whqq125']  = sampleContainer('whqq125',tfiles['whqq125']  , 1, dbtagmin, lumi)
+    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, dbtagmin, lumi)
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
-    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
-    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, lumi)
-    bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, lumi)
-    bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, lumi)
-    bkgSamples['wlnu'] = sampleContainer('wlnu',tfiles['wlnu'], 1, lumi)
-    bkgSamples['zll'] = sampleContainer('zll',tfiles['zll'], 1, lumi)
-    bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
+    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin, lumi)
+    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, dbtagmin, lumi)
+    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, dbtagmin, lumi)
+    bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, dbtagmin, lumi)
+    bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, dbtagmin, lumi)
+    bkgSamples['wlnu'] = sampleContainer('wlnu',tfiles['wlnu'], 1, dbtagmin, lumi)
+    bkgSamples['zll'] = sampleContainer('zll',tfiles['zll'], 1, dbtagmin, lumi)
+    bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, dbtagmin, lumi)
     print "Data..."
     if muonCR:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, dbtagmin, lumi, True , False, '((triggerBits&4)&&passJson)')
     else:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&2)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, dbtagmin, lumi, True , False, '((triggerBits&2)&&passJson)')
 
 
     hall={}
@@ -203,11 +204,12 @@ def main(options,args):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", default = 35.9,type=float,help="luminosity", metavar="lumi")
     parser.add_option("--bb", action='store_true', dest="bb", default = False,help="sort by double b-tag")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write histograms', metavar='odir')
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
+    parser.add_option('-d','--dbtagmin', dest='dbtagmin',  default =-99.,help='left bound to btag selection', metavar='dbtagmin')
 
     (options, args) = parser.parse_args()
 
