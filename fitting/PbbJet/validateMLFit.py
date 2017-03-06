@@ -96,23 +96,25 @@ def main(options,args):
         rfr = r.RooFitResult( fml.Get(options.fit) )
         lParams = []
         lParams.append("qcdeff")
-        lParams.append("r0p1")
-        lParams.append("r0p2") ##
-        lParams.append("r1p0")
+        # for r2p2 polynomial
+        #lParams.append("r0p1")
+        #lParams.append("r0p2")
+        #lParams.append("r1p0")
+        #lParams.append("r1p1")
+        #lParams.append("r1p2")
+        #lParams.append("r2p0") 
+        #lParams.append("r2p1")
+        #lParams.append("r2p2")
+        # for r2p1 polynomial
+        lParams.append("r2p0")
         lParams.append("r1p1")
-        lParams.append("r1p2")
-        lParams.append("r2p0") 
+        lParams.append("r1p0")
+        lParams.append("r0p1")
         lParams.append("r2p1")
+        lParams.append("r0p2") 
+        lParams.append("r1p2")
         lParams.append("r2p2")
         
-        #lParams.append("r1p0")
-        #lParams.append("r2p0")
-        #lParams.append("r0p1")
-        #lParams.append("r1p1")
-        #lParams.append("r2p1")
-        #lParams.append("r0p2") 
-        #lParams.append("r1p2")
-        #lParams.append("r2p2")
 
         pars = []
         for p in lParams:
@@ -391,6 +393,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+"-log.C")
 
     
+
+    
 def fun2(x, par):
     rho = r.TMath.Log((x[0]*x[0])/(x[1]*x[1]))
     poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
@@ -412,8 +416,8 @@ def makeTF(pars,ratio):
     
     f2params = array.array('d',pars)
     npar = len(f2params)
-    print ratio.GetYaxis().GetXmax()
-    f2 = r.TF2("f2",fun2, ratio.GetXaxis().GetXmin()+3.5, ratio.GetXaxis().GetXmin()-3.5, ratio.GetYaxis().GetXmin()+25., ratio.GetYaxis().GetXmax()-100., npar)
+
+    f2 = r.TF2("f2",fun2, ratio.GetXaxis().GetXmin()+3.5, ratio.GetXaxis().GetXmax()-3.5, ratio.GetYaxis().GetXmin()+25., ratio.GetYaxis().GetXmax()-100., npar)
     f2.SetParameters(f2params)
 
     c = r.TCanvas("cTF","cTF",1000,800)
@@ -433,6 +437,7 @@ def makeTF(pars,ratio):
     #f2.FixParameter(8,0)
     #ratio.Fit('f2','RN')
     f2.Draw("surf fb bb same")
+    #f2.Draw("surf fb bb")
 
     r.gPad.SetTheta(30)
     r.gPad.SetPhi(30+270)
@@ -487,7 +492,7 @@ if __name__ == '__main__':
 	r.gStyle.SetPalette(1)
 	r.gStyle.SetPaintTextFormat("1.1f")
 	r.gStyle.SetOptFit(0000)
-	#r.gROOT.SetBatch()
+	r.gROOT.SetBatch()
     #r.gStyle.SetPalette(r.kBird)	
 	main(options,args)
 ##-------------------------------------------------------------------------------------

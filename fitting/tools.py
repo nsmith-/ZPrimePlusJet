@@ -83,6 +83,7 @@ def proj(iLabel,iBin,iH,iNBins,iXMin,iXMax):
         if iH.GetXaxis().GetBinCenter(iM) < lH.GetXaxis().GetXmin() or iH.GetXaxis().GetBinCenter(iM) > lH.GetXaxis().GetXmax():
             continue
         lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinContent(iM,int(iBin)))
+        lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinError(iM,int(iBin)))
     lH.SetDirectory(0)
     return lH
 
