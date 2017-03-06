@@ -608,28 +608,18 @@ def main(options,args):
 
 ##-------------------------------------------------------------------------------------
 def getSF(process,cat,f):
-    if 'hqq' in process:
+    SF = 1
+    if 'hqq' in process or 'zqq' in process:
         if 'pass' in cat:
-            return V_SF*BB_SF
+            SF *= BB_SF
         else:
             passInt = f.Get(process+'_pass').Integral()
             failInt = f.Get(process+'_fail').Integral()
             if failInt > 0:
-                return V_SF*(1.+(1.-BB_SF)*passInt/failInt)
-            else:
-                return V_SF                
-    elif 'wqq' in process or 'zqq' in process:
-        if 'pass' in cat:
-            return BB_SF
-        else:
-            passInt = f.Get(process+'_pass').Integral()
-            failInt = f.Get(process+'_fail').Integral()
-            if failInt > 0:
-                return (1.+(1.-BB_SF)*passInt/failInt)
-            else:
-                return 1.
-    else:
-        return 1.
+                SF *= (1.+(1.-BB_SF)*passInt/failInt)
+    if 'wqq' in process or 'zqq' in process or 'hqq' in process:
+        SF *= V_SF
+    return SF
 def loadHistograms(f,pseudo,blind,useQCD,scale):
     hpass = []
     hfail = []

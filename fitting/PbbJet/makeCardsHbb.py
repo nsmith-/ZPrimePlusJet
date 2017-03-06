@@ -14,15 +14,8 @@ import array
 sys.path.insert(0, '../.')
 from tools import *
 
+from buildRhalphabetHbb import getSF,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI,BB_SF,BB_SF_ERR,V_SF,V_SF_ERR
 
-BLIND_LO = 110
-BLIND_HI = 131
-RHO_LO = -6
-RHO_HI = -2.1
-BB_SF = 0.91
-BB_SF_ERR = 0.03
-V_SF = 0.993
-V_SF_ERR = 0.043
 ##-------------------------------------------------------------------------------------
 def main(options,args):
 	
@@ -100,7 +93,8 @@ def main(options,args):
         bbString = 'bbeff lnN'
         vString = 'veff lnN'
         mcStatStrings = {}
-        mcStatGroupString = 'mcstat group =' 
+        mcStatGroupString = 'mcstat group ='
+        qcdGroupString = 'qcd group = qcdeff'
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins):
@@ -114,7 +108,7 @@ def main(options,args):
                 else:
                     jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
-                if proc in ['qcd','tqq','wqq','zqq']:
+                if proc in ['qcd','tqq','wqq']:
                     bbString += ' -'
                 else:
                     bbString += ' %.3f'%bbErrs['%s_%s'%(proc,box)]
@@ -166,7 +160,9 @@ def main(options,args):
                         
         for im in range(numberOfMassBins):
             dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
+            qcdGroupString += ' qcd_fail_%s_Bin%i'%(tag,im+1)
         dctmp.write(mcStatGroupString + "\n")
+        dctmp.write(qcdGroupString + "\n")
 
 
 ###############################################################

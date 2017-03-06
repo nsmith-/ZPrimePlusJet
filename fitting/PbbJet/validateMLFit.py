@@ -18,8 +18,7 @@ msd_binBoundaries=[]
 for i in range(0,24): msd_binBoundaries.append(40+i*7)
 pt_binBoundaries = [450,500,550,600,675,800,1000]
 
-RHO_LO = -6
-RHO_HI = -2.1
+from buildRhalphabetHbb import getSF,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI,BB_SF,BB_SF_ERR,V_SF,V_SF_ERR
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):

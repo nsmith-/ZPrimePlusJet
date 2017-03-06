@@ -8,35 +8,8 @@ import time
 import array
 import os
 
-RHO_LO = -6
-RHO_HI = -2.1
-BB_SF = 0.91
-BB_SF_ERR = 0.03
-V_SF = 0.993
-V_SF_ERR = 0.043
-def getSF(process,cat,f):
-    if 'hqq' in process:
-        if 'pass' in cat:
-            return V_SF*BB_SF
-        else:
-            passInt = f.Get(process+'_pass').Integral()
-            failInt = f.Get(process+'_fail').Integral()
-            if failInt > 0:
-                return V_SF*(1.+(1.-BB_SF)*passInt/failInt)
-            else:
-                return V_SF                
-    elif 'wqq' in process or 'zqq' in process:
-        if 'pass' in cat:
-            return BB_SF
-        else:
-            passInt = f.Get(process+'_pass').Integral()
-            failInt = f.Get(process+'_fail').Integral()
-            if failInt > 0:
-                return (1.+(1.-BB_SF)*passInt/failInt)
-            else:
-                return 1.
-    else:
-        return 1.
+from buildRhalphabetHbb import getSF,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI,BB_SF,BB_SF_ERR,V_SF,V_SF_ERR
+
 def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     obsRate = {}
     for box in boxes:
