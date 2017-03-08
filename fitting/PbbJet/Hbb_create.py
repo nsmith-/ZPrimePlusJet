@@ -204,12 +204,12 @@ def main(options,args):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option("--lumi", dest="lumi", default = 35.9,type=float,help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", default = 35.9,type="float",help="luminosity", metavar="lumi")
     parser.add_option("--bb", action='store_true', dest="bb", default = False,help="sort by double b-tag")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write histograms', metavar='odir')
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
-    parser.add_option('-d','--dbtagmin', dest='dbtagmin',  default =-99.,help='left bound to btag selection', metavar='dbtagmin')
+    parser.add_option('-d','--dbtagmin', dest='dbtagmin',  default =-99.,type="float",help='left bound to btag selection', metavar='dbtagmin')
 
     (options, args) = parser.parse_args()
 
