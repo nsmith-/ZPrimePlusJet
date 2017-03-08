@@ -121,26 +121,26 @@ def main(options,args):
     
     print "Signals... "
     sigSamples = {}
-    sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, dbtagmin, lumi)
-    sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, dbtagmin, lumi)
-    sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, dbtagmin, lumi)
-    sigSamples['whqq125']  = sampleContainer('whqq125',tfiles['whqq125']  , 1, dbtagmin, lumi)
-    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, dbtagmin, lumi)
+    sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, dbtagmin, lumi,False,False,'1',True)
+    sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, dbtagmin, lumi,False,False,'1',True)
+    sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, dbtagmin, lumi,False,False,'1',True)
+    sigSamples['whqq125']  = sampleContainer('whqq125',tfiles['whqq125']  , 1, dbtagmin, lumi,False,False,'1',True)
+    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, dbtagmin, lumi,False,False,'1',True)
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin, lumi)
-    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, dbtagmin, lumi)
-    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, dbtagmin, lumi)
-    bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, dbtagmin, lumi)
-    bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, dbtagmin, lumi)
-    bkgSamples['wlnu'] = sampleContainer('wlnu',tfiles['wlnu'], 1, dbtagmin, lumi)
-    bkgSamples['zll'] = sampleContainer('zll',tfiles['zll'], 1, dbtagmin, lumi)
-    bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, dbtagmin, lumi)
+    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['wlnu'] = sampleContainer('wlnu',tfiles['wlnu'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['zll'] = sampleContainer('zll',tfiles['zll'], 1, dbtagmin, lumi,False,False,'1',True)
+    bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, dbtagmin, lumi,False,False,'1',True)
     print "Data..."
     if muonCR:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, dbtagmin, lumi, True , False, '((triggerBits&4)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, dbtagmin, lumi, True , False, '((triggerBits&4)&&passJson)',True)
     else:
-        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, dbtagmin, lumi, True , False, '((triggerBits&2)&&passJson)')
+        dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, dbtagmin, lumi, True , False, '((triggerBits&2)&&passJson)',True)
 
 
     hall={}
