@@ -13,7 +13,7 @@ r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHigg
 
 
 # including other directories
-#sys.path.insert(0, '../.')
+sys.path.insert(0, '../.')
 from tools import *
 from hist import *
 from rhalphabet_builder import RhalphabetBuilder, LoadHistograms
@@ -27,18 +27,18 @@ RHO_LO = -6
 RHO_HI = -2.1
 
 def main(options, args):
-	
-	ifile = options.ifile
-	odir = options.odir
+    
+    ifile = options.ifile
+    odir = options.odir
 
-	# Load the input histograms
-	# 	- 2D histograms of pass and fail mass,pT distributions
-	# 	- for each MC sample and the data
-	f = r.TFile.Open(ifile)
+    # Load the input histograms
+    #   - 2D histograms of pass and fail mass,pT distributions
+    #   - for each MC sample and the data
+    f = r.TFile.Open(ifile)
     (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI])
     f.Close()
 
-	# Build the workspaces
+    # Build the workspaces
     rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, options.odir, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, mass_fit=options.mass_fit, freeze_poly=options.freeze_poly)
     # rhalphabuilder._poly_degree_pt = 2
     # rhalphabuilder._poly_degree_rho = 2

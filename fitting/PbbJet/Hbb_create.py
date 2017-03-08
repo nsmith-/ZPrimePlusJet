@@ -4,6 +4,8 @@ from array import array
 from optparse import OptionParser
 import ROOT
 import sys
+sys.path.append(os.path.expandvars("$CMSSW_BASE/src/DAZSLE/ZPrimePlusJet/analysis"))
+
 from sampleContainer import *
 
 
@@ -119,20 +121,13 @@ def main(options,args):
     
     print "Signals... "
     sigSamples = {}
-    sigSamples['hqq125']  = sampleContainer('hqq125',tfiles['hqq125']  , 1, lumi)
-    sigSamples['tthqq125']  = sampleContainer('tthqq125',tfiles['tthqq125']  , 1, lumi)
-    sigSamples['vbfhqq125']  = sampleContainer('vbfhqq125',tfiles['vbfhqq125']  , 1, lumi)
-    sigSamples['whqq125']  = sampleContainer('whqq125',tfiles['whqq125']  , 1, lumi)
-    sigSamples['zhqq125']  = sampleContainer('zhqq125',tfiles['zhqq125']  , 1, lumi)
+    for signal_sample in ["hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"]:
+        sigSamples[signal_sample] = sampleContainer(signal_sample, tfile[signal_sample], 1, lumi)
+
     print "Backgrounds..."
     bkgSamples = {}    
-    bkgSamples['qcd'] = sampleContainer('qcd',tfiles['qcd'], 1, lumi)
-    bkgSamples['tqq'] = sampleContainer('tqq',tfiles['tqq'], 1, lumi)
-    bkgSamples['stqq'] = sampleContainer('stqq',tfiles['stqq'], 1, lumi)
-    bkgSamples['wqq'] = sampleContainer('wqq',tfiles['wqq'], 1, lumi)
-    bkgSamples['wlnu'] = sampleContainer('wlnu',tfiles['wlnu'], 1, lumi)
-    bkgSamples['zqq'] = sampleContainer('zqq',tfiles['zqq'], 1, lumi)
-    bkgSamples['vvqq'] = sampleContainer('vvqq',tfiles['vvqq'], 1, lumi)
+    for background_sample in ["qcd", "tqq", "stqq", "wqq", "wlnu", "zqq", "vvqq"]:
+        bkgSamples[background_sample] = sampleContainer(background_sample, tfiles[background_sample], 1, lumi)
     print "Data..."
     if muonCR:
         dataSample = sampleContainer('data_obs',tfiles['data_obs'], 1, lumi, True , False, '((triggerBits&4)&&passJson)')
@@ -206,3 +201,5 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     main(options,args)
+
+    print "All done."
