@@ -81,7 +81,7 @@ class sampleContainer:
 
         # get histogram for transform
         f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root",
-                                  "read")
+                                  "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
@@ -802,12 +802,17 @@ class sampleContainer:
             # if self._name=='tqq' or 'TTbar' in self._name:
             #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
             vjetsKF = 1.
+	    wscale=[1.0,1.0,1.0,1.20,1.25,1.25,1.0]
+	    ptscale=[0, 500, 600, 700, 800, 900, 1000,3000]
+	    ptKF=1.
             if self._name == 'wqq' or self._name == 'W':
                 # print self._name
-                vjetsKF = self.kfactor[0] * 1.2  # ==1 for not V+jets events
+		for i in range(0, len(ptscale)):
+			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
+                vjetsKF = self.kfactor[0] * 1.35 * ptKF  # ==1 for not V+jets events
             elif self._name == 'zqq' or self._name == 'DY':
                 # print self._name
-                vjetsKF = self.kfactor[0] * 1.15  # ==1 for not V+jets events
+                vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
             # trigger weight
             massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
             ptForTrig = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
