@@ -785,7 +785,7 @@ if __name__ == '__main__':
     parser.add_option('--scale', dest='scale', default=1, type='float',
                       help='scale factor to scale MC (assuming only using a fraction of the data)')
     parser.add_option('--nr', dest='NR', default=2, type='int', help='order of rho (or mass) polynomial')
-    parser.add_option('--np', dest='NP', default=2, type='int', help='order of pt polynomial')
+    parser.add_option('--np', dest='NP', default=1, type='int', help='order of pt polynomial')
     parser.add_option('-r', dest='r', default=0, type='float', help='signal strength for MC pseudodataset')
 
     (options, args) = parser.parse_args()
