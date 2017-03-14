@@ -33,7 +33,7 @@ def Upsilonconstraints(x):
 	y = ( 2*4*math.pi*alpha ) * ( math.sqrt( 3.*RUps + 1 ) + 1 ) * (1-(mZp*mZp/(mUps*mUps)))
 	if y < 0.: y *= -1;
 
-	return math.sqrt(y);
+	return math.sqrt(y)/6.;
 
 def Psiconstraints(x):
 	
@@ -60,7 +60,7 @@ def Psiconstraints(x):
 	###
 	y = math.sqrt( math.fabs(1-(mZp*mZp/(mZ*mZ))) )
 
-	return y;
+	return y/6.;
 
 def Zconstraints(x):
 	
@@ -92,7 +92,7 @@ def Zconstraints(x):
 	if ynum < 0: ynum *= -1.;
 	y = math.sqrt(ynum/yden);
 
-	return y;
+	return y/6.;
 
 ########################################################################################
 def main():
@@ -106,14 +106,26 @@ def main():
 	# masses = [      100,      110, 125, 135, 150, 165, 180, 200, 250, 300];
 	# sXSgb1 = [1.394e+05,4.481e+04,2.641e+04,1.939e+04,1.462e+04,9976,7870,5707,4254,3233,2320,1131, 620]
 	# masses = [       50,       75,       90,      100,      110, 125, 135, 150, 165, 180, 200, 250, 300];
+	#bsXSgb1 = [1.394e+05,8.419e+04,4.481e+04,2.641e+04,1.939e+04,1.462e+04,7870,5707,4254,3233,2320,1131, 620]
+	#bmasses = [       50,       60,       75,       90,      100,      110, 135, 150, 165, 180, 200, 250, 300]
+	#masses = []
+	#sXSgb1 = []
+	#lGraph = ROOT.TGraph(len(bmasses),array('d',bmasses),array('d',bsXSgb1))
+	#for x in range(50,300,5):
+	#if x == 200: continue;
+	#if x > 260 and x < 280: continue;
+	# if x > 160 and x < 170: continue;
+
+	#masses.append(x)
+	#sXSgb1.append(lGraph.Eval(x))
 	bsXSgb1 = [1.394e+05,8.419e+04,4.481e+04,2.641e+04,1.939e+04,1.462e+04,7870,5707,4254,3233,2320,1131, 620]
-	bmasses = [       50,       60,       75,       90,      100,      110, 135, 150, 165, 180, 200, 250, 300]
-	masses = []
-	sXSgb1 = []
-	lGraph = ROOT.TGraph(len(bmasses),array('d',bmasses),array('d',bsXSgb1))
-	for x in range(50,300,5):
-		masses.append(x)
-		sXSgb1.append(lGraph.Eval(x))
+        bmasses = [       50,       60,       75,       90,      100,      110, 135, 150, 165, 180, 200, 250, 300]
+        masses = []
+        sXSgb1 = []
+        lGraph = ROOT.TGraph(len(bmasses),array('d',bmasses),array('d',bsXSgb1))
+        for x in range(50,300,5):
+                masses.append(x)
+                sXSgb1.append(lGraph.Eval(x))
 
 	#sXSgb1 = [1.394e+05,4.481e+04,1.939e+04,9976,5707,2320,1131,620]
 	#masses = [       50,       75,      100, 125, 150, 200, 250,300];
@@ -125,7 +137,9 @@ def main():
 	#--------------------------------
 	results = [];
 	for i in range(len(masses)): 
-		results.append( getAsymLimits('%s/higgsCombine_asym_zqq%s.Asymptotic.mH%s.root' % ( idir,str(masses[i]),str(masses[i])),'Zp'+str(masses[i])) );
+		print str(masses[i])
+                results.append( getAsymLimits('ZQQ_%s/lim_34_results7limit.root' % ( str(masses[i])),'Zp'+str(masses[i])));
+
 
 	names   = [];
 	l_obs   = [];
@@ -180,12 +194,12 @@ def main():
 	l_p1sig_gB = [];
 	l_p2sig_gB = [];
 	for i in range(len(l_exp)):
-		l_obs_gB.append( math.sqrt(l_obs[i]) );
-		l_exp_gB.append( math.sqrt(l_exp[i]) );
-		l_m2sig_gB.append( math.sqrt(l_m2sig[i]) );
-		l_m1sig_gB.append( math.sqrt(l_m1sig[i]) );
-		l_p1sig_gB.append( math.sqrt(l_p1sig[i]) );
-		l_p2sig_gB.append( math.sqrt(l_p2sig[i]) );
+		l_obs_gB.append( math.sqrt(l_obs[i])/6. );
+		l_exp_gB.append( math.sqrt(l_exp[i])/6. );
+		l_m2sig_gB.append( math.sqrt(l_m2sig[i])/6. );
+		l_m1sig_gB.append( math.sqrt(l_m1sig[i])/6. );
+		l_p1sig_gB.append( math.sqrt(l_p1sig[i])/6. );
+		l_p2sig_gB.append( math.sqrt(l_p2sig[i])/6. );
 
 	gr_gB_exp    = makeAGraph( masses, l_exp_gB, 1, 2 );
 	gr_gB_obs    = makeAGraph( masses, l_obs_gB, 1, 1 );
@@ -236,7 +250,7 @@ def main():
 	txta.SetNDC();
 	txtb = ROOT.TLatex(0.24,0.92,"Preliminary");
 	txtb.SetNDC(); txtb.SetTextFont(52);
-	txtc = ROOT.TLatex(0.68,0.92,"35.8 fb^{-1} (13 TeV)");
+	txtc = ROOT.TLatex(0.68,0.92,"35.9 fb^{-1} (13 TeV)");
 	txtc.SetNDC(); txtc.SetTextFont(42); txtc.SetTextSize(0.04);
 	txtd = ROOT.TLatex(0.60,0.80,"g_{B} = 1 or g_{q} = 1/6");
 	txtd.SetNDC(); txtd.SetTextFont(42); txtd.SetTextSize(0.04);
@@ -261,8 +275,8 @@ def main():
 	legbb.AddEntry(gr_mu_exp,"Expected","l")
 	legbb.AddEntry(gr_mu_1sigma,"#pm 1 std. deviation","f")	
 	legbb.AddEntry(gr_mu_2sigma,"#pm 2 std. deviation","f")
-	legbb.AddEntry(gr_xs_gb0d5,"theory, g_{B} = 1","l")	
-	legbb.AddEntry(gr_xs_gb1d0,"theory, g_{B} = 0.5","l")	
+	legbb.AddEntry(gr_xs_gb0d5,"theory, g_{q} = 0.17","l")	
+	legbb.AddEntry(gr_xs_gb1d0,"theory, g_{q} = 0.08","l")	
 
 	can_mu = ROOT.TCanvas("can_mu","can_mu",1200,800);
 	hrl = can_mu.DrawFrame(lowlim,0,320,3);
@@ -357,14 +371,14 @@ def main():
 
 
 	can_gB = ROOT.TCanvas("can_gB","can_gB",900,800);
-	hrl = can_gB.DrawFrame(lowlim,0,650,2);
-	hrl.GetYaxis().SetTitle("coupling, g_{B}");
+	hrl = can_gB.DrawFrame(lowlim,0,300,0.5);
+	hrl.GetYaxis().SetTitle("coupling, g_{q}");
 	hrl.GetYaxis().SetTitleOffset(0.85);
 	hrl.GetXaxis().SetTitle("Z\' mass (GeV)");
 	
 	gr_gB_2sigma.Draw('f');
 	gr_gB_1sigma.Draw('fsames');
-	gr_gB_obs.Draw('csames');
+	gr_gB_obs.Draw('lsames');
 	gr_gB_exp.Draw('csames');
 
 	gr_UA2.Draw("csames")
@@ -391,8 +405,8 @@ def main():
 	#####
 
 	can_gB2 = ROOT.TCanvas("can_gB2","can_gB2",1000,800);
-	hrl2 = can_gB.DrawFrame(30,0.2,801,1.5);
-	hrl2.GetYaxis().SetTitle("coupling, g_{B}");
+	hrl2 = can_gB.DrawFrame(30,0.05,1501,01.0);
+	hrl2.GetYaxis().SetTitle("coupling, g_{q}");
 	hrl2.GetYaxis().SetTitleOffset(0.85);	
 	hrl2.GetXaxis().SetTitle("Z\' mass (GeV)");
 	
@@ -413,8 +427,8 @@ def main():
 
 	gr_gB_2sigma.Draw('fsames');
 	gr_gB_1sigma.Draw('fsames');
-	gr_gB_obs.Draw('lsames');
-	gr_gB_exp.Draw('lsames');
+	gr_gB_obs.Draw('csames');
+	gr_gB_exp.Draw('csames');
 
 	gr_UA2.Draw("csames")
 	gr_CDFRun1.Draw("csames")
@@ -501,7 +515,7 @@ def csvToGraph(fn, linecolor=1, addFactor=False):
 	for line in ifile: 
 		lline = line.strip().split(',');
 		a_m.append(float(lline[0]))
-		a_g.append(float(lline[1])*factor)
+		a_g.append(float(lline[1])*factor/6.)
 		npoints += 1;
 
 	gr = ROOT.TGraph(npoints,a_m,a_g);
