@@ -14,7 +14,9 @@ import array
 sys.path.insert(0, '../.')
 from tools import *
 
-from buildRhalphabetHbb import getSF,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI,BB_SF,BB_SF_ERR,V_SF,V_SF_ERR
+from buildRhalphabetHbb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
+from rhalphabet_builder import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
+
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
@@ -135,10 +137,14 @@ def main(options,args):
                 newline = bbString
             elif 'veff' in l:
                 newline = vString
+            elif 'TQQEFF' in l:
+                tqqeff = histoDict['tqq_pass'].Integral() / (
+                histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
+                newline = l.replace('TQQEFF','%.4f'%tqqeff)
             else:
                 newline = l
             if "CATX" in l:
-                newline = l.replace('CATX',tag)
+                newline = newline.replace('CATX',tag)
             dctmp.write(newline + "\n")
         for box in boxes:
             for proc in sigs+bkgs:
