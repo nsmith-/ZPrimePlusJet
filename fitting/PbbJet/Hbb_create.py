@@ -4,6 +4,8 @@ from array import array
 from optparse import OptionParser
 import ROOT
 import sys
+sys.path.append(os.path.expandvars("$CMSSW_BASE/src/DAZSLE/ZPrimePlusJet/analysis"))
+
 from sampleContainer import *
 
 
@@ -220,3 +222,5 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     main(options, args)
+
+    print "All done."

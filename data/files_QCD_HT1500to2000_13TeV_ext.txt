@@ -1,0 +1,15 @@
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job0_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job10_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job11_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job12_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job13_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job14_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job15_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job1_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job2_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job3_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job4_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job5_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job7_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job8_file0.root
+root://cmsxrootd-site.fnal.gov//store/user/jduarte1/zprimebits-v11.061/QCD_HT1500to2000_13TeV_ext/Output.root_job9_file0.root

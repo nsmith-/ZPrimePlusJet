@@ -8,7 +8,8 @@ import time
 import array
 import os
 
-from buildRhalphabetHbb import getSF,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI,BB_SF,BB_SF_ERR,V_SF,V_SF_ERR
+from buildRhalphabetHbb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
+from rhalphabet_builder import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     obsRate = {}
@@ -195,15 +196,15 @@ def main(options, args):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box)).Clone()
-            histoDict['%s_%s'%(proc,box)].Scale(getSF(proc,box,tfile))
+            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,box,tfile))
             for syst in systs:
                 if proc!='data_obs':
                     print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
                     histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst)).Clone()
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(getSF(proc,box,tfile))
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,box,tfile))
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                     histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst)).Clone()
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(getSF(proc,box,tfile))
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,box,tfile))
                     
                 
     
@@ -214,13 +215,13 @@ def main(options, args):
     w = rt.RooWorkspace('w_muonCR')
     #w.factory('y[40,40,201]')
     #w.var('y').setBins(1)
-    w.factory('x[40,40,201]')
-    w.var('x').setBins(23)
+    w.factory('x[%i,%i,%i]'%(MASS_LO,MASS_LO,MASS_HI))
+    w.var('x').setBins(MASS_BINS)
     for key, histo in histoDict.iteritems():
         #histo.Rebin(23)
         #ds = rt.RooDataHist(key,key,rt.RooArgList(w.var('y')),histo)
         ds = rt.RooDataHist(key,key,rt.RooArgList(w.var('x')),histo)
-        getattr(w,'import')(ds)
+        getattr(w,'import')(ds, rt.RooCmdArg())
     w.Write()
     outputFile.Close()
     txtfileName = outFile.replace('.root','.txt')
