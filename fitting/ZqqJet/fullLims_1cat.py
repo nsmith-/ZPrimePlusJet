@@ -138,7 +138,7 @@ def main():
 	results = [];
 	for i in range(len(masses)): 
 		print str(masses[i])
-                results.append( getAsymLimits('ZQQ_%s/lim_34_results7limit.root' % ( str(masses[i])),'Zp'+str(masses[i])));
+                results.append( getAsymLimits('results7/ZQQ_%s/lim_34_results7limit.root' % ( str(masses[i])),'Zp'+str(masses[i])));
 
 
 	names   = [];
@@ -244,7 +244,7 @@ def main():
 	#--------------------------------
 	#--------------------------------
 	# PLOTTING
-	lowlim = 50;
+	lowlim = 40;
 
 	txta = ROOT.TLatex(0.16,0.92,"CMS");
 	txta.SetNDC();
@@ -297,7 +297,7 @@ def main():
 	can_mu.SaveAs('plots/mu.pdf');
 
 	can_XS = ROOT.TCanvas("can_XS","can_XS",1000,800);
-	hrlxs = can_mu.DrawFrame(lowlim,50,320,100000) ;
+	hrlxs = can_mu.DrawFrame(lowlim,200,320,100000) ;
 	hrlxs.GetYaxis().SetTitle("#sigma_{95% CL} (pb)");
 	hrlxs.GetYaxis().SetTitleOffset(0.85);
 	hrlxs.GetXaxis().SetTitle("Z\' mass (GeV)");
@@ -316,12 +316,12 @@ def main():
 	can_XS.SaveAs('plots/xslim.pdf');
 	#--------------------------------
 
-	leg2 = ROOT.TLegend(0.13,0.55,0.50,0.85);
+	leg2 = ROOT.TLegend(0.13,0.60,0.50,0.88);
 	leg2.SetFillStyle(0);
 	leg2.SetFillColor(10);    
 	leg2.SetBorderSize(0);
 	leg2.SetTextFont(42);  
-	leg2.SetTextSize(0.031);  
+	leg2.SetTextSize(0.029);  
 	# leg2.AddEntry(gr_mu_exp,"expected","l")
 	# leg2.AddEntry(gr_mu_obs,"observed","l")
 	# leg2.AddEntry(gr_mu_2sigma,"expected 2#sigma","f")
@@ -336,7 +336,7 @@ def main():
 	leg2.AddEntry(Zfunc,"Z Width (indirect)","l")
 	# leg2.AddEntry(Upsfunc,"#Upsilon Width","l")
 
-	leg2b = ROOT.TLegend(0.6,0.15,0.85,0.30);
+	leg2b = ROOT.TLegend(0.5,0.15,0.85,0.30);
 	leg2b.SetFillStyle(0);
 	leg2b.SetFillColor(10);    
 	leg2b.SetBorderSize(0);
@@ -405,7 +405,7 @@ def main():
 	#####
 
 	can_gB2 = ROOT.TCanvas("can_gB2","can_gB2",1000,800);
-	hrl2 = can_gB.DrawFrame(30,0.05,1501,01.0);
+	hrl2 = can_gB.DrawFrame(40,0.05,1201,01.0);
 	hrl2.GetYaxis().SetTitle("coupling, g_{q}");
 	hrl2.GetYaxis().SetTitleOffset(0.85);	
 	hrl2.GetXaxis().SetTitle("Z\' mass (GeV)");
@@ -424,7 +424,6 @@ def main():
 	# Ufunc2.Draw("fillsames");
 	Zfunc.Draw("sames");
 	
-
 	gr_gB_2sigma.Draw('fsames');
 	gr_gB_1sigma.Draw('fsames');
 	gr_gB_obs.Draw('csames');
@@ -477,7 +476,7 @@ def makeAGraph(listx,listy,linecolor = 1, linestyle = 1):
 
 	gr.SetLineColor(linecolor)
 	gr.SetLineStyle(linestyle)
-	gr.SetLineWidth(3)
+	gr.SetLineWidth(4)
 
 	return gr
 
