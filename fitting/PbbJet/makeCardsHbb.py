@@ -25,7 +25,7 @@ def main(options,args):
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     bkgs = ['zqq','wqq','qcd','tqq']
-    systs = ['JER','JES']
+    systs = ['JER','JES','Pu']
 
     nBkgd = len(bkgs)
     nSig = len(sigs)
@@ -57,6 +57,7 @@ def main(options,args):
 
         jesErrs = {}
         jerErrs = {}
+        puErrs = {}
         bbErrs = {}
         vErrs = {}
         mcstatErrs = {}
@@ -68,8 +69,11 @@ def main(options,args):
                     rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                     rateJERUp = histoDict['%s_%s_JERUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                     rateJERDown = histoDict['%s_%s_JERDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                    ratePuUp = histoDict['%s_%s_PuUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                    ratePuDown = histoDict['%s_%s_PuDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                     jesErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
-                    jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate)
+                    jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate) 
+                    puErrs['%s_%s'%(proc,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
                 else:
                     jesErrs['%s_%s'%(proc,box)] =  1.0
                     jerErrs['%s_%s'%(proc,box)] =  1.0
@@ -92,6 +96,7 @@ def main(options,args):
 
         jesString = 'JES lnN'
         jerString = 'JER lnN'
+        puString = 'Pu lnN'
         bbString = 'bbeff lnN'
         vString = 'veff lnN'
         mcStatStrings = {}
@@ -107,9 +112,11 @@ def main(options,args):
                 if proc=='qcd':
                     jesString += ' -'
                     jerString += ' -'
+                    puString += ' -'
                 else:
                     jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
+                    puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]
                 if proc in ['qcd','tqq','wqq']:
                     bbString += ' -'
                 else:
@@ -133,6 +140,8 @@ def main(options,args):
                 newline = jesString
             elif 'JER' in l:
                 newline = jerString
+            elif 'Pu' in l:
+                newline = puString
             elif 'bbeff' in l:
                 newline = bbString
             elif 'veff' in l:
