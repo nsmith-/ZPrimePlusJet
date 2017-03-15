@@ -31,7 +31,7 @@ def main(options, args):
     procdict['zhqq125'] = 'ZH(b#bar{b})'
     boxes = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
              'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
-    systs = ['JER','JES','scale','smear','trigger']
+    systs = ['JER','JES','scale','smear','trigger','Pu']
     
     numberOfMassBins = 23    
     numberOfPtBins = 6
