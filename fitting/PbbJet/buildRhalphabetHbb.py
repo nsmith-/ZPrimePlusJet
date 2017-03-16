@@ -9,8 +9,8 @@ import sys
 import time
 import array
 
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
 
 # including other directories
 # sys.path.insert(0, '../.')
@@ -42,7 +42,7 @@ def main(options, args):
     # Build the workspacees
     #dazsleRhalphabetBuilder(hpass, hfail, f, odir, options.NR, options.NP)
 
-    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze)
+    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched)
     rhalphabuilder.run()
 
 ##-------------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ if __name__ == '__main__':
     parser.add_option('--nr', dest='NR', default=2, type='int', help='order of rho (or mass) polynomial')
     parser.add_option('--np', dest='NP', default=1, type='int', help='order of pt polynomial')
     parser.add_option('-r', dest='r', default=0, type='float', help='signal strength for MC pseudodataset')
+    parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
 
     (options, args) = parser.parse_args()
 

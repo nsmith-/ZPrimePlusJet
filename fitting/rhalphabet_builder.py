@@ -7,8 +7,8 @@ import math
 import sys
 import time
 import array
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 
 
 # including other directories
@@ -27,7 +27,7 @@ V_SF_ERR = 0.043
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
@@ -51,6 +51,7 @@ class RhalphabetBuilder():
         # self._mass_lo    = pass_hists[0].GetXaxis().GetBinLowEdge( 1 )
         # self._mass_hi    = pass_hists[0].GetXaxis().GetBinUpEdge( self._mass_nbins )
 
+        self._remove_unmatched  = remove_unmatched
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
 
         #polynomial order for fit
@@ -192,8 +193,8 @@ class RhalphabetBuilder():
 
             print rhalph_bkgd_name+"_fail_"+category+"_Bin"+str(mass_bin), fail_bin_content
 
-            #10 sigma range + 10 events
-            fail_bin_unc = math.sqrt(fail_bin_content)*10.+10.
+            #50 sigma range + 10 events
+            fail_bin_unc = math.sqrt(fail_bin_content)*50.+10.
             #Define the failing category
             fail_bin_var = r.RooRealVar(rhalph_bkgd_name+"_fail_"+category+"_Bin"+str(mass_bin),rhalph_bkgd_name+"_fail_"+category+"_Bin"+str(mass_bin),fail_bin_content,0.,max(fail_bin_content+fail_bin_unc,0.))
 
@@ -459,17 +460,20 @@ class RhalphabetBuilder():
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
             mass = 0
-            systematics = ['JES', 'JER', 'trigger', 'mcstat']
+            systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process):
                 # get systematic histograms
                 hout = []
                 histDict = {}
                 for syst in systematics:
                     if syst == 'mcstat':
-                        tmph = self._inputfile.Get(process + '_' + cat).Clone(process + '_' + cat)
-                        tmph_up = self._inputfile.Get(process + '_' + cat).Clone(
+                        matchingString = ''
+                        if self._remove_unmatched and 'wqq' in process or 'zqq' in process or 'hqq' in process:
+                            matchingString = '_matched'
+                        tmph = self._inputfile.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
+                        tmph_up = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
                             process + '_' + cat + '_' + syst + 'Up')
-                        tmph_down = self._inputfile.Get(process + '_' + cat).Clone(
+                        tmph_down = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
                             process + '_' + cat + '_' + syst + 'Down')
                         tmph.Scale(GetSF(process, cat, self._inputfile))
                         tmph_up.Scale(GetSF(process, cat, self._inputfile))
@@ -585,12 +589,13 @@ class RhalphabetBuilder():
                 # get res up/down
                 hmatchedsys_smear = hist_container.smear(hmatched_new_central, res_shift_unc)
 
-                # add back the unmatched
-                hmatched_new_central.Add(tmph_mass_unmatched)
-                hmatchedsys_shift[0].Add(tmph_mass_unmatched)
-                hmatchedsys_shift[1].Add(tmph_mass_unmatched)
-                hmatchedsys_smear[0].Add(tmph_mass_unmatched)
-                hmatchedsys_smear[1].Add(tmph_mass_unmatched)
+                if not self._remove_unmatched:
+                    # add back the unmatched
+                    hmatched_new_central.Add(tmph_mass_unmatched)
+                    hmatchedsys_shift[0].Add(tmph_mass_unmatched)
+                    hmatchedsys_shift[1].Add(tmph_mass_unmatched)
+                    hmatchedsys_smear[0].Add(tmph_mass_unmatched)
+                    hmatchedsys_smear[1].Add(tmph_mass_unmatched)
                 hmatched_new_central.SetName(import_object.GetName())
                 hmatchedsys_shift[0].SetName(import_object.GetName() + "_scaleUp")
                 hmatchedsys_shift[1].SetName(import_object.GetName() + "_scaleDown")

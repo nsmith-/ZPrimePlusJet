@@ -27,6 +27,8 @@ def main(options,args):
     bkgs = ['zqq','wqq','qcd','tqq']
     systs = ['JER','JES','Pu']
 
+    removeUnmatched = options.removeUnmatched
+
     nBkgd = len(bkgs)
     nSig = len(sigs)
     numberOfMassBins = 23    
@@ -38,6 +40,9 @@ def main(options,args):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
+            if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc):
+                histoDict['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_matched'%(proc,box))
+                histoDict['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_unmatched'%(proc,box))
                 
             for syst in systs:
                 print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
@@ -45,8 +50,8 @@ def main(options,args):
                 print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
-    dctpl = open("datacard.tpl")
-    #dctpl = open("datacardZbb.tpl")
+    #dctpl = open("datacard.tpl")
+    dctpl = open("datacardZbb.tpl")
 
     linel = [];
     for line in dctpl: 
@@ -159,8 +164,10 @@ def main(options,args):
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins):                    
                     # if stat. unc. is greater than 50% 
-                    if histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) > 0 and histoDict['%s_%s'%(proc,box)].GetBinError(j,i) > 0.5*histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) and proc!='qcd':
-                    #if histoDict['%s_%s'%(proc,box)].GetBinContent(j,i) > 0 and proc!='qcd':
+                    matchString = ''
+                    if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc):
+                        matchString = '_matched'                    
+                    if histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) > 0 and histoDict['%s_%s%s'%(proc,box,matchString)].GetBinError(j,i) > 0.5*histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) and proc!='qcd':
                         massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(j)
                         ptVal = histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinLowEdge(i) + 0.3*(histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinWidth(i))
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
@@ -193,6 +200,7 @@ if __name__ == '__main__':
     parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory to write cards', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
+    parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
 
     (options, args) = parser.parse_args()
 
