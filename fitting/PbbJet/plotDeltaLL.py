@@ -8,8 +8,9 @@ from operator import add
 import math
 import sys
 import time
-#rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+from operator import itemgetter
+rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 rt.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 rt.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 rt.RooRandom.randomGenerator().SetSeed(1988)
@@ -53,8 +54,10 @@ def main(options,args):
     for i in range(0,limitWithSys.GetEntries()):
         limitWithSys.GetEntry(i)
         if limitWithSys.quantileExpected < 1:
+            #if 2*limitWithSys.deltaNLL > 7*7: continue
             xp.append(limitWithSys.r)
             yp.append(2*limitWithSys.deltaNLL)
+    [xp, yp] = [list(x) for x in zip(*sorted(zip(xp, yp), key=itemgetter(0)))]
     
     tfileWithoutSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.txt','_%s_nosys'%dataTag)))
     limitWithoutSys = tfileWithoutSys.Get('limit')
@@ -63,8 +66,10 @@ def main(options,args):
     for i in range(0,limitWithoutSys.GetEntries()):
         limitWithoutSys.GetEntry(i)
         if limitWithoutSys.quantileExpected < 1:
+            #if 2*limitWithoutSys.deltaNLL > 7*7: continue
             xs.append(limitWithoutSys.r)
             ys.append(2*limitWithoutSys.deltaNLL)
+    [xs, ys] = [list(x) for x in zip(*sorted(zip(xs, ys), key=itemgetter(0)))]
         
     print xs, ys
     gr_s = rt.TGraph(len(xs), array('f', xs), array('f', ys))
@@ -123,7 +128,7 @@ def main(options,args):
     d = rt.TCanvas('d','d',500,400)
     rFrame.Draw()
     rFrame.SetMinimum(0)
-    rFrame.SetMaximum(6)
+    rFrame.SetMaximum(4.*4.)
     
     rFrame.SetXTitle("#mu (signal strength)")
     rFrame.SetYTitle("-2 #Delta log L(%s)"%dataTag)
