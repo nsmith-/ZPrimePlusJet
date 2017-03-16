@@ -51,7 +51,8 @@ def main(options,args):
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
     #dctpl = open("datacard.tpl")
-    dctpl = open("datacardZbb.tpl")
+    #dctpl = open("datacardZbb.tpl")
+    dctpl = open("datacardZonly.tpl")
 
     linel = [];
     for line in dctpl: 
@@ -66,6 +67,7 @@ def main(options,args):
         bbErrs = {}
         vErrs = {}
         mcstatErrs = {}
+        scaleptErrs = {}
         for box in boxes:
             for proc in (sigs+bkgs):
                 rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
@@ -82,7 +84,18 @@ def main(options,args):
                 else:
                     jesErrs['%s_%s'%(proc,box)] =  1.0
                     jerErrs['%s_%s'%(proc,box)] =  1.0
-                    
+
+                if i == 2:
+                    scaleptErrs['%s_%s'%(proc,box)] =  0.05
+                elif i == 3:
+                    scaleptErrs['%s_%s'%(proc,box)] =  0.1
+                elif i == 4:
+                    scaleptErrs['%s_%s'%(proc,box)] =  0.2
+                elif i == 5:
+                    scaleptErrs['%s_%s'%(proc,box)] =  0.3
+                elif i == 6:
+                    scaleptErrs['%s_%s'%(proc,box)] =  0.4
+                
                 vErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
                 if box=='pass':
                     bbErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR/BB_SF
@@ -104,6 +117,7 @@ def main(options,args):
         puString = 'Pu lnN'
         bbString = 'bbeff lnN'
         vString = 'veff lnN'
+        scaleptString = 'scalept shape'
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group ='
         qcdGroupString = 'qcd group = qcdeff'
@@ -121,7 +135,13 @@ def main(options,args):
                 else:
                     jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
-                    puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]
+                    puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]                        
+                if proc in ['qcd','tqq']:
+                    if i > 1:
+                        scaleptString += ' -'
+                else:
+                    if i > 1:
+                        scaleptString += ' %.3f'%scaleptErrs['%s_%s'%(proc,box)]
                 if proc in ['qcd','tqq','wqq']:
                     bbString += ' -'
                 else:
@@ -151,6 +171,8 @@ def main(options,args):
                 newline = bbString
             elif 'veff' in l:
                 newline = vString
+            elif 'scalept' in l and i>1:
+                newline = scaleptString
             elif 'TQQEFF' in l:
                 tqqeff = histoDict['tqq_pass'].Integral() / (
                 histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
@@ -173,7 +195,7 @@ def main(options,args):
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
                         if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
                             dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
-                            #print 'include %s%scat%imcstat%i'%(proc,box,i,j)
+                            print 'include %s%scat%imcstat%i'%(proc,box,i,j)
                             mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
                         else:
                             print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
