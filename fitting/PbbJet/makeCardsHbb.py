@@ -22,6 +22,10 @@ from rhalphabet_builder import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 def main(options,args):
 	
     tfile = r.TFile.Open(options.ifile)
+    tfile_loose = None
+    if options.ifile_loose is not None:
+        tfile_loose = r.TFile.Open(options.ifile_loose)
+        
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     bkgs = ['zqq','wqq','qcd','tqq']
@@ -35,14 +39,22 @@ def main(options,args):
     numberOfPtBins = 6
 
     histoDict = {}
+    histoDictLoose = {}
 
     for proc in (sigs+bkgs):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
+            if tfile_loose is not None:
+                histoDictLoose['%s_%s'%(proc,box)] = tfile_loose.Get('%s_%s'%(proc,box))
+                
             if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc):
                 histoDict['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_matched'%(proc,box))
                 histoDict['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_unmatched'%(proc,box))
+                if tfile_loose is not None:
+                    histoDictLoose['%s_%s_matched'%(proc,box)] = tfile_loose.Get('%s_%s_matched'%(proc,box))
+                    histoDictLoose['%s_%s_unmatched'%(proc,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,box))
+                    
                 
             for syst in systs:
                 print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
@@ -189,9 +201,13 @@ def main(options,args):
                     matchString = ''
                     if removeUnmatched and (proc =='wqq' or proc=='zqq'):
                         matchString = '_matched'
-                    if abs(histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i)) > 0. and histoDict['%s_%s%s'%(proc,box,matchString)].GetBinError(j,i) > 0.5*histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) and proc!='qcd':
-                        massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(j)
-                        ptVal = histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinLowEdge(i) + 0.3*(histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinWidth(i))
+                    if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
+                        histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
+                    else:
+                        histo = histoDict['%s_%s%s'%(proc,box,matchString)]                        
+                    if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
+                        massVal = histo.GetXaxis().GetBinCenter(j)
+                        ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
                         if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
                             dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
@@ -219,6 +235,7 @@ if __name__ == '__main__':
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
     parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
+    parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)', metavar='ifile_loose')
     parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory to write cards', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')

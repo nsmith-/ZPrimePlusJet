@@ -27,12 +27,13 @@ V_SF_ERR = 0.043
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
         self._freeze = freeze_poly
         self._inputfile = input_file
+        self._inputfile_loose = input_file_loose
 
         self._output_path = "{}/base.root".format(out_dir)
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
@@ -470,14 +471,24 @@ class RhalphabetBuilder():
                         matchingString = ''
                         if self._remove_unmatched and ('wqq' in process or 'zqq' in process):
                             matchingString = '_matched'
-                        tmph = self._inputfile.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
-                        tmph_up = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
-                            process + '_' + cat + '_' + syst + 'Up')
-                        tmph_down = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
-                            process + '_' + cat + '_' + syst + 'Down')
-                        tmph.Scale(GetSF(process, cat, self._inputfile))
-                        tmph_up.Scale(GetSF(process, cat, self._inputfile))
-                        tmph_down.Scale(GetSF(process, cat, self._inputfile))
+                        if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                            
+                            tmph = self._inputfile_loose.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
+                            tmph_up = self._inputfile_loose.Get(process + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Up')
+                            tmph_down = self._inputfile_loose.Get(process + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Down')
+                            tmph.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                            tmph_up.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                            tmph_down.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                        else:                            
+                            tmph = self._inputfile.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
+                            tmph_up = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Up')
+                            tmph_down = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Down')
+                            tmph.Scale(GetSF(process, cat, self._inputfile))
+                            tmph_up.Scale(GetSF(process, cat, self._inputfile))
+                            tmph_down.Scale(GetSF(process, cat, self._inputfile))
                         tmph_mass = tools.proj('cat', str(iPt), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
                         tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
                         tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
@@ -547,10 +558,17 @@ class RhalphabetBuilder():
                     mass = float(process.split('_')[-1])  # Pbb_75 -> 75
 
                 # get the matched and unmatched hist
-                tmph_matched = self._inputfile.Get(process + '_' + cat + '_matched').Clone()
-                tmph_unmatched = self._inputfile.Get(process + '_' + cat + '_unmatched').Clone()
-                tmph_matched.Scale(GetSF(process, cat, self._inputfile))
-                tmph_unmatched.Scale(GetSF(process, cat, self._inputfile))
+                
+                if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                     
+                    tmph_matched = self._inputfile_loose.Get(process + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile_loose.Get(process + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                    tmph_unmatched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
+                else:
+                    tmph_matched = self._inputfile.Get(process + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile.Get(process + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, cat, self._inputfile))
+                    tmph_unmatched.Scale(GetSF(process, cat, self._inputfile))
                 tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo, self._mass_hi)
                 tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                            self._mass_hi)
@@ -644,7 +662,7 @@ class RhalphabetBuilder():
 ##############################################################################
 
 ##-------------------------------------------------------------------------------------
-def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range):
+def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None):
     pass_hists = {}
     fail_hists = {}
     f.ls()
@@ -681,6 +699,15 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
             fail_hists_bkg["qcd"] = qcd_fail
             print 'qcd pass integral', qcd_pass.Integral()
             print 'qcd fail integral', qcd_fail.Integral()
+        elif (fLoose is not None) and bkg=='wqq' or bkg=='zqq':
+            hpass_tmp = fLoose.Get(bkg + '_pass').Clone()
+            hfail_tmp = f.Get(bkg + '_fail').Clone()
+            hpass_tmp.Scale(1. / scale)
+            hfail_tmp.Scale(1. / scale)
+            hpass_tmp.Scale(GetSF(bkg, 'pass', f, fLoose))
+            hfail_tmp.Scale(GetSF(bkg, 'fail', f))
+            pass_hists_bkg[bkg] = hpass_tmp
+            fail_hists_bkg[bkg] = hfail_tmp            
         else:
             hpass_tmp = f.Get(bkg + '_pass').Clone()
             hfail_tmp = f.Get(bkg + '_fail').Clone()
@@ -763,7 +790,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # print fail_hists;
     return (pass_hists,fail_hists)
 
-def GetSF(process, cat, f):
+def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process:
         if 'pass' in cat:
@@ -774,5 +801,17 @@ def GetSF(process, cat, f):
             if failInt > 0:
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
     if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process:
-        SF *= V_SF
+        SF *= V_SF        
+    matchingString = ''
+    if removeUnmatched and ('wqq' in process or 'zqq' in process):
+        matchingString = '_matched'
+    if fLoose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:
+        if iPt > -1:
+            nbinsX = f.Get(process + '_pass' + matchingString).GetXaxis().GetNbins()
+            passInt = f.Get(process + '_pass' + matchingString).Integral(1, nbinsX, int(iPt), int(iPt))
+            passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral(1, nbinsX, int(iPt), int(iPt))
+        else:
+            passInt = f.Get(process + '_pass' + matchingString).Integral()
+            passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral()
+        SF *= passInt/passIntLoose
     return SF
