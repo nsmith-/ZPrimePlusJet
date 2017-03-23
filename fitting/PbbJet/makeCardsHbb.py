@@ -120,8 +120,22 @@ def main(options,args):
                         bbErrs['%s_%s'%(proc,box)] = 1.0
                         
                     
-                for j in range(1,numberOfMassBins+1):
-                    mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
+                for j in range(1,numberOfMassBins+1):                    
+                    if options.noMcStatShape:                 
+                        matchString = ''
+                        if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                            matchString = '_matched'
+                        if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
+                            histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
+                        else:
+                            histo = histoDict['%s_%s%s'%(proc,box,matchString)]
+                            
+                        error = array.array('d',[0.0])
+                        rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
+                        #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
+                        mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                    else:
+                        mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                         
 
         jesString = 'JES lnN'
@@ -136,7 +150,10 @@ def main(options,args):
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
-                    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
+                    if options.noMcStatShape:
+                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
+                    else:
+                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
                     
         for box in boxes:
             for proc in sigs+bkgs:
@@ -166,7 +183,7 @@ def main(options,args):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
                             if proc1==proc and box1==box:
-                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%d'% mcstatErrs['%s_%s'%(proc,box),i,j]
+                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s'%(proc,box),i,j]
                             else:                        
                                 mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
@@ -196,6 +213,11 @@ def main(options,args):
             dctmp.write(newline + "\n")
         for box in boxes:
             for proc in sigs+bkgs:
+                if options.noMcStatShape and proc!='qcd':                        
+                    print 'include %s%scat%imcstat'%(proc,box,i)
+                    dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
+                    mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
+                    continue
                 for j in range(1,numberOfMassBins+1):                    
                     # if stat. unc. is greater than 50% 
                     matchString = ''
@@ -204,7 +226,7 @@ def main(options,args):
                     if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
                         histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
                     else:
-                        histo = histoDict['%s_%s%s'%(proc,box,matchString)]                        
+                        histo = histoDict['%s_%s%s'%(proc,box,matchString)]
                     if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
                         massVal = histo.GetXaxis().GetBinCenter(j)
                         ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
@@ -240,6 +262,7 @@ if __name__ == '__main__':
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
+    parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
 
     (options, args) = parser.parse_args()
 
