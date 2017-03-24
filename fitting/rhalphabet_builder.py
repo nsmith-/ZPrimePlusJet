@@ -9,10 +9,13 @@ import time
 import array
 #r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
 r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
+r.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 
 
 # including other directories
 import tools as tools
+from RootIterator import RootIterator
 from hist import *
 
 BB_SF = 0.91
@@ -38,7 +41,7 @@ class RhalphabetBuilder():
         self._output_path = "{}/base.root".format(out_dir)
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
 
-        self._outfile_validation = r.TFile.Open("validation.root", "RECREATE");
+        self._outfile_validation = r.TFile.Open("{}/validation.root".format(out_dir), "RECREATE");
 
         self._mass_nbins = mass_nbins
         self._mass_lo    = mass_lo
@@ -106,8 +109,164 @@ class RhalphabetBuilder():
                 self._signal_names.append(sig + str(mass))
 
     def run(self):
-        self.LoopOverPtBins();
+        self.LoopOverPtBins()
 
+    def prefit(self):
+
+        fbase = r.TFile.Open(self._output_path,'update')
+        fralphabase = r.TFile.Open(self._rhalphabet_output_path,'update')
+
+        categories = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
+                      'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
+
+        bkgs = self._background_names
+        sigs = self._signal_names
+
+        wbase = {}
+        wralphabase = {}
+        for cat in categories:
+            wbase[cat] = fbase.Get('w_%s'%cat)
+            wralphabase[cat] = fralphabase.Get('w_%s'%cat)
+
+        w = r.RooWorkspace('w')
+        w.factory('mu[1.,0.,20.]')
+        x = wbase[categories[0]].var('x')
+        rooCat = r.RooCategory('cat','cat')
+
+        mu = w.var('mu')
+        epdf_b = {} 
+        epdf_s = {}
+        datahist = {}
+        histpdf = {}
+        histpdfnorm = {}
+        data = {}
+        signorm = {}
+        for cat in categories:
+            rooCat.defineType(cat)
+
+        for cat in categories:        
+            norms_b = r.RooArgList()
+            norms_s = r.RooArgList()
+            norms_b.add(wralphabase[cat].function('qcd_%s_norm'%cat))
+            norms_s.add(wralphabase[cat].function('qcd_%s_norm'%cat))
+            pdfs_b = r.RooArgList()
+            pdfs_s = r.RooArgList()
+            pdfs_b.add(wralphabase[cat].pdf('qcd_%s'%cat))
+            pdfs_s.add(wralphabase[cat].pdf('qcd_%s'%cat))
+
+            data[cat] = wbase[cat].data('data_obs_%s'%cat)
+            for proc in (bkgs+sigs):
+                if proc=='qcd': continue
+
+                datahist['%s_%s'%(proc,cat)] = wbase[cat].data('%s_%s'%(proc,cat))
+                histpdf['%s_%s'%(proc,cat)] = r.RooHistPdf('histpdf_%s_%s'%(proc,cat),
+                                                            'histpdf_%s_%s'%(proc,cat),
+                                                            r.RooArgSet(wbase[cat].var('x')),
+                                                            datahist['%s_%s'%(proc,cat)])
+                getattr(w,'import')(datahist['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+                if 'hqq125' in proc:
+                    # signal
+                    signorm['%s_%s'%(proc,cat)] = r.RooRealVar('signorm_%s_%s'%(proc,cat),
+                                                                'signorm_%s_%s'%(proc,cat),
+                                                                datahist['%s_%s'%(proc,cat)].sumEntries(),
+                                                                0,10.*datahist['%s_%s'%(proc,cat)].sumEntries())
+                    signorm['%s_%s'%(proc,cat)].setConstant(True)                
+                    getattr(w,'import')(signorm['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+                    histpdfnorm['%s_%s'%(proc,cat)] = r.RooFormulaVar('histpdfnorm_%s_%s'%(proc,cat),
+                                                                       '@0*@1',r.RooArgList(mu,signorm['%s_%s'%(proc,cat)]))
+                    pdfs_s.add(histpdf['%s_%s'%(proc,cat)])
+                    norms_s.add(histpdfnorm['%s_%s'%(proc,cat)])
+                else:
+                    # background
+                    histpdfnorm['%s_%s'%(proc,cat)] = r.RooRealVar('histpdfnorm_%s_%s'%(proc,cat),
+                                                                    'histpdfnorm_%s_%s'%(proc,cat),
+                                                                    datahist['%s_%s'%(proc,cat)].sumEntries(),
+                                                                    0,10.*datahist['%s_%s'%(proc,cat)].sumEntries())
+                    histpdfnorm['%s_%s'%(proc,cat)].setConstant(True)
+                    getattr(w,'import')(histpdfnorm['%s_%s'%(proc,cat)])
+                    pdfs_b.add(histpdf['%s_%s'%(proc,cat)])
+                    pdfs_s.add(histpdf['%s_%s'%(proc,cat)])
+                    norms_b.add(histpdfnorm['%s_%s'%(proc,cat)])
+                    norms_s.add(histpdfnorm['%s_%s'%(proc,cat)])
+
+
+            epdf_b[cat] = r.RooAddPdf('epdf_b_'+cat,'epdf_b_'+cat,pdfs_b,norms_b)
+            epdf_s[cat] = r.RooAddPdf('epdf_s_'+cat,'epdf_s_'+cat,pdfs_s,norms_s)
+
+            getattr(w,'import')(epdf_b[cat],r.RooFit.RecycleConflictNodes())
+            getattr(w,'import')(epdf_s[cat],r.RooFit.RecycleConflictNodes())
+
+        arguments = ["data_obs","data_obs",r.RooArgList(x),rooCat]
+
+        m = r.std.map('string, RooDataHist*')()
+        for cat in categories:
+            m.insert(r.std.pair('string, RooDataHist*')(cat, data[cat]))
+        arguments.append(m)
+
+        combData = getattr(r,'RooDataHist')(*arguments)
+
+
+        simPdf_b = r.RooSimultaneous('simPdf_b','simPdf_b',rooCat)
+        simPdf_s = r.RooSimultaneous('simPdf_s','simPdf_s',rooCat)
+        for cat in categories:
+            simPdf_b.addPdf(epdf_b[cat],cat)    
+            simPdf_s.addPdf(epdf_s[cat],cat)
+
+        mu.setVal(1.)    
+
+        getattr(w,'import')(simPdf_b,r.RooFit.RecycleConflictNodes())
+        getattr(w,'import')(simPdf_s,r.RooFit.RecycleConflictNodes())
+        getattr(w,'import')(combData,r.RooFit.RecycleConflictNodes())
+
+        w.Print('v')
+        simPdf_b = w.pdf('simPdf_b')
+        simPdf_s = w.pdf('simPdf_s')
+        combData = w.data('data_obs')
+        x = w.var('x')
+        rooCat = w.cat('cat')
+        mu = w.var('mu')
+        CMS_set = r.RooArgSet()
+        CMS_set.add(rooCat)
+        CMS_set.add(x)
+
+        opt = r.RooLinkedList()
+        opt.Add(r.RooFit.CloneData(False))
+        allParams = simPdf_b.getParameters(combData)
+        r.RooStats.RemoveConstantParameters(allParams)            
+        opt.Add(r.RooFit.Constrain(allParams))
+
+        mu.setVal(1)
+        mu.setConstant(True)
+
+        nll = simPdf_s.createNLL(combData,opt)
+        #nll = simPdf_b.createNLL(combData,opt)
+        m2 = r.RooMinimizer(nll)
+        m2.setStrategy(2)
+        m2.setMaxFunctionCalls(100000)
+        m2.setMaxIterations(100000)
+        m2.setPrintLevel(-1)
+        m2.setPrintEvalErrors(-1)
+        m2.setEps(1e-5)
+        m2.optimizeConst(2)
+
+        migrad_status = m2.minimize('Minuit2','migrad')
+        improve_status = m2.minimize('Minuit2','improve')
+        hesse_status = m2.minimize('Minuit2','hesse')
+        fr = m2.save()
+        fr.Print('v')
+
+        icat = 0
+        for cat in categories:
+            reset(wralphabase[cat],fr)
+            if icat==0:
+                wralphabase[cat].writeToFile(self._rhalphabet_output_path,True)
+            else:
+                wralphabase[cat].writeToFile(self._rhalphabet_output_path,False)
+            icat += 1
+
+
+        
     def LoopOverPtBins(self):
 
         print "number of pt bins = ", self._nptbins;
@@ -815,3 +974,10 @@ def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
             passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral()
         SF *= passInt/passIntLoose
     return SF
+
+def reset(w,fr):
+    for p in RootIterator(fr.floatParsFinal()):
+        if w.var(p.GetName()):            
+            w.var(p.GetName()).setVal(p.getVal())
+            w.var(p.GetName()).setError(p.getError())
+    return True

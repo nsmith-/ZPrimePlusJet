@@ -47,6 +47,8 @@ def main(options, args):
 
     rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose)
     rhalphabuilder.run()
+    if options.prefit:
+        rhalphabuilder.prefit()
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -72,6 +74,7 @@ if __name__ == '__main__':
     parser.add_option('--np', dest='NP', default=1, type='int', help='order of pt polynomial')
     parser.add_option('-r', dest='r', default=0, type='float', help='signal strength for MC pseudodataset')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
+    parser.add_option('--prefit', action='store_true', dest='prefit', default =False,help='do prefit', metavar='prefit')
 
     (options, args) = parser.parse_args()
 

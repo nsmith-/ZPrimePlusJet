@@ -63,8 +63,8 @@ def main(options,args):
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
     #dctpl = open("datacard.tpl")
-    #dctpl = open("datacardZbb.tpl")
-    dctpl = open("datacardZonly.tpl")
+    dctpl = open("datacardZbb.tpl")
+    #dctpl = open("datacardZonly.tpl")
 
     linel = [];
     for line in dctpl: 
@@ -206,6 +206,26 @@ def main(options,args):
                 tqqeff = histoDict['tqq_pass'].Integral() / (
                 histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
                 newline = l.replace('TQQEFF','%.4f'%tqqeff)
+            elif 'wznormEWCATX' in l:
+                if i==4:
+                    newline = l.replace('1.05','1.15')
+                elif i==5:
+                    newline = l.replace('1.05','1.15')
+                elif i==6:
+                    newline = l.replace('1.05','1.15')
+                else:
+                    newline = l
+            elif 'znormEWCATX' in l:
+                if i==3:
+                    newline = l.replace('1.15','1.25')
+                elif i==4:
+                    newline = l.replace('1.15','1.35')
+                elif i==5:
+                    newline = l.replace('1.15','1.35')
+                elif i==6:
+                    newline = l.replace('1.15','1.35')      
+                else:
+                    newline = l              
             else:
                 newline = l
             if "CATX" in l:
