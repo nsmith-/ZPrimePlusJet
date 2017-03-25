@@ -9,11 +9,6 @@ import math
 import sys
 import time
 from operator import itemgetter
-rt.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-#rt.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
-rt.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
-rt.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
-rt.RooRandom.randomGenerator().SetSeed(1988)
 
 # including other directories
 #sys.path.insert(0, '../.')
@@ -40,12 +35,12 @@ def main(options,args):
         
     if not options.justPlot:
         if options.isData:
-            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_data')),options.dryRun)
-            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -S 0'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_data_nosys')),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameters scalept=1.4,scale=-0.5 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s --saveWorkspace'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_data')),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -S 0 --snapshotName MultiDimFit'%(options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.txt','_data'),options.datacard.replace('.txt','_data_nosys')),options.dryRun)
         else:
             dataTag = 'asimov'
-            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 --expectSignal %f'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov'),options.r),options.dryRun)
-            exec_me('combine -M MultiDimFit --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 -S 0 --expectSignal %f'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov_nosys'),options.r),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameters scalept=1.4,scale=-0.5 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq --expectSignal %f'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov'),options.r),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq -S 0 --snapshotName MultiDimFit --expectSignal %f'%(options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.txt','_asimov'),options.datacard.replace('.txt','_asimov_nosys'),options.r),options.dryRun)
 
     tfileWithSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.txt','_%s'%dataTag)))
     limitWithSys = tfileWithSys.Get('limit')    
@@ -54,7 +49,7 @@ def main(options,args):
     for i in range(0,limitWithSys.GetEntries()):
         limitWithSys.GetEntry(i)
         if limitWithSys.quantileExpected < 1:
-            #if 2*limitWithSys.deltaNLL > 7*7: continue
+            if 2*limitWithSys.deltaNLL > 7*7: continue
             xp.append(limitWithSys.r)
             yp.append(2*limitWithSys.deltaNLL)
     [xp, yp] = [list(x) for x in zip(*sorted(zip(xp, yp), key=itemgetter(0)))]
@@ -66,7 +61,7 @@ def main(options,args):
     for i in range(0,limitWithoutSys.GetEntries()):
         limitWithoutSys.GetEntry(i)
         if limitWithoutSys.quantileExpected < 1:
-            #if 2*limitWithoutSys.deltaNLL > 7*7: continue
+            if 2*limitWithoutSys.deltaNLL > 7*7: continue
             xs.append(limitWithoutSys.r)
             ys.append(2*limitWithoutSys.deltaNLL)
     [xs, ys] = [list(x) for x in zip(*sorted(zip(xs, ys), key=itemgetter(0)))]
