@@ -260,12 +260,40 @@ class RhalphabetBuilder():
         for cat in categories:
             reset(wralphabase[cat],fr)
             if icat==0:
+                getattr(wralphabase[cat],'import')(fr)
                 wralphabase[cat].writeToFile(self._rhalphabet_output_path,True)
             else:
                 wralphabase[cat].writeToFile(self._rhalphabet_output_path,False)
             icat += 1
 
+    def loadfit(self,fitToLoad):
 
+        fralphabase_load = r.TFile.Open(fitToLoad,'read')
+        fr = fralphabase_load.Get('w_pass_cat1').obj('nll_simPdf_s_data_obs')
+        
+        fbase = r.TFile.Open(self._output_path,'update')
+        fralphabase = r.TFile.Open(self._rhalphabet_output_path,'update')
+
+        categories = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
+                      'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
+
+        bkgs = self._background_names
+        sigs = self._signal_names
+
+        wbase = {}
+        wralphabase = {}
+        for cat in categories:
+            wbase[cat] = fbase.Get('w_%s'%cat)
+            wralphabase[cat] = fralphabase.Get('w_%s'%cat)
+
+        icat = 0
+        for cat in categories:
+            reset(wralphabase[cat],fr,exclude='qcd_fail_cat')
+            if icat==0:
+                wralphabase[cat].writeToFile(self._rhalphabet_output_path,True)
+            else:
+                wralphabase[cat].writeToFile(self._rhalphabet_output_path,False)
+            icat += 1
         
     def LoopOverPtBins(self):
 
@@ -975,9 +1003,11 @@ def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
         SF *= passInt/passIntLoose
     return SF
 
-def reset(w,fr):
+def reset(w,fr,exclude=None):
     for p in RootIterator(fr.floatParsFinal()):
-        if w.var(p.GetName()):            
+        if exclude is not None and exclude in p.GetName(): continue
+        if w.var(p.GetName()):
+            print 'setting %s = %e +/- %e from %s'%(p.GetName(), p.getVal(), p.getError(),fr.GetName())
             w.var(p.GetName()).setVal(p.getVal())
             w.var(p.GetName()).setError(p.getError())
     return True

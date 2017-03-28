@@ -49,6 +49,9 @@ def main(options, args):
     rhalphabuilder.run()
     if options.prefit:
         rhalphabuilder.prefit()
+    elif options.loadfit is not None:
+        rhalphabuilder.loadfit(options.loadfit)
+        
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -75,6 +78,7 @@ if __name__ == '__main__':
     parser.add_option('-r', dest='r', default=0, type='float', help='signal strength for MC pseudodataset')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--prefit', action='store_true', dest='prefit', default =False,help='do prefit', metavar='prefit')
+    parser.add_option('--loadfit', dest='loadfit', default=None, help='load qcd polynomial parameters from alternative rhalphabase.root',metavar='loadfit')
 
     (options, args) = parser.parse_args()
 
