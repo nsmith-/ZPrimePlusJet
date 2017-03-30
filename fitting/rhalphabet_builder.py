@@ -7,8 +7,8 @@ import math
 import sys
 import time
 import array
-r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 
 
 # including other directories
@@ -468,7 +468,7 @@ class RhalphabetBuilder():
                 for syst in systematics:
                     if syst == 'mcstat':
                         matchingString = ''
-                        if self._remove_unmatched and 'wqq' in process or 'zqq' in process or 'hqq' in process:
+                        if self._remove_unmatched and ('wqq' in process or 'zqq' in process):
                             matchingString = '_matched'
                         tmph = self._inputfile.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
                         tmph_up = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
@@ -589,7 +589,7 @@ class RhalphabetBuilder():
                 # get res up/down
                 hmatchedsys_smear = hist_container.smear(hmatched_new_central, res_shift_unc)
 
-                if not self._remove_unmatched:
+                if not (self._remove_unmatched and ('wqq' in process or 'zqq' in process)):
                     # add back the unmatched
                     hmatched_new_central.Add(tmph_mass_unmatched)
                     hmatchedsys_shift[0].Add(tmph_mass_unmatched)

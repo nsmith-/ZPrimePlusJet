@@ -108,7 +108,7 @@ def main(options,args):
                         bbErrs['%s_%s'%(proc,box)] = 1.0
                         
                     
-                for j in range(1,numberOfMassBins):
+                for j in range(1,numberOfMassBins+1):
                     mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                         
 
@@ -123,7 +123,7 @@ def main(options,args):
         qcdGroupString = 'qcd group = qcdeff'
         for box in boxes:
             for proc in sigs+bkgs:
-                for j in range(1,numberOfMassBins):
+                for j in range(1,numberOfMassBins+1):
                     mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
                     
         for box in boxes:
@@ -150,7 +150,7 @@ def main(options,args):
                     vString += ' -'
                 else:
                     vString += ' %.3f'%vErrs['%s_%s'%(proc,box)]
-                for j in range(1,numberOfMassBins):
+                for j in range(1,numberOfMassBins+1):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
                             if proc1==proc and box1==box:
@@ -184,12 +184,12 @@ def main(options,args):
             dctmp.write(newline + "\n")
         for box in boxes:
             for proc in sigs+bkgs:
-                for j in range(1,numberOfMassBins):                    
+                for j in range(1,numberOfMassBins+1):                    
                     # if stat. unc. is greater than 50% 
                     matchString = ''
-                    if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc):
-                        matchString = '_matched'                    
-                    if histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) > 0 and histoDict['%s_%s%s'%(proc,box,matchString)].GetBinError(j,i) > 0.5*histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) and proc!='qcd':
+                    if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                        matchString = '_matched'
+                    if abs(histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i)) > 0. and histoDict['%s_%s%s'%(proc,box,matchString)].GetBinError(j,i) > 0.5*histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) and proc!='qcd':
                         massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(j)
                         ptVal = histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinLowEdge(i) + 0.3*(histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinWidth(i))
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)

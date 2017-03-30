@@ -11,8 +11,8 @@ import time
 
 # including other directories
 #sys.path.insert(0, '../.')
-from tools import *
-from RootIterator import RootIterator
+#from tools import *
+#from RootIterator import RootIterator
 
 from array import array
 
@@ -20,7 +20,7 @@ def main(options, args):
     tfile = rt.TFile.Open('validation.root')
     
     bkgs = ['wqq','zqq','tqq']
-    sigs = ['hqq125','tthqq125','whqq125','zhqq125']
+    sigs = ['hqq125','tthqq125','whqq125','zhqq125','vbfhqq125']
     procdict = {}
     procdict['tqq'] = 't#bar{t}'
     procdict['wqq'] = 'W(qq)'
@@ -29,9 +29,11 @@ def main(options, args):
     procdict['tthqq125'] = 'ttH(b#bar{b})'
     procdict['whqq125'] = 'WH(b#bar{b})'
     procdict['zhqq125'] = 'ZH(b#bar{b})'
+    procdict['vbfhqq125'] = 'VBF H(b#bar{b})'
     boxes = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
              'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
-    systs = ['JER','JES','scale','smear','trigger','Pu']
+    #systs = ['JER','JES','scale','smear','trigger','Pu']
+    systs = ['scale','smear']
     
     numberOfMassBins = 23    
     numberOfPtBins = 6
@@ -52,6 +54,7 @@ def main(options, args):
             tmph.GetXaxis().SetTitle('m_{SD} (GeV)')
             for syst in systs:
                 tmphUp = tfile.Get('%s_%s_%sUp'%(proc,box,syst))
+                tmphDown = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
                 try:
                     if not tmphUp.InheritsFrom('TH1'):
                         continue
@@ -59,10 +62,14 @@ def main(options, args):
                     continue
                 if 'mcstat' in syst:
                     iBin = int(syst.split('mcstat')[-1])
-                    if tmphUp.GetBinContent(iBin)==0: continue
+                    diff = (tmphUp.GetBinContent(iBin)-tmphDown.GetBinContent(iBin))/2.   
+                    ave = (tmphUp.GetBinContent(iBin)+tmphDown.GetBinContent(iBin))/2.
+                    cen = tmph.GetBinContent(iBin)
+                    #print proc, box, syst, iBin, diff, ave, cen, tmphUp.GetBinContent(iBin), tmphDown.GetBinContent(iBin)
+                    if ave<=0.: continue
+                    if diff <= 0.5*ave: continue
                 tmphUp.SetLineColor(rt.kBlue)
                 tmphUp.SetLineStyle(2)
-                tmphDown = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
                 tmphDown.SetLineColor(rt.kRed)
                 tmphDown.SetLineStyle(3)
                 tmph.Draw('hist')
@@ -85,6 +92,7 @@ def main(options, args):
                 tLeg.Draw('same')
                 c.Print('%s/%s_%s_%s.pdf'%(options.odir,proc,box,syst))
                 c.Print('%s/%s_%s_%s.C'%(options.odir,proc,box,syst))
+                c.Print('%s/png/%s_%s_%s.png'%(options.odir,proc,box,syst))
             
     
 if __name__ == '__main__':
@@ -97,13 +105,13 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     import tdrstyle
     tdrstyle.setTDRStyle()
-    r.gStyle.SetPadTopMargin(0.10)
-    r.gStyle.SetPadLeftMargin(0.16)
-    r.gStyle.SetPadRightMargin(0.10)
-    r.gStyle.SetPalette(1)
-    r.gStyle.SetPaintTextFormat("1.1f")
-    r.gStyle.SetOptFit(0000)
-    r.gROOT.SetBatch()
+    rt.gStyle.SetPadTopMargin(0.10)
+    rt.gStyle.SetPadLeftMargin(0.16)
+    rt.gStyle.SetPadRightMargin(0.10)
+    rt.gStyle.SetPalette(1)
+    rt.gStyle.SetPaintTextFormat("1.1f")
+    rt.gStyle.SetOptFit(0000)
+    rt.gROOT.SetBatch()
 
     main(options, args)
 
