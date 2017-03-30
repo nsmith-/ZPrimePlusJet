@@ -18,7 +18,7 @@ msd_binBoundaries=[]
 for i in range(0,24): msd_binBoundaries.append(40+i*7)
 pt_binBoundaries = [450,500,550,600,675,800,1000]
 
-from buildRhalphabetHbb import getSF,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI,BB_SF,BB_SF_ERR,V_SF,V_SF_ERR
+from buildRhalphabetHbb import BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
@@ -218,8 +218,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     p12.Draw()
     p12.cd()
 
+    h= r.TH1F("h","AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201)    
     htot = bkgs[0].Clone("htot%s"%tag)
-    htot.Draw()
+    htot.SetLineColor(r.kBlack)
+    htot.SetFillStyle(3001)
+    htot.SetFillColor(4)
+    htot.SetLineColor(r.kBlue+1)
+    htot.Draw("")
     for ih in range(1,len(bkgs)):
         htot.Add(bkgs[ih])
     hsig = hsigs[0].Clone("hsig%s"%tag)
@@ -230,12 +235,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     if rBestFit != 0:
         hsig.Scale(100./rBestFit)
 
-    htot.SetLineColor(r.kBlack)
-    colors = [r.kRed, r.kBlue, r.kMagenta, r.kGreen+1, r.kCyan + 1]
+    colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kAzure-5, r.kPink + 7]
+    style = [2,3,4,2,2]
     for i,b in enumerate(bkgs): 
     #	b.SetFillColor(colors[i])
         b.SetLineColor(colors[i])
-        b.SetLineStyle(i+2)
+        b.SetLineStyle(style[i])
         b.SetLineWidth(2)
 
     l = r.TLegend(0.7,0.6,0.9,0.85)
@@ -251,10 +256,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
         l.AddEntry(hsig,"H(b#bar{b}) #times 100","l")
     l.AddEntry(data,"Data","pe")
 
-
-    htot.SetFillStyle(3004)
-    htot.SetFillColor(r.kGray+1)
-    htot.SetLineColor(r.kGray+2)
+    htot.SetLineColor(r.kBlack)
+    htot.SetFillStyle(3001)
+    htot.SetFillColor(4)
+    htot.SetLineColor(r.kBlue+1)
+    #htot.SetFillStyle(3004)
+    #htot.SetFillColor(r.kGray+1)
+    #htot.SetLineColor(r.kGray+2)
     htot.SetMinimum(0)
     htot.SetMarkerSize(0)
     htot.SetMarkerColor(r.kGray+2)
@@ -268,11 +276,11 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     htot_line.Draw('histsame')
     for b in bkgs: 
         b.Draw('hist sames') 
-    hsig.SetLineColor(r.kCyan)
+    hsig.SetLineColor(r.kPink+7)
     hsig.SetLineStyle(2)
-    hsig.SetLineWidth(2)
-    #hsig.SetFillStyle(1001)
-    #hsig.SetFillColor(r.kCyan)
+    hsig.SetLineWidth(1)
+    hsig.SetFillStyle(3004)
+    hsig.SetFillColor(r.kPink+7)
     hsig.Draw('hist sames')
     data.Draw('pezsame')
     l.Draw()    
@@ -300,7 +308,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     p22.cd()
     p22.SetGrid()
 
-    iRatio = data.Clone('iRatio%s'%tag)
+    iRatio = h.Clone('iRatio%s'%tag)
     for i in range(iRatio.GetNbinsX()):            
         if htot.GetBinContent(i+1) > 0:
             iRatio.SetBinContent( i+1, data.GetBinContent(i+1)/htot.GetBinContent(i+1) )
@@ -355,9 +363,11 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     sigHist.Add(htot)
     sigHist.Divide(htot)
     g_signal = r.TGraphAsymmErrors(sigHist)
-    g_signal.SetLineColor(r.kCyan)
+    g_signal.SetLineColor(r.kPink+7)
+    g_signal.SetFillStyle(3004)
+    g_signal.SetFillColor(r.kPink+7)
     g_signal.SetLineStyle(2)
-    g_signal.SetLineWidth(2)
+    g_signal.SetLineWidth(1)
 
     lastX = 0
     lastY = 0
