@@ -214,8 +214,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     htot = bkgs[0].Clone("htot%s"%tag)
     htot.SetLineColor(r.kBlack)
     htot.SetFillStyle(3001)
-    htot.SetFillColor(4)
-    htot.SetLineColor(r.kBlue+1)
+    htot.SetFillColor(r.kAzure-5)
+    htot.SetLineColor(r.kAzure-5)
     htot.Draw("")
     for ih in range(1,len(bkgs)):
         htot.Add(bkgs[ih])
@@ -227,7 +227,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     if rBestFit != 0:
         hsig.Scale(100./rBestFit)
 
-    colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kAzure-5, r.kPink + 7]
+    colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kGray+2, r.kPink + 7]
     style = [2,3,4,2,2]
     for i,b in enumerate(bkgs): 
     #	b.SetFillColor(colors[i])
@@ -250,8 +250,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
 
     htot.SetLineColor(r.kBlack)
     htot.SetFillStyle(3001)
-    htot.SetFillColor(4)
-    htot.SetLineColor(r.kBlue+1)
+    htot.SetFillColor(r.kAzure-5)
+    htot.SetLineColor(r.kAzure-5)
     #htot.SetFillStyle(3004)
     #htot.SetFillColor(r.kGray+1)
     #htot.SetLineColor(r.kGray+2)
