@@ -133,18 +133,20 @@ def main(options, args):
     bkgSamples = {}
     bkgSamples['wqq'] = sampleContainer('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', True)
     bkgSamples['zqq'] = sampleContainer('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, False, '1', True)
-    bkgSamples['qcd'] = sampleContainer('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', True)
+    if not options.skipQCD:
+        bkgSamples['qcd'] = sampleContainer('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', True)
     bkgSamples['tqq'] = sampleContainer('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', True)
     bkgSamples['stqq'] = sampleContainer('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', True)
     bkgSamples['wlnu'] = sampleContainer('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', True)
     bkgSamples['zll'] = sampleContainer('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', True)
     bkgSamples['vvqq'] = sampleContainer('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', True)
     print "Data..."
-    if muonCR:
-        dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
+    if not options.skipData:
+        if muonCR:
+            dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
                                      '((triggerBits&4)&&passJson)', True)
-    else:
-        dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
+        else:
+            dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
                                      '((triggerBits&2)&&passJson)', True)
 
     hall = {}
@@ -194,8 +196,9 @@ def main(options, args):
         for process, s in bkgSamples.iteritems():
             hall['%s_%s' % (process, tag)] = getattr(s, plot)
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
-        hall['%s_%s' % ('data_obs', tag)] = getattr(dataSample, plot)
-        hall['%s_%s' % ('data_obs', tag)].SetName('%s_%s' % ('data_obs', tag))
+        if not options.skipData:
+            hall['%s_%s' % ('data_obs', tag)] = getattr(dataSample, plot)
+            hall['%s_%s' % ('data_obs', tag)].SetName('%s_%s' % ('data_obs', tag))
 
     outfile.cd()
 
@@ -218,6 +221,9 @@ if __name__ == '__main__':
                       metavar='muonCR')
     parser.add_option('-d', '--dbtagmin', dest='dbtagmin', default=-99., type="float",
                       help='left bound to btag selection', metavar='dbtagmin')
+    parser.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skipQCD')
+    parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
+    
 
     (options, args) = parser.parse_args()
 
