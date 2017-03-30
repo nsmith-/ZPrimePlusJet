@@ -114,14 +114,6 @@ def main(options,args):
         lParams.append("r1p2")
         lParams.append("r2p2")
         
-def fun2(x, par):
-    rho = r.TMath.Log((x[0]*x[0])/(x[1]*x[1]))
-    poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
-    poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*x[1]
-    poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
-    return poly0+poly1+poly2
-    
-        
 
         pars = []
         for p in lParams:
@@ -141,6 +133,14 @@ def fun2(x, par):
         
     makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:8], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit)
     makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:8], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit)
+
+
+def fun2(x, par):
+    rho = r.TMath.Log((x[0]*x[0])/(x[1]*x[1]))
+    poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
+    poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*x[1]
+    poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
+    return poly0+poly1+poly2
 
 
 def plotCategory(fml,fd,index,fittype):
@@ -253,7 +253,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
         l.AddEntry(bkgs[i],legnames[leg[i]],"l")
     l.AddEntry(htot,"Total Bkg.","lf")
     if rBestFit != 0:
-        l.AddEntry(hsig,"H(b#bar{b}) #times 100","l")
+        l.AddEntry(hsig,"H(b#bar{b}) #times 100","lf")
     l.AddEntry(data,"Data","pe")
 
     htot.SetLineColor(r.kBlack)
@@ -277,7 +277,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     for b in bkgs: 
         b.Draw('hist sames') 
     hsig.SetLineColor(r.kPink+7)
-    hsig.SetLineStyle(2)
+    #hsig.SetLineStyle(2)
     hsig.SetLineWidth(1)
     hsig.SetFillStyle(3004)
     hsig.SetFillColor(r.kPink+7)
@@ -366,7 +366,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     g_signal.SetLineColor(r.kPink+7)
     g_signal.SetFillStyle(3004)
     g_signal.SetFillColor(r.kPink+7)
-    g_signal.SetLineStyle(2)
+    #g_signal.SetLineStyle(2)
     g_signal.SetLineWidth(1)
 
     lastX = 0
