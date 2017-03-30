@@ -62,8 +62,8 @@ def main(options,args):
                 print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
-    #dctpl = open("datacard.tpl")
-    dctpl = open("datacardZbb.tpl")
+    dctpl = open("datacard.tpl")
+    #dctpl = open("datacardZbb.tpl")
     #dctpl = open("datacardZonly.tpl")
 
     linel = [];

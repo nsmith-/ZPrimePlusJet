@@ -188,18 +188,18 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     #for Hbb extraction:
-    #sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-    #bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
+    sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
     #for Wqq/Zbb extraction:
     #sigs = ['zqq','wqq']
     #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','vvqq','stqq','wlnu','zll']
     #for just Zbb extraction:
-    sigs = ['zqq']
-    bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','wqq','vvqq','stqq','wlnu','zll']
+    #sigs = ['zqq']
+    #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','wqq','vvqq','stqq','wlnu','zll']
     systs = ['JER','JES','mutrigger','muid','muiso','Pu']
 
     
-    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_fixed.root','read')
+    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR.root','read')
     
     histoDict = {}
     datahistDict = {}
