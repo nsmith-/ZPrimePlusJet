@@ -17,7 +17,7 @@ import time
 from array import array
 
 def main(options, args):
-    tfile = rt.TFile.Open('validation.root')
+    tfile = rt.TFile.Open(options.idir+'/validation.root')
     
     bkgs = ['wqq','zqq','tqq']
     sigs = ['hqq125','tthqq125','whqq125','zhqq125','vbfhqq125']
