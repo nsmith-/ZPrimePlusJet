@@ -206,7 +206,7 @@ def plotCategory(fml,fd,index,fittype):
 
 def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     
-    c = r.TCanvas("c%s"%tag,"c%s"%tag,1000,800)
+    c = r.TCanvas("c%s"%tag,"c%s"%tag,800,800)
     SetOwnership(c, False)
     p12 = r.TPad("p12%s"%tag,"p12%s"%tag,0.0,0.3,1.0,1.0)
     p22 = r.TPad("p22%s"%tag,"p22%s"%tag,0.0,0.0,1.0,0.3)
@@ -224,16 +224,26 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     htot.SetFillStyle(3001)
     htot.SetFillColor(r.kAzure-5)
     htot.SetLineColor(r.kAzure-5)
+    htot.SetMinimum(5e-1)
     htot.Draw("")
+    htotsig = bkgs[0].Clone("htotsig%s"%tag)
+    htotsig.SetLineColor(r.kBlack)
+    htotsig.SetFillStyle(3001)
+    htotsig.SetFillColor(r.kPink+3)
+    htotsig.SetLineColor(r.kPink+3)
+    #htotsig.Draw("")
     for ih in range(1,len(bkgs)):
         htot.Add(bkgs[ih])
+	htotsig.Add(bkgs[ih])
     hsig = hsigs[0].Clone("hsig%s"%tag)
+
 
     for ih in range(1,len(hsigs)):
         hsig.Add(hsigs[ih])
+	htotsig.Add(hsigs[ih])
 
     if rBestFit != 0:
-        hsig.Scale(100./rBestFit)
+        hsig.Scale(30./rBestFit)
 
     colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kGray+2, r.kPink + 7]
     style = [2,3,4,2,2]
@@ -243,6 +253,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
         b.SetLineStyle(style[i])
         b.SetLineWidth(2)
 
+
     l = r.TLegend(0.7,0.6,0.9,0.85)
     l.SetFillStyle(0)
     l.SetBorderSize(0)
@@ -250,30 +261,43 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     l.SetTextSize(0.035)
     legnames = {'wqq':'W','zqq':'Z','qcd':'QCD','tqq':'t#bar{t}'}
     for i in range(len(bkgs)):
-        l.AddEntry(bkgs[i],legnames[leg[i]],"l")
+	  l.AddEntry(bkgs[i],legnames[leg[i]],"l")
     l.AddEntry(htot,"Total Bkg.","lf")
+    #l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
     if rBestFit != 0:
-        l.AddEntry(hsig,"H(b#bar{b}) #times 100","lf")
+        l.AddEntry(hsig,"H(b#bar{b}) #times 30","lf")
     l.AddEntry(data,"Data","pe")
 
     htot.SetLineColor(r.kBlack)
     htot.SetFillStyle(3001)
     htot.SetFillColor(r.kAzure-5)
     htot.SetLineColor(r.kAzure-5)
+    htotsig.SetLineColor(r.kPink+3)
+    htotsig.SetFillStyle(3001)
+    htotsig.SetFillColor(r.kPink+3)
+    htotsig.SetLineColor(r.kPink+3)
+    htotsig.SetLineWidth(2)
+	
+
     #htot.SetFillStyle(3004)
     #htot.SetFillColor(r.kGray+1)
     #htot.SetLineColor(r.kGray+2)
-    htot.SetMinimum(0)
+    data.SetMinimum(5e-1)
     htot.SetMarkerSize(0)
     htot.SetMarkerColor(r.kGray+2)
     htot.SetLineWidth(2)
+    
     data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     data.Draw('pez')
     htot.Draw('E2same')
+#    htotsig.Draw('E2same')
 
     htot_line = htot.Clone('htot_line%s'%tag)
     htot_line.SetFillStyle(0)
     htot_line.Draw('histsame')
+    htotsig_line = htotsig.Clone('htotsig_line%s'%tag)
+    htotsig_line.SetFillStyle(0)
+    #htotsig_line.Draw('histsame')
     for b in bkgs: 
         b.Draw('hist sames') 
     hsig.SetLineColor(r.kPink+7)
@@ -330,10 +354,10 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     iRatio.SetTitle("; m_{SD}^{PUPPI} (GeV); Data/Prediction")
     iRatio.SetMaximum(1.5)
     iRatio.SetMinimum(0.)
-    iRatio.GetYaxis().SetTitleSize(0.13)
+    iRatio.GetYaxis().SetTitleSize(0.12)
     iRatio.GetYaxis().SetNdivisions(6)
     iRatio.GetYaxis().SetLabelSize(0.12)
-    iRatio.GetYaxis().SetTitleOffset(0.44)
+    iRatio.GetYaxis().SetTitleOffset(0.6)
     iRatio.GetXaxis().SetTitleSize(0.13)
     iRatio.GetXaxis().SetLabelSize(0.12)
     iRatio.GetXaxis().SetTitleOffset(0.9)
