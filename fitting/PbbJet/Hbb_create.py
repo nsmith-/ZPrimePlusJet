@@ -111,15 +111,15 @@ def main(options, args):
     }
 
     if muonCR:
-        tfiles['data_obs'] = [idir + '/SingleMuonRun2016B_03Feb2017_ver1_v1.root',
-                              idir + '/SingleMuonRun2016B_03Feb2017_ver2_v2.root',
-                              idir + '/SingleMuonRun2016C_03Feb2017_v1.root',
-                              idir + '/SingleMuonRun2016D_03Feb2017_v1.root',
-                              idir + '/SingleMuonRun2016E_03Feb2017_v1.root',
-                              idir + '/SingleMuonRun2016F_03Feb2017_v1.root',
-                              idir + '/SingleMuonRun2016G_03Feb2017_v1.root',
-                              idir + '/SingleMuonRun2016H_03Feb2017_ver2_v1.root',
-                              idir + '/SingleMuonRun2016H_03Feb2017_ver3_v1.root']
+        tfiles['data_obs'] = [idir + '/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
+                              idir + '/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016D_03Feb2017_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016E_03Feb2017_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016F_03Feb2017_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016G_03Feb2017_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016H_03Feb2017_ver2_v1_fixtrig.root',
+                              idir + '/SingleMuonRun2016H_03Feb2017_ver3_v1_fixtrig.root']
 
     print "Signals... "
     sigSamples = {}
