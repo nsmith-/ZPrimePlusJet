@@ -22,6 +22,10 @@ from rhalphabet_builder import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 def main(options,args):
 	
     tfile = r.TFile.Open(options.ifile)
+    tfile_loose = None
+    if options.ifile_loose is not None:
+        tfile_loose = r.TFile.Open(options.ifile_loose)
+        
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     bkgs = ['zqq','wqq','qcd','tqq']
@@ -35,14 +39,22 @@ def main(options,args):
     numberOfPtBins = 6
 
     histoDict = {}
+    histoDictLoose = {}
 
     for proc in (sigs+bkgs):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
+            if tfile_loose is not None:
+                histoDictLoose['%s_%s'%(proc,box)] = tfile_loose.Get('%s_%s'%(proc,box))
+                
             if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc):
                 histoDict['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_matched'%(proc,box))
                 histoDict['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_unmatched'%(proc,box))
+                if tfile_loose is not None:
+                    histoDictLoose['%s_%s_matched'%(proc,box)] = tfile_loose.Get('%s_%s_matched'%(proc,box))
+                    histoDictLoose['%s_%s_unmatched'%(proc,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,box))
+                    
                 
             for syst in systs:
                 print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
@@ -51,8 +63,8 @@ def main(options,args):
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
     #dctpl = open("datacard.tpl")
-    #dctpl = open("datacardZbb.tpl")
-    dctpl = open("datacardZonly.tpl")
+    dctpl = open("datacardZbb.tpl")
+    #dctpl = open("datacardZonly.tpl")
 
     linel = [];
     for line in dctpl: 
@@ -108,8 +120,22 @@ def main(options,args):
                         bbErrs['%s_%s'%(proc,box)] = 1.0
                         
                     
-                for j in range(1,numberOfMassBins+1):
-                    mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
+                for j in range(1,numberOfMassBins+1):                    
+                    if options.noMcStatShape:                 
+                        matchString = ''
+                        if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                            matchString = '_matched'
+                        if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
+                            histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
+                        else:
+                            histo = histoDict['%s_%s%s'%(proc,box,matchString)]
+                            
+                        error = array.array('d',[0.0])
+                        rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
+                        #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
+                        mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                    else:
+                        mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                         
 
         jesString = 'JES lnN'
@@ -124,7 +150,10 @@ def main(options,args):
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
-                    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
+                    if options.noMcStatShape:
+                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
+                    else:
+                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
                     
         for box in boxes:
             for proc in sigs+bkgs:
@@ -154,7 +183,7 @@ def main(options,args):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
                             if proc1==proc and box1==box:
-                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%d'% mcstatErrs['%s_%s'%(proc,box),i,j]
+                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s'%(proc,box),i,j]
                             else:                        
                                 mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
@@ -177,6 +206,26 @@ def main(options,args):
                 tqqeff = histoDict['tqq_pass'].Integral() / (
                 histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
                 newline = l.replace('TQQEFF','%.4f'%tqqeff)
+            elif 'wznormEWCATX' in l:
+                if i==4:
+                    newline = l.replace('1.05','1.15')
+                elif i==5:
+                    newline = l.replace('1.05','1.15')
+                elif i==6:
+                    newline = l.replace('1.05','1.15')
+                else:
+                    newline = l
+            elif 'znormEWCATX' in l:
+                if i==3:
+                    newline = l.replace('1.15','1.25')
+                elif i==4:
+                    newline = l.replace('1.15','1.35')
+                elif i==5:
+                    newline = l.replace('1.15','1.35')
+                elif i==6:
+                    newline = l.replace('1.15','1.35')      
+                else:
+                    newline = l              
             else:
                 newline = l
             if "CATX" in l:
@@ -184,14 +233,23 @@ def main(options,args):
             dctmp.write(newline + "\n")
         for box in boxes:
             for proc in sigs+bkgs:
+                if options.noMcStatShape and proc!='qcd':                        
+                    print 'include %s%scat%imcstat'%(proc,box,i)
+                    dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
+                    mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
+                    continue
                 for j in range(1,numberOfMassBins+1):                    
                     # if stat. unc. is greater than 50% 
                     matchString = ''
                     if removeUnmatched and (proc =='wqq' or proc=='zqq'):
                         matchString = '_matched'
-                    if abs(histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i)) > 0. and histoDict['%s_%s%s'%(proc,box,matchString)].GetBinError(j,i) > 0.5*histoDict['%s_%s%s'%(proc,box,matchString)].GetBinContent(j,i) and proc!='qcd':
-                        massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(j)
-                        ptVal = histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinLowEdge(i) + 0.3*(histoDict['%s_%s'%(proc,box)].GetYaxis().GetBinWidth(i))
+                    if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
+                        histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
+                    else:
+                        histo = histoDict['%s_%s%s'%(proc,box,matchString)]
+                    if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
+                        massVal = histo.GetXaxis().GetBinCenter(j)
+                        ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
                         if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
                             dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
@@ -219,10 +277,12 @@ if __name__ == '__main__':
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
     parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
+    parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)', metavar='ifile_loose')
     parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory to write cards', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
+    parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
 
     (options, args) = parser.parse_args()
 
