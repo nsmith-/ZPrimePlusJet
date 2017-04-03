@@ -131,8 +131,8 @@ def main(options,args):
         # Plot TF poly
         makeTF(pars,ratio_2d_data_subtract)
         
-    makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:8], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit)
-    makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:8], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit)
+    makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:8], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
+    makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:8], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
 
 
 def fun2(x, par):
@@ -197,14 +197,41 @@ def plotCategory(fml,fd,index,fittype):
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
 
-    makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit)
-    makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit)
+    makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
+    makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
 
     return (histograms_pass,histograms_fail)
 
 ###############################################################
+def weightBySOverSpB(bkgs, data, hsigs, tag):
+    hweight = data.Clone(data.GetName().replace('data','weight')) 
+    for i in range(1,data.GetNbinsX()+1):
+        wB = 0.
+        wS = 0.
+        for b in bkgs:
+            wB += b.GetBinContent(i)
+        for s in hsigs:
+            wS += s.GetBinContent(i)
+        if 'allcats' in tag:
+            Z = 1
+        else:
+            Z = wS/(wS+wB)
+        for h in [data]+bkgs+hsigs:
+            h.SetBinContent(i, h.GetBinContent(i)*Z)
+            if h.GetBinContent(i)>0:
+                h.SetBinError(i, h.GetBinError(i)*Z)
+            else:
+                h.SetBinError(i, 0.)                
+        hweight.SetBinContent(i, wS/(wS+wB))
+    return [bkgs, data, hsigs, hweight]
+    
 
-def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
+def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False):
+    if sOverSb:
+        [bkgs, data, hsigs, hweight] = weightBySOverSpB(bkgs, data, hsigs, tag)
+        data.GetYaxis().SetTitle('S/(S+B) Weighted Events / 7 GeV')
+    else:        
+        data.GetYaxis().SetTitle('Events / 7 GeV')
     
     c = r.TCanvas("c%s"%tag,"c%s"%tag,800,800)
     SetOwnership(c, False)
@@ -221,10 +248,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     h= r.TH1F("h","AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201)    
     htot = bkgs[0].Clone("htot%s"%tag)
     htot.SetLineColor(r.kBlack)
+    htot.SetLineStyle(1)
     htot.SetFillStyle(3001)
     htot.SetFillColor(r.kAzure-5)
     htot.SetLineColor(r.kAzure-5)
-    htot.SetMinimum(5e-1)
+    htot.SetMinimum(0)
+    #htot.SetMinimum(5e-1)
     htot.Draw("")
     htotsig = bkgs[0].Clone("htotsig%s"%tag)
     htotsig.SetLineColor(r.kBlack)
@@ -282,7 +311,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     #htot.SetFillStyle(3004)
     #htot.SetFillColor(r.kGray+1)
     #htot.SetLineColor(r.kGray+2)
-    data.SetMinimum(5e-1)
+    #data.SetMinimum(5e-1)
+    data.SetMinimum(0)
     htot.SetMarkerSize(0)
     htot.SetMarkerColor(r.kGray+2)
     htot.SetLineWidth(2)
@@ -340,7 +370,10 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
         iRatioGraph = r.TGraphAsymmErrors(iRatio)        
     alpha = 1-0.6827
     for i in range(0,iRatioGraph.GetN()):
-        N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)
+        if sOverSb:
+            N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)/hweight.GetBinContent(i+1)
+        else:
+            N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)
         L = 0
         if N!=0:
             L = r.Math.gamma_quantile(alpha/2,N,1.)
@@ -364,16 +397,16 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     iRatio.GetYaxis().SetRangeUser(0.51,1.49)
     iOneWithErrors = htot.Clone('iOneWithErrors%s'%tag)
     iOneWithErrors.Divide(htot.Clone())
-    for i in range(iOneWithErrors.GetNbinsX()): 
-        if htot.GetBinContent(i+1) > 0:
+    for i in range(iOneWithErrors.GetNbinsX()):
+        print i+1, htot.GetBinContent(i+1)
+        if htot.GetBinContent(i+1) > 0. and data.GetBinContent > 0.:
             iOneWithErrors.SetBinError( i+1, htot.GetBinError(i+1)/htot.GetBinContent(i+1) )
         else:
-            iOneWithErrors.SetBinError( i+1, 1)
-
+            iOneWithErrors.SetBinError( i+1, 0)
             
-    iOneWithErrors.SetFillStyle(3004)
-    iOneWithErrors.SetFillColor(r.kGray+1)
-    iOneWithErrors.SetLineColor(r.kGray+2)
+    iOneWithErrors.SetFillStyle(3001)
+    iOneWithErrors.SetFillColor(r.kAzure-5)
+    iOneWithErrors.SetLineColor(r.kAzure-5)
     iOneWithErrors.SetMarkerSize(0)
     iOneWithErrors.SetLineWidth(2)
     iRatio.Draw('pez')
@@ -381,8 +414,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
     iOneWithErrorsLine.SetFillStyle(0)
     iOneWithErrorsLine.Draw("hist sames")
     iOneWithErrors.Draw("e2 sames")
-    iRatioGraph.Draw("pezsames")
-
+    iRatioGraph.Draw("pezsame")
+    iRatio.Draw('pezsame')
+    
     sigHist = hsig.Clone('sigHist%s'%tag)
     sigHist.Add(htot)
     sigHist.Divide(htot)
@@ -421,9 +455,10 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1):
             lastX = g_signal.GetX()[i]
             lastY = g_signal.GetY()[i]
     #g_signal.Draw("cxsame")
+        
 
-    
-
+    if sOverSb:
+        tag += '_sOverSb'
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+".pdf")
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+".C")
     data.SetMinimum(5e-1)
@@ -522,6 +557,7 @@ if __name__ == '__main__':
 	parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory for plots', metavar='odir')
 	parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_s or fit_b', metavar='fit')
 	parser.add_option('--data', action='store_true', dest='isData', default =False,help='is data', metavar='isData')
+	parser.add_option('--s-over-sb', action='store_true', dest='sOverSb', default =False,help='weight entries by sOverSb', metavar='sOverSb')
 
 	(options, args) = parser.parse_args()
 
