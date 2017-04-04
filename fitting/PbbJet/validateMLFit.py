@@ -131,8 +131,8 @@ def main(options,args):
         # Plot TF poly
         makeTF(pars,ratio_2d_data_subtract)
         
-    makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:8], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
-    makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:8], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
+    [histograms_pass_summed_list]=makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:8], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
+    [histograms_fail_summed_list]=makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:8], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
 
 
 def fun2(x, par):
@@ -197,8 +197,8 @@ def plotCategory(fml,fd,index,fittype):
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
 
-    makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
-    makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
+    [histograms_fail]= makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
+    [histograms_pass]=makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
 
     return (histograms_pass,histograms_fail)
 
@@ -212,11 +212,11 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
             wB += b.GetBinContent(i)
         for s in hsigs:
             wS += s.GetBinContent(i)
-    #if 'allcats' in tag:
-    #    Z = 1
-    #else:
-    Z = wS/math.sqrt(wS+wB)
-    print(Z)
+    if 'allcats' in tag:
+        Z = 1
+    else:
+        Z = wS/math.sqrt(wS+wB)
+        print(Z)
     #for i in range(1,data.GetNbinsX()+1):
     for h in [data]+bkgs+hsigs:
             h.Scale(Z)#SetBinContent(i, h.GetBinContent(i)*Z)
@@ -470,7 +470,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+"-log.pdf")
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+"-log.C")
 
-    
+    return[[data]+bkgs+hsigs]
 
     
 def fun2(x, par):
