@@ -81,41 +81,19 @@ def main(options,args):
 
     plots = [
 'h_n_ak4'           ,
-'h_n_ak4'           ,
-'h_n_ak4_fwd'       ,
-'h_n_ak4L'          ,
-'h_n_ak4L100'       ,
-'h_n_ak4M'          ,
-'h_n_ak4M100'       ,
-'h_n_ak4T'          ,
-'h_n_ak4T100'       ,
-'h_n_ak4_dR0p8'     ,
-'h_isolationCA15'   ,
 'h_met'             ,
 'h_pt_ak8'          ,
-'h_pt_ak8_sub1'     ,
-'h_pt_ak8_sub2'     ,
 'h_pt_ak8_dbtagCut' ,
 'h_msd_ak8'         ,
 'h_msd_ak8_dbtagCut',
 'h_msd_ak8_t21ddtCut'  ,
 'h_msd_ak8_N2Cut'   ,
 'h_dbtag_ak8'       ,
-'h_dbtag_ak8_sub1'  ,
-'h_dbtag_ak8_sub2'  ,
-'h_t21_ak8'         ,
 'h_t21ddt_ak8'      ,
 'h_t32_ak8'         ,
 'h_t32_ak8_t21ddtCut'  ,
 'h_n2b1sd_ak8'      ,
 'h_n2b1sdddt_ak8'   ,
-'h_msd_ak8_topR1'   ,
-'h_msd_ak8_topR2_pass'   ,
-'h_msd_ak8_topR3_pass'   ,
-'h_msd_ak8_topR4_pass'   ,
-'h_msd_ak8_topR5_pass'   ,
-'h_msd_ak8_topR6_pass'   ,
-'h_msd_ak8_topR7_pass'   ,
 'h_pt_bbleading' ,
 'h_bb_bbleading' ,
 'h_msd_bbleading',
@@ -144,7 +122,7 @@ if __name__ == '__main__':
 
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option("--lumi", dest="lumi", type=float,default = 30,help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", type=float,default = 35.9,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 
