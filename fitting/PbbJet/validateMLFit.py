@@ -204,32 +204,33 @@ def plotCategory(fml,fd,index,fittype):
 
 ###############################################################
 def weightBySOverSpB(bkgs, data, hsigs, tag):
-    hweight = data.Clone(data.GetName().replace('data','weight')) 
+    #hweight = data.Clone(data.GetName().replace('data','weight')) 
     wB = 0.
     wS = 0.
-    for i in range(1,data.GetNbinsX()+1):
+    for i in range(10,14):#110-131 H mass window; #1,data.GetNbinsX()+1):
         for b in bkgs:
             wB += b.GetBinContent(i)
         for s in hsigs:
             wS += s.GetBinContent(i)
-    if 'allcats' in tag:
-        Z = 1
-    else:
-        Z = wS/(wS+wB)
-    for i in range(1,data.GetNbinsX()+1):
-        for h in [data]+bkgs+hsigs:
-            h.SetBinContent(i, h.GetBinContent(i)*Z)
-            if h.GetBinContent(i)>0:
-                h.SetBinError(i, h.GetBinError(i)*Z)
-            else:
-                h.SetBinError(i, 0.)                
-        hweight.SetBinContent(i, wS/(wS+wB))
-    return [bkgs, data, hsigs, hweight]
+    #if 'allcats' in tag:
+    #    Z = 1
+    #else:
+    Z = wS/math.sqrt(wS+wB)
+    print(Z)
+    #for i in range(1,data.GetNbinsX()+1):
+    for h in [data]+bkgs+hsigs:
+            h.Scale(Z)#SetBinContent(i, h.GetBinContent(i)*Z)
+           # if h.GetBinContent(i)>0:
+           #     h.SetBinError(i, h.GetBinError(i)*Z)
+           # else:
+           #     h.SetBinError(i, 0.)                
+    weight= wS/math.sqrt(wS+wB) #.SetBinContent(i, wS/math.sqrt(wS+wB))
+    return [bkgs, data, hsigs, weight]
     
 
 def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False):
     if sOverSb:
-        [bkgs, data, hsigs, hweight] = weightBySOverSpB(bkgs, data, hsigs, tag)
+        [bkgs, data, hsigs, weight] = weightBySOverSpB(bkgs, data, hsigs, tag)
         data.GetYaxis().SetTitle('S/(S+B) Weighted Events / 7 GeV')
     else:        
         data.GetYaxis().SetTitle('Events / 7 GeV')
@@ -372,7 +373,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     alpha = 1-0.6827
     for i in range(0,iRatioGraph.GetN()):
         if sOverSb:
-            N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)/hweight.GetBinContent(i+1)
+            N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)#hweight.GetBinContent(i+1)
         else:
             N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)
         L = 0
@@ -553,11 +554,11 @@ def makeTF(pars,ratio):
 if __name__ == '__main__':
 	parser = OptionParser()
 	parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-	parser.add_option("--lumi", dest="lumi", type=float, default = 30,help="luminosity", metavar="lumi")
+	parser.add_option("--lumi", dest="lumi", type=float, default = 35.9,help="luminosity", metavar="lumi")
 	parser.add_option('-i','--idir', dest='idir', default = 'cards/',help='directory with data', metavar='idir')
 	parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory for plots', metavar='odir')
 	parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_s or fit_b', metavar='fit')
-	parser.add_option('--data', action='store_true', dest='isData', default =False,help='is data', metavar='isData')
+	parser.add_option('--data', action='store_true', dest='isData', default =True,help='is data', metavar='isData')
 	parser.add_option('--s-over-sb', action='store_true', dest='sOverSb', default =False,help='weight entries by sOverSb', metavar='sOverSb')
 
 	(options, args) = parser.parse_args()
