@@ -205,17 +205,18 @@ def plotCategory(fml,fd,index,fittype):
 ###############################################################
 def weightBySOverSpB(bkgs, data, hsigs, tag):
     hweight = data.Clone(data.GetName().replace('data','weight')) 
+    wB = 0.
+    wS = 0.
     for i in range(1,data.GetNbinsX()+1):
-        wB = 0.
-        wS = 0.
         for b in bkgs:
             wB += b.GetBinContent(i)
         for s in hsigs:
             wS += s.GetBinContent(i)
-        if 'allcats' in tag:
-            Z = 1
-        else:
-            Z = wS/(wS+wB)
+    if 'allcats' in tag:
+        Z = 1
+    else:
+        Z = wS/(wS+wB)
+    for i in range(1,data.GetNbinsX()+1):
         for h in [data]+bkgs+hsigs:
             h.SetBinContent(i, h.GetBinContent(i)*Z)
             if h.GetBinContent(i)>0:
