@@ -204,7 +204,6 @@ def plotCategory(fml,fd,index,fittype):
 
 ###############################################################
 def weightBySOverSpB(bkgs, data, hsigs, tag):
-    #hweight = data.Clone(data.GetName().replace('data','weight')) 
     wB = 0.
     wS = 0.
     for i in range(10,14):#110-131 H mass window; #1,data.GetNbinsX()+1):
@@ -217,18 +216,14 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
     else:
         Z = wS/math.sqrt(wS+wB)
         print(Z)
-    #for i in range(1,data.GetNbinsX()+1):
     for h in [data]+bkgs+hsigs:
-            h.Scale(Z)#SetBinContent(i, h.GetBinContent(i)*Z)
-           # if h.GetBinContent(i)>0:
-           #     h.SetBinError(i, h.GetBinError(i)*Z)
-           # else:
-           #     h.SetBinError(i, 0.)                
-    weight= wS/math.sqrt(wS+wB) #.SetBinContent(i, wS/math.sqrt(wS+wB))
+        h.Scale(Z)               
+    weight= wS/math.sqrt(wS+wB)
     return [bkgs, data, hsigs, weight]
     
 
 def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False):
+    weight = 1
     if sOverSb:
         [bkgs, data, hsigs, weight] = weightBySOverSpB(bkgs, data, hsigs, tag)
         data.GetYaxis().SetTitle('S/(S+B) Weighted Events / 7 GeV')
@@ -372,17 +367,14 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
         iRatioGraph = r.TGraphAsymmErrors(iRatio)        
     alpha = 1-0.6827
     for i in range(0,iRatioGraph.GetN()):
-        if sOverSb:
-            N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)#hweight.GetBinContent(i+1)
-        else:
-            N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)
+        N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)/weight
         L = 0
         if N!=0:
             L = r.Math.gamma_quantile(alpha/2,N,1.)
         U = r.Math.gamma_quantile_c(alpha/2,N+1,1)
-        iRatioGraph.SetPointEYlow(i, (N-L)/htot.GetBinContent(i+1))
-        iRatioGraph.SetPointEYhigh(i, (U-N)/htot.GetBinContent(i+1))
-        iRatioGraph.SetPoint(i, iRatioGraph.GetX()[i], N/htot.GetBinContent(i+1) )
+        iRatioGraph.SetPointEYlow(i, (N-L)/htot.GetBinContent(i+1)*weight)
+        iRatioGraph.SetPointEYhigh(i, (U-N)/htot.GetBinContent(i+1)*weight)
+        iRatioGraph.SetPoint(i, iRatioGraph.GetX()[i], N/htot.GetBinContent(i+1)*weight )
     
     data.GetXaxis().SetTitleOffset(100)
     data.GetXaxis().SetLabelOffset(100)
