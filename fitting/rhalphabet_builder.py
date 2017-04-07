@@ -184,7 +184,7 @@ class RhalphabetBuilder():
                                                                     datahist['%s_%s'%(proc,cat)].sumEntries(),
                                                                     0,10.*datahist['%s_%s'%(proc,cat)].sumEntries())
                     histpdfnorm['%s_%s'%(proc,cat)].setConstant(True)
-                    getattr(w,'import')(histpdfnorm['%s_%s'%(proc,cat)])
+                    getattr(w,'import')(histpdfnorm['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
                     pdfs_b.add(histpdf['%s_%s'%(proc,cat)])
                     pdfs_s.add(histpdf['%s_%s'%(proc,cat)])
                     norms_b.add(histpdfnorm['%s_%s'%(proc,cat)])
@@ -247,8 +247,7 @@ class RhalphabetBuilder():
         mu.setVal(1)
         mu.setConstant(True)
 
-        nll = simPdf_s.createNLL(combData,opt)
-        #nll = simPdf_b.createNLL(combData,opt)
+        nll = simPdf_s.createNLL(combData)
         m2 = r.RooMinimizer(nll)
         m2.setStrategy(2)
         m2.setMaxFunctionCalls(100000)
