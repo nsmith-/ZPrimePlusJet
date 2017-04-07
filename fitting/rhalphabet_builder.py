@@ -9,8 +9,8 @@ import time
 import array
 #r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
 r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
-r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
-r.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
+#r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
+#r.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 
 
 # including other directories
@@ -197,15 +197,23 @@ class RhalphabetBuilder():
             getattr(w,'import')(epdf_b[cat],r.RooFit.RecycleConflictNodes())
             getattr(w,'import')(epdf_s[cat],r.RooFit.RecycleConflictNodes())
 
-        arguments = ["data_obs","data_obs",r.RooArgList(x),rooCat]
+        ## arguments = ["data_obs","data_obs",r.RooArgList(x),rooCat]
 
-        m = r.std.map('string, RooDataHist*')()
+        ## m = r.std.map('string, RooDataHist*')()
+        ## for cat in categories:
+        ##    m.insert(r.std.pair('string, RooDataHist*')(cat, data[cat]))
+        ## arguments.append(m)
+        
+        ## combData = getattr(r,'RooDataHist')(*arguments)
+        
+        cat = categories[0]
+        args = data[cat].get(0)
+            
+        combiner = r.CombDataSetFactory(args, rooCat)
+            
         for cat in categories:
-            m.insert(r.std.pair('string, RooDataHist*')(cat, data[cat]))
-        arguments.append(m)
-
-        combData = getattr(r,'RooDataHist')(*arguments)
-
+            combiner.addSetBin(cat, data[cat])
+        combData = combiner.done('data_obs','data_obs')
 
         simPdf_b = r.RooSimultaneous('simPdf_b','simPdf_b',rooCat)
         simPdf_s = r.RooSimultaneous('simPdf_s','simPdf_s',rooCat)
