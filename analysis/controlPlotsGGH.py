@@ -11,7 +11,7 @@ import glob
 import os
 from plotHelpers import *
 from sampleContainer import *
-DBTMIN=99
+DBTMIN=-99
 #
 def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
     if isData:

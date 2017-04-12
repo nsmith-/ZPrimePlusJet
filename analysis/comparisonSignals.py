@@ -10,6 +10,7 @@ import array
 
 from plotHelpers import *
 from sampleContainer import *
+DBTAGMIN=-99
 #
 
 ##############################################################################
@@ -66,12 +67,12 @@ def main(options,args):
     print "Signals... "
     sigSamples = {}
     #sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi ) 
-    sigSamples['ggHbbp']  = sampleContainer('ggHbbp',tfiles['ggHbbp']  , 1, lumi)
-    sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi) 
-    sigSamples['ZHbb'] = sampleContainer('ZHbb',tfiles['ZHbb'], 1, lumi ) 	
-    sigSamples['WHbb'] = sampleContainer('WHbb',tfiles['WHbb'], 1, lumi )
-    sigSamples['tthbb'] = sampleContainer('tthbb',tfiles['tthbb'], 1, lumi )	
-    sigSamples['ZnnHbb'] = sampleContainer('ZnnHbb',tfiles['ZnnHbb'], 1, lumi )
+    sigSamples['ggHbbp']  = sampleContainer('ggHbbp',tfiles['ggHbbp']  , 1, DBTAGMIN,lumi)
+    sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTAGMIN,lumi) 
+    sigSamples['ZHbb'] = sampleContainer('ZHbb',tfiles['ZHbb'], 1, DBTAGMIN,lumi ) 	
+    sigSamples['WHbb'] = sampleContainer('WHbb',tfiles['WHbb'], 1, DBTAGMIN,lumi )
+    sigSamples['tthbb'] = sampleContainer('tthbb',tfiles['tthbb'], 1, DBTAGMIN,lumi )	
+    sigSamples['ZnnHbb'] = sampleContainer('ZnnHbb',tfiles['ZnnHbb'], 1, DBTAGMIN,lumi )
     #sigSamples['Phibb'] = sampleContainer('Phibb',tfiles['Phibb'], 1, lumi*0.035)   
 
 
