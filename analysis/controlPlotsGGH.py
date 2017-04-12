@@ -11,13 +11,14 @@ import glob
 import os
 from plotHelpers import *
 from sampleContainer import *
+DBTMIN=99
 #
 def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
     if isData:
         c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)	
     else:
-#        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
+        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
         c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
 #        canvases.append(c)	
         canvases.append(c1)
@@ -50,7 +51,7 @@ def main(options,args,outputExists):
                'TTbar0Lep': 't#bar{t}+jets, 0l',        
                'TTbar2Lep': 't#bar{t}+jets, 2l',        
                'QCD': 'QCD',
-		       'data': 'JetHT data',
+	       'data': 'JetHT data',
                'muon': 'SingleMuon data',
                'Phibb50': '#Phi(b#bar{b}), 50 GeV',
                'Phibb75': '#Phi(b#bar{b}), 75 GeV',
@@ -124,7 +125,7 @@ def main(options,args,outputExists):
 		       idir+'JetHTRun2016G_03Feb2017_v1_4.root',
 		       idir+'JetHTRun2016G_03Feb2017_v1_3.root',
 		       idir+'JetHTRun2016G_03Feb2017_v1_6.root',
-		       idir+'JetHTRun2016G_03Feb2017_v1_0.root']
+		       idir+'JetHTRun2016G_03Feb2017_v1_0.root'],
               'muon': [idir+'/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
                        idir+'/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
                        idir+'/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
@@ -195,7 +196,7 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainer('test',[], 1, lumi)
+        testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
@@ -206,7 +207,7 @@ def main(options,args,outputExists):
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht']
     else:
         plots = []
-        testSample = sampleContainer('test',[], 1, lumi)
+        testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
@@ -215,7 +216,7 @@ def main(options,args,outputExists):
                 pass
             
     if not outputExists: 
-        samples = ['ggHbb','VBFHbb','VHbb','ttHbb','QCD','SingleTop','Diboson','W','Wlnu','DY','TTbar','muon','data']                      
+        samples = ['ggHbb','VBFHbb','VHbb','ttHbb','QCD','SingleTop','Diboson','W','DY','TTbar']                      
         for s in samples:
             for tfile in tfiles[s]:
                 if not os.path.isfile(tfile):
@@ -223,39 +224,39 @@ def main(options,args,outputExists):
                     sys.exit()
         print "Signals... "
         sigSamples = {}
-        sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, lumi) 
-        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, lumi ) 
-        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, lumi ) 	
-        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, lumi )    
+        sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi) 
+        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ) 
+        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ) 	
+        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi )    
         #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
         #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 
         #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, lumi)
-        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, lumi)
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
+        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi)
+        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi)
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, DBTMIN,lumi)
         if isData and muonCR:
-            bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, lumi)
-            bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, lumi)
-            bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-            bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-            bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar2Lep']  = sampleContainer('TTbar2Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
+            bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi)
+            bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi)
+            bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+            bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+            bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar2Lep']  = sampleContainer('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
         else:        
-            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
-        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, lumi)
-        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, lumi)
+            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi)
+        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi)
+        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi)
         #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
 
         if isData:
             print "Data..."
         if isData and muonCR:
-            dataSample = sampleContainer('muon',tfiles['muon'], 1, lumi, isData, False, '((triggerBits&4)&&passJson)')
+            dataSample = sampleContainer('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
         elif isData:
-            dataSample = sampleContainer('data',tfiles['data'], 1, lumi, isData, False, '((triggerBits&2)&&passJson)')
+            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)')
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
 
@@ -336,7 +337,7 @@ if __name__ == '__main__':
 
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", default = 35.9,type=float,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
     parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')

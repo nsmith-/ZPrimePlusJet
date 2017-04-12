@@ -355,6 +355,7 @@ class sampleContainer:
                 'h_pt_ak8_dbtagCut': ["h_" + self._name + "_pt_ak8_dbtagCut", "; AK8 leading p_{T} (GeV);", 45, 300,
                                       2100],
                 'h_msd_ak8': ["h_" + self._name + "_msd_ak8", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+                'h_rho_ak8': ["h_" + self._name + "_rho_ak8", "; AK8 #rho=log(m_{SD}^{2}/p_{T}^{2}) (GeV);", 50, -7, -1], 
                 'h_msd_ak8_raw': ["h_" + self._name + "_msd_ak8_raw", "; AK8 m_{SD}^{PUPPI} no correction (GeV);", 23,
                                   40, 201],
                 'h_msd_ak8_inc': ["h_" + self._name + "_msd_ak8_inc", "; AK8 m_{SD}^{PUPPI} (GeV);", 100, 0, 500],
@@ -792,9 +793,10 @@ class sampleContainer:
                 sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")
                 sys.stdout.flush()
 
-            # puweight = self.puWeight[0] #corrected
+            puweight = self.puWeight[0] #corrected
             nPuForWeight = min(self.npu[0], 49.5)
-            puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
+	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
+            #puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
             puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             # print(self.puWeight[0],puweight,puweight_up,puweight_down)
@@ -1197,6 +1199,7 @@ class sampleContainer:
                     self.h_pt_ak8_sub1.Fill(jpt_8_sub1, weight)
                     self.h_pt_ak8_sub2.Fill(jpt_8_sub2, weight)
                     self.h_msd_ak8.Fill(jmsd_8, weight)
+		    self.h_rho_ak8.Fill(rh_8, weight)
                     self.h_msd_ak8_raw.Fill(jmsd_8_raw, weight)
                     self.h_dbtag_ak8.Fill(jdb_8, weight)
                     self.h_dbtag_ak8_sub1.Fill(jdb_8_sub1, weight)
