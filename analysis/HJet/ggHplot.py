@@ -3,24 +3,24 @@ from ROOT import TFile, TTree, TChain, gPad, gDirectory
 from multiprocessing import Process
 from optparse import OptionParser
 from operator import add
+from array import array
 import math
 import sys
 import time
-import array
 
 ##############################################################################
 def main(options,args):
-
+    binBoundaries=[300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,540+20*1, 540+20*2, 540+20*3, 540+20*4, 540+20*5, 540+20*6, 540+20*7, 540+20*8, 540+20*9, 540+20*10, 540+20*10+30,540+20*10 + 60, 540+20*10 +90,540+20*10+120,540+20*10+150,540+20*10+180,540+20*10+210,540+20*10+240,540+20*10+270,540+20*10+470]
     file_in = ROOT.TFile.Open("GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root")
     file_corr = ROOT.TFile.Open("GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted_corrected.root")
     file_phil = ROOT.TFile.Open("ggH_corrections.root")
     file_in.cd()	
     tt = file_in.Get('otree')
-    h_lo_ptH=ROOT.TH1F("h_lo_ptH","h_lo_ptH",80,200,1200)
+    h_lo_ptH=ROOT.TH1F("h_lo_ptH","h_lo_ptH",len(binBoundaries)-1, array('d',binBoundaries)) 
     tt.Draw("genVPt>>h_lo_ptH","1*scale1fb") #(AK8Puppijet0_pt>450.)
     file_corr.cd()
     tt2 = file_corr.Get('otree')
-    h_nnnlo_ptH=ROOT.TH1F("h_nnnlo_ptH","h_nnnlo_ptH",80,200,1200)
+    h_nnnlo_ptH=ROOT.TH1F("h_nnnlo_ptH","h_nnnlo_ptH",len(binBoundaries)-1, array('d',binBoundaries))
     tt2.Draw("genVPt>>h_nnnlo_ptH","(1.)*scale1fb")
     	
     
@@ -42,11 +42,13 @@ def main(options,args):
     h_lo_ptH.GetYaxis().SetTitleOffset(1.1)
     #h_nlo_ptH.SetLineColor(ROOT.kGreen+3);
     #h_nnlo_ptH.SetLineColor(ROOT.kBlue);
-    h_nnnlo_ptH.SetLineColor(ROOT.kRed);   
-    h_nnnlo_ptH.SetMarkerColor(ROOT.kRed);
+    h_nnnlo_ptH.SetLineColor(ROOT.kAzure-9);   
+    h_nnnlo_ptH.SetMarkerColor(ROOT.kAzure-9);
     h_lo_ptH.SetMarkerColor(ROOT.kBlack);
     h_nnnlo_ptH.SetMarkerStyle(20);
     h_lo_ptH.SetMarkerStyle(20);
+    h_nnnlo_ptH.SetMarkerSize(0.5)
+    h_lo_ptH.SetMarkerSize(0.5)	
 
     leg = ROOT.TLegend(0.7,0.7,0.9,0.9);
     leg.SetBorderSize(0);
@@ -66,15 +68,17 @@ def main(options,args):
 
     c_ptH.cd();
     p1.Draw(); p1.cd();
-    h_lo_ptH.SetMaximum(1000.)
+    h_lo_ptH = divideBinWidth(h_lo_ptH)
+    h_nnnlo_ptH = divideBinWidth(h_nnnlo_ptH)	
+    h_lo_ptH.SetMaximum(50.)
     h_lo_ptH.Draw('e');
     #h_nlo_ptH.Draw('esames');
     #h_nnlo_ptH.Draw('histesames');
     h_nnnlo_ptH.Draw('e sames');
-    #file_phil.cd()
-    #h3 = file_phil.Get('MG_NNLO_FT')
+    #file_phil.cd()   #sanity check with files from phil we used to derive the ratio
+    #h3 = file_phil.Get('MG_NNLO_FT_binWdith')
   
-    #h4 = file_phil.Get('Powheg')
+    #h4 = file_phil.Get('Powheg_binWidth')
     #h3.Draw('sames')
     #h4.Draw('sames')
     leg.Draw();
@@ -104,6 +108,14 @@ def main(options,args):
     #fixRatioErrors(h_nlo_ptH_ratio,h_nlo_ptH);
     #fixRatioErrors(h_nnlo_ptH_ratio,h_nnlo_ptH);
     fixRatioErrors(h_nnnlo_ptH_ratio,h_nnnlo_ptH);
+    h_nnnlo_ptH_ratio.SetMarkerColor(ROOT.kBlack);
+    h_nnnlo_ptH_ratio.SetLineColor(ROOT.kBlack);
+    NLO_= ROOT.TF1("NLO_", "pol2", 200, 1200)
+    
+    NLO_.SetParameter(0, 2.70299e+00)
+    NLO_.SetParameter(1, -2.18233e-03)
+    NLO_.SetParameter(2,5.22287e-07 )
+
     
 
 
@@ -112,6 +124,8 @@ def main(options,args):
     #h_nlo_ptH_ratio.Draw("histe");
     #h_nnlo_ptH_ratio.Draw("histesames");
     h_nnnlo_ptH_ratio.Draw("histesames");
+    NLO_.Draw("sames")
+
     #h3_ratio.Draw("histesames");
 
     c_ptH.SaveAs("ptH.pdf");
@@ -165,46 +179,15 @@ def makeHistFromTextInput(fn,name):
     h.Sumw2();
     return h;
 
-def makeCanvas(h):
+def divideBinWidth(h):
 
-    c = ROOT.TCanvas("c","c",1000,800);
-    h.Draw('hist');
-    c.SaveAs("plots/"+h.GetName()+".pdf");
-    c.SaveAs("plots/"+h.GetName()+".png");
-
-def makeCanvasViolin(h):
-
-    c = ROOT.TCanvas("c","c",1000,800);
-    h.Draw('VIOLIN');
-    c.SaveAs("plots/"+h.GetName()+".pdf");
-    c.SaveAs("plots/"+h.GetName()+".png");
-
-def makeCanvas2D(h):
-
-    c = ROOT.TCanvas("c","c",1000,800);
-    h.Draw('COLZ');
-    c.SaveAs("plots/"+h.GetName()+".pdf");
-    c.SaveAs("plots/"+h.GetName()+".png");
-
-
-def makeCanvases(hs):
-
-    colors = [1,2,4,6,7,3];
-    for i,h in enumerate(hs): h.SetLineColor(colors[i]);
-    for i,h in enumerate(hs): 
-        if h.Integral() > 0: h.Scale( 1/h.Integral() );
-    hmax = -99;
-    for i,h in enumerate(hs): 
-        if hmax < h.GetMaximum(): hs[0].SetMaximum(h.GetMaximum()*10);
-
-    c = ROOT.TCanvas("c","c",1000,800);
-    for i,h in enumerate(hs):
-        option = 'hist';
-        if i > 0: option = 'histsames';
-        h.Draw(option);
-    c.SaveAs("plots/"+hs[0].GetName()+"s.pdf");
-    c.SaveAs("plots/"+hs[0].GetName()+"s.png");
-
+    for iB in range(1, h.GetNbinsX()+1):
+      currentVal = h.GetBinContent(iB);
+      currentErr = h.GetBinError(iB);
+      binWidth = h.GetBinWidth(iB);
+      h.SetBinContent(iB,currentVal/binWidth);
+      h.SetBinError(iB,currentErr/binWidth);
+    return h
 
 ##----##----##----##----##----##----##
 if __name__ == '__main__':
