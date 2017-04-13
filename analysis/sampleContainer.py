@@ -1473,7 +1473,7 @@ class sampleContainer:
             self.h_Cuts.SetBinContent(6, float(cut[6] / cut[3] * 100.))
   #          self.h_Cuts.SetBinContent(7, float(cut[7] / cut[3] * 100.))
             # self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
-            self.h_Cuts.SetBinContent(8,float(cut[7]/nent*100.))
+            self.h_Cuts.SetBinContent(8,float(cut[7]/ cut[3]  *100.))
             self.h_Cuts.SetBinContent(7, float(cut[8]) / cut[3] * 100.)
             print(cut[0] / nent * 100., cut[7], cut[8], cut[9])
             a_Cuts = self.h_Cuts.GetXaxis()
