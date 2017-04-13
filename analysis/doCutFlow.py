@@ -65,7 +65,7 @@ def main(options,args):
                      idir+'/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
                     idir+'/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
-              'TTbar':  [idir+'/TT_powheg_1000pb_weighted.root'], #Powheg is the new default
+              'TTbar':  [idir+'/TT_powheg_1000pb_weighted_v1204.root'], #Powheg is the new default
               'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
                       idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
                       idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
-    parser.add_option("--lumi", dest="lumi", default = 30,type=float,help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", default = 35.9,type=float,help="luminosity", metavar="lumi")
     parser.add_option('-i','--idir', dest='idir', default = 'data/',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
 
