@@ -100,6 +100,7 @@ def main(options,args):
     h_nnnlo_ptH_ratio.GetYaxis().SetTitleSize(0.09)
     h_nnnlo_ptH_ratio.GetXaxis().SetTitleOffset(1.1)
     h_nnnlo_ptH_ratio.GetYaxis().SetTitleOffset(0.6)
+    h_nnnlo_ptH_ratio.GetXaxis().SetLabelOffset(0.03)
     
     h_nnnlo_ptH_ratio.Divide(h_lo_ptH);  
     #h3_ratio = h3.Clone() 
@@ -108,13 +109,20 @@ def main(options,args):
     #fixRatioErrors(h_nlo_ptH_ratio,h_nlo_ptH);
     #fixRatioErrors(h_nnlo_ptH_ratio,h_nnlo_ptH);
     fixRatioErrors(h_nnnlo_ptH_ratio,h_nnnlo_ptH);
-    h_nnnlo_ptH_ratio.SetMarkerColor(ROOT.kBlack);
-    h_nnnlo_ptH_ratio.SetLineColor(ROOT.kBlack);
-    NLO_= ROOT.TF1("NLO_", "pol2", 200, 1200)
+    h_nnnlo_ptH_ratio.SetMarkerColor(ROOT.kAzure-9);
+    h_nnnlo_ptH_ratio.SetLineColor(ROOT.kAzure-9);
+    NLO_= ROOT.TF1("NLO_", "pol2", 200, 1220)
     
     NLO_.SetParameter(0, 2.70299e+00)
     NLO_.SetParameter(1, -2.18233e-03)
     NLO_.SetParameter(2,5.22287e-07 )
+    NLO_.SetLineColor(ROOT.kGray+2)
+    NLO_.SetLineWidth(1)
+    a = ROOT.TLine(300,1,1200,1)
+    a.SetLineWidth(1)
+    a.SetLineStyle(2)
+    a.SetLineColor(ROOT.kBlack)
+    
 
     
 
@@ -125,6 +133,7 @@ def main(options,args):
     #h_nnlo_ptH_ratio.Draw("histesames");
     h_nnnlo_ptH_ratio.Draw("histesames");
     NLO_.Draw("sames")
+    a.Draw("sames")
 
     #h3_ratio.Draw("histesames");
 
