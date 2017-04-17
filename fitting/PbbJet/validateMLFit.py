@@ -131,8 +131,8 @@ def main(options,args):
         # Plot TF poly
         makeTF(pars,ratio_2d_data_subtract)
         
-    [histograms_pass_summed_list]=makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:8], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
-    [histograms_fail_summed_list]=makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:8], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb)
+    [histograms_pass_summed_list]=makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS)
+    [histograms_fail_summed_list]=makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:9], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS)
 
 
 def fun2(x, par):
@@ -214,15 +214,15 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
     if 'allcats' in tag:
         Z = 1
     else:
-        Z = wS/math.sqrt(wS+wB)
-        print(Z)
+        Z = wS/(wS+wB)#math.sqrt(wS+wB)
+        print(Z,wS,wB)
     for h in [data]+bkgs+hsigs:
         h.Scale(Z)               
-    weight= wS/math.sqrt(wS+wB)
+    weight= wS/(wS+wB)#math.sqrt(wS+wB)
     return [bkgs, data, hsigs, weight]
     
 
-def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False):
+def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False, splitS= True):
     weight = 1
     if sOverSb:
         [bkgs, data, hsigs, weight] = weightBySOverSpB(bkgs, data, hsigs, tag)
@@ -269,9 +269,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
 	htotsig.Add(hsigs[ih])
 
     if rBestFit != 0:
-        hsig.Scale(30./rBestFit)
+	print(rBestFit)
+        if splitS : hsig.Scale(30./rBestFit)
+    
 
     colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kGray+2, r.kPink + 7]
+    sigcolor = 	[r.kPink + 7, r.kPink+1, r.kAzure+1, r.kOrange+1, r.kAzure+3]
+    sleg = ['GF H(b#bar{b})','Z(q#bar{q})H(b#bar{b})','W(q#bar{q})H(b#bar{b})','ttH(b#bar{b})','VBF H(b#bar{b})']	
     style = [2,3,4,2,2]
     for i,b in enumerate(bkgs): 
     #	b.SetFillColor(colors[i])
@@ -280,7 +284,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
         b.SetLineWidth(2)
 
 
-    l = r.TLegend(0.7,0.6,0.9,0.85)
+    if splitS : l = r.TLegend(0.6,0.4,0.75,0.85)
+    else : l = r.TLegend(0.6,0.6,0.75,0.85)
     l.SetFillStyle(0)
     l.SetBorderSize(0)
     l.SetTextFont(42)
@@ -290,8 +295,14 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
 	  l.AddEntry(bkgs[i],legnames[leg[i]],"l")
     l.AddEntry(htot,"Total Bkg.","lf")
     #l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
-    if rBestFit != 0:
-        l.AddEntry(hsig,"H(b#bar{b}) #times 30","lf")
+    if rBestFit != 0 :
+        if splitS : 
+	    for ih in range(0,len(hsigs)):
+		print(hsigs[ih])
+	        hsigs[ih].SetLineColor(sigcolor[ih])
+	  	l.AddEntry(hsigs[ih], sleg[ih]+" #times 30", "lf")
+	else: l.AddEntry(hsig,"H(b#bar{b}) #times 30","lf")
+	
     l.AddEntry(data,"Data","pe")
 
     htot.SetLineColor(r.kBlack)
@@ -332,7 +343,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     hsig.SetLineWidth(1)
     hsig.SetFillStyle(3004)
     hsig.SetFillColor(r.kPink+7)
-    hsig.Draw('hist sames')
+    if not splitS: hsig.Draw('hist sames')
+    else: 	
+      for ih in range(0,len(hsigs)):
+	print(hsigs[ih])
+	hsigs[ih].Scale(30./rBestFit)
+        hsigs[ih].Draw('hist sames')
     data.Draw('pezsame')
     l.Draw()    
     tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
@@ -392,7 +408,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     iOneWithErrors = htot.Clone('iOneWithErrors%s'%tag)
     iOneWithErrors.Divide(htot.Clone())
     for i in range(iOneWithErrors.GetNbinsX()):
-        print i+1, htot.GetBinContent(i+1)
+        #print i+1, htot.GetBinContent(i+1)
         if htot.GetBinContent(i+1) > 0. and data.GetBinContent > 0.:
             iOneWithErrors.SetBinError( i+1, htot.GetBinError(i+1)/htot.GetBinContent(i+1) )
         else:
@@ -552,6 +568,7 @@ if __name__ == '__main__':
 	parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_s or fit_b', metavar='fit')
 	parser.add_option('--data', action='store_true', dest='isData', default =True,help='is data', metavar='isData')
 	parser.add_option('--s-over-sb', action='store_true', dest='sOverSb', default =False,help='weight entries by sOverSb', metavar='sOverSb')
+	parser.add_option('--splitS', action='store_true', dest='splitS', default =False,help='split signal contribution', metavar='splitS')
 
 	(options, args) = parser.parse_args()
 
