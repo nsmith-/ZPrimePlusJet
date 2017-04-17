@@ -270,7 +270,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
 
     if rBestFit != 0:
 	print(rBestFit)
-        if splitS : hsig.Scale(30./rBestFit)
+        if not splitS : hsig.Scale(5./rBestFit)
     
 
     colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kGray+2, r.kPink + 7]
@@ -298,10 +298,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     if rBestFit != 0 :
         if splitS : 
 	    for ih in range(0,len(hsigs)):
-		print(hsigs[ih])
 	        hsigs[ih].SetLineColor(sigcolor[ih])
 	  	l.AddEntry(hsigs[ih], sleg[ih]+" #times 30", "lf")
-	else: l.AddEntry(hsig,"H(b#bar{b}) #times 30","lf")
+	else: l.AddEntry(hsig,"H(b#bar{b}) #times 5","lf")
 	
     l.AddEntry(data,"Data","pe")
 
@@ -310,8 +309,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     htot.SetFillColor(r.kAzure-5)
     htot.SetLineColor(r.kAzure-5)
     htotsig.SetLineColor(r.kPink+3)
-    htotsig.SetFillStyle(3001)
-    htotsig.SetFillColor(r.kPink+3)
+   # htotsig.SetFillStyle(3001)
+    #htotsig.SetFillColor(r.kPink+3)
     htotsig.SetLineColor(r.kPink+3)
     htotsig.SetLineWidth(2)
 	
@@ -341,12 +340,11 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     hsig.SetLineColor(r.kPink+7)
     #hsig.SetLineStyle(2)
     hsig.SetLineWidth(1)
-    hsig.SetFillStyle(3004)
-    hsig.SetFillColor(r.kPink+7)
+    #hsig.SetFillStyle(3004)
+    #hsig.SetFillColor(r.kPink+7)
     if not splitS: hsig.Draw('hist sames')
     else: 	
       for ih in range(0,len(hsigs)):
-	print(hsigs[ih])
 	hsigs[ih].Scale(30./rBestFit)
         hsigs[ih].Draw('hist sames')
     data.Draw('pezsame')
