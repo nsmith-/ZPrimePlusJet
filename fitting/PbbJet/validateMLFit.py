@@ -266,11 +266,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
 
 
     for ih in range(1,len(hsigs)):
+	print(hsig)
         hsig.Add(hsigs[ih])
 	htotsig.Add(hsigs[ih])
 
     if rBestFit != 0:
-	print(rBestFit)
+	#print(rBestFit)
         if not splitS : hsig.Scale(5./rBestFit)
     
 
