@@ -130,7 +130,8 @@ def main(options,args):
 
         # Plot TF poly
         makeTF(pars,ratio_2d_data_subtract)
-        
+    
+
     [histograms_pass_summed_list]=makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS, options.ratio)
     [histograms_fail_summed_list]=makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:9], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS, options.ratio)
 
@@ -272,8 +273,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     hsig = hsigs[0].Clone("hsig%s"%tag)
 
 
-    for ih in range(1,len(hsigs)):
-        print(hsigs[ih])
+    for ih in range(1,len(hsigs)-1):
         hsig.Add(hsigs[ih])
 	htotsig.Add(hsigs[ih])
 
@@ -489,7 +489,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+"-log.pdf")
     c.SaveAs(odir+"/mlfit/mlfit_"+tag+"-log.C")
 
-    return[[data]+bkgs+hsigs]
+    return[bkgs+hsigs+[data]]
 
     
 def fun2(x, par):
