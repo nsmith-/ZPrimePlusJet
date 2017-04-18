@@ -253,6 +253,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     h= r.TH1F("h","AK8 m_{SD} (GeV);", 23, 40, 201)    
     htot = bkgs[0].Clone("htot%s"%tag)
     hqcd = bkgs[3].Clone("hqcd%s"%tag)
+    hqcd.Add(bkgs[2])
     htot.SetLineColor(r.kBlack)
     htot.SetLineStyle(1)
     htot.SetFillStyle(3001)
@@ -273,7 +274,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     hsig = hsigs[0].Clone("hsig%s"%tag)
 
 
-    for ih in range(1,len(hsigs)-1):
+    for ih in range(1,len(hsigs)):
         hsig.Add(hsigs[ih])
 	htotsig.Add(hsigs[ih])
 
@@ -371,7 +372,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     c.cd()
     p22.Draw()
     p22.cd()
-    p22.SetGrid()
+    #p22.SetGrid()
 
     iRatio = h.Clone('iRatio%s'%tag)
     if ratio :
@@ -403,7 +404,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     if ratio: 
 	iRatio.SetTitle("; m_{SD} (GeV); Data/Prediction")
     else : 
-	iRatio.SetTitle("; m_{SD} (GeV); #frac{Data - multijet Bkg}{#sigma_{data}}") 
+	iRatio.SetTitle("; m_{SD} (GeV); #frac{Data - (multijet + t#bar{t})}{#sigma_{data}}") 
     iRatio.SetMaximum(1.5)
     iRatio.SetMinimum(0.)
     iRatio.GetYaxis().SetTitleSize(0.1)
