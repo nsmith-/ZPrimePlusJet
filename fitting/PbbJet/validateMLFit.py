@@ -197,8 +197,8 @@ def plotCategory(fml,fd,index,fittype):
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
 
-    [histograms_fail]= makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb,options.ratio )
-    [histograms_pass]=makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb, options.ratio)
+    [histograms_fail]= makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb, options.splitS, options.ratio )
+    [histograms_pass]=makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb,  options.splitS, options.ratio)
 
     return (histograms_pass,histograms_fail)
 
@@ -241,6 +241,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     c.cd()
     p12.Draw()
     p12.cd()
+ 
+    if rBestFit != 0:
+      for ih in range(0,len(hsigs)):
+        hsigs[ih].Scale(10./rBestFit)
+        	
+
+
 
     h= r.TH1F("h","AK8 m_{SD} (GeV);", 23, 40, 201)    
     htot = bkgs[0].Clone("htot%s"%tag)
@@ -266,14 +273,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
 
 
     for ih in range(1,len(hsigs)):
-	print(hsig)
+        print(hsigs[ih])
         hsig.Add(hsigs[ih])
 	htotsig.Add(hsigs[ih])
-
-    if rBestFit != 0:
-	#print(rBestFit)
-        if not splitS : hsig.Scale(5./rBestFit)
-    
 
     colors = [r.kGreen+2, r.kRed+1, r.kMagenta+3, r.kGray+2, r.kPink + 7]
     sigcolor = 	[r.kPink + 7, r.kPink+1, r.kAzure+1, r.kOrange+1, r.kAzure+3]
@@ -297,12 +299,11 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
 	  l.AddEntry(bkgs[i],legnames[leg[i]],"l")
     l.AddEntry(htot,"Total Bkg.","lf")
     #l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
-    if rBestFit != 0 :
-        if splitS : 
+    if splitS : 
 	    for ih in range(0,len(hsigs)):
 	        hsigs[ih].SetLineColor(sigcolor[ih])
 	  	l.AddEntry(hsigs[ih], sleg[ih]+" #times 10", "lf")
-	else: l.AddEntry(hsig,"H(b#bar{b}) #times 5","lf")
+    else: l.AddEntry(hsig,"H(b#bar{b}) #times 10","lf")
 	
     l.AddEntry(data,"Data","pe")
 
@@ -342,13 +343,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     hsig.SetLineColor(r.kPink+7)
     #hsig.SetLineStyle(2)
     hsig.SetLineWidth(1)
-    #hsig.SetFillStyle(3004)
-    #hsig.SetFillColor(r.kPink+7)
     if not splitS: hsig.Draw('hist sames')
     else: 	
       for ih in range(0,len(hsigs)):
-	hsigs[ih].Scale(10./rBestFit)
-        print(hsigs[ih])
         hsigs[ih].Draw('hist sames')
     data.Draw('pezsame')
     l.Draw()    
