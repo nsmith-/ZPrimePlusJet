@@ -131,8 +131,8 @@ def main(options,args):
         # Plot TF poly
         makeTF(pars,ratio_2d_data_subtract)
         
-    [histograms_pass_summed_list]=makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS)
-    [histograms_fail_summed_list]=makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:9], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS)
+    [histograms_pass_summed_list]=makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9], shapes, "pass_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS, options.ratio)
+    [histograms_fail_summed_list]=makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9], histograms_fail_summed_list[4:9], shapes, "fail_allcats_"+options.fit,options.odir,rBestFit,options.sOverSb, options.splitS, options.ratio)
 
 
 def fun2(x, par):
@@ -197,8 +197,8 @@ def plotCategory(fml,fd,index,fittype):
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
 
-    [histograms_fail]= makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
-    [histograms_pass]=makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb)
+    [histograms_fail]= makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes, "fail_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb,options.ratio )
+    [histograms_pass]=makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes, "pass_cat"+str(index)+"_"+fittype,options.odir,rBestFit,options.sOverSb, options.ratio)
 
     return (histograms_pass,histograms_fail)
 
@@ -222,7 +222,7 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
     return [bkgs, data, hsigs, weight]
     
 
-def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False, splitS= True):
+def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOverSb = False, splitS= True, ratio= False):
     weight = 1
     if sOverSb:
         [bkgs, data, hsigs, weight] = weightBySOverSpB(bkgs, data, hsigs, tag)
@@ -242,8 +242,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     p12.Draw()
     p12.cd()
 
-    h= r.TH1F("h","AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201)    
+    h= r.TH1F("h","AK8 m_{SD} (GeV);", 23, 40, 201)    
     htot = bkgs[0].Clone("htot%s"%tag)
+    hqcd = bkgs[3].Clone("hqcd%s"%tag)
     htot.SetLineColor(r.kBlack)
     htot.SetLineStyle(1)
     htot.SetFillStyle(3001)
@@ -290,7 +291,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     l.SetBorderSize(0)
     l.SetTextFont(42)
     l.SetTextSize(0.035)
-    legnames = {'wqq':'W','zqq':'Z','qcd':'QCD','tqq':'t#bar{t}'}
+    legnames = {'wqq':'W','zqq':'Z','qcd':'multijet','tqq':'t#bar{t}'}
     for i in range(len(bkgs)):
 	  l.AddEntry(bkgs[i],legnames[leg[i]],"l")
     l.AddEntry(htot,"Total Bkg.","lf")
@@ -299,7 +300,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
         if splitS : 
 	    for ih in range(0,len(hsigs)):
 	        hsigs[ih].SetLineColor(sigcolor[ih])
-	  	l.AddEntry(hsigs[ih], sleg[ih]+" #times 30", "lf")
+	  	l.AddEntry(hsigs[ih], sleg[ih]+" #times 10", "lf")
 	else: l.AddEntry(hsig,"H(b#bar{b}) #times 5","lf")
 	
     l.AddEntry(data,"Data","pe")
@@ -345,7 +346,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     if not splitS: hsig.Draw('hist sames')
     else: 	
       for ih in range(0,len(hsigs)):
-	hsigs[ih].Scale(30./rBestFit)
+	hsigs[ih].Scale(10./rBestFit)
+        print(hsigs[ih])
         hsigs[ih].Draw('hist sames')
     data.Draw('pezsame')
     l.Draw()    
@@ -374,13 +376,14 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     p22.SetGrid()
 
     iRatio = h.Clone('iRatio%s'%tag)
-    for i in range(iRatio.GetNbinsX()):            
+    if ratio :
+     for i in range(iRatio.GetNbinsX()):            
         if htot.GetBinContent(i+1) > 0:
             iRatio.SetBinContent( i+1, data.GetBinContent(i+1)/htot.GetBinContent(i+1) )
             iRatio.SetBinError( i+1, data.GetBinError(i+1)/htot.GetBinContent(i+1) )
         iRatioGraph = r.TGraphAsymmErrors(iRatio)        
-    alpha = 1-0.6827
-    for i in range(0,iRatioGraph.GetN()):
+     alpha = 1-0.6827
+     for i in range(0,iRatioGraph.GetN()):
         N = iRatioGraph.GetY()[i]*htot.GetBinContent(i+1)/weight
         L = 0
         if N!=0:
@@ -389,29 +392,41 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
         iRatioGraph.SetPointEYlow(i, (N-L)/htot.GetBinContent(i+1)*weight)
         iRatioGraph.SetPointEYhigh(i, (U-N)/htot.GetBinContent(i+1)*weight)
         iRatioGraph.SetPoint(i, iRatioGraph.GetX()[i], N/htot.GetBinContent(i+1)*weight )
-    
+    else  :
+     for i in range(iRatio.GetNbinsX()):
+        if hqcd.GetBinContent(i+1) > 0:
+            iRatio.SetBinContent( i+1, (data.GetBinContent(i+1)-hqcd.GetBinContent(i+1))/data.GetBinError(i+1) )
+	    #print(data.GetBinContent(i+1)-hqcd.GetBinContent(i+1))
+            iRatio.SetBinError( i+1, 1) #data.GetBinError(i+1)+hqcd.GetBinError(i+1) )
+        iRatioGraph = r.TGraphAsymmErrors(iRatio)
+
     data.GetXaxis().SetTitleOffset(100)
     data.GetXaxis().SetLabelOffset(100)
-    iRatio.SetTitle("; m_{SD}^{PUPPI} (GeV); Data/Prediction")
+    if ratio: 
+	iRatio.SetTitle("; m_{SD} (GeV); Data/Prediction")
+    else : 
+	iRatio.SetTitle("; m_{SD} (GeV); #frac{Data - multijet Bkg}{#sigma_{data}}") 
     iRatio.SetMaximum(1.5)
     iRatio.SetMinimum(0.)
-    iRatio.GetYaxis().SetTitleSize(0.12)
+    iRatio.GetYaxis().SetTitleSize(0.1)
     iRatio.GetYaxis().SetNdivisions(6)
     iRatio.GetYaxis().SetLabelSize(0.12)
-    iRatio.GetYaxis().SetTitleOffset(0.6)
+    iRatio.GetYaxis().SetTitleOffset(0.7)
     iRatio.GetXaxis().SetTitleSize(0.13)
     iRatio.GetXaxis().SetLabelSize(0.12)
     iRatio.GetXaxis().SetTitleOffset(0.9)
-    iRatio.GetYaxis().SetRangeUser(0.51,1.49)
+    if ratio : iRatio.GetYaxis().SetRangeUser(0.51,1.49)
+    else : iRatio.GetYaxis().SetRangeUser(-12,12)
     iOneWithErrors = htot.Clone('iOneWithErrors%s'%tag)
-    iOneWithErrors.Divide(htot.Clone())
-    for i in range(iOneWithErrors.GetNbinsX()):
+    if ratio:
+     iOneWithErrors.Divide(htot.Clone())
+     for i in range(iOneWithErrors.GetNbinsX()):
         #print i+1, htot.GetBinContent(i+1)
         if htot.GetBinContent(i+1) > 0. and data.GetBinContent > 0.:
             iOneWithErrors.SetBinError( i+1, htot.GetBinError(i+1)/htot.GetBinContent(i+1) )
         else:
             iOneWithErrors.SetBinError( i+1, 0)
-            
+    else : iOneWithErrors.Add((-1)*htot.Clone())          
     iOneWithErrors.SetFillStyle(3001)
     iOneWithErrors.SetFillColor(r.kAzure-5)
     iOneWithErrors.SetLineColor(r.kAzure-5)
@@ -421,7 +436,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit = 1, sOv
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s'%tag)
     iOneWithErrorsLine.SetFillStyle(0)
     iOneWithErrorsLine.Draw("hist sames")
-    iOneWithErrors.Draw("e2 sames")
+    if ratio: iOneWithErrors.Draw("e2 sames")
     iRatioGraph.Draw("pezsame")
     iRatio.Draw('pezsame')
     
@@ -567,6 +582,7 @@ if __name__ == '__main__':
 	parser.add_option('--data', action='store_true', dest='isData', default =True,help='is data', metavar='isData')
 	parser.add_option('--s-over-sb', action='store_true', dest='sOverSb', default =False,help='weight entries by sOverSb', metavar='sOverSb')
 	parser.add_option('--splitS', action='store_true', dest='splitS', default =False,help='split signal contribution', metavar='splitS')
+        parser.add_option('--ratio', action='store_true', dest='ratio', default =False,help='ratio or data-mc', metavar='ratio')
 
 	(options, args) = parser.parse_args()
 
