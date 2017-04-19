@@ -9,6 +9,7 @@ import math
 import sys
 import time
 import array
+import re
 
 # including other directories
 # sys.path.insert(0, '../.')
@@ -41,9 +42,9 @@ def main(options, args):
         histograms_fail_all[i] = {}
         for shape in shapes:
             for hist in tmppass:
-                if shape in hist.GetName(): histograms_pass_all[i][shape] = hist
+                if re.match(shape,hist.GetName()): histograms_pass_all[i][shape] = hist
             for hist in tmpfail:
-                if shape in hist.GetName(): histograms_fail_all[i][shape] = hist
+                if re.match(shape,hist.GetName()): histograms_fail_all[i][shape] = hist
 
     pass_2d = {}
     fail_2d = {}
@@ -80,7 +81,7 @@ def main(options, args):
     for shape in shapes:
         histograms_pass_summed[shape] = histograms_pass_all[0][shape].Clone(shape + '_pass_sum')
         histograms_fail_summed[shape] = histograms_fail_all[0][shape].Clone(shape + '_fail_sum')
-        for i in range(1, len(pt_binBoundaries) - 1):
+        for i in range(1, len(pt_binBoundaries)-1):
             histograms_pass_summed[shape].Add(histograms_pass_all[i][shape])
             histograms_fail_summed[shape].Add(histograms_fail_all[i][shape])
 
@@ -254,9 +255,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     p12.Draw()
     p12.cd()
 
-    if rBestFit != 0:
-        for ih in range(0, len(hsigs)):
-            hsigs[ih].Scale(5. / rBestFit)
+    #if rBestFit != 0:
+        #for ih in range(0, len(hsigs)):
+        #    hsigs[ih].Scale(5. / rBestFit)
 
     h = r.TH1F("h", "AK8 m_{SD} (GeV);", 23, 40, 201)
     htot = bkgs[0].Clone("htot%s" % tag)
@@ -311,9 +312,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     if splitS:
         for ih in range(0, len(hsigs)):
             hsigs[ih].SetLineColor(sigcolor[ih])
-            l.AddEntry(hsigs[ih], sleg[ih] + " #times 5", "lf")
+            l.AddEntry(hsigs[ih], sleg[ih], "lf")
     else:
-        l.AddEntry(hsig, "H(b#bar{b}) #times 5", "lf")
+        l.AddEntry(hsig, "H(b#bar{b})", "lf")
 
     l.AddEntry(data, "Data", "pe")
 
