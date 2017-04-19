@@ -256,7 +256,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
 
     if rBestFit != 0:
         for ih in range(0, len(hsigs)):
-            hsigs[ih].Scale(10. / rBestFit)
+            hsigs[ih].Scale(5. / rBestFit)
 
     h = r.TH1F("h", "AK8 m_{SD} (GeV);", 23, 40, 201)
     htot = bkgs[0].Clone("htot%s" % tag)
@@ -311,9 +311,9 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     if splitS:
         for ih in range(0, len(hsigs)):
             hsigs[ih].SetLineColor(sigcolor[ih])
-            l.AddEntry(hsigs[ih], sleg[ih] + " #times 10", "lf")
+            l.AddEntry(hsigs[ih], sleg[ih] + " #times 5", "lf")
     else:
-        l.AddEntry(hsig, "H(b#bar{b}) #times 10", "lf")
+        l.AddEntry(hsig, "H(b#bar{b}) #times 5", "lf")
 
     l.AddEntry(data, "Data", "pe")
 
@@ -502,8 +502,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
             ## Fill histo with residuals
             sigHistResidual.SetBinContent(bin+1,sig_residual)
         sigHistResiduals.append(sigHistResidual)
-    for sigHistResidual in sigHistResiduals:
-        sigHistResidual.Draw("hist sames")
+    hstack = r.THStack("hstack","hstack")
+    for sigHistResidual in sorted(sigHistResiduals,key=lambda (v): v.Integral()):
+	print
+	hstack.Add(sigHistResidual) 	
+    #    sigHistResidual.Draw("hist sames")
+    hstack.Draw("hist sames")	
     iOneWithErrorsLine.Draw("hist sames")
 
 
@@ -575,7 +579,7 @@ def makeTF(pars, ratio):
     tag1.SetNDC();
     tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
-    tag2 = r.TLatex(0.15, 0.92, "CMS")
+    tag2 = r.TLatex(0.16, 0.92, "CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
     if options.isData:
