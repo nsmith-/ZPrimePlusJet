@@ -32,17 +32,21 @@ def main(options,args):
         dataTag = 'data'
     else:        
         dataTag = 'asimov'
+
+    floatTag = '-P %s'%options.poi
+    if options.floatOtherPOIs:
+        floatTag = '--floatOtherPOIs 1 -P %s'%options.poi
         
     if not options.justPlot:
         if options.isData:
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameters scalept=1.4,scale=-0.5 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s --saveWorkspace'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_data')),options.dryRun)
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -S 0 --snapshotName MultiDimFit'%(options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.txt','_data'),options.datacard.replace('.txt','_data_nosys')),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s --saveWorkspace %s'%(options.poi,options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.root','_data'),floatTag),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -S 0 --snapshotName MultiDimFit %s'%(options.poi,options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.root','_data'),options.datacard.replace('.root','_data_nosys'),floatTag),options.dryRun)
         else:
             dataTag = 'asimov'
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameters scalept=1.4,scale=-0.5 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq --expectSignal %f --saveWorkspace'%(options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.txt','_asimov'),options.r),options.dryRun)
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges r=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq -S 0 --snapshotName MultiDimFit --expectSignal %f'%(options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.txt','_asimov'),options.datacard.replace('.txt','_asimov_nosys'),options.r),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq --setPhysicsModelParameters %s=%f --saveWorkspace %s'%(options.poi,options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.root','_asimov'),options.poi,options.r,floatTag),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq -S 0 --snapshotName MultiDimFit --setPhysicsModelParameters %s=%f %s'%(options.poi,options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.root','_asimov'),options.datacard.replace('.root','_asimov_nosys'),options.poi,options.r,floatTag),options.dryRun)
 
-    tfileWithSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.txt','_%s'%dataTag)))
+    tfileWithSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.root','_%s'%dataTag)))
     limitWithSys = tfileWithSys.Get('limit')    
     xp = []
     yp = []
@@ -50,11 +54,11 @@ def main(options,args):
         limitWithSys.GetEntry(i)
         if limitWithSys.quantileExpected < 1:
             if 2*limitWithSys.deltaNLL > 7*7: continue
-            xp.append(limitWithSys.r)
+            xp.append(getattr(limitWithSys,options.poi))
             yp.append(2*limitWithSys.deltaNLL)
     [xp, yp] = [list(x) for x in zip(*sorted(zip(xp, yp), key=itemgetter(0)))]
     
-    tfileWithoutSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.txt','_%s_nosys'%dataTag)))
+    tfileWithoutSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.root','_%s_nosys'%dataTag)))
     limitWithoutSys = tfileWithoutSys.Get('limit')
     xs = []
     ys = []
@@ -62,7 +66,7 @@ def main(options,args):
         limitWithoutSys.GetEntry(i)
         if limitWithoutSys.quantileExpected < 1:
             if 2*limitWithoutSys.deltaNLL > 7*7: continue
-            xs.append(limitWithoutSys.r)
+            xs.append(getattr(limitWithoutSys,options.poi))
             ys.append(2*limitWithoutSys.deltaNLL)
     [xs, ys] = [list(x) for x in zip(*sorted(zip(xs, ys), key=itemgetter(0)))]
         
@@ -176,7 +180,9 @@ if __name__ == '__main__':
     parser.add_option('-n','--npoints'   ,action='store',type='int',dest='npoints'   ,default=20, help='npoints')
     parser.add_option('--dry-run',dest="dryRun",default=False,action='store_true',
                   help="Just print out commands to run")
-    
+    parser.add_option('-P','--poi'   ,action='store',type='string',dest='poi'   ,default='r', help='poi name')  
+    parser.add_option('--floatOtherPOIs',action='store_true', dest='floatOtherPOIs', default=False, help='float other pois')
+
     (options, args) = parser.parse_args()
 
     import tdrstyle
