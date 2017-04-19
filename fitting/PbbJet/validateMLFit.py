@@ -335,12 +335,31 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     htot.SetMarkerSize(0)
     htot.SetMarkerColor(r.kGray + 2)
     htot.SetLineWidth(2)
+    
+    def getDataGraphFromHist(h_data):    
+        g_data = r.TGraphAsymmErrors(h_data)    
+        alpha = 1-0.6827
+        for i in range(0,g_data.GetN()):
+            N = g_data.GetY()[i]
+            L = 0
+            if N!=0:
+                L = r.Math.gamma_quantile(alpha/2,N,1.)
+            U = r.Math.gamma_quantile_c(alpha/2,N+1,1)
+            g_data.SetPointEYlow(i, (N-L))
+            g_data.SetPointEYhigh(i, (U-N))
+            g_data.SetPoint(i, g_data.GetX()[i], N)
+        return g_data
+            
+    g_data = getDataGraphFromHist(data)
+    
 
     data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     data.Draw('pez')
+    g_data.Draw('pezsame')
     htot.Draw('E2same')
     #    htotsig.Draw('E2same')
 
+        
     htot_line = htot.Clone('htot_line%s' % tag)
     htot_line.SetFillStyle(0)
     htot_line.Draw('histsame')
@@ -404,9 +423,16 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     else:
         for i in range(iRatio.GetNbinsX()):
             if hqcd.GetBinContent(i + 1) > 0:
-                iRatio.SetBinContent(i + 1,
-                                     (data.GetBinContent(i + 1) - hqcd.GetBinContent(i + 1)) / data.GetBinError(i + 1))
-                # print(data.GetBinContent(i+1)-hqcd.GetBinContent(i+1))
+                value_data = data.GetBinContent(i + 1)
+                value_fit = hqcd.GetBinContent(i + 1)                
+                err_low_data = g_data.GetEYlow()[i]
+                err_high_data = g_data.GetEYhigh()[i]
+                err_tot_data = 0
+                if (value_fit > value_data):
+                    err_tot_data = err_high_data  
+                else:
+                    err_tot_data = err_low_data
+                iRatio.SetBinContent(i + 1, (value_data - value_fit) / err_tot_data)
                 iRatio.SetBinError(i + 1, 1)  # data.GetBinError(i+1)+hqcd.GetBinError(i+1) )
             iRatioGraph = r.TGraphAsymmErrors(iRatio)
 
@@ -448,49 +474,37 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     iRatio.Draw('pez')
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s' % tag)
     iOneWithErrorsLine.SetFillStyle(0)
-    iOneWithErrorsLine.Draw("hist sames")
     if ratio: iOneWithErrors.Draw("e2 sames")
     iRatioGraph.Draw("pezsame")
     iRatio.Draw('pezsame')
 
-    sigHist = hsig.Clone('sigHist%s' % tag)
-    sigHist.Add(htot)
-    sigHist.Divide(htot)
-    g_signal = r.TGraphAsymmErrors(sigHist)
-    g_signal.SetLineColor(r.kPink + 7)
-    g_signal.SetFillStyle(3004)
-    g_signal.SetFillColor(r.kPink + 7)
-    # g_signal.SetLineStyle(2)
-    g_signal.SetLineWidth(1)
-
-    lastX = 0
-    lastY = 0
-    firstX = 0
-    firstY = 0
-    mass = 125.
-    notSet = True
-    for i in range(0, g_signal.GetN()):
-        N = g_signal.GetY()[i]
-        binWidth = g_signal.GetEXlow()[i] + g_signal.GetEXhigh()[i]
-        if g_signal.GetX()[i] > float(mass) * 0.75 and notSet:
-            firstX = g_signal.GetX()[i]
-            firstY = N
-            notSet = False
-    for i in range(0, g_signal.GetN()):
-        N = g_signal.GetY()[i]
-        binWidth = g_signal.GetEXlow()[i] + g_signal.GetEXhigh()[i]
-        if g_signal.GetX()[i] <= float(mass) * 0.75:
-            g_signal.SetPoint(i, firstX, firstY)
-        else:
-            g_signal.SetPoint(i, g_signal.GetX()[i], N)
-        g_signal.SetPointEYlow(i, 0)
-        g_signal.SetPointEYhigh(i, 0)
-        if g_signal.GetX()[i] > float(mass) * 1.25:
-            g_signal.SetPoint(i, lastX, lastY)
-        else:
-            lastX = g_signal.GetX()[i]
-            lastY = g_signal.GetY()[i]
-    # g_signal.Draw("cxsame")
+    
+    sigHistResiduals = []
+    if splitS:
+        sigHists = list(hsigs)
+    else:
+        sigHists = [hsig]
+    [sigHists.append(bkg) for bkg in bkgs if 'zqq' in bkg.GetName()]
+    [sigHists.append(bkg) for bkg in bkgs if 'wqq' in bkg.GetName()]
+    print sigHists
+    #sys.exit()
+    for sigHist in sigHists:
+        sigHistResidual = sigHist.Clone('sigHistResidual%s%s' % (sigHist.GetName(),tag))
+        for bin in range (0,g_data.GetN()):
+            value_data = g_data.GetY()[bin]
+            err_tot_data = g_data.GetEYhigh()[bin]
+            value_signal = sigHist.GetBinContent(bin+1)
+            ## Signal residuals
+            if err_tot_data>0:                
+                sig_residual = (value_signal) / err_tot_data
+            else:
+                sig_residual = 0                                
+            ## Fill histo with residuals
+            sigHistResidual.SetBinContent(bin+1,sig_residual)
+        sigHistResiduals.append(sigHistResidual)
+    for sigHistResidual in sigHistResiduals:
+        sigHistResidual.Draw("hist sames")
+    iOneWithErrorsLine.Draw("hist sames")
 
 
     if sOverSb:
