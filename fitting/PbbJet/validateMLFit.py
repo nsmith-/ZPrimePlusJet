@@ -80,7 +80,7 @@ def main(options, args):
     for shape in shapes:
         histograms_pass_summed[shape] = histograms_pass_all[0][shape].Clone(shape + '_pass_sum')
         histograms_fail_summed[shape] = histograms_fail_all[0][shape].Clone(shape + '_fail_sum')
-        for i in range(1, len(pt_binBoundaries) - 1):
+        for i in range(0, len(pt_binBoundaries) - 1):
             histograms_pass_summed[shape].Add(histograms_pass_all[i][shape])
             histograms_fail_summed[shape].Add(histograms_fail_all[i][shape])
 
