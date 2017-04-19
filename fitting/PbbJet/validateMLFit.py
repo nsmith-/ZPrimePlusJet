@@ -355,7 +355,6 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
 
     data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     data.Draw('pez')
-    g_data.Draw('pezsame')
     htot.Draw('E2same')
     #    htotsig.Draw('E2same')
 
@@ -376,7 +375,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     else:
         for ih in range(0, len(hsigs)):
             hsigs[ih].Draw('hist sames')
-    data.Draw('pezsame')
+    g_data.Draw('pezsame')
     l.Draw()
     tag1 = r.TLatex(0.67, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
     tag1.SetNDC();
@@ -480,10 +479,6 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
         iRatio.GetYaxis().SetRangeUser(0.51, 1.49)
     else:
         iRatio.GetYaxis().SetRangeUser(-5, maxdata*1.5)
-
-    iRatioGraph.Draw("pezsame")
-    iRatio.Draw('pezsame')
-
     
     sigHistResiduals = []
     if splitS:
@@ -515,7 +510,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     #    sigHistResidual.Draw("hist sames")
     hstack.Draw("hist sames")	
     iOneWithErrorsLine.Draw("hist sames")
-
+    iRatioGraph.Draw("pezsame")
 
     if sOverSb:
         tag += '_sOverSb'
