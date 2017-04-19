@@ -132,6 +132,8 @@ def main(options, args):
         # Plot TF poly
         makeTF(pars, ratio_2d_data_subtract)
 
+    #print "sum ",histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9]
+
     [histograms_pass_summed_list] = makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9],
                                                     histograms_pass_summed_list[4:9], shapes,
                                                     "pass_allcats_" + options.fit, options.odir, rBestFit,
@@ -185,7 +187,8 @@ def plotCategory(fml, fd, index, fittype):
         #    histograms_pass[i].SetBinContent(13,(histograms_pass[i].GetBinContent(12)+histograms_pass[i].GetBinContent(14))/2.)
 
 
-        # print ish, curnorm_fail, curnorm_pass, index
+        #print "here",ish, curnorm_fail, curnorm_pass, index
+	
         if curnorm_fail > 0.: histograms_fail[i].Scale(curnorm_fail / histograms_fail[i].Integral())
         if curnorm_pass > 0.: histograms_pass[i].Scale(curnorm_pass / histograms_pass[i].Integral())
 
@@ -255,10 +258,6 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     p12.Draw()
     p12.cd()
 
-    #if rBestFit != 0:
-        #for ih in range(0, len(hsigs)):
-        #    hsigs[ih].Scale(5. / rBestFit)
-
     h = r.TH1F("h", "AK8 m_{SD} (GeV);", 23, 40, 201)
     htot = bkgs[0].Clone("htot%s" % tag)
     hqcd = bkgs[3].Clone("hqcd%s" % tag)
@@ -281,7 +280,6 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
         htot.Add(bkgs[ih])
         htotsig.Add(bkgs[ih])
     hsig = hsigs[0].Clone("hsig%s" % tag)
-
     for ih in range(1, len(hsigs)):
         hsig.Add(hsigs[ih])
         htotsig.Add(hsigs[ih])
@@ -307,7 +305,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     legnames = {'wqq': 'W', 'zqq': 'Z', 'qcd': 'Multijet', 'tqq': 't#bar{t}'}
     for i in range(len(bkgs)):
         l.AddEntry(bkgs[i], legnames[leg[i]], "l")
-    l.AddEntry(htot, "Total Bkg.", "lf")
+    l.AddEntry(htot, "Total Background", "lf")
     # l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
     if splitS:
         for ih in range(0, len(hsigs)):
@@ -500,7 +498,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
         sigHists = [hsig]
     [sigHists.append(bkg) for bkg in bkgs if 'zqq' in bkg.GetName()]
     [sigHists.append(bkg) for bkg in bkgs if 'wqq' in bkg.GetName()]
-    print sigHists
+    #print sigHists
     #sys.exit()
     for sigHist in sigHists:
         sigHistResidual = sigHist.Clone('sigHistResidual%s%s' % (sigHist.GetName(),tag))
@@ -518,7 +516,6 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
         sigHistResiduals.append(sigHistResidual)
     hstack = r.THStack("hstack","hstack")
     for sigHistResidual in sorted(sigHistResiduals,key=lambda (v): v.Integral()):
-	print
 	hstack.Add(sigHistResidual) 	
     #    sigHistResidual.Draw("hist sames")
     hstack.Draw("hist sames")	
