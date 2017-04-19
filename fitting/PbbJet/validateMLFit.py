@@ -404,6 +404,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     # p22.SetGrid()
 
     iRatio = h.Clone('iRatio%s' % tag)
+    maxdata=1	
     if ratio:
         for i in range(iRatio.GetNbinsX()):
             if htot.GetBinContent(i + 1) > 0:
@@ -421,6 +422,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
             iRatioGraph.SetPointEYhigh(i, (U - N) / htot.GetBinContent(i + 1) * weight)
             iRatioGraph.SetPoint(i, iRatioGraph.GetX()[i], N / htot.GetBinContent(i + 1) * weight)
     else:
+	
         for i in range(iRatio.GetNbinsX()):
             if hqcd.GetBinContent(i + 1) > 0:
                 value_data = data.GetBinContent(i + 1)
@@ -433,6 +435,8 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
                 else:
                     err_tot_data = err_low_data
                 iRatio.SetBinContent(i + 1, (value_data - value_fit) / err_tot_data)
+		if (value_data - value_fit) / err_tot_data > maxdata : maxdata = (value_data - value_fit) / err_tot_data
+		
                 iRatio.SetBinError(i + 1, 1)  # data.GetBinError(i+1)+hqcd.GetBinError(i+1) )
             iRatioGraph = r.TGraphAsymmErrors(iRatio)
 
@@ -451,10 +455,6 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     iRatio.GetXaxis().SetTitleSize(0.13)
     iRatio.GetXaxis().SetLabelSize(0.12)
     iRatio.GetXaxis().SetTitleOffset(0.9)
-    if ratio:
-        iRatio.GetYaxis().SetRangeUser(0.51, 1.49)
-    else:
-        iRatio.GetYaxis().SetRangeUser(-12, 12)
     iOneWithErrors = htot.Clone('iOneWithErrors%s' % tag)
     if ratio:
         iOneWithErrors.Divide(htot.Clone())
@@ -474,7 +474,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     iRatio.Draw('pez')
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s' % tag)
     iOneWithErrorsLine.SetFillStyle(0)
-    if ratio: iOneWithErrors.Draw("e2 sames")
+
+    if ratio: 
+	iOneWithErrors.Draw("e2 sames")
+        iRatio.GetYaxis().SetRangeUser(0.51, 1.49)
+    else:
+        iRatio.GetYaxis().SetRangeUser(-5, maxdata*1.5)
+
     iRatioGraph.Draw("pezsame")
     iRatio.Draw('pezsame')
 
