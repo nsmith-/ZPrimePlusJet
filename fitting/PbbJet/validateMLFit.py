@@ -323,7 +323,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     htot.SetLineColor(r.kAzure - 5)
     htotsig.SetLineColor(r.kPink + 3)
     # htotsig.SetFillStyle(3001)
-    # htotsig.SetFillColor(r.kPink+3)
+    htotsig.SetFillColor(r.kPink+3)
     htotsig.SetLineColor(r.kPink + 3)
     htotsig.SetLineWidth(2)
 
@@ -365,16 +365,24 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     htotsig_line = htotsig.Clone('htotsig_line%s' % tag)
     htotsig_line.SetFillStyle(0)
     # htotsig_line.Draw('histsame')
-    for b in bkgs:
-        b.Draw('hist sames')
+    hstackMC = r.THStack("hstackMC","hstackMC")
+    for b  in sorted(bkgs,key=lambda (v): v.Integral()):
+	if 'qcd' in b.GetName():
+        	b.Draw('hist sames')
+	else : 
+	   hstackMC.Add(b)
     hsig.SetLineColor(r.kPink + 7)
+    hsig.SetFillColor(r.kPink + 7)
     # hsig.SetLineStyle(2)
-    hsig.SetLineWidth(1)
+    #hsig.SetLineWidth(1)
     if not splitS:
-        hsig.Draw('hist sames')
+	hstackMC.Add(hsig)
+        #hsig.Draw('hist sames')
     else:
         for ih in range(0, len(hsigs)):
-            hsigs[ih].Draw('hist sames')
+	    hstackMC.Add(hsigs[ih])	
+            #hsigs[ih].Draw('hist sames')
+    hstackMC.Draw("hist sames")
     g_data.Draw('pezsame')
     l.Draw()
     tag1 = r.TLatex(0.67, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
@@ -466,8 +474,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     else:
         iOneWithErrors.Add((-1) * htot.Clone())
     iOneWithErrors.SetFillStyle(3001)
-    iOneWithErrors.SetFillColor(r.kAzure - 5)
-    iOneWithErrors.SetLineColor(r.kAzure - 5)
+    if ratio: 
+	iOneWithErrors.SetFillColor(r.kAzure - 5)
+    	iOneWithErrors.SetLineColor(r.kAzure - 5)
+    else :
+	iOneWithErrors.SetLineColor(r.kGray+2)
+	iOneWithErrors.SetFillColor(r.kGray+2)
     iOneWithErrors.SetMarkerSize(0)
     iOneWithErrors.SetLineWidth(2)
     iRatio.Draw('pez')
@@ -580,7 +592,7 @@ def makeTF(pars, ratio):
     tag1.SetNDC();
     tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
-    tag2 = r.TLatex(0.16, 0.92, "CMS")
+    tag2 = r.TLatex(0.17, 0.92, "CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
     if options.isData:
