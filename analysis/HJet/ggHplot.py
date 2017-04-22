@@ -42,8 +42,8 @@ def main(options,args):
     h_lo_ptH.GetYaxis().SetTitleOffset(1.1)
     #h_nlo_ptH.SetLineColor(ROOT.kGreen+3);
     #h_nnlo_ptH.SetLineColor(ROOT.kBlue);
-    h_nnnlo_ptH.SetLineColor(ROOT.kAzure-9);   
-    h_nnnlo_ptH.SetMarkerColor(ROOT.kAzure-9);
+    h_nnnlo_ptH.SetLineColor(ROOT.kAzure-8);   
+    h_nnnlo_ptH.SetMarkerColor(ROOT.kAzure-8);
     h_lo_ptH.SetMarkerColor(ROOT.kBlack);
     h_nnnlo_ptH.SetMarkerStyle(20);
     h_lo_ptH.SetMarkerStyle(20);
@@ -109,8 +109,8 @@ def main(options,args):
     #fixRatioErrors(h_nlo_ptH_ratio,h_nlo_ptH);
     #fixRatioErrors(h_nnlo_ptH_ratio,h_nnlo_ptH);
     fixRatioErrors(h_nnnlo_ptH_ratio,h_nnnlo_ptH);
-    h_nnnlo_ptH_ratio.SetMarkerColor(ROOT.kAzure-9);
-    h_nnnlo_ptH_ratio.SetLineColor(ROOT.kAzure-9);
+    h_nnnlo_ptH_ratio.SetMarkerColor(ROOT.kAzure-8);
+    h_nnnlo_ptH_ratio.SetLineColor(ROOT.kAzure-8);
     NLO_= ROOT.TF1("NLO_", "pol2", 200, 1220)
     
     NLO_.SetParameter(0, 2.70299e+00)
@@ -159,7 +159,7 @@ def fixRatioErrors(hrat,h):
 		fracerr =1 
 	else:
             fracerr = h.GetBinError(i+1)/h.GetBinContent(i+1);
-        hrat.SetBinError(i+1, fracerr*hrat.GetBinContent(i+1));
+        hrat.SetBinError(i+1, 0.3*hrat.GetBinContent(i+1));
 
 def makeHistFromTextInput(fn,name):
 
