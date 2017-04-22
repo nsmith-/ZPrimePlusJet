@@ -36,17 +36,21 @@ def main(options,args):
     floatTag = '-P %s'%options.poi
     if options.floatOtherPOIs:
         floatTag = '--floatOtherPOIs 1 -P %s'%options.poi
+
+    floatString = 'fixOtherPOIs'
+    if options.floatOtherPOIs:
+        floatString = 'floatOtherPOIs'
         
     if not options.justPlot:
         if options.isData:
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s --saveWorkspace %s'%(options.poi,options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.root','_data'),floatTag),options.dryRun)
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -S 0 --snapshotName MultiDimFit %s'%(options.poi,options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.root','_data'),options.datacard.replace('.root','_data_nosys'),floatTag),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s --saveWorkspace %s'%(options.poi,options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.root','_data_%s_%s'%(options.poi,floatString)),floatTag),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -S 0 --snapshotName MultiDimFit %s'%(options.poi,options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.root','_data_%s_%s'%(options.poi,floatString)),options.datacard.replace('.root','_data_nosys_%s_%s'%(options.poi,floatString)),floatTag),options.dryRun)
         else:
             dataTag = 'asimov'
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq --setPhysicsModelParameters %s=%f --saveWorkspace %s'%(options.poi,options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.root','_asimov'),options.poi,options.r,floatTag),options.dryRun)
-            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq -S 0 --snapshotName MultiDimFit --setPhysicsModelParameters %s=%f %s'%(options.poi,options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.root','_asimov'),options.datacard.replace('.root','_asimov_nosys'),options.poi,options.r,floatTag),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq --setPhysicsModelParameters %s=%f --saveWorkspace %s'%(options.poi,options.rMin,options.rMax,options.npoints,options.datacard,options.datacard.replace('.root','_asimov_%s_%s'%(options.poi,floatString)),options.poi,options.r,floatTag),options.dryRun)
+            exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2 --setPhysicsModelParameterRanges %s=%f,%f --algo grid --points %i -d %s -n %s -t -1 --toysFreq -S 0 --snapshotName MultiDimFit --setPhysicsModelParameters %s=%f %s'%(options.poi,options.rMin,options.rMax,options.npoints,'higgsCombine%s.MultiDimFit.mH120.root'%options.datacard.replace('.root','_asimov_%s_%s'%(options.poi,floatString)),options.datacard.replace('.root','_asimov_nosys_%s_%s'%(options.poi,floatString)),options.poi,options.r,floatTag),options.dryRun)
 
-    tfileWithSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.root','_%s'%dataTag)))
+    tfileWithSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.root','_%s_%s_%s'%(dataTag,options.poi,floatString))))
     limitWithSys = tfileWithSys.Get('limit')    
     xp = []
     yp = []
@@ -58,7 +62,7 @@ def main(options,args):
             yp.append(2*limitWithSys.deltaNLL)
     [xp, yp] = [list(x) for x in zip(*sorted(zip(xp, yp), key=itemgetter(0)))]
     
-    tfileWithoutSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.root','_%s_nosys'%dataTag)))
+    tfileWithoutSys = rt.TFile.Open('higgsCombine%s.MultiDimFit.mH120.root'%(options.datacard.replace('.root','_%s_nosys_%s_%s'%(dataTag,options.poi,floatString))))
     limitWithoutSys = tfileWithoutSys.Get('limit')
     xs = []
     ys = []
@@ -95,31 +99,41 @@ def main(options,args):
     rFrame.addObject(gr_p, 'L')
 
     tlines = []
+    tlats = []
     cl = 0.95
     crossing = rt.TMath.Power(rt.Math.normal_quantile(1-0.5*(1-cl), 1.0),2)
-    tline = rt.TLine(options.rMin,crossing,options.rMax,crossing)
-    tline.SetLineColor(rt.kRed)
-    tline.SetLineWidth(2)
-    tlines.append(tline)
-    
-    rLimit = -1
-    rLimitNoSys = -1
-    for xi in range(0,1001):
-        xr = xi*options.rMax/1000.
-        if gr_p.Eval(xr) >= crossing and rLimit < 0:
-            rLimit = xr
-        if gr_s.Eval(xr) >= crossing and rLimitNoSys < 0:
-            rLimitNoSys = xr
+    crossings = [1, 4, 9]
 
-    tline = rt.TLine(rLimit,0,rLimit,crossing)
-    tline.SetLineColor(rt.kBlack)
-    tline.SetLineWidth(2)
-    tlines.append(tline)
-    tline = rt.TLine(rLimitNoSys,0,rLimitNoSys,crossing)
-    tline.SetLineColor(rt.kBlue)
-    tline.SetLineStyle(2)
-    tline.SetLineWidth(2)
-    tlines.append(tline)
+    for crossing in crossings:
+        tline = rt.TLine(options.rMin,crossing,options.rMax,crossing)
+        tline.SetLineColor(rt.kGray)
+        tline.SetLineWidth(2)
+        tline.SetLineStyle(2)
+        tlines.append(tline)
+        tlat = rt.TLatex(options.rMax+0.01*(options.rMax-options.rMin),crossing-0.2,"%.0f#sigma"%(rt.TMath.Sqrt(crossing)))
+        tlat.SetTextFont(42)
+        tlat.SetTextSize(0.04)
+        tlat.SetTextColor(rt.kGray)
+        tlats.append(tlat)
+    
+        rLimit = -1
+        rLimitNoSys = -1
+        for xi in range(0,1001):
+            xr = xi*options.rMax/1000.
+            if gr_p.Eval(xr) >= crossing and rLimit < 0:
+                rLimit = xr
+            if gr_s.Eval(xr) >= crossing and rLimitNoSys < 0:
+                rLimitNoSys = xr
+    
+        tline = rt.TLine(rLimit,0,rLimit,crossing)
+        tline.SetLineColor(rt.kBlack)
+        tline.SetLineWidth(2)
+        #tlines.append(tline)
+        tline = rt.TLine(rLimitNoSys,0,rLimitNoSys,crossing)
+        tline.SetLineColor(rt.kBlue)
+        tline.SetLineStyle(2)
+        tline.SetLineWidth(2)
+        #tlines.append(tline)
             
     for tline in tlines:
         rFrame.addObject(tline,"")
@@ -128,8 +142,14 @@ def main(options,args):
     rFrame.Draw()
     rFrame.SetMinimum(0)
     rFrame.SetMaximum(4.*4.)
-    
-    rFrame.SetXTitle("#mu (signal strength)")
+
+    rFrame.GetXaxis().SetTitleOffset(1.5)
+    rFrame.GetYaxis().SetTitleOffset(1.5)
+    rFrame.Draw()
+    if options.poi=='r_z':
+        rFrame.SetXTitle("#mu_{Z}")
+    else:        
+        rFrame.SetXTitle("#mu")
     rFrame.SetYTitle("-2 #Delta log L(%s)"%dataTag)
     rFrame.SetTitleSize(0.04,"X")
     rFrame.SetTitleOffset(0.85,"X")
@@ -153,15 +173,18 @@ def main(options,args):
     tag1.SetTextSize(0.04)
     tag2 = rt.TLatex(0.17,0.92,"CMS")
     tag2.SetNDC(); tag2.SetTextFont(62)
-    tag3 = rt.TLatex(0.27,0.92,"Simulation Preliminary")
+    tag3 = rt.TLatex(0.27,0.92,"Preliminary")
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
     
-    d.Print(odir+"/deltaLL_%s_r%f.pdf"%(dataTag,options.r))
-    d.Print(odir+"/deltaLL_%s_r%f.C"%(dataTag,options.r))
+    for tlat in tlats:
+        tlat.Draw()
+        
+    d.Print(odir+"/deltaLL_%s_%s%f_%s.pdf"%(dataTag,options.poi,options.r,floatString))
+    d.Print(odir+"/deltaLL_%s_%s%f_%s.C"%(dataTag,options.poi,options.r,floatString))
 
-    print "stat+sys:  r < %f"%rLimit
-    print "stat-only: r < %f"%rLimitNoSys
+    #print "stat+sys:  r < %f"%rLimit
+    #print "stat-only: r < %f"%rLimitNoSys
 
 
 
