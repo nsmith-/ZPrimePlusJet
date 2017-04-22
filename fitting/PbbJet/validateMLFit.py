@@ -301,7 +301,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     l.SetFillStyle(0)
     l.SetBorderSize(0)
     l.SetTextFont(42)
-    l.SetTextSize(0.035)
+    l.SetTextSize(0.037)
     legnames = {'wqq': 'W', 'zqq': 'Z', 'qcd': 'Multijet', 'tqq': 't#bar{t}'}
     for i in range(len(bkgs)):
         l.AddEntry(bkgs[i], legnames[leg[i]], "l")
@@ -388,13 +388,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     tag1.SetNDC();
     tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
-    tag2 = r.TLatex(0.15, 0.92, "CMS")
+    tag2 = r.TLatex(0.2, 0.82, "CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
     if options.isData:
-        tag3 = r.TLatex(0.25, 0.92, "Preliminary")
+        tag3 = r.TLatex(0.2, 0.77, "Preliminary")
     else:
-        tag3 = r.TLatex(0.25, 0.92, "Simulation Preliminary")
+        tag3 = r.TLatex(0.2, 0.77, "Simulation Preliminary")
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
