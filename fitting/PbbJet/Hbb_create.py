@@ -73,7 +73,7 @@ def main(options, args):
         'Phibb150': [idir + '/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb250': [idir + '/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'data_obs': [idirData + 'JetHTRun2016B_03Feb2017_ver1_v1_v3.root',
-/                     idirData + 'JetHTRun2016C_03Feb2017_v1_v3_0.root',
+                     idirData + 'JetHTRun2016C_03Feb2017_v1_v3_0.root',
                      idirData + 'JetHTRun2016C_03Feb2017_v1_v3_1.root',
                      idirData + 'JetHTRun2016C_03Feb2017_v1_v3_2.root',
                      idirData + 'JetHTRun2016C_03Feb2017_v1_v3_3.root',
