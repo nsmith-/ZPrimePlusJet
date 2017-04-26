@@ -1297,12 +1297,12 @@ class sampleContainer:
                     else:
                         self.h_msd_v_pt_ak8_topR6_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
 	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet and jdb_8 > DBTAGCUT and rh_8<-2.1 and rh_8>-6.: 	
-		self.h_n2b1sdddt_ak8_aftercut.Fill(jtN2b1sdddt_8,weight)
+		if (not self._minBranches): self.h_n2b1sdddt_ak8_aftercut.Fill(jtN2b1sdddt_8,weight)
             if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
                 cut[8] = cut[8] + 1
 		if  rh_8<-2.1 and rh_8>-6.:
 		    cut[7] = cut[7] + 1
-		    self.h_dbtag_ak8_aftercut.Fill(jdb_8,weight)
+		    if (not self._minBranches): self.h_dbtag_ak8_aftercut.Fill(jdb_8,weight)
                 if jdb_8 > DBTAGCUT:
                     cut[9] = cut[9] + 1
                     self.h_msd_ak8_topR6_N2_pass.Fill(jmsd_8, weight)
