@@ -982,8 +982,8 @@ class sampleContainer:
                 n_MPt150dR0p8_4 = self.nAK4PuppijetsMPt150dR08_0[0]
                 n_TPt150dR0p8_4 = self.nAK4PuppijetsTPt150dR08_0[0]
 
-            met = self.puppet[0]
-            metphi = self.puppetphi[0]
+            met = self.pfmet[0]#puppet[0]
+            metphi = self.pfmetphi[0]#puppetphi[0]
             met_x = met * ROOT.TMath.Cos(metphi)
             met_y = met * ROOT.TMath.Sin(metphi)
             met_JESUp = ROOT.TMath.Sqrt(
