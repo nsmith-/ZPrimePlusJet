@@ -7,8 +7,9 @@ import math
 import sys
 import time
 import array
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+import re
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 #r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 #r.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 
@@ -795,6 +796,22 @@ class RhalphabetBuilder():
                 tmp_smeared_h = hist_container.smear(tmp_shifted_h[0], smear_val)
                 hmatched_new_central = tmp_smeared_h[0]
                 if smear_val <= 0: hmatched_new_central = tmp_smeared_h[1]
+                    
+                if re.match('zqq',tmph_mass_matched.GetName()):
+                    print tmph_mass_matched.GetName()
+                    print mass_shift
+                    print mass_shift_unc
+                    print shift_val
+                    print "before shift", tmph_mass_matched.Integral()
+                    print "after shift", tmp_shifted_h[0].Integral()
+                
+                    print res_shift
+                    print res_shift_unc                
+                    print smear_val                    
+                    print "before smear", tmph_mass_matched.Integral()
+                    print "after smear", hmatched_new_central.Integral()
+                    #sys.exit()
+                    
                 # get shift up/down
                 shift_unc = mass * mass_shift * mass_shift_unc
                 hmatchedsys_shift = hist_container.shift(hmatched_new_central, mass * mass_shift_unc)
@@ -835,6 +852,9 @@ class RhalphabetBuilder():
                         pName = h.GetName().replace("scale", "scalept")
                         tmprdh = r.RooDataHist(pName, pName, r.RooArgList(self._lMSD), h)
                         getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+                        #pName = h.GetName().replace("scale", "shiftMH")
+                        #tmprdh = r.RooDataHist(pName, pName, r.RooArgList(self._lMSD), h)
+                        #getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                     # validation
                     self._outfile_validation.cd()
                     h.Write()
@@ -893,7 +913,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
             fail_hists_bkg["qcd"] = qcd_fail
             print 'qcd pass integral', qcd_pass.Integral()
             print 'qcd fail integral', qcd_fail.Integral()
-        elif (fLoose is not None) and bkg=='wqq' or bkg=='zqq':
+        elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq'):
             hpass_tmp = fLoose.Get(bkg + '_pass').Clone()
             hfail_tmp = f.Get(bkg + '_fail').Clone()
             hpass_tmp.Scale(1. / scale)
@@ -986,16 +1006,23 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
 
 def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
+    print process, cat
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process:
         if 'pass' in cat:
             SF *= BB_SF
+            if 'zqq' in process:
+                print BB_SF
         else:
             passInt = f.Get(process + '_pass').Integral()
             failInt = f.Get(process + '_fail').Integral()
             if failInt > 0:
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
+                if 'zqq' in process:
+                    print (1. + (1. - BB_SF) * passInt / failInt)
     if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process:
-        SF *= V_SF        
+        SF *= V_SF
+        if 'zqq' in process:
+            print V_SF
     matchingString = ''
     if removeUnmatched and ('wqq' in process or 'zqq' in process):
         matchingString = '_matched'
@@ -1008,6 +1035,23 @@ def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
             passInt = f.Get(process + '_pass' + matchingString).Integral()
             passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral()
         SF *= passInt/passIntLoose
+        if 'zqq' in process:
+            print passInt/passIntLoose
+    # remove cross section from MH=125 signal templates (template normalized to luminosity*efficiency*acceptance)
+    ## if process=='hqq125':
+    ##     SF *= 1./48.85*5.824E-01
+    ## elif process=='zhqq':
+    ##     SF *= 1./(8.839E-01*(1.-3.*0.0335962-0.201030)*5.824E-01+8.839E-01*5.824E-01*0.201030+1.227E-01*5.824E-01*0.201030+1.227E-01*5.824E-01*0.201030)
+    ## elif process=='whqq':
+    ##     SF *= 1./(5.328E-01*(1.-3.*0.108535)*5.824E-01+8.400E-01*(1.-3.*0.108535)*5.824E-01)
+    ## elif process=='vbfhqq':
+    ##     SF *= 1./(3.782*5.824E-01)
+    ## elif process=='tthqq':
+    ##     SF *= 1./(5.071E-01*5.824E-01)
+    
+    if 'zqq' in process:
+        print SF
+        sys.exit()
     return SF
 
 def reset(w,fr,exclude=None):

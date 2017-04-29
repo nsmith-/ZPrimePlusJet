@@ -21,6 +21,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
 
     rates = {}
     lumiErrs = {}
+    hqq125ptErrs = {}
     mcStatErrs = {}
     veffErrs = {}
     bbeffErrs = {}
@@ -39,7 +40,11 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             error = array.array('d',[0.0])
             rate = histoDict['%s_%s'%(proc,box)].IntegralAndError(1,histoDict['%s_%s'%(proc,box)].GetNbinsX(),error)
             rates['%s_%s'%(proc,box)]  = rate
-            lumiErrs['%s_%s'%(proc,box)] = 1.026
+            lumiErrs['%s_%s'%(proc,box)] = 1.025
+            if proc=='hqq125':
+                hqq125ptErrs['%s_%s'%(proc,box)] = 1.3                
+            else:
+                hqq125ptErrs['%s_%s'%(proc,box)] = 1.0
             if proc=='wqq' or proc=='zqq' or 'hqq' in proc:
                 veffErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
                 if box=='pass':
@@ -107,11 +112,12 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     processNumberString = 'process'
     rateString = 'rate'
     lumiString = 'lumi\tlnN'
+    hqq125ptString = 'hqq125pt\tlnN'
     veffString = 'veff\tlnN'
     bbeffString = 'bbeff\tlnN'
-    znormEWString = 'znormEWmuonCR\tlnN'
+    znormEWString = 'znormEW\tlnN'
     znormQString = 'znormQ\tlnN'    
-    wznormEWString = 'wznormEWmuonCR\tlnN'
+    wznormEWString = 'wznormEW\tlnN'
     muidString = 'muid\tshape'   
     muisoString = 'muiso\tshape'   
     mutriggerString = 'mutrigger\tshape'  
@@ -135,6 +141,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             processNumberString += '\t%i'%(i-nSig+1)
             rateString += '\t%.3f' %rates['%s_%s'%(proc,box)]
             lumiString += '\t%.3f'%lumiErrs['%s_%s'%(proc,box)]
+            hqq125ptString += '\t%.3f'%hqq125ptErrs['%s_%s'%(proc,box)]
             veffString += '\t%.3f'%veffErrs['%s_%s'%(proc,box)]
             bbeffString += '\t%.3f'%bbeffErrs['%s_%s'%(proc,box)]
             znormEWString += '\t%.3f'%znormEWErrs['%s_%s'%(proc,box)]
@@ -153,7 +160,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
                     else:                        
                         mcStatErrString['%s_%s'%(proc1,box1)] += '\t-'
             
-    binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n';
+    binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n'; hqq125ptString+='\n';
     veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; wznormEWString+='\n'; mutriggerString+='\n'; muidString+='\n'; muisoString+='\n'; 
     jesString+='\n'; jerString+='\n'; puString+='\n';     
     for proc in (sigs+bkgs):
@@ -163,7 +170,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     datacard+=binString+processString+processNumberString+rateString+divider
 
     # now nuisances
-    datacard+=lumiString+veffString+bbeffString+znormEWString+znormQString+wznormEWString+mutriggerString+muidString+muisoString+jesString+jerString+puString
+    datacard+=lumiString+hqq125ptString+veffString+bbeffString+znormEWString+znormQString+wznormEWString+mutriggerString+muidString+muisoString+jesString+jerString+puString
 
     for proc in (sigs+bkgs):
         for box in boxes:
