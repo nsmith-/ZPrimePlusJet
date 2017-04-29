@@ -806,7 +806,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     return c
 
 
-def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=False):
+def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=False,ratio=False):
     ttbarInt = 0
     ttbarErr = 0
     ttbarErr2 = 0
@@ -844,12 +844,6 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     print 'data TTBar', dataInt-otherInt,'+/-', sqrt(dataErr*dataErr + otherErr*otherErr)
     print 'mc   TTBar', ttbarInt, '+/-', ttbarErr
     
-    leg_y = 0.88 - (len(hs)+len(hb))*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
-    leg.SetFillStyle(0)
-    leg.SetBorderSize(0)
-    leg.SetTextSize(0.035)
-    leg.SetTextFont(42)
 
     maxval = -99
 
@@ -871,9 +865,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     fullmc = hstack.GetStack().Last();
 
     # normalize MC to data
+    scalefactor = hd.Integral()/fullmc.Integral();
+    print "data/mc scale factor = ", scalefactor
     if normalize:
-    	scalefactor = hd.Integral()/fullmc.Integral();
-    	print "data/mc scale factor = ", scalefactor
     	for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()): h.Scale( scalefactor );
     hstack2 = ROOT.THStack("hstack2","hstack2");
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):	
@@ -885,55 +879,71 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetFillStyle(1001)
     
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
-        h.SetLineColor(color[name])
-        h.SetLineStyle(style[name])
-        h.SetLineWidth(2)
-        h.SetFillStyle(0)
-        
+	if 'ggH' in name:
+          h.SetLineColor(color[name])
+          h.SetLineStyle(style[name])
+          h.SetLineWidth(2)
+          h.SetFillStyle(0)
+
+    leg_y = 0.88 - (2+len(hb))*0.04
+    leg = ROOT.TLegend(0.6,leg_y,0.88,0.88,"data/mc scale factor %.2f"%(scalefactor),"NDC")
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"f")
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+      if 'ggH' in name:
         leg.AddEntry(h,legname[name],"l")
     leg.AddEntry(hd,legname['data'],"pe");
-    
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
-
     c.SetFillStyle(4000)
     c.SetFrameFillStyle(1000)
     c.SetFrameFillColor(0)
+    if ratio:
+    	oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
+	unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
+        oben.SetBottomMargin(0)
+	unten.SetTopMargin(0.)
+	unten.SetBottomMargin(0.35)
 
-    oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
-    oben.SetBottomMargin(0)
+    else:	
+        oben = ROOT.TPad('oben','oben',0,0.05 ,1.0,1.0)
+	unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.0)
     oben.SetFillStyle(4000)
     oben.SetFrameFillStyle(1000)
     oben.SetFrameFillColor(0)
-    unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
-    unten.SetTopMargin(0.)
-    unten.SetBottomMargin(0.35)
     unten.SetFillStyle(4000)
     unten.SetFrameFillStyle(1000)
     unten.SetFrameFillColor(0)
-
     oben.Draw()
     unten.Draw()
     oben.cd()
+ 
     hstack2.Draw('hist')
-    hstack2.SetMaximum(2.*maxval)
+    hstack2.SetMaximum(500000.*maxval)
     hstack2.GetYaxis().SetTitle('Events')
     hstack2.GetYaxis().SetTitleOffset(1.0)	
     hstack2.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+    hstack2.GetXaxis().SetTitleOffset(1.3)
+    hstack2.GetXaxis().SetLabelSize(0.04)
+    hstack2.GetXaxis().SetTitleSize(0.045)
     hstack2.Draw('hist')
-    for name, h in hs.iteritems(): h.Draw("histsame")
+    for name, h in hs.iteritems(): 
+	  if 'ggH' in name:
+		h.Draw("histsame")
     leg.Draw()
     hstack2.SetMinimum(1e-1)
     hd.Draw('pesames');
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
-    tag2 = ROOT.TLatex(0.15,0.92,"CMS")
+    tag2 = ROOT.TLatex(0.17,0.92,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    tag3 = ROOT.TLatex(0.25,0.92,"Preliminary")
+    tag3 = ROOT.TLatex(0.27,0.92,"Preliminary")
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
@@ -942,40 +952,41 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     tag2.Draw()
     tag3.Draw()
     allMC2=hstack2.GetStack().Last().Clone()
-    unten.cd()
-    ratio= getRatio(hd,allMC2)
-    ksScore = hd.KolmogorovTest( allMC2 )
-    chiScore = hd.Chi2Test( allMC2 , "UWCHI2/NDF")
-    print ksScore
-    print chiScore
-    ratio.SetStats(0)
-    ratio.GetYaxis().SetRangeUser(0,3.5)	
-    ratio.GetYaxis().SetNdivisions(504)
-    ratio.GetYaxis().SetTitle("Data/Simulation")
-    ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())    
-    ratio.GetXaxis().SetTitleSize(0.14)
-    ratio.GetXaxis().SetTitleOffset(1.0)
-    ratio.GetYaxis().SetTitleOffset(0.5)
-    ratio.GetYaxis().SetLabelSize(0.12)
-    ratio.GetYaxis().SetTitleSize(0.14)
-    ratio.GetXaxis().SetLabelSize(0.12)
+    if ratio:	
+    	unten.cd()
+    	ratio= getRatio(hd,allMC2)
+    	ksScore = hd.KolmogorovTest( allMC2 )
+    	chiScore = hd.Chi2Test( allMC2 , "UWCHI2/NDF")
+    	print ksScore
+    	print chiScore
+    	ratio.SetStats(0)
+        ratio.GetYaxis().SetRangeUser(0,2.5)	
+        ratio.GetYaxis().SetNdivisions(504)
+    	ratio.GetYaxis().SetTitle("Data/Simulation")
+    	ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())    
+    	ratio.GetXaxis().SetTitleSize(0.14)
+    	ratio.GetXaxis().SetTitleOffset(1.0)
+    	ratio.GetYaxis().SetTitleOffset(0.5)
+    	ratio.GetYaxis().SetLabelSize(0.12)
+    	ratio.GetYaxis().SetTitleSize(0.11)
+    	ratio.GetXaxis().SetLabelSize(0.11)
 	
-    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+    	line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
                       ratio.GetXaxis().GetXmax(), 1.0)
-    line.SetLineColor(ROOT.kGray)
-    line.SetLineStyle(2)
-    line.Draw()
-    tKsChi = ROOT.TLatex()
-    tKsChi.SetNDC()
-    tKsChi.SetTextFont(42)
-    tKsChi.SetTextSize(0.09)
+    	line.SetLineColor(ROOT.kGray)
+    	line.SetLineStyle(2)
+    	line.Draw()
+    	tKsChi = ROOT.TLatex()
+    	tKsChi.SetNDC()
+    	tKsChi.SetTextFont(42)
+    	tKsChi.SetTextSize(0.09)
 
     #ratioError = ROOT.TGraphErrors(error)
     #ratioError.SetFillColor(ROOT.kGray+3)
     #ratioError.SetFillStyle(3013)
-    ratio.Draw("E1 ")	
-    line.Draw("same")	
-    tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
+    	ratio.Draw("E1 ")	
+    	line.Draw("same")	
+    #tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
 
     c.SaveAs(pdir+"/"+outname+".pdf")
     c.SaveAs(pdir+"/"+outname+".C")
