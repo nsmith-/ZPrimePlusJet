@@ -159,13 +159,14 @@ def main(options,args):
     rFrame.SetLabelSize(0.04,"Y")
     rFrame.SetNdivisions(505,"X")
     
-    leg = rt.TLegend(0.7,0.15,0.89,0.3)
+    leg = rt.TLegend(0.68,0.17,0.89,0.33)
     leg.SetTextFont(42)
     leg.SetFillColor(rt.kWhite)
     leg.SetLineColor(rt.kWhite)
     leg.SetFillStyle(0)
-    leg.AddEntry("p2ll_data", "stat + syst","l")
-    leg.AddEntry("n2ll_data", "stat only","l")
+    leg.SetLineWidth(0)
+    leg.AddEntry("p2ll_data", "stat. + syst.","l")
+    leg.AddEntry("n2ll_data", "stat. only","l")
     leg.Draw("same")
     
     tag1 = rt.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
