@@ -16,7 +16,7 @@ PTCUTMUCR = 400.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
-METCUT = 180
+METCUT = 140
 MASSCUT = 40
 NJETCUT = 100
 
@@ -1483,7 +1483,7 @@ class sampleContainer:
             a_Cuts.SetBinLabel(1, "p_{T}>450 GeV")
             a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV")
             a_Cuts.SetBinLabel(3, "tight ID")
-            a_Cuts.SetBinLabel(6, "MET<180")
+            a_Cuts.SetBinLabel(6, "MET<140")
 #            a_Cuts.SetBinLabel(7, "njet<5")
             a_Cuts.SetBinLabel(7, "N2^{DDT}<0")
 	    a_Cuts.SetBinLabel(8, "-6<#rho<-2.1")
