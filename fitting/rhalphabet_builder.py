@@ -8,8 +8,8 @@ import sys
 import time
 import array
 import re
-r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 #r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 #r.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 
@@ -1049,9 +1049,9 @@ def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
     ## elif process=='tthqq':
     ##     SF *= 1./(5.071E-01*5.824E-01)
     
-    if 'zqq' in process:
-        print SF
-        sys.exit()
+    #if 'zqq' in process:
+    #    print SF
+    #    sys.exit()
     return SF
 
 def reset(w,fr,exclude=None):
