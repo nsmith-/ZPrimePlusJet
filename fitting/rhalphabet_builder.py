@@ -175,11 +175,20 @@ class RhalphabetBuilder():
 		    hist_up.Scale(rescaled_int_up)		
 		    hist_down.Scale(rescaled_int_down)
 
-	            hptpdfUp_s[cat] = r.RooDataHist('hqq125ptShapeUp_'+cat,'hqq125ptShapeUp_'+cat,r.RooArgList(x),hist_up)
-		    hptpdfDown_s[cat] = r.RooDataHist('hqq125ptShapeDown_'+cat,'hqq125ptShapeDown_'+cat,r.RooArgList(x),hist_down)
+	            hptpdfUp_s[cat] = r.RooDataHist('hqq125_ptShapeUp_'+cat,'hqq125i_ptShapeUp_'+cat,r.RooArgList(x),hist_up)
+		    hptpdfDown_s[cat] = r.RooDataHist('hqq125_ptShapeDown_'+cat,'hqq125_ptShapeDown_'+cat,r.RooArgList(x),hist_down)
 	
         	    getattr(w,'import')(hptpdfUp_s[cat],r.RooFit.RecycleConflictNodes())		
 		    getattr(w,'import')(hptpdfDown_s[cat],r.RooFit.RecycleConflictNodes())
+
+        icat = 0
+        for cat in categories:
+            if icat==0:
+                wralphabase[cat].writeToFile(self._rhalphabet_output_path,True)
+            else:
+                wralphabase[cat].writeToFile(self._rhalphabet_output_path,False)
+            icat += 1
+        
 	
     
    
