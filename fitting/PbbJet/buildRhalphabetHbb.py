@@ -9,8 +9,8 @@ import sys
 import time
 import array
 
-#r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
+r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
+#r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
 
 # including other directories
 # sys.path.insert(0, '../.')
@@ -47,10 +47,10 @@ def main(options, args):
 
     rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose)
     rhalphabuilder.run()
-    if options.prefit:
-        rhalphabuilder.prefit()
     if options.addHptShape:
         rhalphabuilder.addHptShape()	
+    if options.prefit:
+        rhalphabuilder.prefit()
     elif options.loadfit is not None:
         rhalphabuilder.loadfit(options.loadfit)
         
