@@ -138,15 +138,15 @@ class RhalphabetBuilder():
 	all_int_rescale_Down=0
 	all_int_rescale_Up=0
 	for proc in (sigs):
-	   if 'hqq125' in proc:	
+	   if 'hqq125' == proc:	
 		icat=0
         	for cat in categories:
-		    icat=icat+1
+		    icat+=1
             	    rooCat.defineType(cat)
                     getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
 		    datahist['%s_%s'%(proc,cat)] = wbase[cat].data('%s_%s'%(proc,cat))	
-	            all_int_rescale_Up =  all_int_rescale+(1.+i*0.05)*datahist['%s_%s'%(proc,cat)].sumEntries()		 
-		    all_int_rescale_Down = all_int_rescale+(2.-i*0.05)*datahist['%s_%s'%(proc,cat)].sumEntries() 
+	            all_int_rescale_Up +=(1.+icat*0.05)*datahist['%s_%s'%(proc,cat)].sumEntries()		 
+		    all_int_rescale_Down += (2.-icat*0.05)*datahist['%s_%s'%(proc,cat)].sumEntries() 
 		    all_int = all_int+datahist['%s_%s'%(proc,cat)].sumEntries()
                 icat=0 
 	        for cat in categories:
@@ -157,8 +157,8 @@ class RhalphabetBuilder():
                     datahist['%s_%s'%(proc,cat)] = wbase[cat].data('%s_%s'%(proc,cat))
  
 	 
-	            rescaled_int_up = datahist['%s_%s'%(proc,cat)].sumEntries() * (1.+i*0.05) * all_int/all_int_rescale_Up
-		    rescaled_int_down = datahist['%s_%s'%(proc,cat)].sumEntries() * (2.-i*0.05)* all_int/all_int_rescale_Down	
+	            rescaled_int_up = datahist['%s_%s'%(proc,cat)].sumEntries() * (1.+icat*0.05) * all_int/all_int_rescale_Up
+		    rescaled_int_down = datahist['%s_%s'%(proc,cat)].sumEntries() * (2.-icat*0.05)* all_int/all_int_rescale_Down	
 		    
 	
                     signormUp['%s_%s'%(proc,cat)] = r.RooRealVar('signormUp_%s_%s'%(proc,cat),
