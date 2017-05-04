@@ -112,6 +112,82 @@ class RhalphabetBuilder():
     def run(self):
         self.LoopOverPtBins()
 
+    def add_HptUnc(self):
+        fbase = r.TFile.Open(self._output_path,'update')
+        fralphabase = r.TFile.Open(self._rhalphabet_output_path,'update')
+
+        categories = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
+                      'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
+
+	sigs = self._signal_names
+	wbase = {}
+        wralphabase = {}
+        for cat in categories:
+            wbase[cat] = fbase.Get('w_%s'%cat)
+            wralphabase[cat] = fralphabase.Get('w_%s'%cat)
+        w = r.RooWorkspace('w')
+        x = wbase[categories[0]].var('x')
+        rooCat = r.RooCategory('cat','cat')
+
+        epdf_s = {}
+        histpdf = {}
+        histpdfnorm = {}
+        datahist = {}
+        signorm = {}
+	all_int = 0
+	all_int_rescale_Down=0
+	all_int_rescale_Up=0
+	for proc in (sigs):
+	   if 'hqq125' in proc:	
+		icat=0
+        	for cat in categories:
+		    icat=icat+1
+            	    rooCat.defineType(cat)
+                    getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+		    datahist['%s_%s'%(proc,cat)] = wbase[cat].data('%s_%s'%(proc,cat))	
+	            all_int_rescale_Up =  all_int_rescale+(1.+i*0.05)*datahist['%s_%s'%(proc,cat)].sumEntries()		 
+		    all_int_rescale_Down = all_int_rescale+(2.-i*0.05)*datahist['%s_%s'%(proc,cat)].sumEntries() 
+		    all_int = all_int+datahist['%s_%s'%(proc,cat)].sumEntries()
+                icat=0 
+	        for cat in categories:
+		    icat=1+icat
+		    rooCat.defineType(cat)
+                    pdfs_s = r.RooArgList()
+                    getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+                    datahist['%s_%s'%(proc,cat)] = wbase[cat].data('%s_%s'%(proc,cat))
+ 
+	 
+	            rescaled_int_up = datahist['%s_%s'%(proc,cat)].sumEntries() * (1.+i*0.05) * all_int/all_int_rescale_Up
+		    rescaled_int_down = datahist['%s_%s'%(proc,cat)].sumEntries() * (2.-i*0.05)* all_int/all_int_rescale_Down	
+		    
+	
+                    signormUp['%s_%s'%(proc,cat)] = r.RooRealVar('signormUp_%s_%s'%(proc,cat),
+                                                                'signormUp_%s_%s'%(proc,cat),
+                                                                rescaled_int_up,
+                                                                0,10.*rescaled_int_up) 
+                    signormUp['%s_%s'%(proc,cat)].setConstant(True)
+                    getattr(w,'import')(signormUp['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+                    histpdfnormUp['%s_%s'%(proc,cat)] = r.RooFormulaVar('histpdfnormUp_%s_%s'%(proc,cat),
+                                                                       '@0',r.RooArgList(signormUp['%s_%s'%(proc,cat)]))
+		    signormDown['%s_%s'%(proc,cat)] = r.RooRealVar('signormDown_%s_%s'%(proc,cat),
+                                                                'signormDown_%s_%s'%(proc,cat),
+                                                                rescaled_int_down,
+                                                                0,10.*rescaled_int_down)
+                    signormDown['%s_%s'%(proc,cat)].setConstant(True)
+                    getattr(w,'import')(signormDown['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
+                    histpdfnormDown['%s_%s'%(proc,cat)] = r.RooFormulaVar('histpdfnormDown_%s_%s'%(proc,cat),
+                                                                       '@0',r.RooArgList(signormDown['%s_%s'%(proc,cat)]))
+
+
+	            hptpdfUp_s[cat] = r.RooAddPdf('hqq125ptUp_'+cat,'hqq125ptUp_'+cat,histpdfnormUp['%s_%s'%(proc,cat)],histpdfnormUp['%s_%s'%(proc,cat)])
+		    hptpdfDown_s[cat] = r.RooAddPdf('hqq125ptDown_'+cat,'hqq125ptDown_'+cat,histpdfnormDown['%s_%s'%(proc,cat)],histpdfnormDown['%s_%s'%(proc,cat)])	
+        	    getattr(w,'import')(hptpdfUp_s[cat],r.RooFit.RecycleConflictNodes())		
+		    getattr(w,'import')(hptpdfDown_s[cat],r.RooFit.RecycleConflictNodes())
+	
+    
+   
+
+
     def prefit(self):
 
         fbase = r.TFile.Open(self._output_path,'update')
