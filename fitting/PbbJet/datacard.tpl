@@ -18,7 +18,8 @@ rate -1 -1 -1 -1 -1 -1 -1 1.0 -1 -1 -1 -1 -1 -1 -1 -1 1.0 -1
 ----------------------------------------------------------------------------------------------------------------------------------
 #lumi_13TeV lnN 1.025 1.025 1.025 1.025 1.025 1.025 1.025 - 1.025 1.025 1.025 1.025 1.025 1.025 1.025 1.025 - 1.025
 lumi lnN 1.025 1.025 1.025 1.025 1.025 1.025 1.025 - - 1.025 1.025 1.025 1.025 1.025 1.025 1.025 - -
-hqq125pt lnN - - 1.3 - - - - - - - - 1.3 - - - - - -
+hqq125pt lnN - - 1.30 - - - - - - - - 1.30 - - - - - -
+hqq125ptShape lnN - - 1 - - - - - - - - 1 - - - - - -
 #CMS_eff_v lnN 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - - 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - -
 #CMS_eff_bb lnN 1.1 1.1 1.1 1.1 1.1 - - - - 1.1 1.1 1.1 1.1 1.1 - - - -
 veff lnN 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - - 1.2 1.2 1.2 1.2 1.2 1.2 1.2 - -
@@ -51,3 +52,13 @@ r0p1 flatParam
 r1p1 flatParam
 r2p1 flatParam
 qcdeff flatParam
+#hbb rateParam 	    * tthqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+#hbb rateParam 	    * whqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+#hbb rateParam 	    * hqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+#hbb rateParam 	    * zhqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+#hbb rateParam 	    * vbfhqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
+#ttH_13TeV rateParam * tthqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+#WH_13TeV rateParam * whqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+#ggH_13TeV rateParam * hqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+#ZH_13TeV rateParam * zhqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
+#vbfH_13TeV rateParam * vbfhqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_yr4_13TeV.root:xs_13TeV 
