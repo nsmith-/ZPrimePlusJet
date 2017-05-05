@@ -142,7 +142,9 @@ class RhalphabetBuilder():
         all_int_rescale_Down = 0
         all_int_rescale_Up = 0
         proc = 'hqq125'
-        total_unc = 0.5
+        #total_unc = 1.3 # -> cat6 has 130% SF w.r.t cat1
+        #total_unc = 1.6 # -> cat6 has 160% SF w.r.t. cat1
+        total_unc = 3.0 # -> cat6 has 300% SF w.r.t. cat1
         iptlo = self._ptbins[0]
         ipthi = self._ptbins[-2]
         for cat in categories:
@@ -151,12 +153,11 @@ class RhalphabetBuilder():
             rooCat.defineType(cat)
             datahist['%s_%s' % (proc, cat)] = wbase[cat].data('%s_%s' % (proc, cat))
             myint = datahist['%s_%s' % (proc, cat)].sumEntries()
-            all_int_rescale_Up += (1. + (ipt-iptlo) * total_unc / (ipthi-iptlo)) * myint
-            all_int_rescale_Down += (1. - (ipt-iptlo) * total_unc / (ipthi-iptlo)) * myint
+            all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+            all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
             all_int += myint
-            
-            print cat, (1. + (ipt-iptlo) * total_unc / (ipthi-iptlo))
-            
+            print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+
         for cat in categories:           
             iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
             ipt = self._ptbins[iptbin]
@@ -169,8 +170,8 @@ class RhalphabetBuilder():
             hist_up = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
             hist_down = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
 
-            rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * total_unc / (ipthi-iptlo)) * all_int / all_int_rescale_Up
-            rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. - (ipt-iptlo) * total_unc / (ipthi-iptlo)) * all_int / all_int_rescale_Down
+            rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
+            rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
 
             hist_up.Scale(rescaled_int_up/hist_up.Integral())
             hist_down.Scale(rescaled_int_down/hist_down.Integral())
