@@ -203,8 +203,6 @@ class RhalphabetBuilder():
         print "total", up
         print "total", down
         
-        sys.exit()
-
         icat = 0
         for cat in categories:
             if icat == 0:
