@@ -70,6 +70,9 @@ class RhalphabetBuilder():
         self._nptbins = pass_hists["data_obs"].GetYaxis().GetNbins()
         self._pt_lo = pass_hists["data_obs"].GetYaxis().GetBinLowEdge(1)
         self._pt_hi = pass_hists["data_obs"].GetYaxis().GetBinUpEdge(self._nptbins)
+        self._ptbins = []
+        for ipt in range(0,self._nptbins+1):
+            self._ptbins.append(pass_hists["data_obs"].GetYaxis().GetBinLowEdge(ipt+1))
 
         # define RooRealVars
         self._lMSD = r.RooRealVar("x", "x", self._mass_lo, self._mass_hi)
@@ -139,17 +142,24 @@ class RhalphabetBuilder():
         all_int_rescale_Down = 0
         all_int_rescale_Up = 0
         proc = 'hqq125'
+        total_unc = 0.5
+        iptlo = self._ptbins[0]
+        ipthi = self._ptbins[-2]
         for cat in categories:
             iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
+            ipt = self._ptbins[iptbin]
             rooCat.defineType(cat)
             datahist['%s_%s' % (proc, cat)] = wbase[cat].data('%s_%s' % (proc, cat))
             myint = datahist['%s_%s' % (proc, cat)].sumEntries()
-            all_int_rescale_Up += (1. + iptbin * 0.05) * myint
-            all_int_rescale_Down += (1. - iptbin * 0.05) * myint
+            all_int_rescale_Up += (1. + (ipt-iptlo) * total_unc / (ipthi-iptlo)) * myint
+            all_int_rescale_Down += (1. - (ipt-iptlo) * total_unc / (ipthi-iptlo)) * myint
             all_int += myint
             
-        for cat in categories:                    
-            iptbin = int(cat[-1])-1
+            print cat, (1. + (ipt-iptlo) * total_unc / (ipthi-iptlo))
+            
+        for cat in categories:           
+            iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
+            ipt = self._ptbins[iptbin]
             rooCat.defineType(cat)
             histpdf['%s_%s' % (proc, cat)] = r.RooHistPdf('histpdf_%s_%s' % (proc, cat),
                                                           'histpdf_%s_%s' % (proc, cat),
@@ -159,8 +169,8 @@ class RhalphabetBuilder():
             hist_up = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
             hist_down = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
 
-            rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + iptbin * 0.05) * all_int / all_int_rescale_Up
-            rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. - iptbin * 0.05) * all_int / all_int_rescale_Down
+            rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * total_unc / (ipthi-iptlo)) * all_int / all_int_rescale_Up
+            rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. - (ipt-iptlo) * total_unc / (ipthi-iptlo)) * all_int / all_int_rescale_Down
 
             hist_up.Scale(rescaled_int_up/hist_up.Integral())
             hist_down.Scale(rescaled_int_down/hist_down.Integral())
@@ -177,7 +187,23 @@ class RhalphabetBuilder():
             hptpdfDown_s[cat] = r.RooDataHist('%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'), '%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'), r.RooArgList(x), hist_down)
 
             getattr(wbase[cat], 'import')(hptpdfUp_s[cat], r.RooFit.RecycleConflictNodes())
-            getattr(wbase[cat], 'import')(hptpdfDown_s[cat], r.RooFit.RecycleConflictNodes())   
+            getattr(wbase[cat], 'import')(hptpdfDown_s[cat], r.RooFit.RecycleConflictNodes())
+
+        up = 0
+        down = 0
+        nom = 0
+        for cat in categories:
+            nom  += datahist['%s_%s' % (proc, cat)].sumEntries()
+            up += hptpdfUp_s[cat].sumEntries()
+            down += hptpdfDown_s[cat].sumEntries()
+            print cat, datahist['%s_%s' % (proc, cat)].sumEntries()
+            print cat, hptpdfUp_s[cat].sumEntries()
+            print cat, hptpdfDown_s[cat].sumEntries()
+        print "total", nom
+        print "total", up
+        print "total", down
+        
+        sys.exit()
 
         icat = 0
         for cat in categories:
