@@ -142,9 +142,9 @@ class RhalphabetBuilder():
         all_int_rescale_Down = 0
         all_int_rescale_Up = 0
         proc = 'hqq125'
-        #total_unc = 1.3 # -> cat6 has 130% SF w.r.t cat1
+        total_unc = 1.3 # -> cat6 has 130% SF w.r.t cat1
         #total_unc = 1.6 # -> cat6 has 160% SF w.r.t. cat1
-        total_unc = 3.0 # -> cat6 has 300% SF w.r.t. cat1
+        #total_unc = 3.0 # -> cat6 has 300% SF w.r.t. cat1
         iptlo = self._ptbins[0]
         ipthi = self._ptbins[-2]
         for cat in categories:
