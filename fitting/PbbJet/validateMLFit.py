@@ -345,7 +345,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     
 
     data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
-    data.Draw('pez')
+    data.Draw('pez')    
+    if 'cat1' in tag:
+        data.GetXaxis().SetRangeUser(40,201 - 7*5)
+    elif 'cat2' in tag:
+        data.GetXaxis().SetRangeUser(40,201 - 7*3)
+    else:
+        data.GetXaxis().SetRangeUser(40,201)
     htot.Draw('E2same')
     #    htotsig.Draw('E2same')
 
@@ -377,7 +383,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     g_data.Draw('pezsame')
     l.Draw()
     tag1 = r.TLatex(0.67, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
-    tag1.SetNDC();
+    tag1.SetNDC()
     tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
     tag2 = r.TLatex(0.2, 0.82, "CMS")
@@ -387,13 +393,36 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
         tag3 = r.TLatex(0.2, 0.77, "Preliminary")
     else:
         tag3 = r.TLatex(0.2, 0.77, "Simulation Preliminary")
+
+        
+    ptRange = [450, 1000]
+    if 'cat1' in tag:
+        ptRange = [450, 500]
+    elif 'cat2' in tag:
+        ptRange = [500, 550]
+    elif 'cat3' in tag:
+        ptRange = [550, 600]
+    elif 'cat3' in tag:
+        ptRange = [550, 600]
+    elif 'cat4' in tag:
+        ptRange = [600, 675]
+    elif 'cat5' in tag:
+        ptRange = [675, 800]
+    elif 'cat6' in tag:
+        ptRange = [800, 1000]
+        
+    tag4 = r.TLatex(0.37, 0.77, "%i < p_{T} < %i GeV"%(ptRange[0],ptRange[1]))
+    tag4.SetNDC()
+    tag4.SetTextFont(42)
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
     tag3.SetTextSize(0.045)
+    tag4.SetTextSize(0.035)
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+    tag4.Draw()
     data.SetMaximum(data.GetMaximum() * 1.2)
 
     c.cd()
@@ -474,6 +503,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     iOneWithErrors.SetMarkerSize(0)
     iOneWithErrors.SetLineWidth(2)
     iRatio.Draw('pez')
+    if 'cat1' in tag:
+        iRatio.GetXaxis().SetRangeUser(40,201 - 7*5)
+    elif 'cat2' in tag:
+        iRatio.GetXaxis().SetRangeUser(40,201 - 7*3)
+    else:
+        iRatio.GetXaxis().SetRangeUser(40,201)
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s' % tag)
     iOneWithErrorsLine.SetFillStyle(0)
 
@@ -617,7 +652,7 @@ def makeTF(pars, ratio):
 
     
     c.SetLogz(0)
-    Npoints = 100
+    Npoints = 10
     f2graph = r.TGraph2D()
     N = -1
     for i in range(Npoints+1):
@@ -822,8 +857,8 @@ if __name__ == '__main__':
     r.gStyle.SetPaintTextFormat("1.1f")
     r.gStyle.SetOptFit(0000)
     r.gROOT.SetBatch()
-    r.gStyle.SetPalette(r.kBird)
-    #r.gStyle.SetPalette(r.kBlackBody)
+    #r.gStyle.SetPalette(r.kBird)
+    r.gStyle.SetPalette(r.kBlackBody)
     r.gStyle.SetNumberContours(999)
 
     main(options, args)
