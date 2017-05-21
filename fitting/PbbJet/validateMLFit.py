@@ -144,14 +144,6 @@ def main(options, args):
                                                     options.sOverSb, options.splitS, options.ratio)
 
 
-def fun2(x, par):
-    rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho)
-    poly1 = par[0] * (par[3] + par[4] * rho + par[5] * rho * rho) * x[1]
-    poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
-    return poly0 + poly1 + poly2
-
-
 def plotCategory(fml, fd, index, fittype):
     shapes = ['wqq', 'zqq', 'tqq', 'qcd', 'hqq125', 'zhqq125', 'whqq125', 'tthqq125', 'vbfhqq125']
     histograms_fail = []
@@ -544,6 +536,13 @@ def fun2(x, par):
     return poly0 + poly1 + poly2
 
 
+def fun2rho(x, par):
+    rho = x[0]
+    poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
+    poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*x[1]
+    poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
+    return poly0+poly1+poly2
+
 def makeTF(pars, ratio):
     ratio.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     ratio.GetYaxis().SetTitle('p_{T} (GeV)')
@@ -616,6 +615,183 @@ def makeTF(pars, ratio):
     #    r.gPad.Update()
     #    c.SaveAs(options.odir+"/mlfit/tf_%03d.png"%i)
 
+    
+    c.SetLogz(0)
+    Npoints = 100
+    f2graph = r.TGraph2D()
+    N = -1
+    for i in range(Npoints+1):
+        for j in range(Npoints+1):
+            N+=1
+            x = ratio.GetXaxis().GetXmin() + i*(ratio.GetXaxis().GetXmax()-ratio.GetXaxis().GetXmin())/Npoints
+            y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
+            z = f2.Eval(x,y)
+            #if math.log(x*x/(y*y)) < -6 or math.log(x*x/(y*y)) > -2.1:
+            #    z = 0
+            #print x, y, z
+            f2graph.SetPoint(N,x,y,z)
+
+    rhoxy =  r.TF2("rhoxy","log(x*x/y/y)",30,221,400,1100)
+    contours = array.array('d',[-6 ,-2.1])
+    rhoxy.SetContour(2,contours)
+    rhoxy.Draw("CONT Z LIST")
+    r.gPad.Update()
+    conts = r.gROOT.GetListOfSpecials().FindObject("contours")
+    contour0 = conts.At(0)
+    rhocurv1 = contour0.First().Clone()
+    rhocurv1.SetLineWidth(-503)
+    rhocurv1.SetFillStyle(3004)
+    rhocurv1.SetFillColor(r.kBlack)
+    rhocurv1.SetLineColor(r.kBlack)
+    contour0 = conts.At(1)
+    rhocurv2 = contour0.First().Clone()
+    rhocurv2.SetLineWidth(503)
+    rhocurv2.SetFillStyle(3004)
+    rhocurv2.SetFillColor(r.kBlack)
+    rhocurv2.SetLineColor(r.kBlack)
+    
+    mxy = r.TF2("mxy", "sqrt(exp(x))*y",-6.5, -1.5, 400, 1100)
+    contours = array.array('d',[40 ,201])
+    mxy.SetContour(2,contours)
+    mxy.Draw("CONT Z LIST")
+    r.gPad.Update()
+    conts = r.gROOT.GetListOfSpecials().FindObject("contours")
+    contour0 = conts.At(0)
+    mcurv1 = contour0.First().Clone()    
+    mcurv1.SetLineWidth(503)
+    mcurv1.SetFillStyle(3004)
+    mcurv1.SetFillColor(r.kBlack)
+    mcurv1.SetLineColor(r.kBlack)
+    contour0 = conts.At(1)
+    mcurv2 = contour0.First().Clone()    
+    mcurv2.SetLineWidth(-503)
+    mcurv2.SetFillStyle(3004)
+    mcurv2.SetFillColor(r.kBlack)
+    mcurv2.SetLineColor(r.kBlack)
+    
+    r.gStyle.SetNumberContours(999)
+            
+    ratiorho = r.TH2D('ratiorho','ratiorho',Npoints,-6,-2.1,Npoints,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax())
+    ratiorho.GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())    
+    ratiorho.GetXaxis().SetTitle('#rho')
+    ratiorho.GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
+    ratiorhograph = r.TGraph2D()
+    N = -1
+    for i in range(1,ratio.GetNbinsX()+1):
+        for j in range(1,ratio.GetNbinsY()+1):
+            N+=1
+            m = ratio.GetXaxis().GetBinCenter(i)
+            y = ratio.GetYaxis().GetBinCenter(j)
+            x = math.log(m*m/(y*y))
+            z = ratio.GetBinContent(i,j)
+            #print N, x, y, z
+            ratiorhograph.SetPoint(N,x,y,z)
+    f2rho = r.TF2("f2",fun2rho,-6,-2.1,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+    f2rho.SetParameters(f2params)
+    f2rhograph = r.TGraph2D()
+    N = -1
+    for i in range(Npoints+1):
+        for j in range(Npoints+1):
+            N+=1
+            x = -6 + i*(-2.1+6)/Npoints
+            y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
+            z = f2rho.Eval(x,y)
+            m = math.sqrt(math.exp(x))*y
+            #if m < 40 or m > 201:
+            #    z = 0
+            #print x, y, z
+            f2rhograph.SetPoint(N,x,y,z)
+    #ratiorho.Draw('surf1')    
+    ratiorhograph.GetHistogram().GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())    
+    ratiorhograph.GetHistogram().GetXaxis().SetTitle('#rho')
+    ratiorhograph.GetHistogram().GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
+    ratiorhograph.GetHistogram().GetYaxis().SetNdivisions(505)
+    ratiorhograph.GetHistogram().GetXaxis().SetNdivisions(505)
+    ratiorhograph.GetHistogram().GetXaxis().SetTitleOffset(1.5)
+    ratiorhograph.GetHistogram().GetYaxis().SetTitleOffset(1.5)
+    ratiorhograph.Draw("surf1")
+    f2rho.Draw("surf fb bb same")
+    #f2rhograph.SetLineColor(r.kRed)
+    #f2rhograph.Draw("surf fb bb same")
+    tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = r.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+    
+    c.SaveAs(options.odir + "/mlfit/tf_rho.pdf")
+    c.SaveAs(options.odir + "/mlfit/tf_rho.C")
+    
+    # to plot TF2
+    #f2.Draw("colz")
+    c.SetRightMargin(0.20)
+    # to plot TGraph:
+    f2graph.Draw("colz")
+    rhocurv1.Draw('same')
+    rhocurv2.Draw('same')
+    
+    f2graph.GetHistogram().GetXaxis().SetTitle(ratio.GetXaxis().GetTitle())
+    f2graph.GetHistogram().GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())
+    f2graph.GetHistogram().GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
+    f2graph.GetHistogram().GetZaxis().SetTitleOffset(1.3)
+    tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = r.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+
+    
+    c.SaveAs(options.odir + "/mlfit/tf_msdcolz.pdf")
+    c.SaveAs(options.odir + "/mlfit/tf_msdcolz.C")
+
+    # to plot TF2
+    #f2rho.Draw("colz")
+    # to plot TGraph:
+    #f2rhograph.SetContours(999)
+    f2rhograph.Draw("colz")
+    mcurv1.Draw('same')
+    mcurv2.Draw('same')
+    f2rhograph.GetHistogram().GetXaxis().SetTitle('#rho')
+    f2rhograph.GetHistogram().GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())
+    f2rhograph.GetHistogram().GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
+    f2rhograph.GetHistogram().GetZaxis().SetTitleOffset(1.3)
+    Tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
+    tag1.SetNDC(); tag1.SetTextFont(42)
+    tag1.SetTextSize(0.045)
+    tag2 = r.TLatex(0.15,0.92,"CMS")
+    tag2.SetNDC()
+    tag2.SetTextFont(62)
+    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3.SetNDC()
+    tag3.SetTextFont(52)
+    tag2.SetTextSize(0.055)
+    tag3.SetTextSize(0.045)
+    tag1.Draw()
+    tag2.Draw()
+    tag3.Draw()
+    
+    c.SaveAs(options.odir + "/mlfit/tf_rhocolz.pdf")
+    c.SaveAs(options.odir + "/mlfit/tf_rhocolz.C")
+    
+
 
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -646,6 +822,9 @@ if __name__ == '__main__':
     r.gStyle.SetPaintTextFormat("1.1f")
     r.gStyle.SetOptFit(0000)
     r.gROOT.SetBatch()
-    # r.gStyle.SetPalette(r.kBird)
+    r.gStyle.SetPalette(r.kBird)
+    #r.gStyle.SetPalette(r.kBlackBody)
+    r.gStyle.SetNumberContours(999)
+
     main(options, args)
 ##-------------------------------------------------------------------------------------
