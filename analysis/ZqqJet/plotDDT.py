@@ -18,7 +18,7 @@ def main(options,args):
     c_ptH = ROOT.TCanvas("c_ptH","c_ptH",800,800);
 
     c_ptH.cd();
-    ROOT.gStyle.SetPalette(ROOT.kBird);
+    ROOT.gStyle.SetPalette(ROOT.kBlackBody);
     tt.GetXaxis().SetTitle('#rho = ln(m_{SD}^{2}/p_{T}^{2})')
     tt.GetYaxis().SetTitle('p_{T} (GeV)')
     tt.GetXaxis().SetTitleSize(0.043)
@@ -27,8 +27,14 @@ def main(options,args):
     tt.GetYaxis().SetTitleOffset(1.2)
     tt.GetXaxis().SetLabelSize(0.03)
     tt.GetYaxis().SetLabelSize(0.03)
-    tt.GetZaxis().SetLabelSize(0.03)
-    tt.Draw('COLZ2')
+    tt.GetZaxis().SetLabelSize(0.025)
+    tt.GetZaxis().SetTitleSize(0.04)
+    tt.GetZaxis().SetTitleOffset(1.2)
+    tt.GetZaxis().SetTitle('N_{2}^{1} cut at 26% QCD eff')
+    ROOT.gStyle.SetNumberContours(999)
+    palette = ROOT.TPaletteAxis(-1.74753,450.4435,-1.501524,1000.444,tt);
+    tt.Draw('COL')
+    palette.Draw()
     tag1 = ROOT.TLatex(0.67, 0.92, "35.9 fb^{-1} (13 TeV)")
     tag1.SetNDC();
     tag1.SetTextFont(42)
@@ -45,8 +51,8 @@ def main(options,args):
     tag2.Draw()
     tag3.Draw()
 
-    c_ptH.SaveAs("ptH.pdf");
-    c_ptH.SaveAs("ptH.png");
+    c_ptH.SaveAs("DDT.pdf");
+    c_ptH.SaveAs("DDT.png");
 
 ##----##----##----##----##----##----##
 if __name__ == '__main__':
