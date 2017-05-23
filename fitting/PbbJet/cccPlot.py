@@ -8,21 +8,21 @@ poiMap = {'r':"#mu_{H}",
           'r_z':"#mu_{Z}"}
         
 catDict = {}
-catDict['muonCR','r'] = '#splitline{Combined}{   #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
-catDict['cat1','r'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
-catDict['cat2','r'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
-catDict['cat3','r'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
-catDict['cat4','r'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
-catDict['cat5','r'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
-catDict['cat6','r'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['muonCR','r'] = '#splitline{Combined}{   #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat1','r'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat2','r'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat3','r'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat4','r'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat5','r'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat6','r'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
 
-catDict['muonCR','r_z'] = '#splitline{Combined}{   #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
-catDict['cat1','r_z'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
-catDict['cat2','r_z'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
-catDict['cat3','r_z'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
-catDict['cat4','r_z'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
-catDict['cat5','r_z'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
-catDict['cat6','r_z'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['muonCR','r_z'] = '#splitline{Combined}{   #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat1','r_z'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat2','r_z'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat3','r_z'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat4','r_z'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat5','r_z'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat6','r_z'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
 def cccPlot(poi = "r", rMin =-10, rMax=15, filename="ccc_r.pdf"):
     c1 = rt.TCanvas("c1")
     c1.SetLeftMargin(0.4)
