@@ -411,7 +411,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     elif 'cat6' in tag:
         ptRange = [800, 1000]
         
-    tag4 = r.TLatex(0.37, 0.77, "%i < p_{T} < %i GeV"%(ptRange[0],ptRange[1]))
+    passTag = 'double-b tag > 0.9'
+    if 'fail' in tag:
+        passTag = 'double-b tag < 0.9'
+
+
+    tag4 = r.TLatex(0.37, 0.77, "#splitline{%i < p_{T} < %i GeV}{%s}"%(ptRange[0],ptRange[1],passTag))
     tag4.SetNDC()
     tag4.SetTextFont(42)
     tag3.SetNDC()
@@ -584,7 +589,7 @@ def makeTF(pars, ratio):
 
     ratio.GetXaxis().SetTitleOffset(1.5)
     ratio.GetYaxis().SetTitleOffset(1.5)
-    ratio.GetZaxis().SetTitle('Ratio')
+    ratio.GetZaxis().SetTitle('Pass-to-fail Ratio')
     ratio.GetXaxis().SetNdivisions(504)
     ratio.GetYaxis().SetNdivisions(504)
     ratio.GetZaxis().SetNdivisions(504)
@@ -792,6 +797,33 @@ def makeTF(pars, ratio):
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+    
+    pave_param = r.TPaveText(0.17,0.72,0.27,0.82,"NDC")
+    pave_param.SetTextFont(42)
+    pave_param.SetFillColor(0)
+    pave_param.SetBorderSize(0)
+    pave_param.SetFillStyle(0)
+    pave_param.SetTextAlign(11)
+    pave_param.SetTextSize(0.045)
+    text = pave_param.AddText("#rho = #minus6")
+    text.SetTextAngle(75)
+    text.SetTextAlign(22)
+    text.SetTextSize(0.045)
+    pave_param.Draw()
+    
+    pave_param2 = r.TPaveText(0.62,0.18,0.72,0.28,"NDC")
+    pave_param2.SetTextFont(42)
+    pave_param2.SetFillColor(0)
+    pave_param2.SetBorderSize(0)
+    pave_param2.SetFillStyle(0)
+    pave_param2.SetTextAlign(11)
+    pave_param2.SetTextSize(0.045)
+    text2 = pave_param2.AddText("#rho = #minus2.1")
+    text2.SetTextAngle(40)
+    text2.SetTextAlign(22)
+    text2.SetTextSize(0.045)
+    pave_param2.Draw()
+    
 
     
     c.SaveAs(options.odir + "/mlfit/tf_msdcolz.pdf")
@@ -822,6 +854,33 @@ def makeTF(pars, ratio):
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+
+    
+    pave_param = r.TPaveText(0.18,0.5,0.28,0.6,"NDC")
+    pave_param.SetTextFont(42)
+    pave_param.SetFillColor(0)
+    pave_param.SetBorderSize(0)
+    pave_param.SetFillStyle(0)
+    pave_param.SetTextAlign(11)
+    pave_param.SetTextSize(0.045)
+    text = pave_param.AddText("m_{SD} = 40 GeV")
+    text.SetTextAngle(-70)
+    text.SetTextAlign(22)
+    text.SetTextSize(0.045)
+    pave_param.Draw()
+    
+    pave_param2 = r.TPaveText(0.57,0.65,0.67,0.75,"NDC")
+    pave_param2.SetTextFont(42)
+    pave_param2.SetFillColor(0)
+    pave_param2.SetBorderSize(0)
+    pave_param2.SetFillStyle(0)
+    pave_param2.SetTextAlign(11)
+    pave_param2.SetTextSize(0.045)
+    text2 = pave_param2.AddText("m_{SD} = 201 GeV")
+    text2.SetTextAngle(-72)
+    text2.SetTextAlign(22)
+    text2.SetTextSize(0.045)
+    pave_param2.Draw()
     
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.pdf")
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.C")
@@ -857,8 +916,8 @@ if __name__ == '__main__':
     r.gStyle.SetPaintTextFormat("1.1f")
     r.gStyle.SetOptFit(0000)
     r.gROOT.SetBatch()
-    #r.gStyle.SetPalette(r.kBird)
-    r.gStyle.SetPalette(r.kBlackBody)
+    r.gStyle.SetPalette(r.kBird)
+    #r.gStyle.SetPalette(r.kBlackBody)
     r.gStyle.SetNumberContours(999)
 
     main(options, args)

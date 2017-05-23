@@ -25,23 +25,26 @@ if __name__ == "__main__":
     parser.add_option('--scale',dest='scale', default=1,type='float',help='scale factor to scale MC (assuming only using a fraction of the data)')
     parser.add_option('-l','--lumi'   ,action='store',type='float',dest='lumi'   ,default=36.4, help='lumi')
     parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
+    parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)',
+                      metavar='ifile_loose')
     parser.add_option('-t','--toys'   ,action='store',type='int',dest='toys'   ,default=200, help='number of toys')
-    
+    parser.add_option('-r','--r',dest='r', default=0 ,type='float',help='default value of r')    
     parser.add_option('-n','--n' ,action='store',type='int',dest='n'   ,default=5*20, help='number of bins')
     parser.add_option('--just-plot', action='store_true', dest='justPlot', default=False, help='just plot')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default=False, help='run on asimov dataset')
     parser.add_option('--blind', action='store_true', dest='blind', default=False, help='run on blinded dataset')
     parser.add_option('--dry-run',dest="dryRun",default=False,action='store_true',
                   help="Just print out commands to run")    
+    parser.add_option('-o', '--odir', dest='odir', default='./', help='directory to write plots', metavar='odir')
 
 
     (options,args) = parser.parse_args()
     if options.pseudo:
-        cardsDir1 = 'cards_mc_r%ip%i'%(options.NR1,options.NP1)
-        cardsDir2 = 'cards_mc_r%ip%i'%(options.NR2,options.NP2)
+        cardsDir1 = '%s/cards_mc_r%ip%i'%(options.odir,options.NR1,options.NP1)
+        cardsDir2 = '%s/cards_mc_r%ip%i'%(options.odir,options.NR2,options.NP2)
     else:        
-        cardsDir1 = 'cards_r%ip%i'%(options.NR1,options.NP1)
-        cardsDir2 = 'cards_r%ip%i'%(options.NR2,options.NP2)
+        cardsDir1 = '%s/cards_r%ip%i'%(options.odir,options.NR1,options.NP1)
+        cardsDir2 = '%s/cards_r%ip%i'%(options.odir,options.NR2,options.NP2)
 
     pseudoString = ''
     if options.pseudo:
@@ -50,20 +53,37 @@ if __name__ == "__main__":
     blindString = ''
     if options.blind:
         blindString = '--blind'
-    
+        
+    exec_me('mkdir -p %s'%options.odir,options.dryRun)
+    exec_me('mkdir -p %s/ftest_r%ip%i_r%ip%i_muonCR'%(options.odir,options.NR1, options.NP1, options.NR2, options.NP2),options.dryRun)
+    exec_me('mkdir -p %s/ftest_r%ip%i_r%ip%i'%(options.odir,options.NR1, options.NP1, options.NR2, options.NP2),options.dryRun)
     exec_me('mkdir -p %s'%cardsDir1,options.dryRun)
     exec_me('mkdir -p %s'%cardsDir2,options.dryRun)
-    exec_me('python buildRhalphabetHbb.py -i %s --scale %f -o %s --nr %i --np %i %s %s --use-qcd '%(options.ifile, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString),options.dryRun )
-    exec_me('python buildRhalphabetHbb.py -i %s --scale %f -o %s --nr %i --np %i %s %s --use-qcd '%(options.ifile, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString),options.dryRun )
-    exec_me('python makeCardsHbb.py -i %s -o %s'%(options.ifile,cardsDir1),options.dryRun)
-    exec_me('python makeCardsHbb.py -i %s -o %s'%(options.ifile,cardsDir2),options.dryRun)
-    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > card_rhalphabet_r%ip%i.txt'%(cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,options.NR1, options.NP1),options.dryRun)
-    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > card_rhalphabet_r%ip%i.txt'%(cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,options.NR2, options.NP2),options.dryRun)
-    p1 = int((options.NR1+1)*(options.NP1+1))
-    p2 = int((options.NR2+1)*(options.NP2+1))
+    exec_me('python buildRhalphabetHbb.py -i %s --ifile-loose %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd --addHptShape '%(options.ifile, options.ifile_loose, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString),options.dryRun )
+    exec_me('python buildRhalphabetHbb.py -i %s --ifile-loose %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd --addHptShape '%(options.ifile, options.ifile_loose, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString),options.dryRun )
+    exec_me('python writeMuonCRDatacard.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/ -o %s/'%(cardsDir1),options.dryRun)
+    exec_me('python writeMuonCRDatacard.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/ -o %s/'%(cardsDir2),options.dryRun)
+    exec_me('python makeCardsHbb.py -i %s --ifile-loose %s -o %s --remove-unmatched --no-mcstat-shape'%(options.ifile,options.ifile_loose,cardsDir1),options.dryRun)
+    exec_me('python makeCardsHbb.py -i %s --ifile-loose %s -o %s --remove-unmatched --no-mcstat-shape'%(options.ifile,options.ifile_loose,cardsDir2),options.dryRun)
+    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt %s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i.txt'%(cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,options.NR1, options.NP1),options.dryRun)
+    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt %s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i.txt'%(cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,options.NR2, options.NP2),options.dryRun)
+    exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root"%(cardsDir1, options.NR1, options.NP1, cardsDir1, options.NR1, options.NP1))
+    exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root"%(cardsDir2, options.NR2, options.NP2, cardsDir2, options.NR2, options.NP2))
+    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i.txt'%(cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,options.NR1, options.NP1),options.dryRun)
+    exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i.txt'%(cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,cardsDir2,options.NR2, options.NP2),options.dryRun)
+    exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_r%ip%i.txt -o %s/card_rhalphabet_floatZ_r%ip%i.root"%(cardsDir1, options.NR1, options.NP1, cardsDir1, options.NR1, options.NP1))
+    exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_r%ip%i.txt -o %s/card_rhalphabet_floatZ_r%ip%i.root"%(cardsDir2, options.NR2, options.NP2, cardsDir2, options.NR2, options.NP2))
+
+    p1 = int((options.NR1+1)*(options.NP1+1)) + 2 # paramaters including floating Hbb and Zbb signals
+    p2 = int((options.NR2+1)*(options.NP2+1)) + 2 # parameters including floating Hbb and Zbb signals
     
-    exec_me('mkdir -p ftest_r%ip%i_r%ip%i'%(options.NR1, options.NP1, options.NR2, options.NP2),options.dryRun)
-    exec_me('python limit.py -M FTest --datacard card_rhalphabet_r%ip%i.txt --datacard-alt card_rhalphabet_r%ip%i.txt -o ftest_r%ip%i_r%ip%i -n %i --p1 %i --p2 %i -t %i --lumi %f '%(options.NR1, options.NP1, options.NR2, options.NP2,options.NR1, options.NP1, options.NR2, options.NP2, options.n, p1, p2, options.toys,options.lumi ),options.dryRun)
+
+    dataString = ''
+    if not options.pseudo:
+        dataString = '--data'
+    
+    exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root --datacard-alt %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root -o %s/ftest_r%ip%i_r%ip%i_muonCR -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f'%(cardsDir1, options.NR1, options.NP1, cardsDir2, options.NR2, options.NP2, options.odir, options.NR1, options.NP1, options.NR2, options.NP2, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
+    #exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_floatZ_r%ip%i.root --datacard-alt %s/card_rhalphabet_floatZ_r%ip%i.root -o %s/ftest_r%ip%i_r%ip%i -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f --freezeNuisances tqqeffSF,tqqnormSF'%(cardsDir1, options.NR1, options.NP1, cardsDir2, options.NR2, options.NP2, options.odir, options.NR1, options.NP1, options.NR2, options.NP2, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
      
 
      
