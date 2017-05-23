@@ -1,8 +1,9 @@
-
-
 import ROOT as rt
 from tools import *
 from array import array
+from scipy.interpolate import Rbf, interp1d
+import itertools
+import numpy as np
 
 def exec_me(command,dryRun=True):
     print command
@@ -100,6 +101,40 @@ def contourFromTH2(h2in, threshold, minPoints=20):
 
     return finalcurv
 
+
+def interpolate2D(hist,epsilon=1,smooth=0):
+    x = array('d',[])
+    y = array('d',[])
+    z = array('d',[])
+    
+    binWidthX = float(hist.GetXaxis().GetBinWidth(1))
+    binWidthY = float(hist.GetYaxis().GetBinWidth(1))
+    
+    for i in range(1, hist.GetNbinsX()+1):
+        for j in range(1, hist.GetNbinsY()+1):
+            if hist.GetBinContent(i,j)>0.:
+                x.append(hist.GetXaxis().GetBinCenter(i))
+                y.append(hist.GetYaxis().GetBinCenter(j))
+                z.append(hist.GetBinContent(i,j))
+
+    mgMin = hist.GetXaxis().GetBinCenter(1)
+    mgMax = hist.GetXaxis().GetBinCenter(hist.GetNbinsX())#+hist.GetXaxis().GetBinWidth(hist.GetNbinsX())
+    mchiMin = hist.GetYaxis().GetBinCenter(1)
+    mchiMax = hist.GetYaxis().GetBinCenter(hist.GetNbinsY())#+hist.GetYaxis().GetBinWidth(hist.GetNbinsY())
+    
+    myX = np.linspace(mgMin, mgMax,int((mgMax-mgMin)/binWidthX+1))
+    myY = np.linspace(mchiMin, mchiMax, int((mchiMax-mchiMin)/binWidthY+1))
+    myXI, myYI = np.meshgrid(myX,myY)
+
+    rbf = Rbf(x, y, z, function='multiquadric', epsilon=epsilon,smooth=smooth)
+    myZI = rbf(myXI, myYI)
+    
+    for i in range(1, hist.GetNbinsX()+1):
+        for j in range(1, hist.GetNbinsY()+1):
+            if hist.GetBinContent(i,j)<=0.:
+                hist.SetBinContent(i,j,myZI[j-1][i-1])
+    return hist
+
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--data', action='store_true', dest='isData', default=False, help='is data')
@@ -116,24 +151,31 @@ if __name__ == '__main__':
     rt.gROOT.SetBatch()
     rt.gStyle.SetOptTitle(0)
     rt.gStyle.SetOptStat(0)
-    rt.gStyle.SetPalette(rt.kBlackBody)
+    #rt.gStyle.SetPalette(rt.kBlackBody)
+    rt.gStyle.SetPalette(rt.kBird)
     rt.gStyle.SetNumberContours(999)
 
     #exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges r=0,5:r_z=0,2 --algo grid --points 100 -d card_rhalphabet_muonCR_floatZ.root -n 2D --saveWorkspace',True)
     c = rt.TCanvas('c','c',500,400)
     
     if options.isData:
+        #dataTag = 'data_nosys'
         dataTag = 'data'
     else:
+        #dataTag = 'asimov_nosys'
         dataTag = 'asimov'
     
     tfile = rt.TFile.Open('higgsCombine2D_%s.MultiDimFit.mH120.root'%(dataTag))
     limit = tfile.Get('limit')
     fit = bestFit(limit, 'r', 'r_z')
-    limit.Draw("r_z:r>>htemp(20,-4,8,20,0,3)","2*deltaNLL*(quantileExpected>-1)","colz")
+    limit.Draw("r_z:r>>htemp(21,-4,8,21,0,3)","2*deltaNLL*(quantileExpected>-1)*(deltaNLL>0)*(deltaNLL<100)","colz")
+    #limit.Draw("r_z:r>>htemp(21,-6,12,21,0,3)","2*deltaNLL*(quantileExpected>-1)*(deltaNLL>0)*(deltaNLL<100)","colz")
     #contours = array('d',[2.3,5.99])
     htemp = rt.gPad.GetPrimitive('htemp')
-    htemp.GetXaxis().SetTitle('#mu')
+    if options.isData:
+        htemp.SetBinContent(htemp.FindBin(1.5,0.5),0)
+    htemp = interpolate2D(htemp)
+    htemp.GetXaxis().SetTitle('#mu_{H}')
     htemp.GetYaxis().SetTitle('#mu_{Z}')
     htemp.GetZaxis().SetTitle('-2 #Delta log L(%s)'%dataTag)
     htemp.SetMinimum(0.)
@@ -145,16 +187,21 @@ if __name__ == '__main__':
     
     cl68 = contourFromTH2(htemp, 2.3)
     cl95 = contourFromTH2(htemp, 5.99)
+    cl997 = contourFromTH2(htemp, 11.83)
     cl68.SetLineColor(rt.kBlack)
     cl68.SetLineWidth(2)
     cl68.SetLineStyle(1)
     cl95.SetLineColor(rt.kBlack)
     cl95.SetLineWidth(2)
     cl95.SetLineStyle(2)
+    cl997.SetLineColor(rt.kBlack)
+    cl997.SetLineWidth(2)
+    cl997.SetLineStyle(3)
     
     htemp.DrawCopy("colz")
     cl68.Draw("L SAME")
     cl95.Draw("L SAME")
+    #cl997.Draw("L SAME")
     fit.Draw("P SAME")
 
     smx = 1.
@@ -189,13 +236,14 @@ if __name__ == '__main__':
 
     
     
-    c.Print('deltaLL2D_%s.pdf'%dataTag)
-    c.Print('deltaLL2D_%s.C'%dataTag)
+    c.Print('deltaLL2D_%s.pdf'%dataTag.lower())
+    c.Print('deltaLL2D_%s.C'%dataTag.lower())
 
     
     htemp.Draw("axis")
     cl68.Draw("L SAME")
     cl95.Draw("L SAME")
+    #cl997.Draw("L SAME")
     fit.Draw("P SAME")
 
     
@@ -217,7 +265,7 @@ if __name__ == '__main__':
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
 
-    leg = rt.TLegend(0.6,0.7,0.85,0.85)
+    leg = rt.TLegend(0.6,0.7,0.85,0.87)
     leg.SetTextFont(42)
     leg.SetFillColor(rt.kWhite)
     leg.SetLineColor(rt.kWhite)
