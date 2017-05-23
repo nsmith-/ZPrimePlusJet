@@ -3,14 +3,26 @@ from RootIterator import RootIterator
 
 from optparse import OptionParser
 
+
+poiMap = {'r':"#mu_{H}",
+          'r_z':"#mu_{Z}"}
+        
 catDict = {}
-catDict['muonCR'] = '#splitline{Combined}{   #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat1'] = '#splitline{[450, 500  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat2'] = '#splitline{[500, 550  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat3'] = '#splitline{[550, 600  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat4'] = '#splitline{[600, 675  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat5'] = '#splitline{[675, 800  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat6'] = '#splitline{[800, 1000 GeV]}{     #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
+catDict['muonCR','r'] = '#splitline{Combined}{   #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['cat1','r'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['cat2','r'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['cat3','r'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['cat4','r'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['cat5','r'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+catDict['cat6','r'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{H} = %.1f^{#minus%.1f}_{+%.1f}}}'
+
+catDict['muonCR','r_z'] = '#splitline{Combined}{   #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['cat1','r_z'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['cat2','r_z'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['cat3','r_z'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['cat4','r_z'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['cat5','r_z'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
+catDict['cat6','r_z'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{Z} = %.2f^{#minus%.2f}_{+%.2f}}}'
 def cccPlot(poi = "r", rMin =-10, rMax=15, filename="ccc_r.pdf"):
     c1 = rt.TCanvas("c1")
     c1.SetLeftMargin(0.4)
@@ -36,9 +48,7 @@ def cccPlot(poi = "r", rMin =-10, rMax=15, filename="ccc_r.pdf"):
         if prefix in a.GetName():
             nChann+=1
 
-    poiMap = {'r':"#mu",
-              'r_z':"#mu_{Z}"}
-    frame = rt.TH2F("frame",";best fit %s;"%poiMap[poi],1,rMin,rMax,nChann,0,nChann)
+    frame = rt.TH2F("frame",";%s;"%poiMap[poi],1,rMin,rMax,nChann,0,nChann)
 
     iChann = 0
     points = rt.TGraphAsymmErrors(nChann)
@@ -57,9 +67,9 @@ def cccPlot(poi = "r", rMin =-10, rMax=15, filename="ccc_r.pdf"):
                 points.SetPointError(iChann, -ri.getAsymErrorLo(), ri.getAsymErrorHi(), 0, 0)
             iChann+=1
             if channel=='muonCR':
-                frame.GetYaxis().SetBinLabel(iChann, catDict[channel]%(rFit.getVal(),-rFit.getAsymErrorLo(), rFit.getAsymErrorHi()))
+                frame.GetYaxis().SetBinLabel(iChann, (catDict[channel,options.poi]%(rFit.getVal(),-rFit.getAsymErrorLo(), rFit.getAsymErrorHi())).replace('-','#minus'))
             else:
-                frame.GetYaxis().SetBinLabel(iChann, catDict[channel]%(ri.getVal(),-ri.getAsymErrorLo(), ri.getAsymErrorHi()))
+                frame.GetYaxis().SetBinLabel(iChann, (catDict[channel,options.poi]%(ri.getVal(),-ri.getAsymErrorLo(), ri.getAsymErrorHi())).replace('-','#minus'))
     points.SetLineColor(rt.kRed)
     points.SetLineWidth(3)
     points.SetMarkerStyle(21)
@@ -85,7 +95,7 @@ def cccPlot(poi = "r", rMin =-10, rMax=15, filename="ccc_r.pdf"):
     l.SetTextFont(62)
     l.DrawLatex(0.41,0.85,"CMS")
     l.SetTextFont(52)
-    l.DrawLatex(0.41,0.8,"Internal")
+    l.DrawLatex(0.41,0.8,"Preliminary")
     tag1 = rt.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%(35.9))
     tag1.SetNDC()
     tag1.SetTextFont(42)
