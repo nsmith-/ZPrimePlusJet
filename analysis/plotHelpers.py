@@ -587,7 +587,8 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=None,unitnorm=False):
     #color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
     #style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
-    leg = ROOT.TLegend(0.65,0.65,0.9,0.9)
+    #leg = ROOT.TLegend(0.65,0.65,0.9,0.9)
+    leg = ROOT.TLegend(0.65,0.62,0.9,0.87)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.027)
@@ -622,7 +623,8 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
          i+=1
          if i==1:
 		s.SetMaximum(1.5*maxval)
-         	s.SetMinimum(0.01)
+         	#s.SetMinimum(0.01)
+		s.SetMinimum(0.4)
 	 	if unitnorm : 
 			s.SetMaximum(100.)
 			s.DrawNormalized("hist")
@@ -636,15 +638,34 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.033)
-    tag2 = ROOT.TLatex(0.17,0.92,"CMS")
+    tag2 = ROOT.TLatex(0.18,0.83,"CMS")
     tag2.SetNDC(); tag2.SetTextFont(62)
-    tag3 = ROOT.TLatex(0.25,0.92,"Simulation Preliminary")
+    tag3 = ROOT.TLatex(0.18,0.79,"Simulation")
     tag3.SetNDC(); tag3.SetTextFont(52)
-    tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw()
+    tag4 = ROOT.TLatex(0.18,0.75,"Preliminary")
+    tag4.SetNDC(); tag4.SetTextFont(52)
+    
+    tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag4.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw(); tag4.Draw()
+
+    
+    ptRange = [450, 1000]
+    if 'msd_ak8_topR6_N2_pass' in name:
+        passTag = 'double-b tag > 0.9'
+    elif 'msd_ak8_topR6_N2_fail' in name:
+        passTag = 'double-b tag < 0.9'
+    if 'msd_ak8_topR6_N2_pass' in name or 'msd_ak8_topR6_N2_fail' in name:
+        tag5 = ROOT.TLatex(0.31, 0.83, "#splitline{%i < p_{T} < %i GeV}{%s}"%(ptRange[0],ptRange[1],passTag))
+        tag5.SetNDC()
+        tag5.SetTextFont(42)
+        tag5.SetTextSize(0.025)
+        tag5.Draw()
+    
     c.SaveAs(pdir+"/"+name+".pdf")
+    c.SaveAs(pdir+"/"+name+".C")
     ROOT.gPad.SetLogy()
 
     c.SaveAs(pdir+"/"+name+"_log.pdf")
+    c.SaveAs(pdir+"/"+name+"_log.C")
     if ofile is not None:
         ofile.cd()
         c.Write('c'+name)
