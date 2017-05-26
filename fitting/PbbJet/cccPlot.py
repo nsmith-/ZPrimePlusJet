@@ -1,15 +1,29 @@
 import ROOT as rt
 from RootIterator import RootIterator
 
+from optparse import OptionParser
+
+
+poiMap = {'r':"#mu_{H}",
+          'r_z':"#mu_{Z}"}
+        
 catDict = {}
-catDict['muonCR'] = '#splitline{Combined}{   #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat1'] = '#splitline{[450, 500  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat2'] = '#splitline{[500, 550  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat3'] = '#splitline{[550, 600  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat4'] = '#splitline{[600, 675  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat5'] = '#splitline{[675, 800  GeV]}{    #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-catDict['cat6'] = '#splitline{[800, 1000 GeV]}{     #scale[0.8]{#mu=%.2f^{-%.2f}_{+%.2f}}}'
-def cccPlot(poi = "r", rMax=10, filename="ccc.pdf"):
+catDict['muonCR','r'] = '#splitline{Combined}{   #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat1','r'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat2','r'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat3','r'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat4','r'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat5','r'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+catDict['cat6','r'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{H} = %.1f_{#minus%.1f}^{+%.1f}}}'
+
+catDict['muonCR','r_z'] = '#splitline{Combined}{   #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat1','r_z'] = '#splitline{[450, 500] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat2','r_z'] = '#splitline{[500, 550] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat3','r_z'] = '#splitline{[550, 600] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat4','r_z'] = '#splitline{[600, 675] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat5','r_z'] = '#splitline{[675, 800] GeV}{    #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+catDict['cat6','r_z'] = '#splitline{[800, 1000] GeV}{     #scale[0.8]{#mu_{Z} = %.2f_{#minus%.2f}^{+%.2f}}}'
+def cccPlot(poi = "r", rMin =-10, rMax=15, filename="ccc_r.pdf"):
     c1 = rt.TCanvas("c1")
     c1.SetLeftMargin(0.4)
     c1.SetBottomMargin(0.12)
@@ -33,7 +47,8 @@ def cccPlot(poi = "r", rMax=10, filename="ccc.pdf"):
     for a in RootIterator(fit_alternate.floatParsFinal()):
         if prefix in a.GetName():
             nChann+=1
-    frame = rt.TH2F("frame",";best fit #sigma/#sigma_{SM};",1,-10,15,nChann,0,nChann)
+
+    frame = rt.TH2F("frame",";%s;"%poiMap[poi],1,rMin,rMax,nChann,0,nChann)
 
     iChann = 0
     points = rt.TGraphAsymmErrors(nChann)
@@ -42,14 +57,19 @@ def cccPlot(poi = "r", rMax=10, filename="ccc.pdf"):
         if (rt.TString(a.GetName()).Index(prefix) == 0):
             ri = a
             channel = a.GetName()
-            channel = channel.replace(prefix,"")
-            points.SetPoint(iChann,       ri.getVal(), iChann+0.5)
-            points.SetPointError(iChann, -ri.getAsymErrorLo(), ri.getAsymErrorHi(), 0, 0)
+            channel = channel.replace(prefix,"")            
+            if channel=='muonCR':
+                # put at some dummy value
+                points.SetPoint(iChann,       100, iChann+0.5)
+                points.SetPointError(iChann, -1, 1, 0, 0)
+            else:
+                points.SetPoint(iChann,       ri.getVal(), iChann+0.5)
+                points.SetPointError(iChann, -ri.getAsymErrorLo(), ri.getAsymErrorHi(), 0, 0)
             iChann+=1
             if channel=='muonCR':
-                frame.GetYaxis().SetBinLabel(iChann, catDict[channel]%(rFit.getVal(),-rFit.getAsymErrorLo(), rFit.getAsymErrorHi()))
+                frame.GetYaxis().SetBinLabel(iChann, (catDict[channel,options.poi]%(rFit.getVal(),-rFit.getAsymErrorLo(), rFit.getAsymErrorHi())).replace('-','#minus'))
             else:
-                frame.GetYaxis().SetBinLabel(iChann, catDict[channel]%(ri.getVal(),-ri.getAsymErrorLo(), ri.getAsymErrorHi()))
+                frame.GetYaxis().SetBinLabel(iChann, (catDict[channel,options.poi]%(ri.getVal(),-ri.getAsymErrorLo(), ri.getAsymErrorHi())).replace('-','#minus'))
     points.SetLineColor(rt.kRed)
     points.SetLineWidth(3)
     points.SetMarkerStyle(21)
@@ -75,7 +95,7 @@ def cccPlot(poi = "r", rMax=10, filename="ccc.pdf"):
     l.SetTextFont(62)
     l.DrawLatex(0.41,0.85,"CMS")
     l.SetTextFont(52)
-    l.DrawLatex(0.41,0.8,"Internal")
+    l.DrawLatex(0.41,0.8,"Preliminary")
     tag1 = rt.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%(35.9))
     tag1.SetNDC()
     tag1.SetTextFont(42)
@@ -87,7 +107,15 @@ def cccPlot(poi = "r", rMax=10, filename="ccc.pdf"):
     c1.Print(filename.replace('.pdf','.C'))
 
 if __name__ == '__main__':
+    parser = OptionParser()
+    parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
+    parser.add_option('--rMin',dest='rMin', default=-10 ,type='float',help='minimum of r (signal strength) in profile likelihood plot')
+    parser.add_option('--rMax',dest='rMax', default=15,type='float',help='maximum of r (signal strength) in profile likelihood plot')  
     
+    parser.add_option('-P','--poi'   ,action='store',type='string',dest='poi'   ,default='r', help='poi name')  
+
+    
+    (options, args) = parser.parse_args()
     rt.gROOT.SetBatch()
-    f = rt.TFile.Open('cards_2017_03_29_fixtrig_hptcorr/higgsCombineTest.ChannelCompatibilityCheck.mH125.root')
-    cccPlot()
+    f = rt.TFile.Open('output-miniaod-pfmet140-hptckkw-hqq125ptShape/higgsCombine%s.ChannelCompatibilityCheck.mH125.root'%options.poi)
+    cccPlot(options.poi, options.rMin, options.rMax, "ccc_"+options.poi+".pdf")

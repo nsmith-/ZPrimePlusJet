@@ -18,6 +18,7 @@ def main(options,args):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
     #odir = "plots_2016_10_31/"
     idir = options.idir
+    idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
     odir = options.odir
     lumi = options.lumi
     
@@ -31,7 +32,7 @@ def main(options,args):
 	       'Phibb': ' Phi(125)(b#bar{b})'}
 
         
-    tfiles = {#'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_0_ptw_1000pb_weighted.root'],#amcatnloFXFX_pythia8_1000pb_weighted.root'],
+    tfiles = {#'ggHbb': [idirData + '/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root']
 	       'ggHbbp': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
                'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
                'ZHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
@@ -113,8 +114,9 @@ def main(options,args):
         ofile.cd()
         for process, h in hs.iteritems():
             h.Write()
+
         
-        #c.Write()
+        c.Write()
 	
 
 

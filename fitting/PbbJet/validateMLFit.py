@@ -345,7 +345,13 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     
 
     data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
-    data.Draw('pez')
+    data.Draw('pez')    
+    if 'cat1' in tag:
+        data.GetXaxis().SetRangeUser(40,201 - 7*5)
+    elif 'cat2' in tag:
+        data.GetXaxis().SetRangeUser(40,201 - 7*3)
+    else:
+        data.GetXaxis().SetRangeUser(40,201)
     htot.Draw('E2same')
     #    htotsig.Draw('E2same')
 
@@ -377,7 +383,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     g_data.Draw('pezsame')
     l.Draw()
     tag1 = r.TLatex(0.67, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
-    tag1.SetNDC();
+    tag1.SetNDC()
     tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
     tag2 = r.TLatex(0.2, 0.82, "CMS")
@@ -387,13 +393,41 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
         tag3 = r.TLatex(0.2, 0.77, "Preliminary")
     else:
         tag3 = r.TLatex(0.2, 0.77, "Simulation Preliminary")
+
+        
+    ptRange = [450, 1000]
+    if 'cat1' in tag:
+        ptRange = [450, 500]
+    elif 'cat2' in tag:
+        ptRange = [500, 550]
+    elif 'cat3' in tag:
+        ptRange = [550, 600]
+    elif 'cat3' in tag:
+        ptRange = [550, 600]
+    elif 'cat4' in tag:
+        ptRange = [600, 675]
+    elif 'cat5' in tag:
+        ptRange = [675, 800]
+    elif 'cat6' in tag:
+        ptRange = [800, 1000]
+        
+    passTag = 'double-b tag > 0.9'
+    if 'fail' in tag:
+        passTag = 'double-b tag < 0.9'
+
+
+    tag4 = r.TLatex(0.37, 0.77, "#splitline{%i < p_{T} < %i GeV}{%s}"%(ptRange[0],ptRange[1],passTag))
+    tag4.SetNDC()
+    tag4.SetTextFont(42)
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
     tag3.SetTextSize(0.045)
+    tag4.SetTextSize(0.035)
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+    tag4.Draw()
     data.SetMaximum(data.GetMaximum() * 1.2)
 
     c.cd()
@@ -474,6 +508,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     iOneWithErrors.SetMarkerSize(0)
     iOneWithErrors.SetLineWidth(2)
     iRatio.Draw('pez')
+    if 'cat1' in tag:
+        iRatio.GetXaxis().SetRangeUser(40,201 - 7*5)
+    elif 'cat2' in tag:
+        iRatio.GetXaxis().SetRangeUser(40,201 - 7*3)
+    else:
+        iRatio.GetXaxis().SetRangeUser(40,201)
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s' % tag)
     iOneWithErrorsLine.SetFillStyle(0)
 
@@ -549,7 +589,7 @@ def makeTF(pars, ratio):
 
     ratio.GetXaxis().SetTitleOffset(1.5)
     ratio.GetYaxis().SetTitleOffset(1.5)
-    ratio.GetZaxis().SetTitle('Ratio')
+    ratio.GetZaxis().SetTitle('Pass-to-fail Ratio')
     ratio.GetXaxis().SetNdivisions(504)
     ratio.GetYaxis().SetNdivisions(504)
     ratio.GetZaxis().SetNdivisions(504)
@@ -617,7 +657,7 @@ def makeTF(pars, ratio):
 
     
     c.SetLogz(0)
-    Npoints = 100
+    Npoints = 10
     f2graph = r.TGraph2D()
     N = -1
     for i in range(Npoints+1):
@@ -757,6 +797,33 @@ def makeTF(pars, ratio):
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+    
+    pave_param = r.TPaveText(0.17,0.72,0.27,0.82,"NDC")
+    pave_param.SetTextFont(42)
+    pave_param.SetFillColor(0)
+    pave_param.SetBorderSize(0)
+    pave_param.SetFillStyle(0)
+    pave_param.SetTextAlign(11)
+    pave_param.SetTextSize(0.045)
+    text = pave_param.AddText("#rho = #minus6")
+    text.SetTextAngle(75)
+    text.SetTextAlign(22)
+    text.SetTextSize(0.045)
+    pave_param.Draw()
+    
+    pave_param2 = r.TPaveText(0.62,0.18,0.72,0.28,"NDC")
+    pave_param2.SetTextFont(42)
+    pave_param2.SetFillColor(0)
+    pave_param2.SetBorderSize(0)
+    pave_param2.SetFillStyle(0)
+    pave_param2.SetTextAlign(11)
+    pave_param2.SetTextSize(0.045)
+    text2 = pave_param2.AddText("#rho = #minus2.1")
+    text2.SetTextAngle(40)
+    text2.SetTextAlign(22)
+    text2.SetTextSize(0.045)
+    pave_param2.Draw()
+    
 
     
     c.SaveAs(options.odir + "/mlfit/tf_msdcolz.pdf")
@@ -787,6 +854,33 @@ def makeTF(pars, ratio):
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
+
+    
+    pave_param = r.TPaveText(0.18,0.5,0.28,0.6,"NDC")
+    pave_param.SetTextFont(42)
+    pave_param.SetFillColor(0)
+    pave_param.SetBorderSize(0)
+    pave_param.SetFillStyle(0)
+    pave_param.SetTextAlign(11)
+    pave_param.SetTextSize(0.045)
+    text = pave_param.AddText("m_{SD} = 40 GeV")
+    text.SetTextAngle(-70)
+    text.SetTextAlign(22)
+    text.SetTextSize(0.045)
+    pave_param.Draw()
+    
+    pave_param2 = r.TPaveText(0.57,0.65,0.67,0.75,"NDC")
+    pave_param2.SetTextFont(42)
+    pave_param2.SetFillColor(0)
+    pave_param2.SetBorderSize(0)
+    pave_param2.SetFillStyle(0)
+    pave_param2.SetTextAlign(11)
+    pave_param2.SetTextSize(0.045)
+    text2 = pave_param2.AddText("m_{SD} = 201 GeV")
+    text2.SetTextAngle(-72)
+    text2.SetTextAlign(22)
+    text2.SetTextSize(0.045)
+    pave_param2.Draw()
     
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.pdf")
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.C")

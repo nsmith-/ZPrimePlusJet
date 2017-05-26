@@ -149,17 +149,28 @@ def main(options,args):
     if options.poi=='r_z':
         rFrame.SetXTitle("#mu_{Z}")
     else:        
-        rFrame.SetXTitle("#mu")
+        rFrame.SetXTitle("#mu_{H}")
     rFrame.SetYTitle("-2 #Delta log L(%s)"%dataTag)
     rFrame.SetTitleSize(0.04,"X")
     rFrame.SetTitleOffset(0.85,"X")
-    rFrame.SetTitleSize(0.04,"Y")
-    rFrame.SetTitleOffset(0.8,"Y")
-    rFrame.SetLabelSize(0.04,"X")
-    rFrame.SetLabelSize(0.04,"Y")
-    rFrame.SetNdivisions(505,"X")
-    
-    leg = rt.TLegend(0.68,0.17,0.89,0.33)
+    rFrame.GetXaxis().SetTitleOffset(1.1)
+    rFrame.GetXaxis().SetTitleSize(0.055)
+    rFrame.GetXaxis().SetLabelSize(0.05)
+    rFrame.GetYaxis().SetTitleSize(0.055)
+    rFrame.GetYaxis().SetLabelSize(0.05)
+    rFrame.GetYaxis().SetTitleOffset(1.1)
+    #rFrame.SetTitleSize(0.04,"Y")
+    #rFrame.SetTitleOffset(0.8,"Y")
+    #rFrame.SetLabelSize(0.04,"X")
+    #rFrame.SetLabelSize(0.04,"Y")
+    rFrame.SetNdivisions(507,"X")
+    rt.gPad.Update()
+    rFrame.Draw()
+
+    if dataTag=='asimov' and options.poi=='r_z':
+        leg = rt.TLegend(0.18,0.17,0.39,0.33)
+    else:
+        leg = rt.TLegend(0.69,0.17,0.90,0.33)
     leg.SetTextFont(42)
     leg.SetFillColor(rt.kWhite)
     leg.SetLineColor(rt.kWhite)
