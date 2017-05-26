@@ -152,7 +152,21 @@ if __name__ == '__main__':
     rt.gStyle.SetOptTitle(0)
     rt.gStyle.SetOptStat(0)
     #rt.gStyle.SetPalette(rt.kBlackBody)
-    rt.gStyle.SetPalette(rt.kBird)
+    #rt.gStyle.SetPalette(rt.kBird)
+    #rt.gStyle.SetPalette(rt.kCherry)
+    stops = [ 0.0, 1.0]
+    red =   [ 1.0, 0.3]
+    green = [ 1.0, 0.3]
+    blue =  [ 1.0, 1.0]
+
+    s = array('d', stops)
+    r = array('d', red)
+    g = array('d', green)
+    b = array('d', blue)
+
+    npoints = len(s)
+    rt.TColor.CreateGradientColorTable(npoints, s, r, g, b, 999)
+
     rt.gStyle.SetNumberContours(999)
 
     #exec_me('combine -M MultiDimFit --minimizerTolerance 0.001 --minimizerStrategy 2  --setPhysicsModelParameterRanges r=0,5:r_z=0,2 --algo grid --points 100 -d card_rhalphabet_muonCR_floatZ.root -n 2D --saveWorkspace',True)
@@ -222,10 +236,13 @@ if __name__ == '__main__':
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
 
-    leg = rt.TLegend(0.6,0.7,0.85,0.87)
+
+    leg = rt.TLegend(0.55,0.7,0.8,0.87)
+    leg.SetBorderSize(0)
     leg.SetTextFont(42)
     leg.SetFillColor(rt.kWhite)
     leg.SetLineColor(rt.kWhite)
+    leg.SetLineStyle(0)
     leg.SetFillStyle(0)
     leg.SetLineWidth(0)
     leg.AddEntry(fit, "Best fit", "p")
@@ -233,6 +250,7 @@ if __name__ == '__main__':
     leg.AddEntry(cl68, "68% CL", "l")
     leg.AddEntry(cl95, "95% CL", "l")
     leg.Draw("same")
+
 
     
     
@@ -265,10 +283,12 @@ if __name__ == '__main__':
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
 
-    leg = rt.TLegend(0.6,0.7,0.85,0.87)
+    leg = rt.TLegend(0.55,0.7,0.8,0.87)
+    leg.SetBorderSize(0)
     leg.SetTextFont(42)
     leg.SetFillColor(rt.kWhite)
     leg.SetLineColor(rt.kWhite)
+    leg.SetLineStyle(0)
     leg.SetFillStyle(0)
     leg.SetLineWidth(0)
     leg.AddEntry(fit, "Best fit", "p")
