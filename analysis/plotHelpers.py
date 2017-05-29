@@ -22,7 +22,7 @@ def getRatio(hist, reference):
 			ratio.SetBinContent(xbin, val/ref)
 			ratio.SetBinError(xbin, math.sqrt( (val*refE/(ref**2))**2 + (valE/ref)**2 ))
 		except ZeroDivisionError:
-			ratio.SetBinContent(xbin, 1.0)
+			#ratio.SetBinContent(xbin, 1.0)
 			ratio.SetBinError(xbin, 0.0)
 
 	return ratio
@@ -827,7 +827,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     return c
 
 
-def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=False,ratio=False):
+def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=True,ratio=True):
     ttbarInt = 0
     ttbarErr = 0
     ttbarErr2 = 0
@@ -879,6 +879,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineStyle(1)
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
+	
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
     allMC=hstack.GetStack().Last().Clone()
     maxval = max(hd.GetMaximum(),maxval)
@@ -889,7 +890,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     scalefactor = hd.Integral()/fullmc.Integral();
     print "data/mc scale factor = ", scalefactor
     if normalize:
-    	for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()): h.Scale( scalefactor );
+    	for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()): 
+   	     if 'QCD' in name:	
+    		h.Scale( scalefactor );
     hstack2 = ROOT.THStack("hstack2","hstack2");
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):	
 	hstack2.Add(h);
@@ -898,6 +901,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineStyle(1)
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
+
+	
     
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
 	if 'ggH' in name:
@@ -905,20 +910,38 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
           h.SetLineStyle(style[name])
           h.SetLineWidth(2)
           h.SetFillStyle(0)
+	
 
-    leg_y = 0.88 - (2+len(hb))*0.04
-    leg = ROOT.TLegend(0.6,leg_y,0.88,0.88,"data/mc scale factor %.2f"%(scalefactor),"NDC")
+    leg_y = 0.88 - (2+int(len(hb)/3))*0.03
+    leg = ROOT.TLegend(0.2,leg_y,0.5,0.88)#,"data/mc scale factor %.2f"%(scalefactor),"NDC")
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
     leg.SetTextFont(42)
+    leg2 = ROOT.TLegend(0.5,leg_y,0.78,0.88,)
+    leg2.SetFillStyle(0)
+    leg2.SetBorderSize(0)
+    leg2.SetTextSize(0.035)
+    leg2.SetTextFont(42)
+    leg3 = ROOT.TLegend(0.65,leg_y,0.98,0.88,)
+    leg3.SetFillStyle(0)
+    leg3.SetBorderSize(0)
+    leg3.SetTextSize(0.035)
+    leg3.SetTextFont(42)
 
+
+    count=1
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"f")
+        if count <4: 
+		if name in 'QCD': leg.AddEntry(h,legname[name]+" (k-factor %.2f)"%scalefactor,"f")
+		else : leg.AddEntry(h,legname[name],"f")
+	elif count >3 and count<7 : leg2.AddEntry(h,legname[name],"f")
+	elif count >6 : leg3.AddEntry(h,legname[name],"f")
+        count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
       if 'ggH' in name:
-        leg.AddEntry(h,legname[name],"l")
-    leg.AddEntry(hd,legname['data'],"pe");
+        leg3.AddEntry(h,legname[name],"l")
+    leg3.AddEntry(hd,'Data',"pe");
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
     c.SetFillStyle(4000)
     c.SetFrameFillStyle(1000)
@@ -931,7 +954,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 	unten.SetBottomMargin(0.35)
 
     else:	
-        oben = ROOT.TPad('oben','oben',0,0.05 ,1.0,1.0)
+        oben = ROOT.TPad('oben','oben',0,0.03 ,1.0,1.0)
 	unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.0)
     oben.SetFillStyle(4000)
     oben.SetFrameFillStyle(1000)
@@ -944,7 +967,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     oben.cd()
  
     hstack2.Draw('hist')
-    hstack2.SetMaximum(500000.*maxval)
+    hstack2.SetMaximum(10*maxval)
+    hstack2.SetMinimum(1.)
+    hstack2.GetYaxis().SetRangeUser(1.,10*maxval)
     hstack2.GetYaxis().SetTitle('Events')
     hstack2.GetYaxis().SetTitleOffset(1.0)	
     hstack2.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
@@ -956,8 +981,43 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 	  if 'ggH' in name:
 		h.Draw("histsame")
     leg.Draw()
-    hstack2.SetMinimum(1e-1)
+    leg2.Draw()
+    leg3.Draw() 
+    hstack2.SetMinimum(1)
+    allMC2=hstack2.GetStack().Last().Clone()
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+	if name in 'QCD' :  
+		herr = h.Clone('herr')	
+		herr2 = h.Clone('herr2')
+	#        for ibin in range(1,h.GetNbinsX()+1): print(ibin,herr.GetBinError(ibin),herr.GetBinContent(ibin))
+
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):	
+	#for ibin in range(1,h.GetNbinsX()+1): print(ibin,herr.GetBinError(ibin),herr.GetBinContent(ibin))
+	if name in 'QCD' : continue
+        for ibin in range(1,h.GetNbinsX()+1):
+           valA  = herr.GetBinContent(ibin);
+           evalA = herr.GetBinError(ibin);
+           valB  = h.GetBinContent(ibin);
+           evalB = h.GetBinError(ibin);
+ 
+           herr.SetBinContent(ibin,(valA+valB));
+           herr.SetBinError(ibin,sqrt(evalA*evalA+evalB*evalB));
+	   if(valA+valB >0): herr2.SetBinContent(ibin,(valA+valB+sqrt(evalA*evalA+evalB*evalB))/(valA+valB));
+	   else : herr2.SetBinContent(ibin,1);
+           #herr2.SetBinError(ibin,sqrt(evalA*evalA+evalB*evalB));	
+
+     
+    theErrorGraph = ROOT.TGraphErrors(herr)
+    theErrorGraph.SetFillColor(ROOT.kGray+2)
+    theErrorGraph.SetFillStyle(3002)	
+    herr.SetFillColor(ROOT.kGray+2)
+    herr.SetFillStyle(3002)
+    herr.SetMarkerColor(1111);	
+    leg3.AddEntry(herr,"MC uncert. (stat.)","fl")
+
     hd.Draw('pesames');
+    theErrorGraph.Draw('SAME2')	
+    #herr.Draw('ERROR SAME2')
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
@@ -972,16 +1032,18 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
-    allMC2=hstack2.GetStack().Last().Clone()
+    
     if ratio:	
     	unten.cd()
-    	ratio= getRatio(hd,allMC2)
+    	ratio = getRatio(hd,allMC2)
+        herr3= TOTerror(allMC2,ratio);
+	toterree = ROOT.TGraphErrors(herr3)
     	ksScore = hd.KolmogorovTest( allMC2 )
     	chiScore = hd.Chi2Test( allMC2 , "UWCHI2/NDF")
     	print ksScore
     	print chiScore
     	ratio.SetStats(0)
-        ratio.GetYaxis().SetRangeUser(0,2.5)	
+        ratio.GetYaxis().SetRangeUser(0,5)	
         ratio.GetYaxis().SetNdivisions(504)
     	ratio.GetYaxis().SetTitle("Data/Simulation")
     	ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())    
@@ -1005,17 +1067,35 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     #ratioError = ROOT.TGraphErrors(error)
     #ratioError.SetFillColor(ROOT.kGray+3)
     #ratioError.SetFillStyle(3013)
-    	ratio.Draw("E1 ")	
+    	ratio.Draw("P E ")	
+        '''
+        herr2.SetFillColor(ROOT.kGray+2);
+        herr2.SetLineColor(ROOT.kGray+2);
+	herr2.SetFillStyle(3002);
+	herr2.Draw("hist same");
+        '''
+        toterree.SetFillColor(ROOT.kGray+2);
+        toterree.SetLineColor(ROOT.kGray+2);
+        toterree.SetFillStyle(3002);                                   
+        toterree.Draw("2 same");
+        #toterree.Draw("p");
     	line.Draw("same")	
     #tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
+        leg4 = ROOT.TLegend(0.7,0.89,0.5,0.8)#,"data/mc scale factor %.2f"%(scalefactor),"NDC")
+        leg4.SetFillStyle(0)
+        leg4.SetBorderSize(0)
+        leg4.SetTextSize(0.05)
+        leg4.SetTextFont(42)
+        leg4.AddEntry(toterree,"MC uncert. (stat.)","fl")
+        leg4.Draw()
 
     c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".C")
+    c.SaveAs(pdir+"/"+outname+".root")
     oben.SetLogy()
 
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
-    c.SaveAs(pdir+"/"+outname+"_log.C")
+    c.SaveAs(pdir+"/"+outname+"_log.root")
 
     if ofile is not None:
         ofile.cd()
@@ -1542,3 +1622,57 @@ def makeROCFromHisto(hists,LtoR=True):
 def dummy():
 	print "hi";
 
+
+
+def TOTerror(hmc, ratio ):
+  hmc.Sumw2()
+  den1 = hmc.Clone ("den1");
+  den2 = hmc.Clone ("den2");
+
+  nvar = hmc.GetNbinsX();
+  
+  x1 = []
+  y1 = []
+  exl1 = []
+  eyl1= []
+  exh1= []
+  eyh1= []
+  
+  for km in range(1,nvar+1):
+    delta = hmc.GetBinError(km)
+    den1.SetBinError(km,0)   
+    #den1.SetBinContent(km,hmc.GetBinContent(km) + delta);
+    #den2.SetBinContent(km,hmc.GetBinContent(km) - delta);
+
+
+  # ratio from variation and nominal
+  ratiop = hmc.Clone("ratiop");
+  ratiom = hmc.Clone("ratiom");
+  
+  ratiop.Divide(den1);
+  ratiom.Divide(den1);
+  #den1.Divide(ratiop)
+  #den2.Divide(ratiom)
+  '''
+  for km in range(0,nvar):  
+    if(ratio.GetBinContent(km+1)==0):
+      y1.append(1.)
+      eyl1.append(0.)
+      eyh1.append(0.)
+    else:
+      y1.append(1)
+      eyl1.append(abs(ratiop.GetBinContent(km+1)))# - ratio.GetBinContent(km+1)))
+      eyh1.append(abs(ratiom.GetBinContent(km+1)))# - ratio.GetBinContent(km+1)))
+    x1.append(ratio.GetBinCenter(km+1))
+    exl1.append(ratio.GetBinWidth(km)/2)
+    exh1.append(ratio.GetBinWidth(km)/2)
+  x1Array = array.array ('d', x1)
+  y1Array = array.array ('d', y1)
+  exl1Array = array.array ('d', exl1)
+  eyl1Array = array.array ('d', eyl1)
+  exh1Array = array.array ('d', exh1)
+  eyh1Array = array.array ('d', eyh1)
+  err = ROOT.TGraphAsymmErrors (nvar, x1Array, y1Array, exl1Array, exh1Array, eyl1Array, eyh1Array);
+  '''
+
+  return ratiop;
