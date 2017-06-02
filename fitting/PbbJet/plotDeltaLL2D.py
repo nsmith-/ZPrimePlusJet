@@ -244,14 +244,14 @@ if __name__ == '__main__':
     m.DrawMarker(smx,smy)
 
     lumi = 35.9
-    tag1 = rt.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+    tag1 = rt.TLatex(0.65,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.04)
-    tag2 = rt.TLatex(0.17,0.92,"CMS")
+    tag2 = rt.TLatex(0.19,0.82,"CMS")
     tag2.SetNDC(); tag2.SetTextFont(62)
-    tag3 = rt.TLatex(0.27,0.92,"Preliminary")
+    tag3 = rt.TLatex(0.29,0.82,"Preliminary")
     tag3.SetNDC(); tag3.SetTextFont(52)
-    tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
+    tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); #tag3.Draw()
 
 
     leg = rt.TLegend(0.55,0.7,0.8,0.87)
