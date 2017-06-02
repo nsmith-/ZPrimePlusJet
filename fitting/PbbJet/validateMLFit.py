@@ -289,7 +289,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     if splitS:
         l = r.TLegend(0.6, 0.4, 0.75, 0.85)
     else:
-        l = r.TLegend(0.6, 0.6, 0.75, 0.85)
+        l = r.TLegend(0.6, 0.5, 0.75, 0.85)
     l.SetFillStyle(0)
     l.SetBorderSize(0)
     l.SetTextFont(42)
@@ -426,7 +426,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     tag4.SetTextSize(0.035)
     tag1.Draw()
     tag2.Draw()
-    tag3.Draw()
+    #tag3.Draw()
     tag4.Draw()
     data.SetMaximum(data.GetMaximum() * 1.2)
 
@@ -916,8 +916,21 @@ if __name__ == '__main__':
     r.gStyle.SetPaintTextFormat("1.1f")
     r.gStyle.SetOptFit(0000)
     r.gROOT.SetBatch()
-    r.gStyle.SetPalette(r.kBird)
+    #r.gStyle.SetPalette(r.kBird)
     #r.gStyle.SetPalette(r.kBlackBody)
+    stops = [ 0.0, 1.0]
+    red =   [ 1.0, 0.3]
+    green = [ 1.0, 0.3]
+    blue =  [ 1.0, 1.0]
+
+    s = array.array('d', stops)
+    rs = array.array('d', red)
+    g = array.array('d', green)
+    b = array.array('d', blue)
+
+    npoints = len(s)
+    r.TColor.CreateGradientColorTable(npoints, s, rs, g, b, 999)
+
     r.gStyle.SetNumberContours(999)
 
     main(options, args)
