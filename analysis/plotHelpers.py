@@ -600,12 +600,12 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
         h.SetLineStyle(style[iname])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
-	h.GetXaxis().SetLabelSize(0.03)
+	h.GetXaxis().SetLabelSize(0.04)
 	h.GetXaxis().SetTitleOffset(1.1)
-	h.GetXaxis().SetTitleSize(0.033)
-        h.GetYaxis().SetLabelSize(0.03)
+	h.GetXaxis().SetTitleSize(0.04)
+        h.GetYaxis().SetLabelSize(0.04)
 	h.GetYaxis().SetTitleOffset(1.2)
-	h.GetYaxis().SetTitleSize(0.033)
+	h.GetYaxis().SetTitleSize(0.04)
 
 
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
@@ -628,7 +628,10 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 	 	if unitnorm : 
 			s.SetMaximum(100.)
 			s.DrawNormalized("hist")
-                else: s.Draw("hist")
+                else: 
+			s.GetXaxis().SetTitle(s.GetXaxis().GetTitle().replace("AK8 m_{SD}^{PUPPI} (GeV)","m_{SD} (GeV)"))
+			s.GetYaxis().SetTitle("Events / 7 GeV")
+			s.Draw("hist")
          else : 	
 		if unitnorm : s.DrawNormalized("histsame")
 		else : s.Draw("histsame")
@@ -645,7 +648,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     tag4 = ROOT.TLatex(0.18,0.75,"Preliminary")
     tag4.SetNDC(); tag4.SetTextFont(52)
     
-    tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag4.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw(); tag4.Draw()
+    tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag4.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw(); #tag4.Draw()
 
     
     ptRange = [450, 1000]
