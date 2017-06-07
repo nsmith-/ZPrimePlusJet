@@ -20,7 +20,7 @@ def main(options, args):
     tfile = rt.TFile.Open(options.idir+'/validation.root')
     
     bkgs = ['wqq','zqq','tqq']
-    sigs = ['hqq125','tthqq125','whqq125','zhqq125','vbfhqq125']
+    sigs = ['DMSbb50','DMSbb100','DMSbb200','DMSbb300']
     procdict = {}
     procdict['tqq'] = 't#bar{t}'
     procdict['wqq'] = 'W(qq)'
@@ -30,17 +30,21 @@ def main(options, args):
     procdict['whqq125'] = 'WH(b#bar{b})'
     procdict['zhqq125'] = 'ZH(b#bar{b})'
     procdict['vbfhqq125'] = 'VBF H(b#bar{b})'
+    procdict['DMSbb50'] = '#Phi(b#bar{b}), m = 50 GeV'
+    procdict['DMSbb100'] = '#Phi(b#bar{b}), m = 100 GeV'
+    procdict['DMSbb200'] = '#Phi(b#bar{b}), m = 200 GeV'
+    procdict['DMSbb300'] = '#Phi(b#bar{b}), m = 300 GeV'
     boxes = ['pass_cat1','pass_cat2','pass_cat3','pass_cat4','pass_cat5','pass_cat6',
              'fail_cat1','fail_cat2','fail_cat3','fail_cat4','fail_cat5','fail_cat6']
     #systs = ['JER','JES','scale','smear','trigger','Pu']
     systs = ['scale','smear']
     
-    numberOfMassBins = 23    
-    numberOfPtBins = 6
-    for box in boxes:
-        for proc in (bkgs+sigs):
-            for i in range(1,numberOfMassBins+1):
-                systs.append('%s%s%s%i'%(proc,box.replace('_',''),'mcstat',i))        
+    #numberOfMassBins = 23    
+    #numberOfPtBins = 6
+    #for box in boxes:
+    #    for proc in (bkgs+sigs):
+    #        for i in range(1,numberOfMassBins+1):
+    #            systs.append('%s%s%s%i'%(proc,box.replace('_',''),'mcstat',i))        
 
     shapes = {}
     
@@ -92,7 +96,7 @@ def main(options, args):
                 tLeg.Draw('same')
                 c.Print('%s/%s_%s_%s.pdf'%(options.odir,proc,box,syst))
                 c.Print('%s/%s_%s_%s.C'%(options.odir,proc,box,syst))
-                c.Print('%s/png/%s_%s_%s.png'%(options.odir,proc,box,syst))
+                #c.Print('%s/png/%s_%s_%s.png'%(options.odir,proc,box,syst))
             
     
 if __name__ == '__main__':

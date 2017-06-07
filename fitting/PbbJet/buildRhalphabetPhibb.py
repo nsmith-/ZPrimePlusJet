@@ -18,9 +18,9 @@ from tools import *
 from hist import *
 from rhalphabet_builder_Phibb import RhalphabetBuilder, LoadHistograms, GetSF
 
-MASS_BINS = 23
+MASS_BINS = 52
 MASS_LO = 40
-MASS_HI = 201
+MASS_HI = 404
 BLIND_LO = 110
 BLIND_HI = 131
 RHO_LO = -6
