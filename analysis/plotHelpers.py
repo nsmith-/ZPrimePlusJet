@@ -642,9 +642,13 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     tag3.SetNDC(); tag3.SetTextFont(52)
     tag2.SetTextSize(0.042); tag3.SetTextSize(0.033); tag1.Draw(); tag2.Draw(); tag3.Draw()
     c.SaveAs(pdir+"/"+name+".pdf")
+    c.SaveAs(pdir+"/"+name+".gif")
+    c.SaveAs(pdir+"/"+name+".C")
     ROOT.gPad.SetLogy()
 
     c.SaveAs(pdir+"/"+name+"_log.pdf")
+    c.SaveAs(pdir+"/"+name+"_log.gif")
+    c.SaveAs(pdir+"/"+name+"_log.C")
     if ofile is not None:
         ofile.cd()
         c.Write('c'+name)
@@ -664,9 +668,9 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     maxval = -99
     nevt=[]
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in (sorted(hb.iteritems(),key=customSort)):
+    #for name, h in (sorted(hb.iteritems(),key=customSort)):
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
     	print name
-    #for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -774,6 +778,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 
 
     c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".gif")
     c.SaveAs(pdir+"/"+outname+".C")
 		
 	
@@ -785,6 +790,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     hstack.SetMinimum(1e-1)	
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.gif")
     c.SaveAs(pdir+"/"+outname+"_log.C")
 
     
@@ -806,7 +812,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     return c
 
 
-def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=False,ratio=False):
+def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=False,ratio=True):
     ttbarInt = 0
     ttbarErr = 0
     ttbarErr2 = 0
@@ -986,14 +992,16 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     #ratioError.SetFillStyle(3013)
     	ratio.Draw("E1 ")	
     	line.Draw("same")	
-    #tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
+        tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
 
     c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".gif")
     c.SaveAs(pdir+"/"+outname+".C")
     oben.SetLogy()
 
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.gif")
     c.SaveAs(pdir+"/"+outname+"_log.C")
 
     if ofile is not None:

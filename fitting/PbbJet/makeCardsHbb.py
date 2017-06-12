@@ -206,7 +206,7 @@ def main(options,args):
                 tqqeff = histoDict['tqq_pass'].Integral() / (
                 histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
                 newline = l.replace('TQQEFF','%.4f'%tqqeff)
-            elif 'wznormEW' in l:
+            elif 'wznormEWCATX' in l:
                 if i==4:
                     newline = l.replace('1.05','1.15')
                 elif i==5:
@@ -215,7 +215,7 @@ def main(options,args):
                     newline = l.replace('1.05','1.15')
                 else:
                     newline = l
-            elif 'znormEW' in l:
+            elif 'znormEWCATX' in l:
                 if i==3:
                     newline = l.replace('1.15','1.25')
                 elif i==4:

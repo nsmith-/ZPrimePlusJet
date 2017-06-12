@@ -21,13 +21,13 @@ from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 ##-------------------------------------------------------------------------------------
 def main(options,args):
     for model in ["DMSbb"]: # [PS, Zp]
-        for mass in [50, 100, 200, 300]:	
+        for mass in [50, 100, 125, 200, 300, 350, 400, 500]:	
             tfile = r.TFile.Open(options.ifile)
             tfile_loose = None
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
             
-            cuts = ['p85']         # Change cut here
+            cuts = ['p9']         # Change cut here
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
             bkgs = ['zqq','wqq','qcd','tqq']

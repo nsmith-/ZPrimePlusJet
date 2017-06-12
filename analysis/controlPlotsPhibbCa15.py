@@ -20,14 +20,14 @@ def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canv
     else:
         #c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
         c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,False,ofile)
-        c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,True)
+        c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,False)
 #        canvases.append(c)	
         canvases.append(c1)
 ##############################################################################
 def main(options,args,outputExists):
-    idir_old = "/eos/uscms/store/user/lpchbb/zprimebits-v12.03/cvernier"
-    idir = "/eos/uscms/store/user/lpchbb/zprimebits-v12.04/norm2/cvernier/"
-    idir_data = '/eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
+    idir_old = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.03/cvernier"
+    idir = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/norm2/cvernier/"
+    idir_data = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
     #idir = options.idir   
     odir = options.odir
     lumi = options.lumi
@@ -55,13 +55,14 @@ def main(options,args,outputExists):
                'QCD': 'QCD',
 	       'data': 'JetHT data',
                'muon': 'SingleMuon data',
-               'Phibb10': '#Phi(b#bar{b}), 10 GeV',
-               'Phibb20': '#Phi(b#bar{b}), 20 GeV',
                'Phibb50': '#Phi(b#bar{b}), 50 GeV',
                'Phibb100': '#Phi(b#bar{b}), 100 GeV',
+               'Phibb125': '#Phi(b#bar{b}), 125 GeV',
                'Phibb200': '#Phi(b#bar{b}), 200 GeV',
-               'Phibb300': '#Phi(b#bar{b}), 300 GeV',               
-               'Phibb1000': '#Phi(b#bar{b}), 1000 GeV',
+               'Phibb300': '#Phi(b#bar{b}), 300 GeV',
+               'Phibb350': '#Phi(b#bar{b}), 350 GeV',
+               'Phibb400': '#Phi(b#bar{b}), 400 GeV',
+               'Phibb500': '#Phi(b#bar{b}), 500 GeV',
                }
 
     if isData and muonCR:
@@ -88,13 +89,14 @@ def main(options,args,outputExists):
                        idir_old + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'ttHbb':  [idir_old + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
 ############### Signals
-              'Phibb10': [idir_data + '/Spin0_ggPhibb1j_g1_10_Scalar.root'],
-              'Phibb20': [idir_data + '/Spin0_ggPhibb1j_g1_20_Scalar.root'],
               'Phibb50': [idir_data + '/Spin0_ggPhibb1j_g1_50_Scalar_1000pb_weighted.root'],
               'Phibb100': [idir_data + '/Spin0_ggPhibb1j_g1_100_Scalar_1000pb_weighted.root'],
+              'Phibb125': [idir_data + '/Spin0_ggPhibb1j_g1_125_Scalar_1000pb_weighted.root'],
               'Phibb200': [idir_data + '/Spin0_ggPhibb1j_g1_200_Scalar_1000pb_weighted.root'],
               'Phibb300': [idir_data + '/Spin0_ggPhibb1j_g1_300_Scalar_1000pb_weighted.root'],
-              'Phibb1000': [idir_data + '/Spin0_ggPhibb1j_g1_1000_Scalar_1000pb_weighted.root'],
+              'Phibb350': [idir_data + '/Spin0_ggPhibb1j_g1_350_Scalar_1000pb_weighted.root'],
+              'Phibb400': [idir_data + '/Spin0_ggPhibb1j_g1_400_Scalar_1000pb_weighted.root'],
+              'Phibb500': [idir_data + '/Spin0_ggPhibb1j_g1_500_Scalar_1000pb_weighted.root'],
 ############### Backgrounds
               'QCD': [idir_data + '/QCD_HT100to200_13TeV_1000pb_weighted.root',
                       idir_data + '/QCD_HT200to300_13TeV_1000pb_weighted.root',
@@ -246,14 +248,16 @@ def main(options,args,outputExists):
              'Hbb': ROOT.kRed,
              'VHbb': ROOT.kTeal+1,
              'VBFHbb': ROOT.kBlue-10,
-	     'Phibb10': ROOT.kRed,
-             'Phibb20': ROOT.kBlue-1,
              'Phibb50': ROOT.kAzure+1,
-             'Phibb100': ROOT.kTeal+1,
+             'Phibb100': ROOT.kRed-2,
+             #'Phibb125': ROOT.kRed,
+             'Phibb125': ROOT.kOrange-9,
              'Phibb200': ROOT.kBlue-1,
              'Phibb300': ROOT.kMagenta+1,
-             'Phibb1000': ROOT.kBlue-10,
-	     'ttHbb': ROOT.kBlue-1,
+             'Phibb350': ROOT.kBlue,
+             'Phibb400': ROOT.kBlue-10,
+             'Phibb500': ROOT.kSpring,
+             'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
              'DY':  ROOT.kRed,
@@ -273,13 +277,14 @@ def main(options,args,outputExists):
 
     style = {'Hbb': 1,
              'ggHbb': 2,             
-	     'Phibb10': 2,
-	     'Phibb20': 2,
              'Phibb50': 3,
-	     'Phibb100': 4,
-	     'Phibb200': 2,
-	     'Phibb300': 5,
-	     'Phibb1000': 2,
+             'Phibb100': 4,
+             'Phibb125': 4,
+             'Phibb200': 9,
+             'Phibb300': 5,
+             'Phibb350': 2,
+             'Phibb400': 2,
+             'Phibb500': 2,
              'VBFHbb': 3,
 	     'VHbb': 4,
 	     'ttHbb': 5,
@@ -313,7 +318,7 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt_ca15','h_msd_ca15','h_dbtag_ca15','h_n_ak4','h_n_ak4_dR0p8','h_t21_ca15','h_t32_ca15','h_n2b1sdddt_ca15','h_t21ddt_ca15','h_met_ca15','h_npv','h_eta_ca15','h_ht','h_dbtag_ca15_aftercut','h_n2b1sdddt_ca15_aftercut','h_rho_ca15', 'h_rho_ca15_nocut', 'h_msd_ca15_nocut']
+        plots = ['h_pt_ca15','h_msd_ca15','h_dbtag_ca15','h_n_ak4','h_n_ak4_dR0p8','h_t21_ca15','h_t32_ca15','h_n2b1sdddt_ca15','h_t21ddt_ca15','h_met_ca15','h_npv','h_eta_ca15','h_ht_ca15','h_dbtag_ca15_aftercut','h_n2b1sdddt_ca15_aftercut','h_rho_ca15', 'h_rho_ca15_nocut', 'h_msd_ca15_nocut', 'h_Cuts_ca15']
     else:
         plots = []
         testSample = sampleContainerPhibbCa15('test',[], 1, DBTMIN,lumi)
@@ -325,25 +330,26 @@ def main(options,args,outputExists):
                 pass
             
     if not outputExists: 
-        samples = ['ggHbb','VBFHbb','VHbb','ttHbb','Phibb20','Phibb50','Phibb100','Phibb200','Phibb300','QCD','SingleTop','Diboson','W','DY','TTbar']
-        for s in samples:
-            for tfile in tfiles[s]:
-                if not os.path.isfile(tfile):
-                    print 'error: %s does not exist'%tfile                 
-                    sys.exit()
+        samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500','QCD','SingleTop','Diboson','W','DY','TTbar']
+#        for s in samples:
+#            for tfile in tfiles[s]:
+#                if not os.path.isfile(tfile):
+#                    print 'error: %s does not exist'%tfile                 
+#                    sys.exit()
         print "Signals... "
         sigSamples = {}
 #No        sigSamples['ggHbb']  = sampleContainerPhibbCa15('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi) 
 #No        sigSamples['VBFHbb'] = sampleContainerPhibbCa15('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ) 
 #No        sigSamples['VHbb'] = sampleContainerPhibbCa15('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi )        
 #No        sigSamples['ttHbb'] = sampleContainerPhibbCa15('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi )    
-#No        sigSamples['Phibb10']  = sampleContainerPhibbCa15('Phibb10',tfiles['Phibb10']  , 1, DBTMIN, lumi)
-#No        sigSamples['Phibb20']  = sampleContainerPhibbCa15('Phibb20',tfiles['Phibb20']  , 1, DBTMIN, lumi) 
-        sigSamples['Phibb50'] = sampleContainerPhibbCa15('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi) 
-        sigSamples['Phibb100'] = sampleContainerPhibbCa15('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb200'] = sampleContainerPhibbCa15('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb300'] = sampleContainerPhibbCa15('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi)      
-#No        sigSamples['Phibb1000'] = sampleContainerPhibbCa15('Phibb1000',tfiles['Phibb1000'], DBTMIN, lumi)   
+        sigSamples['Phibb50'] = sampleContainerPhibbCa15('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi)
+        sigSamples['Phibb100'] = sampleContainerPhibbCa15('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi)
+        sigSamples['Phibb125'] = sampleContainerPhibbCa15('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi)
+        sigSamples['Phibb200'] = sampleContainerPhibbCa15('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi)
+        sigSamples['Phibb300'] = sampleContainerPhibbCa15('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi)
+        sigSamples['Phibb350'] = sampleContainerPhibbCa15('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi)
+        sigSamples['Phibb400'] = sampleContainerPhibbCa15('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi)
+        sigSamples['Phibb500'] = sampleContainerPhibbCa15('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi)
         print "Backgrounds..."
         bkgSamples = {}
         bkgSamples['W']  = sampleContainerPhibbCa15('W',tfiles['W'], 1, DBTMIN,lumi)
@@ -416,7 +422,7 @@ def main(options,args,outputExists):
     
         ofile.Close()
     else:        
-        sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb','Phibb20','Phibb50','Phibb100','Phibb200','Phibb300']        
+        sigSamples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
         if isData and muonCR:
             bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
@@ -470,7 +476,7 @@ if __name__ == '__main__':
 
     
     outputExists = False
-    if glob.glob(options.odir+'/Plots_1000pb_weighted.root'):
+    if glob.glob(options.odir+'/Plots_CA15_1000pb_weighted.root'):
         outputExists = True
         
     main(options,args,outputExists)

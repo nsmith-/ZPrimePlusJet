@@ -16,7 +16,7 @@ r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHigg
 
 # including other directories
 import tools as tools
-from RootIterator import RootIterator
+#from RootIterator import RootIterator
 from hist import *
 
 BB_SF = 0.91
@@ -655,6 +655,7 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
+            print 'Anter Object : ', import_object.GetName(), 'Process : ', process, 'Cat : ',cat
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process):
@@ -688,6 +689,8 @@ class RhalphabetBuilder():
                         tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
                         tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
                                               self._mass_hi)
+                            print 'Mass : ', tmph_mass, 'Up : ',tmph_mass_up, 'Down : ',tmph_mass_down
+
                         for i in range(1, tmph_mass_up.GetNbinsX() + 1):
                             mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
                             mcstatdown = max(0., tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))

@@ -266,7 +266,6 @@ class sampleContainer:
                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_topR6_N2_fail_JERDown': ["h_" + self._name + "_msd_ak8_topR6_N2_fail_JERDown",
                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-
             'h_pt_mu_muCR4_N2': ["h_" + self._name + "_pt_mu_muCR4_N2", "; leading muon p_{T} (GeV);", 50, 30, 500],
             'h_eta_mu_muCR4_N2': ["h_" + self._name + "_eta_mu_muCR4_N2", "; leading muon #eta;", 50, -2.5, 2.5],
             'h_pt_ak8_muCR4_N2': ["h_" + self._name + "_pt_ak8_muCR4_N2", "; AK8 leading p_{T} (GeV);", 50, 300, 2100],
@@ -772,7 +771,10 @@ class sampleContainer:
     def loop(self):
         # looping
         nent = self._tt.GetEntries()
-        print nent
+        print "\n", "***********************************************************************************************************************************"
+        print self._name
+        print "***********************************************************************************************************************************", "\n"
+        print nent , "\n"        
         cut = []
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
@@ -915,6 +917,7 @@ class sampleContainer:
                 weight_mu_pu_down = 1
 
             ##### AK8 info
+            #print "Anter Weight : ", weight
             jmsd_8_raw = self.AK8Puppijet0_msd[0]
             jpt_8 = self.AK8Puppijet0_pt[0]
             jpt_8_JERUp = self.AK8Puppijet0_pt_JERUp[0]
@@ -1153,7 +1156,6 @@ class sampleContainer:
                         else:
                             self.h_msd_ak8_bbleading_muCR4_fail.Fill(i[0], weight_mu)
                             self.h_msd_v_pt_ak8_bbleading_muCR4_fail.Fill(i[0], i[1], weight_mu)
-
                 if jpt_8 > PTCUT:
                     cut[3] = cut[3] + 1
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT:
@@ -1195,8 +1197,8 @@ class sampleContainer:
                             self.h_msd_ak8_bbleading_topR6_fail.Fill(i[0], weight)
                             self.h_msd_v_pt_ak8_bbleading_topR6_fail.Fill(i[0], i[1], weight)
 
-		if jpt_8 > PTCUT and jmsd_8 > MASSCUT:
-			self.h_rho_ak8.Fill(rh_8, weight)
+		#if jpt_8 > PTCUT and jmsd_8 > MASSCUT:
+		#	self.h_rho_ak8.Fill(rh_8, weight)
 
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and rh_8<-2.1 and rh_8>-6.:
                     self.h_pt_ak8.Fill(jpt_8, weight)
@@ -1463,7 +1465,7 @@ class sampleContainer:
                 #####
         print "\n"
         
-        if not self._minBranches:
+        if not self._minBranches and cut[3] > 0.:
             self.h_Cuts.SetBinContent(4, float(cut[0] / cut[3] * 100.))
             self.h_Cuts.SetBinContent(5, float(cut[1] / cut[3] * 100.))
             # self.h_Cuts.SetBinContent(6,float(cut[2]/nent*100.))
