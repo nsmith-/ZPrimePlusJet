@@ -21,7 +21,7 @@ from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 ##-------------------------------------------------------------------------------------
 def main(options,args):
     for model in ["DMSbb"]: # [PS, Zp]
-        for mass in [50, 100, 200, 300]:	
+        for mass in [50, 100, 125, 200, 300]:	
             tfile = r.TFile.Open(options.ifile)
             tfile_loose = None
             if options.ifile_loose is not None:

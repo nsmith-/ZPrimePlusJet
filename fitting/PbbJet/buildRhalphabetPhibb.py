@@ -20,7 +20,7 @@ from rhalphabet_builder_Phibb import RhalphabetBuilder, LoadHistograms, GetSF
 
 MASS_BINS = 52
 MASS_LO = 40
-MASS_HI = 404
+MASS_HI = 600
 BLIND_LO = 110
 BLIND_HI = 131
 RHO_LO = -6
