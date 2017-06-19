@@ -21,7 +21,8 @@ def main(options, args):
     dbtagmin = options.dbtagmin
 
     #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
-    fileName = 'hist_1DZbb_pt_scalesmear_AK8__newsamples.root'
+    #fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples.root'
+    fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples_300.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:

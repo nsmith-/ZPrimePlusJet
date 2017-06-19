@@ -18,7 +18,7 @@ def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canv
         c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)	
     else:
-        #c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
+        #c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,True,ofile)
         c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,False,ofile)
         c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,False)
 #        canvases.append(c)	

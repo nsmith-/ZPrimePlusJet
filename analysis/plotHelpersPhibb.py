@@ -665,13 +665,25 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     return c
 
     
-def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,printSB=False,ofile=None):
-    leg_y = 0.88 - (len(hs)+len(hb))*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,printSB=True,ofile=None):
+    #leg_y = 0.88 - (len(hs)+len(hb))*0.04
+#    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+#    leg.SetFillStyle(0)
+#    leg.SetBorderSize(0)
+#    leg.SetTextSize(0.035)
+#    leg.SetTextFont(42)
+    leg_y = 0.87 - (2+len(hb))*0.04
+    leg = ROOT.TLegend(0.72,leg_y,0.89,0.87)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
-    leg.SetTextSize(0.035)
+    leg.SetTextSize(0.027)
     leg.SetTextFont(42)
+
+    leg1 = ROOT.TLegend(0.48,leg_y,0.85,0.87)
+    leg1.SetFillStyle(0)
+    leg1.SetBorderSize(0)
+    leg1.SetTextSize(0.027)
+    leg1.SetTextFont(42)
 
     maxval = -99
     nevt=[]
@@ -712,7 +724,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"f")
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"l")
+        leg1.AddEntry(h,legname[name],"l")
 
 
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
@@ -740,12 +752,14 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
      c.cd()
 
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    #hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(1e+12)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
+    leg1.Draw()
     
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
@@ -765,7 +779,9 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
      ratio.SetLineColor(hs[nameS].GetLineColor())
      ratio.SetLineWidth(2)
      ratio.SetLineStyle(1)
-     ratio.GetYaxis().SetRangeUser(0.001,2)
+     #if "dbtag" in outname: ratio.GetYaxis().SetRangeUser(0,8)
+     #else: ratio.GetYaxis().SetRangeUser(-3,4.1)
+     ratio.GetYaxis().SetRangeUser(0.0001,10)
      ratio.GetYaxis().SetTitle("S/#sqrt{B}")
      ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
      ratio.GetXaxis().SetTitleSize(0.14)

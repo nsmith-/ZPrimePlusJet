@@ -14,7 +14,7 @@ r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHigg
 
 # including other directories
 import tools as tools
-#from RootIterator import RootIterator
+from RootIterator import RootIterator
 from hist import *
 
 BB_SF = 0.91
@@ -164,7 +164,7 @@ class RhalphabetBuilder():
                                                             datahist['%s_%s'%(proc,cat)])
                 getattr(w,'import')(datahist['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
-                if 'hqq125' in proc:
+                if 'hqq125' in proc or 'Sbb' in proc:
                     # signal
                     signorm['%s_%s'%(proc,cat)] = r.RooRealVar('signorm_%s_%s'%(proc,cat),
                                                                 'signorm_%s_%s'%(proc,cat),

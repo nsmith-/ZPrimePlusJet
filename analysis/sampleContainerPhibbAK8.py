@@ -11,7 +11,8 @@ import sys
 import time
 import warnings
 
-PTCUT = 450.
+#PTCUT = 450.
+PTCUT = 300.
 PTCUTMUCR = 400.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
@@ -403,30 +404,28 @@ class sampleContainerPhibbAK8:
                 'h_msd_ak8_topR4_fail': ["h_" + self._name + "_msd_ak8_topR4_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_bbleading_topR6_pass': ["h_" + self._name + "_msd_ak8_bbleading_topR6_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_bbleading_topR6_fail': ["h_" + self._name + "_msd_ak8_bbleading_topR6_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p6_pass': ["h_" + self._name + "_msd_ak8_topR6_p6_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p6_fail': ["h_" + self._name + "_msd_ak8_topR6_p6_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p65_pass': ["h_" + self._name + "_msd_ak8_topR6_p65_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p65_fail': ["h_" + self._name + "_msd_ak8_topR6_p65_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_topR6_p7_pass': ["h_" + self._name + "_msd_ak8_topR6_p7_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_topR6_p7_fail': ["h_" + self._name + "_msd_ak8_topR6_p7_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_topR6_p75_pass': ["h_" + self._name + "_msd_ak8_topR6_p75_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_topR6_p75_fail': ["h_" + self._name + "_msd_ak8_topR6_p75_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p5_pass': ["h_" + self._name + "_msd_ak8_topR6_p5_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p5_fail': ["h_" + self._name + "_msd_ak8_topR6_p5_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p45_pass': ["h_" + self._name + "_msd_ak8_topR6_p45_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p45_fail': ["h_" + self._name + "_msd_ak8_topR6_p45_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p4_pass': ["h_" + self._name + "_msd_ak8_topR6_p4_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p4_fail': ["h_" + self._name + "_msd_ak8_topR6_p4_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p91_pass': ["h_" + self._name + "_msd_ak8_topR6_p91_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p91_fail': ["h_" + self._name + "_msd_ak8_topR6_p91_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p92_pass': ["h_" + self._name + "_msd_ak8_topR6_p92_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p92_fail': ["h_" + self._name + "_msd_ak8_topR6_p92_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p93_pass': ["h_" + self._name + "_msd_ak8_topR6_p93_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p93_fail': ["h_" + self._name + "_msd_ak8_topR6_p93_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p94_pass': ["h_" + self._name + "_msd_ak8_topR6_p94_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p94_fail': ["h_" + self._name + "_msd_ak8_topR6_p94_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_p8_pass': ["h_" + self._name + "_msd_ak8_topR6_p8_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_p8_fail': ["h_" + self._name + "_msd_ak8_topR6_p8_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_p85_pass': ["h_" + self._name + "_msd_ak8_topR6_p85_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_p85_fail': ["h_" + self._name + "_msd_ak8_topR6_p85_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_p9_pass': ["h_" + self._name + "_msd_ak8_topR6_p9_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_p9_fail': ["h_" + self._name + "_msd_ak8_topR6_p9_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_topR6_p95_pass': ["h_" + self._name + "_msd_ak8_topR6_p95_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_ak8_topR6_p95_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p91_pass': ["h_" + self._name + "_msd_ak8_topR6_p91_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p91_fail': ["h_" + self._name + "_msd_ak8_topR6_p91_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p92_pass': ["h_" + self._name + "_msd_ak8_topR6_p92_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p92_fail': ["h_" + self._name + "_msd_ak8_topR6_p92_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p93_pass': ["h_" + self._name + "_msd_ak8_topR6_p93_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p93_fail': ["h_" + self._name + "_msd_ak8_topR6_p93_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p94_pass': ["h_" + self._name + "_msd_ak8_topR6_p94_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p94_fail': ["h_" + self._name + "_msd_ak8_topR6_p94_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p95_pass': ["h_" + self._name + "_msd_ak8_topR6_p95_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+               # 'h_msd_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_ak8_topR6_p95_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_pt_ca15': ["h_" + self._name + "_pt_ca15", "; CA15 p{T} (GeV);", 100, 300, 3000],
                 'h_msd_ca15': ["h_" + self._name + "_msd_ca15", "; CA15 m_{SD}^{PUPPI} (GeV);", 35, 50, 400],
                 'h_msd_ca15_t21ddtCut': ["h_" + self._name + "_msd_ca15_t21ddtCut", "; CA15 m_{SD}^{PUPPI} (GeV);", 35, 50, 400],
@@ -439,7 +438,8 @@ class sampleContainerPhibbAK8:
         for i in range(0, 81):
             msd_binBoundaries.append(40. + i * 7)
         print(msd_binBoundaries)
-        pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        #pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
 
         histos2d_fix = {
             'h_rhop_v_t21_ak8': ["h_" + self._name + "_rhop_v_t21_ak8", "; AK8 rho^{DDT}; AK8 <#tau_{21}>", 15, -5, 10,
@@ -638,24 +638,15 @@ class sampleContainerPhibbAK8:
                 'h_msd_v_pt_ak8_topR6_p9_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_p9_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_p9_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p91_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p91_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p91_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p91_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p92_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p92_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p92_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p92_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p93_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p93_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p93_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p93_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p94_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p94_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p94_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p94_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p91_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p91_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p91_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p91_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p92_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p92_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p92_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p92_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p93_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p93_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p93_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p93_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p94_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p94_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p94_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p94_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_p95_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_p95_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_p95_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
@@ -1293,6 +1284,7 @@ class sampleContainerPhibbAK8:
             if not self._minBranches:
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
                     if jdb_8 > 0.7:
+                        self.h_msd_ak8_topR6_p7_pass.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p7_pass.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p7_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p7_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1304,6 +1296,7 @@ class sampleContainerPhibbAK8:
                         else:
                             self.h_msd_v_pt_ak8_topR6_p7_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                     else:
+                        self.h_msd_ak8_topR6_p7_fail.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p7_fail.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p7_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p7_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1315,6 +1308,7 @@ class sampleContainerPhibbAK8:
                         else:
                             self.h_msd_v_pt_ak8_topR6_p7_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
                     if jdb_8 > 0.75:
+                        self.h_msd_ak8_topR6_p75_pass.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p75_pass.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p75_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p75_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1326,6 +1320,7 @@ class sampleContainerPhibbAK8:
                         else:
                             self.h_msd_v_pt_ak8_topR6_p75_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                     else:
+                        self.h_msd_ak8_topR6_p75_fail.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p75_fail.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p75_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p75_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1337,6 +1332,7 @@ class sampleContainerPhibbAK8:
                         else:
                             self.h_msd_v_pt_ak8_topR6_p75_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
                     if jdb_8 > 0.8:
+                        self.h_msd_ak8_topR6_p8_pass.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p8_pass.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p8_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p8_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1348,6 +1344,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p8_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                     else:
+                        self.h_msd_ak8_topR6_p8_fail.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p8_fail.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p8_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p8_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1359,7 +1356,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p8_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
                     if jdb_8 > 0.85:
-                        self.h_msd_v_pt_ak8_topR6_p85_pass.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_ak8_topR6_p85_pass.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p85_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p85_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
                         self.h_msd_v_pt_ak8_topR6_p85_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
@@ -1370,6 +1367,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p85_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                     else:
+                        self.h_msd_ak8_topR6_p85_fail.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p85_fail.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p85_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p85_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1381,6 +1379,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p85_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
                     if jdb_8 > 0.9:
+                        self.h_msd_ak8_topR6_p9_pass.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p9_pass.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p9_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p9_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1392,6 +1391,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p9_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                     else:
+                        self.h_msd_ak8_topR6_p9_fail.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p9_fail.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p9_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p9_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1403,6 +1403,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p9_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
                     if jdb_8 > 0.95:
+                        self.h_msd_ak8_topR6_p95_pass.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p95_pass.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p95_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p95_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1414,6 +1415,7 @@ class sampleContainerPhibbAK8:
                         else:
                            self.h_msd_v_pt_ak8_topR6_p95_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                     else:
+                        self.h_msd_ak8_topR6_p95_fail.Fill(jmsd_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p95_fail.Fill(jmsd_8, jpt_8, weight)
                         self.h_msd_v_pt_ak8_topR6_p95_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                         self.h_msd_v_pt_ak8_topR6_p95_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
@@ -1591,7 +1593,8 @@ class sampleContainerPhibbAK8:
             a_Cuts.SetBinLabel(4, "lep veto")
             a_Cuts.SetBinLabel(5, "#tau veto")
             # a_Cuts.SetBinLabel(6, "#gamma veto")
-            a_Cuts.SetBinLabel(1, "p_{T}>450 GeV")
+            #a_Cuts.SetBinLabel(1, "p_{T}>450 GeV")
+            a_Cuts.SetBinLabel(1, "p_{T}>300 GeV")
             a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV")
             a_Cuts.SetBinLabel(3, "tight ID")
             a_Cuts.SetBinLabel(6, "MET<140")
