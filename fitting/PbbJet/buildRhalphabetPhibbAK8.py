@@ -16,9 +16,12 @@ r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/l
 # sys.path.insert(0, '../.')
 from tools import *
 from hist import *
-from rhalphabet_builder_Phibb import RhalphabetBuilder, LoadHistograms, GetSF
+from rhalphabet_builder_Phibb_AK8 import RhalphabetBuilder, LoadHistograms, GetSF
 
-MASS_BINS = 52
+#MASS_BINS = 23
+#MASS_LO = 40
+#MASS_HI = 201
+MASS_BINS =80 
 MASS_LO = 40
 MASS_HI = 600
 BLIND_LO = 110

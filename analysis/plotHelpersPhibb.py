@@ -587,11 +587,17 @@ def makeCanvasShapeComparison(hs,legname,name,pdir="plots"):
 def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=None,unitnorm=False):
     #color = [ROOT.kBlue,ROOT.kGreen+1,ROOT.kCyan,ROOT.kViolet,ROOT.kBlack,ROOT.kRed,5,2,4,6,7,8,3,5,2,4,6,7,8,3,5]
     #style = [1,2,5,6,7,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3]
-    leg = ROOT.TLegend(0.65,0.65,0.9,0.9)
+    leg = ROOT.TLegend(0.69,0.7,0.90,0.87)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.027)
     leg.SetTextFont(42)
+
+    leg1 = ROOT.TLegend(0.38,0.65,0.81,0.87)
+    leg1.SetFillStyle(0)
+    leg1.SetBorderSize(0)
+    leg1.SetTextSize(0.027)
+    leg1.SetTextFont(42)
 
     maxval = -99
     for iname, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
@@ -608,7 +614,8 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 
 
         if h.GetMaximum() > maxval: maxval = h.GetMaximum()
-        leg.AddEntry(h,legname[iname],"l")
+        if 'Phibb' in iname: leg1.AddEntry(h,legname[iname],"l")
+        else: leg.AddEntry(h,legname[iname],"l")
 
 
     print "======== signal contribution =========="
@@ -631,6 +638,7 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
 		if unitnorm : s.DrawNormalized("histsame")
 		else : s.Draw("histsame")
     leg.Draw()
+    leg1.Draw()
     #hs[0].GetXaxis().SetRangeUser(0,400)
     #hs[0].SetMinimum(1e-1); i
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
@@ -657,13 +665,25 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     return c
 
     
-def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,printSB=False,ofile=None):
-    leg_y = 0.88 - (len(hs)+len(hb))*0.04
-    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plots",lumi=30,printSB=True,ofile=None):
+    #leg_y = 0.88 - (len(hs)+len(hb))*0.04
+#    leg = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+#    leg.SetFillStyle(0)
+#    leg.SetBorderSize(0)
+#    leg.SetTextSize(0.035)
+#    leg.SetTextFont(42)
+    leg_y = 0.87 - (2+len(hb))*0.04
+    leg = ROOT.TLegend(0.72,leg_y,0.89,0.87)
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
-    leg.SetTextSize(0.035)
+    leg.SetTextSize(0.027)
     leg.SetTextFont(42)
+
+    leg1 = ROOT.TLegend(0.48,leg_y,0.85,0.87)
+    leg1.SetFillStyle(0)
+    leg1.SetBorderSize(0)
+    leg1.SetTextSize(0.027)
+    leg1.SetTextFont(42)
 
     maxval = -99
     nevt=[]
@@ -704,7 +724,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
         leg.AddEntry(h,legname[name],"f")
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"l")
+        leg1.AddEntry(h,legname[name],"l")
 
 
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
@@ -732,12 +752,14 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
      c.cd()
 
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    #hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(1e+12)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
+    leg1.Draw()
     
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
@@ -757,7 +779,9 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
      ratio.SetLineColor(hs[nameS].GetLineColor())
      ratio.SetLineWidth(2)
      ratio.SetLineStyle(1)
-     ratio.GetYaxis().SetRangeUser(0.001,2)
+     #if "dbtag" in outname: ratio.GetYaxis().SetRangeUser(0,8)
+     #else: ratio.GetYaxis().SetRangeUser(-3,4.1)
+     ratio.GetYaxis().SetRangeUser(0.0001,10)
      ratio.GetYaxis().SetTitle("S/#sqrt{B}")
      ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
      ratio.GetXaxis().SetTitleSize(0.14)
@@ -891,23 +915,43 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
           h.SetLineStyle(style[name])
           h.SetLineWidth(2)
           h.SetFillStyle(0)
-
     #leg_y = 0.88 - (2+len(hb))*0.04
-    leg_y = 0.88 - (2+len(hb))*0.06
-    print "Length ", 0.88 - (2+len(hb))*0.06
-    leg = ROOT.TLegend(0.6,leg_y,0.88,0.88,"data/mc scale factor %.2f"%(scalefactor),"NDC")
+    leg_y = 0.87 - (2+len(hb))*0.04
+    #print "Length ", leg_y, " : ", len(hb)
+##    leg = ROOT.TLegend(0.6,leg_y,0.88,0.88,"data/mc scale factor %.2f"%(scalefactor),"NDC")
+##    leg.SetFillStyle(0)
+##    leg.SetBorderSize(0)
+##    leg.SetTextSize(0.035)
+##    leg.SetTextFont(42)
+##
+##    for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+##        leg.AddEntry(h,legname[name],"f")
+##    for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+##      #if 'ggH' in name:
+##      if 'Phibb' in name:
+##        leg.AddEntry(h,legname[name],"l")
+##    leg.AddEntry(hd,legname['data'],"pe");
+    leg = ROOT.TLegend(0.65,leg_y,0.82,0.87,"data/mc scale factor %.2f"%(scalefactor),"NDC")
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(0.035)
     leg.SetTextFont(42)
+    leg2 = ROOT.TLegend(0.35,leg_y,0.72,0.87)
+    leg2.SetFillStyle(0)
+    leg2.SetBorderSize(0)
+    leg2.SetTextSize(0.035)
+    leg2.SetTextFont(42)
 
+    count=1
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"f")
+        if count <7: 
+                leg.AddEntry(h,legname[name],"f")
+        #print " count : ",count, "Name : ", h.GetName(); 
+        count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
-      #if 'ggH' in name:
       if 'Phibb' in name:
-        leg.AddEntry(h,legname[name],"l")
-    leg.AddEntry(hd,legname['data'],"pe");
+        leg2.AddEntry(h,legname[name],"l")
+    leg.AddEntry(hd,'Data',"pe");
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
     c.SetFillStyle(4000)
     c.SetFrameFillStyle(1000)
@@ -946,6 +990,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 	  if 'Phibb' in name:
 		h.Draw("histsame")
     leg.Draw()
+    leg2.Draw()
     hstack2.SetMinimum(1e-1)
     hd.Draw('pesames');
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)

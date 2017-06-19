@@ -30,7 +30,7 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-4.7, rho_hi= -0.8, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
@@ -104,7 +104,7 @@ class RhalphabetBuilder():
         #for mass in [50,75,125,100,150,250,300]:
         #    self._signal_names.append("Pbb_" + str(mass))
         # for Hbb
-        for mass in [50,100,200,300]:
+        for mass in [50,100,125,200,300,350,400,500]:
             self._signal_names.append("DMSbb" + str(mass))
 
     def run(self):
@@ -652,7 +652,7 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
-            cuts = ['p85']           # Change cut here
+            cuts = ['p7']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
@@ -887,7 +887,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
-    cuts = {'p85'} # Change cut here
+    cuts = {'p7'} # Change cut here
     background_names = ["wqq", "zqq", "qcd", "tqq"]
     for i, bkg in enumerate(background_names):
         for cut in cuts:
@@ -946,11 +946,11 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     #sigs = ['Pbb_']
     #signal_names = []
     # for Hbb
-    masses = [50,100,200,300]
+    masses = [50,100,125,200,300,350,400,500]
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     sigs = ["DMSbb"]
     signal_names = []
-    cuts = ['p85'] # Change cut here
+    cuts = ['p7'] # Change cut here
     for mass in masses:
         for sig in sigs:
             for cut in cuts:
