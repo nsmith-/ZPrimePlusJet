@@ -20,6 +20,7 @@ def main(options, args):
     tfile = rt.TFile.Open(options.idir+'/validation.root')
     
     bkgs = ['wqq','zqq','tqq']
+    #sigs = ['hqq125','tthqq125','whqq125','zhqq125','vbfhqq125']
     sigs = ['DMSbb50','DMSbb100','DMSbb200','DMSbb300']
     procdict = {}
     procdict['tqq'] = 't#bar{t}'
@@ -94,8 +95,14 @@ def main(options, args):
                 tLeg.AddEntry(tmphUp,"%s +%i#sigma"%(syst,nsigma),"l")
                 tLeg.AddEntry(tmphDown,"%s -%i#sigma"%(syst,nsigma),"l")
                 tLeg.Draw('same')
+<<<<<<< HEAD
                 c.Print('%s/%s_%s_%s.pdf'%(options.odir,proc,box,syst))
                 c.Print('%s/%s_%s_%s.C'%(options.odir,proc,box,syst))
+=======
+                #c.Print('%s/%s_%s_%s.pdf'%(options.odir,proc,box,syst))
+                #c.Print('%s/%s_%s_%s.C'%(options.odir,proc,box,syst))
+                c.Print('%s/%s_%s_%s.gif'%(options.odir,proc,box,syst))
+>>>>>>> b7a2b9fad748a3a113bb231a9d887a690fa85b7c
                 #c.Print('%s/png/%s_%s_%s.png'%(options.odir,proc,box,syst))
             
     

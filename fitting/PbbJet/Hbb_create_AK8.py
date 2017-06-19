@@ -21,7 +21,8 @@ def main(options, args):
     dbtagmin = options.dbtagmin
 
     #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
-    fileName = 'hist_1DZbb_pt_scalesmear_AK8_new.root'
+    #fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples.root'
+    fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples_300.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
@@ -42,13 +43,14 @@ def main(options, args):
                     idir_old + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
         'tthqq125': [idir_old + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 ############### Signals
-        'DMSbb10': [idir_data + '/Spin0_ggPhibb1j_g1_10_Scalar.root'],
-        'DMSbb20': [idir_data + '/Spin0_ggPhibb1j_g1_20_Scalar.root'],
         'DMSbb50': [idir_data + '/Spin0_ggPhibb1j_g1_50_Scalar_1000pb_weighted.root'],
         'DMSbb100': [idir_data + '/Spin0_ggPhibb1j_g1_100_Scalar_1000pb_weighted.root'],
+        'DMSbb125': [idir_data + '/Spin0_ggPhibb1j_g1_125_Scalar_1000pb_weighted.root'],
         'DMSbb200': [idir_data + '/Spin0_ggPhibb1j_g1_200_Scalar_1000pb_weighted.root'],
         'DMSbb300': [idir_data + '/Spin0_ggPhibb1j_g1_300_Scalar_1000pb_weighted.root'],
-        'DMSbb1000': [idir_data + '/Spin0_ggPhibb1j_g1_1000_Scalar_1000pb_weighted.root'],
+        'DMSbb350': [idir_data + '/Spin0_ggPhibb1j_g1_350_Scalar_1000pb_weighted.root'],
+        'DMSbb400': [idir_data + '/Spin0_ggPhibb1j_g1_400_Scalar_1000pb_weighted.root'],
+        'DMSbb500': [idir_data + '/Spin0_ggPhibb1j_g1_500_Scalar_1000pb_weighted.root'],
 
 ############### Backgrounds
         'qcd': [
@@ -208,13 +210,14 @@ def main(options, args):
 #No    sigSamples['vbfhqq125'] = sampleContainerPhibbAK8('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
 #No    sigSamples['whqq125'] = sampleContainerPhibbAK8('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', False)
 #No    sigSamples['zhqq125'] = sampleContainerPhibbAK8('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    sigSamples['DMSbb10']  = sampleContainerPhibbAK8('DMSbb10',tfiles['DMSbb10']  , 1, dbtagmin, 0.2080*lumi, False, False, '1', False)
-#No    sigSamples['DMSbb20']  = sampleContainerPhibbAK8('DMSbb20',tfiles['DMSbb20']  , 1, dbtagmin, 0.2080*lumi, False, False, '1', False)
     sigSamples['DMSbb50'] = sampleContainerPhibbAK8('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, False, '1', False)
     sigSamples['DMSbb100'] = sampleContainerPhibbAK8('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb125'] = sampleContainerPhibbAK8('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, False, '1', False)
     sigSamples['DMSbb200'] = sampleContainerPhibbAK8('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, False, '1', False)
     sigSamples['DMSbb300'] = sampleContainerPhibbAK8('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    sigSamples['DMSbb1000'] = sampleContainerPhibbAK8('DMSbb1000',tfiles['DMSbb1000'], 1, dbtagmin, 0.6699*lumi, False, False, '1', False)
+    sigSamples['DMSbb350'] = sampleContainerPhibbAK8('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb400'] = sampleContainerPhibbAK8('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb500'] = sampleContainerPhibbAK8('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, False, '1', False)
 
     print "Backgrounds..."
     bkgSamples = {}
