@@ -220,7 +220,7 @@ class RhalphabetBuilder():
             simPdf_b.addPdf(epdf_b[cat],cat)    
             simPdf_s.addPdf(epdf_s[cat],cat)
 
-        mu.setVal(1.)    
+        mu.setVal(0.)    
 
         getattr(w,'import')(simPdf_b,r.RooFit.RecycleConflictNodes())
         getattr(w,'import')(simPdf_s,r.RooFit.RecycleConflictNodes())
@@ -243,7 +243,7 @@ class RhalphabetBuilder():
         r.RooStats.RemoveConstantParameters(allParams)            
         opt.Add(r.RooFit.Constrain(allParams))
 
-        mu.setVal(1)
+        mu.setVal(0.)
         mu.setConstant(True)
 
         nll = simPdf_s.createNLL(combData)
