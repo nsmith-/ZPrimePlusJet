@@ -27,7 +27,7 @@ def main(options,args):
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
             
-            cuts = ['p9']         # Change cut here
+            cuts = ['p75']         # Change cut here
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
             bkgs = ['zqq','wqq','qcd','tqq']

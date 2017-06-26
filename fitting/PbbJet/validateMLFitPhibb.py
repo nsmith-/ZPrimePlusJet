@@ -75,7 +75,7 @@ def main(options, args):
             ptVal = ratio_2d_data_subtract.GetYaxis().GetBinLowEdge(j) + ratio_2d_data_subtract.GetYaxis().GetBinWidth(
                 j) * 0.3
             rhoVal = r.TMath.Log(massVal * massVal / ptVal / ptVal)
-            if rhoVal < options.lrho or rhoVal > options.hro:
+            if rhoVal < options.lrho or rhoVal > options.hrho:
                 ratio_2d_data_subtract.SetBinContent(i, j, 0)
 
     for shape in shapes:
@@ -133,13 +133,14 @@ def main(options, args):
         makeTF(pars, ratio_2d_data_subtract)
 
     #print "sum ",histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9]
+    #print "sum ",histograms_pass_summed_list[0:4], histograms_pass_summed_list[5], histograms_pass_summed_list[4]
 
-    [histograms_pass_summed_list] = makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[9],
-                                                    histograms_pass_summed_list[4:9], shapes,
+    [histograms_pass_summed_list] = makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[5],
+                                                    histograms_pass_summed_list[4], shapes,
                                                     "pass_allcats_" + options.fit, options.odir, rBestFit,
                                                     options.sOverSb, options.splitS, options.ratio)
-    [histograms_fail_summed_list] = makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[9],
-                                                    histograms_fail_summed_list[4:9], shapes,
+    [histograms_fail_summed_list] = makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[5],
+                                                    histograms_fail_summed_list[4], shapes,
                                                     "fail_allcats_" + options.fit, options.odir, rBestFit,
                                                     options.sOverSb, options.splitS, options.ratio)
 
@@ -160,7 +161,6 @@ def plotCategory(fml, fd, index, fittype):
 
     rBestFit = 1
     if fittype == "fit_b" or fittype == "fit_s":
-        print " Anter : ", fml.Get(options.fit) 
         rfr = r.RooFitResult(fml.Get(options.fit))
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
@@ -172,17 +172,17 @@ def plotCategory(fml, fd, index, fittype):
         else:
             # fitdir = "prefit"
             fitdir = fittype
-        # print fitdir+"/cat%i_fail_cat%i/%s" % (index,index,ish)
+        #print fitdir+"/ch%i_fail_cat%i/%s" % (index,index,ish)
 
-        histograms_fail.append(fml.Get("shapes_" + fitdir + "/cat%i_fail_cat%i/%s" % (index, index, ish)))
-        histograms_pass.append(fml.Get("shapes_" + fitdir + "/cat%i_pass_cat%i/%s" % (index, index, ish)))
+        histograms_fail.append(fml.Get("shapes_" + fitdir + "/ch%i_fail_cat%i/%s" % (index, index, ish)))
+        histograms_pass.append(fml.Get("shapes_" + fitdir + "/ch%i_pass_cat%i/%s" % (index, index, ish)))
         # print fitdir
         rags = fml.Get("norm_" + fitdir)
         # rags.Print()
 
-        rrv_fail = r.RooRealVar(rags.find("cat%i_fail_cat%i/%s" % (index, index, ish)))
+        rrv_fail = r.RooRealVar(rags.find("ch%i_fail_cat%i/%s" % (index, index, ish)))
         curnorm_fail = rrv_fail.getVal()
-        rrv_pass = r.RooRealVar(rags.find("cat%i_pass_cat%i/%s" % (index, index, ish)))
+        rrv_pass = r.RooRealVar(rags.find("ch%i_pass_cat%i/%s" % (index, index, ish)))
         curnorm_pass = rrv_pass.getVal()
         # if ish=='qcd' and index==4:
         #    histograms_fail[i].SetBinContent(13,(histograms_fail[i].GetBinContent(12)+histograms_fail[i].GetBinContent(14))/2.)
@@ -209,7 +209,6 @@ def plotCategory(fml, fd, index, fittype):
     #    data_fail.SetBinContent(13,(data_fail.GetBinContent(12)+data_fail.GetBinContent(14))/2.)
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
-
     [histograms_fail] = makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes,
                                         "fail_cat" + str(index) + "_" + fittype, options.odir, rBestFit,
                                         options.sOverSb, options.splitS, options.ratio)
@@ -242,6 +241,7 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
 
 def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOverSb=False, splitS=True, ratio=False):
     weight = 1
+    #print " Back : ",  bkgs, " Data : ", data, " Sig : ", hsigs 
     if sOverSb:
         [bkgs, data, hsigs, weight] = weightBySOverSpB(bkgs, data, hsigs, tag)
         data.GetYaxis().SetTitle('S/(S+B) Weighted Events / 7 GeV')
@@ -260,7 +260,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     p12.Draw()
     p12.cd()
 
-    h = r.TH1F("h", "AK8 m_{SD} (GeV);", 23, 40, 201)
+    h = r.TH1F("h", "AK8 m_{SD} (GeV);", 80, 40, 600)
     htot = bkgs[0].Clone("htot%s" % tag)
     hqcd = bkgs[3].Clone("hqcd%s" % tag)
     hqcd.Add(bkgs[2])
@@ -281,6 +281,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     for ih in range(1, len(bkgs)):
         htot.Add(bkgs[ih])
         htotsig.Add(bkgs[ih])
+    print " Anter tag : ", tag, " ", len(hsigs), hsigs[0].GetName() 
     hsig = hsigs[0].Clone("hsig%s" % tag)
     for ih in range(1, len(hsigs)):
         hsig.Add(hsigs[ih])

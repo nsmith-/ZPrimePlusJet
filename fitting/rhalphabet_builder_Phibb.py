@@ -653,7 +653,7 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
-            cuts = ['p7']           # Change cut here
+            cuts = ['p75']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
@@ -889,7 +889,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
-    cuts = {'p7'} # Change cut here
+    cuts = {'p75'} # Change cut here
     background_names = ["wqq", "zqq", "qcd", "tqq"]
     for i, bkg in enumerate(background_names):
         for cut in cuts:
@@ -952,7 +952,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     sigs = ["DMSbb"]
     signal_names = []
-    cuts = ['p7'] # Change cut here
+    cuts = ['p75'] # Change cut here
     for mass in masses:
         for sig in sigs:
             for cut in cuts:
