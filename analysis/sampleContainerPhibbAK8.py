@@ -946,14 +946,14 @@ class sampleContainerPhibbAK8:
                 genVPhi = self.genVPhi[0]
                 genVMass = self.genVMass[0]
                 if genVPt > 0 and genVMass > 0:
-                    dphi = math.fabs(genVPhi - jphi_8)
+                    dphi = math.fabs(math.acos(math.cos(genVPhi - jphi_8)))
                     dpt = math.fabs(genVPt - jpt_8) / genVPt
                     dmass = math.fabs(genVMass - jmsd_8) / genVMass
 
             # Single Muon Control Regions
             if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
                     vmuoLoose0_eta) < 2.1 and isTightVJet and abs(
-                            vmuoLoose0_phi - jphi_8) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+                            math.acos(math.cos(vmuoLoose0_phi - jphi_8))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                 if not self._minBranches:
                     ht_ = 0.
                     if (abs(self.AK4Puppijet0_eta[0]) < 2.4 and self.AK4Puppijet0_pt[0] > 30): ht_ = ht_ + \
@@ -1029,8 +1029,8 @@ class sampleContainerPhibbAK8:
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
                 if eval(
                                 'jpt_8_%s' % syst) > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
-                        vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(
-                                vmuoLoose0_phi - jphi_8) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+                        vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(math.acos(math.cos(
+                                vmuoLoose0_phi - jphi_8))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                     if jdb_8 > DBTAGCUT:
                         (getattr(self, 'h_msd_ak8_muCR4_N2_pass_%s' % syst)).Fill(jmsd_8, weight)
                     elif jdb_8 > self.DBTAGCUTMIN:
