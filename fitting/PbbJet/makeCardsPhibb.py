@@ -14,8 +14,8 @@ import array
 sys.path.insert(0, '../.')
 from tools import *
 
-from buildRhalphabetPhibbAK8 import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
-from rhalphabet_builder_Phibb_AK8 import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
+from buildRhalphabetPhibb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI
+from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 
 ##-------------------------------------------------------------------------------------
@@ -27,12 +27,12 @@ def main(options,args):
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
             
-            cuts = ['p85']         # Change cut here
+            cuts = ['p75']         # Change cut here
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
             bkgs = ['zqq','wqq','qcd','tqq']
             systs = ['JER','JES','Pu']
-
+            #print " Anter : ", " Low : ", options.lrho, " High : ", options.hrho
             removeUnmatched = options.removeUnmatched
 
             nBkgd = len(bkgs)
@@ -261,7 +261,7 @@ def main(options,args):
                                     massVal = histo.GetXaxis().GetBinCenter(j)
                                     ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
                                     rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
-                                    if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
+                                    if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < options.lrho or rhoVal > options.hrho):
                                         dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
                                         print 'include %s%scat%imcstat%i'%(proc,box,i,j)
                                         mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
@@ -293,6 +293,8 @@ if __name__ == '__main__':
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
+    parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
+    parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
 
     (options, args) = parser.parse_args()
 

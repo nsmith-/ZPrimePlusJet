@@ -16,7 +16,7 @@ r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/l
 # sys.path.insert(0, '../.')
 from tools import *
 from hist import *
-from rhalphabet_builder_Phibb_AK8 import RhalphabetBuilder, LoadHistograms, GetSF
+from rhalphabet_builder_Phibb import RhalphabetBuilder, LoadHistograms, GetSF
 
 #MASS_BINS = 23
 #MASS_LO = 40
@@ -26,8 +26,8 @@ MASS_LO = 40
 MASS_HI = 600
 BLIND_LO = 110
 BLIND_HI = 131
-RHO_LO = -6
-RHO_HI = -2.1
+#RHO_LO = -6
+#RHO_HI = -2.1
 
 
 def main(options, args):
@@ -42,13 +42,13 @@ def main(options, args):
     if options.ifile_loose is not None:
         fLoose = r.TFile.Open(options.ifile_loose)
     #(hpass, hfail) = loadHistograms(f, options.pseudo, options.blind, options.useQCD, options.scale, options.r)
-    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[RHO_LO,RHO_HI], fLoose=fLoose)
+    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], fLoose=fLoose)
     #f.Close()
 
     # Build the workspacees
     #dazsleRhalphabetBuilder(hpass, hfail, f, odir, options.NR, options.NP)
 
-    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose)
+    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=options.lrho, rho_hi=options.hrho, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose)
     rhalphabuilder.run()
     if options.prefit:
         rhalphabuilder.prefit()
@@ -82,6 +82,8 @@ if __name__ == '__main__':
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--prefit', action='store_true', dest='prefit', default =False,help='do prefit', metavar='prefit')
     parser.add_option('--loadfit', dest='loadfit', default=None, help='load qcd polynomial parameters from alternative rhalphabase.root',metavar='loadfit')
+    parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
+    parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
 
     (options, args) = parser.parse_args()
 

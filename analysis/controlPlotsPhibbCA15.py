@@ -10,7 +10,7 @@ import array
 import glob
 import os
 from plotHelpersPhibb import *
-from sampleContainerPhibbAK8 import *
+from sampleContainerPhibbCA15 import *
 DBTMIN=-99
 #
 def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
@@ -18,8 +18,8 @@ def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canv
         c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)	
     else:
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,True,ofile)
-        #c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,False,ofile)
+        #c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,True,ofile)
+        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,False,ofile)
         c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,False)
 #        canvases.append(c)	
         canvases.append(c1)
@@ -59,8 +59,8 @@ def main(options,args,outputExists):
                'Phibb100': '#Phi(b#bar{b}), 100 GeV',
                'Phibb125': '#Phi(b#bar{b}), 125 GeV',
                'Phibb200': '#Phi(b#bar{b}), 200 GeV',
-               'Phibb300': '#Phi(b#bar{b}), 300 GeV',               
-               'Phibb350': '#Phi(b#bar{b}), 350 GeV',               
+               'Phibb300': '#Phi(b#bar{b}), 300 GeV',
+               'Phibb350': '#Phi(b#bar{b}), 350 GeV',
                'Phibb400': '#Phi(b#bar{b}), 400 GeV',
                'Phibb500': '#Phi(b#bar{b}), 500 GeV',
                }
@@ -250,14 +250,14 @@ def main(options,args,outputExists):
              'VBFHbb': ROOT.kBlue-10,
              'Phibb50': ROOT.kAzure+1,
              'Phibb100': ROOT.kRed-2,
-	     #'Phibb125': ROOT.kRed,
-	     'Phibb125': ROOT.kOrange-9,
+             #'Phibb125': ROOT.kRed,
+             'Phibb125': ROOT.kOrange-9,
              'Phibb200': ROOT.kBlue-1,
              'Phibb300': ROOT.kMagenta+1,
              'Phibb350': ROOT.kBlue,
              'Phibb400': ROOT.kBlue-10,
              'Phibb500': ROOT.kSpring,
-	     'ttHbb': ROOT.kBlue-1,
+             'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
              'DY':  ROOT.kRed,
@@ -278,13 +278,13 @@ def main(options,args,outputExists):
     style = {'Hbb': 1,
              'ggHbb': 2,             
              'Phibb50': 3,
-	     'Phibb100': 4,
-	     'Phibb125': 4,
-	     'Phibb200': 9,
-	     'Phibb300': 5,
-	     'Phibb350': 2,
-	     'Phibb400': 2,
-	     'Phibb500': 2,
+             'Phibb100': 4,
+             'Phibb125': 4,
+             'Phibb200': 9,
+             'Phibb300': 5,
+             'Phibb350': 2,
+             'Phibb400': 2,
+             'Phibb500': 2,
              'VBFHbb': 3,
 	     'VHbb': 4,
 	     'ttHbb': 5,
@@ -310,7 +310,7 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainerPhibbAK8('test',[], 1, DBTMIN,lumi)
+        testSample = sampleContainerPhibbCA15('test',[], 1, DBTMIN,lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
@@ -318,10 +318,10 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8', 'h_rho_ak8_nocut', 'h_msd_ak8_nocut','h_Cuts']
+        plots = ['h_pt_ca15','h_msd_ca15','h_dbtag_ca15','h_n_ak4','h_n_ak4_dR0p8','h_t21_ca15','h_t32_ca15','h_n2b1sdddt_ca15','h_t21ddt_ca15','h_met_ca15','h_npv','h_eta_ca15','h_ht_ca15','h_dbtag_ca15_aftercut','h_n2b1sdddt_ca15_aftercut','h_rho_ca15', 'h_rho_ca15_nocut', 'h_msd_ca15_nocut', 'h_Cuts_ca15']
     else:
         plots = []
-        testSample = sampleContainerPhibbAK8('test',[], 1, DBTMIN,lumi)
+        testSample = sampleContainerPhibbCA15('test',[], 1, DBTMIN,lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
@@ -338,45 +338,45 @@ def main(options,args,outputExists):
 #                    sys.exit()
         print "Signals... "
         sigSamples = {}
-#No        sigSamples['ggHbb']  = sampleContainerPhibbAK8('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi) 
-#No        sigSamples['VBFHbb'] = sampleContainerPhibbAK8('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ) 
-#No        sigSamples['VHbb'] = sampleContainerPhibbAK8('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi )        
-#No        sigSamples['ttHbb'] = sampleContainerPhibbAK8('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi )    
-        sigSamples['Phibb50'] = sampleContainerPhibbAK8('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi) 
-        sigSamples['Phibb100'] = sampleContainerPhibbAK8('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb125'] = sampleContainerPhibbAK8('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb200'] = sampleContainerPhibbAK8('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb300'] = sampleContainerPhibbAK8('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb350'] = sampleContainerPhibbAK8('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi)      
-        sigSamples['Phibb400'] = sampleContainerPhibbAK8('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi)   
-        sigSamples['Phibb500'] = sampleContainerPhibbAK8('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi)   
+#No        sigSamples['ggHbb']  = sampleContainerPhibbCA15('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi) 
+#No        sigSamples['VBFHbb'] = sampleContainerPhibbCA15('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ) 
+#No        sigSamples['VHbb'] = sampleContainerPhibbCA15('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi )        
+#No        sigSamples['ttHbb'] = sampleContainerPhibbCA15('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi )    
+        sigSamples['Phibb50'] = sampleContainerPhibbCA15('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi)
+        sigSamples['Phibb100'] = sampleContainerPhibbCA15('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi)
+        sigSamples['Phibb125'] = sampleContainerPhibbCA15('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi)
+        sigSamples['Phibb200'] = sampleContainerPhibbCA15('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi)
+        sigSamples['Phibb300'] = sampleContainerPhibbCA15('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi)
+        sigSamples['Phibb350'] = sampleContainerPhibbCA15('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi)
+        sigSamples['Phibb400'] = sampleContainerPhibbCA15('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi)
+        sigSamples['Phibb500'] = sampleContainerPhibbCA15('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi)
         print "Backgrounds..."
         bkgSamples = {}
-        bkgSamples['W']  = sampleContainerPhibbAK8('W',tfiles['W'], 1, DBTMIN,lumi)
-        bkgSamples['DY']  = sampleContainerPhibbAK8('DY',tfiles['DY'], 1, DBTMIN,lumi)
-        bkgSamples['QCD'] = sampleContainerPhibbAK8('QCD',tfiles['QCD'], 1, DBTMIN,lumi)
+        bkgSamples['W']  = sampleContainerPhibbCA15('W',tfiles['W'], 1, DBTMIN,lumi)
+        bkgSamples['DY']  = sampleContainerPhibbCA15('DY',tfiles['DY'], 1, DBTMIN,lumi)
+        bkgSamples['QCD'] = sampleContainerPhibbCA15('QCD',tfiles['QCD'], 1, DBTMIN,lumi)
         if isData and muonCR:
-            bkgSamples['Wlnu']  = sampleContainerPhibbAK8('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi)
-#No            bkgSamples['DYll']  = sampleContainerPhibbAK8('DYll',tfiles['DYll'], 1, DBTMIN,lumi)
-#No            bkgSamples['TTbar1Mu']  = sampleContainerPhibbAK8('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-#No            bkgSamples['TTbar1Ele']  = sampleContainerPhibbAK8('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-#No            bkgSamples['TTbar1Tau']  = sampleContainerPhibbAK8('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-#No            bkgSamples['TTbar0Lep']  = sampleContainerPhibbAK8('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
-#No            bkgSamples['TTbar2Lep']  = sampleContainerPhibbAK8('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
+            bkgSamples['Wlnu']  = sampleContainerPhibbCA15('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi)
+#No            bkgSamples['DYll']  = sampleContainerPhibbCA15('DYll',tfiles['DYll'], 1, DBTMIN,lumi)
+#No            bkgSamples['TTbar1Mu']  = sampleContainerPhibbCA15('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+#No            bkgSamples['TTbar1Ele']  = sampleContainerPhibbCA15('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+#No            bkgSamples['TTbar1Tau']  = sampleContainerPhibbCA15('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+#No            bkgSamples['TTbar0Lep']  = sampleContainerPhibbCA15('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
+#No            bkgSamples['TTbar2Lep']  = sampleContainerPhibbCA15('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
         else:        
-            bkgSamples['TTbar']  = sampleContainerPhibbAK8('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi)
-        bkgSamples['SingleTop'] = sampleContainerPhibbAK8('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi)
-        bkgSamples['Diboson'] = sampleContainerPhibbAK8('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi)
-#No        bkgSamples['Hbb'] = sampleContainerPhibbAK8('Hbb',tfiles['Hbb'], 1, lumi )  
+            bkgSamples['TTbar']  = sampleContainerPhibbCA15('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi)
+        bkgSamples['SingleTop'] = sampleContainerPhibbCA15('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi)
+        bkgSamples['Diboson'] = sampleContainerPhibbCA15('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi)
+#No        bkgSamples['Hbb'] = sampleContainerPhibbCA15('Hbb',tfiles['Hbb'], 1, lumi )  
 
         if isData:
             print "Data..."
         if isData and muonCR:
-            dataSample = sampleContainerPhibbAK8('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
+            dataSample = sampleContainerPhibbCA15('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
         elif isData:
-            dataSample = sampleContainerPhibbAK8('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)')
+            dataSample = sampleContainerPhibbCA15('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)')
         
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Plots_CA15_1000pb_weighted.root ','recreate')
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
@@ -429,7 +429,7 @@ def main(options,args,outputExists):
         else:        
             bkgSamples.extend(['TTbar'])
             
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','read')
+        ofile = ROOT.TFile.Open(odir+'/Plots_CA15_1000pb_weighted.root','read')
         for plot in plots:
             hb = {}
             hs = {}
@@ -476,7 +476,7 @@ if __name__ == '__main__':
 
     
     outputExists = False
-    if glob.glob(options.odir+'/Plots_1000pb_weighted.root'):
+    if glob.glob(options.odir+'/Plots_CA15_1000pb_weighted.root'):
         outputExists = True
         
     main(options,args,outputExists)

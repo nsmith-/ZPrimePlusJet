@@ -57,6 +57,7 @@ class RhalphabetBuilder():
 
         self._remove_unmatched  = remove_unmatched
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
+        print " Rho : ", " Low : ", self._rho_lo, " High : ", self._rho_hi
 
         #polynomial order for fit
         self._poly_degree_rho = nr #1 = linear ; 2 is quadratic
@@ -243,7 +244,7 @@ class RhalphabetBuilder():
         r.RooStats.RemoveConstantParameters(allParams)            
         opt.Add(r.RooFit.Constrain(allParams))
 
-        mu.setVal(0.)
+        mu.setVal(0)
         mu.setConstant(True)
 
         nll = simPdf_s.createNLL(combData)
@@ -652,7 +653,7 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
-            cuts = ['p85']           # Change cut here
+            cuts = ['p75']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
@@ -731,6 +732,7 @@ class RhalphabetBuilder():
                             h.GetName(), h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i, 0.)
                             h.SetBinError(i, 0.)
+                        print " Anter : ", rhoVal 
                         if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
                             print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
                             rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
@@ -887,7 +889,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
-    cuts = {'p85'} # Change cut here
+    cuts = {'p75'} # Change cut here
     background_names = ["wqq", "zqq", "qcd", "tqq"]
     for i, bkg in enumerate(background_names):
         for cut in cuts:
@@ -950,7 +952,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     sigs = ["DMSbb"]
     signal_names = []
-    cuts = ['p85'] # Change cut here
+    cuts = ['p75'] # Change cut here
     for mass in masses:
         for sig in sigs:
             for cut in cuts:
