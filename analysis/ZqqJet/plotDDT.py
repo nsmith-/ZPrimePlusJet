@@ -75,7 +75,20 @@ if __name__ == '__main__':
     ROOT.gStyle.SetOptFit(0000)
     ROOT.gROOT.SetBatch()
     #ROOT.gStyle.SetPalette(ROOT.kBlackBody)
-    ROOT.gStyle.SetPalette(ROOT.kBird)
+    #ROOT.gStyle.SetPalette(ROOT.kBird)    
+    stops = [ 0.0, 1.0]
+    red =   [ 1.0, 0.3]
+    green = [ 1.0, 0.3]
+    blue =  [ 1.0, 1.0]
+
+    s = array('d', stops)
+    r = array('d', red)
+    g = array('d', green)
+    b = array('d', blue)
+
+    npoints = len(s)
+    ROOT.TColor.CreateGradientColorTable(npoints, s, r, g, b, 999)
+
     ROOT.gStyle.SetNumberContours(999)
 
     main(options,args)
