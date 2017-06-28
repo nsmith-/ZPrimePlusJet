@@ -8,40 +8,21 @@ sys.path.append(os.path.expandvars("$CMSSW_BASE/src/DAZSLE/ZPrimePlusJet/analysi
 
 from sampleContainerPhibbAK8 import *
 
-
-##----##----##----##----##----##----##
-def main(options, args):
-    idir_old = "/eos/uscms/store/user/lpchbb/zprimebits-v12.03/cvernier"
+def getFiles(muonCR=False):
+    #idir_old = "/eos/uscms/store/user/lpchbb/zprimebits-v12.03/cvernier/"
     idir = "/eos/uscms/store/user/lpchbb/zprimebits-v12.04/norm2/cvernier/"
+    idir_muon = "/eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/"
     idir_data = '/eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
-    #idir = options.idir   
-    odir = options.odir
-    lumi = options.lumi
-    muonCR = options.muonCR
-    dbtagmin = options.dbtagmin
-
-    #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
-    #fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples.root'
-    fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples_300.root'
-    if options.bb:
-        fileName = 'hist_1DZbb_sortByBB.root'
-    elif muonCR:
-        fileName = 'hist_1DZbb_muonCR.root'
-
-    outfile = ROOT.TFile(options.odir + "/" + fileName, "recreate")
-
     tfiles = {
-        'hqq125': [idir_old+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
-        'vbfhqq125': [idir_old+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
-        'zhqq125': [idir_old+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
-        'whqq125': [idir_old + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                    idir_old + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-        'tthqq125': [idir_old + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+        'hqq125': [idir_data+'/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root'],
+        'vbfhqq125': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
+        'zhqq125': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+        'whqq125': [idir + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                    idir + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+        'tthqq125': [idir + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 ############### Signals
         'DMSbb50': [idir_data + '/Spin0_ggPhibb1j_g1_50_Scalar_1000pb_weighted.root'],
         'DMSbb100': [idir_data + '/Spin0_ggPhibb1j_g1_100_Scalar_1000pb_weighted.root'],
@@ -73,13 +54,13 @@ def main(options, args):
                  idir+'/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                  idir+'/WZ_13TeV_pythia8_1000pb_weighted.root'],
 ################
-        'zll': [idir_old + '/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
-        'wlnu': [idir_old + 'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
-                 idir_old + '/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
-                 idir_old + '/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
-                 idir_old + '/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-                 idir_old + '/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
-                 idir_old + '/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root'],
+        'zll': [idir + '/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
+        'wlnu': [idir + 'WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
+                 idir + '/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
+                 idir + '/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
+                 idir + '/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
+                 idir + '/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
+                 idir + '/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root'],
 ################
         'data_obs': [idir_data+'JetHTRun2016B_03Feb2017_ver2_v2_v3.root',
                      idir_data + 'JetHTRun2016B_03Feb2017_ver1_v1_v3.root',
@@ -193,23 +174,42 @@ def main(options, args):
     }
 
     if muonCR:
-        tfiles['data_obs'] = [idir_old + '/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016D_03Feb2017_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016E_03Feb2017_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016F_03Feb2017_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016G_03Feb2017_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016H_03Feb2017_ver2_v1_fixtrig.root',
-                              idir_old + '/SingleMuonRun2016H_03Feb2017_ver3_v1_fixtrig.root']
+        tfiles['data_obs'] = [idir_muon + '/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016D_03Feb2017_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016E_03Feb2017_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016F_03Feb2017_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016G_03Feb2017_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016H_03Feb2017_ver2_v1_fixtrig.root',
+                              idir_muon + '/SingleMuonRun2016H_03Feb2017_ver3_v1_fixtrig.root']
+
+    return tfiles
+
+##----##----##----##----##----##----##
+def main(options, args):
+
+    #idir = options.idir   
+    odir = options.odir
+    lumi = options.lumi
+    muonCR = options.muonCR
+    dbtagmin = options.dbtagmin
+
+    #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
+    #fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples.root'
+    fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples_300.root'
+    if options.bb:
+        fileName = 'hist_1DZbb_sortByBB.root'
+    elif muonCR:
+        fileName = 'hist_1DZbb_muonCR.root'
+
+    outfile = ROOT.TFile(options.odir + "/" + fileName, "recreate")
+
+    tfiles = getFiles(muonCR)
+
 
     print "Signals... "
     sigSamples = {}
-#No    sigSamples['hqq125'] = sampleContainerPhibbAK8('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    sigSamples['tthqq125'] = sampleContainerPhibbAK8('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    sigSamples['vbfhqq125'] = sampleContainerPhibbAK8('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    sigSamples['whqq125'] = sampleContainerPhibbAK8('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    sigSamples['zhqq125'] = sampleContainerPhibbAK8('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
     sigSamples['DMSbb50'] = sampleContainerPhibbAK8('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, False, '1', False)
     sigSamples['DMSbb100'] = sampleContainerPhibbAK8('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, False, '1', False)
     sigSamples['DMSbb125'] = sampleContainerPhibbAK8('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, False, '1', False)
@@ -227,9 +227,16 @@ def main(options, args):
         bkgSamples['qcd'] = sampleContainerPhibbAK8('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', False)
     bkgSamples['tqq'] = sampleContainerPhibbAK8('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', False)
     bkgSamples['stqq'] = sampleContainerPhibbAK8('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    bkgSamples['wlnu'] = sampleContainerPhibbAK8('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', False)
-#No    bkgSamples['zll'] = sampleContainerPhibbAK8('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['wlnu'] = sampleContainerPhibbAK8('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['zll'] = sampleContainerPhibbAK8('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', False)
     bkgSamples['vvqq'] = sampleContainerPhibbAK8('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['hqq125'] = sampleContainerPhibbAK8('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['tthqq125'] = sampleContainerPhibbAK8('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['vbfhqq125'] = sampleContainerPhibbAK8('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['whqq125'] = sampleContainerPhibbAK8('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['zhqq125'] = sampleContainerPhibbAK8('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+
+
     print "Data..."
     if not options.skipData:
         if muonCR:
