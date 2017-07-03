@@ -33,30 +33,30 @@ def main(options, args):
     print "Signals... "
     sigSamples = {}
     sigSamples['DMSbb50'] = sampleContainerPhibbCA15('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb100'] = sampleContainerPhibbCA15('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb125'] = sampleContainerPhibbCA15('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb200'] = sampleContainerPhibbCA15('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb300'] = sampleContainerPhibbCA15('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb350'] = sampleContainerPhibbCA15('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb400'] = sampleContainerPhibbCA15('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## sigSamples['DMSbb500'] = sampleContainerPhibbCA15('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb100'] = sampleContainerPhibbCA15('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb125'] = sampleContainerPhibbCA15('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb200'] = sampleContainerPhibbCA15('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb300'] = sampleContainerPhibbCA15('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb350'] = sampleContainerPhibbCA15('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb400'] = sampleContainerPhibbCA15('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb500'] = sampleContainerPhibbCA15('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, False, '1', False)
 
     print "Backgrounds..."
     bkgSamples = {}
-    ## bkgSamples['wqq'] = sampleContainerPhibbCA15('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['wqq'] = sampleContainerPhibbCA15('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', False)
     bkgSamples['zqq'] = sampleContainerPhibbCA15('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## if not options.skipQCD:
-    ##     bkgSamples['qcd'] = sampleContainerPhibbCA15('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['tqq'] = sampleContainerPhibbCA15('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['stqq'] = sampleContainerPhibbCA15('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['wlnu'] = sampleContainerPhibbCA15('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['zll'] = sampleContainerPhibbCA15('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['vvqq'] = sampleContainerPhibbCA15('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', False)
+    if not options.skipQCD:
+        bkgSamples['qcd'] = sampleContainerPhibbCA15('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['tqq'] = sampleContainerPhibbCA15('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['stqq'] = sampleContainerPhibbCA15('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['wlnu'] = sampleContainerPhibbCA15('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['zll'] = sampleContainerPhibbCA15('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['vvqq'] = sampleContainerPhibbCA15('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', False)
     bkgSamples['hqq125'] = sampleContainerPhibbCA15('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['tthqq125'] = sampleContainerPhibbCA15('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['vbfhqq125'] = sampleContainerPhibbCA15('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['whqq125'] = sampleContainerPhibbCA15('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    ## bkgSamples['zhqq125'] = sampleContainerPhibbCA15('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['tthqq125'] = sampleContainerPhibbCA15('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['vbfhqq125'] = sampleContainerPhibbCA15('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['whqq125'] = sampleContainerPhibbCA15('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['zhqq125'] = sampleContainerPhibbCA15('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
 
 
     print "Data..."
