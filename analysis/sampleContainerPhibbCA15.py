@@ -20,6 +20,17 @@ METCUT = 140
 MASSCUT = 40
 NJETCUT = 100
 
+def delta_phi(phi1, phi2):
+  PI = 3.14159265359
+  x = phi1 - phi2
+  while x >=  PI:
+      x -= ( 2*PI )
+  while x <  -PI:
+      x += ( 2*PI )
+  return x
+
+def delta_phi_david(phi1, phi2):
+    return math.acos(math.cos(phi1 - phi2))
 
 #########################################################################################################
 class sampleContainerPhibbCA15:
@@ -405,30 +416,42 @@ class sampleContainerPhibbCA15:
                 'h_msd_ca15_topR7_fail': ["h_" + self._name + "_msd_ca15_topR7_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ca15_topR4_fail': ["h_" + self._name + "_msd_ca15_topR4_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ca15_bbleading_topR6_pass': ["h_" + self._name + "_msd_ca15_bbleading_topR6_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_bbleading_topR6_fail': ["h_" + self._name + "_msd_ca15_bbleading_topR6_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p7_pass': ["h_" + self._name + "_msd_ca15_topR6_p7_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p7_fail': ["h_" + self._name + "_msd_ca15_topR6_p7_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p75_pass': ["h_" + self._name + "_msd_ca15_topR6_p75_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p75_fail': ["h_" + self._name + "_msd_ca15_topR6_p75_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p8_pass': ["h_" + self._name + "_msd_ca15_topR6_p8_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p8_fail': ["h_" + self._name + "_msd_ca15_topR6_p8_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p85_pass': ["h_" + self._name + "_msd_ca15_topR6_p85_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p85_fail': ["h_" + self._name + "_msd_ca15_topR6_p85_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p9_pass': ["h_" + self._name + "_msd_ca15_topR6_p9_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p9_fail': ["h_" + self._name + "_msd_ca15_topR6_p9_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p95_pass': ["h_" + self._name + "_msd_ca15_topR6_p95_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p95_fail': ["h_" + self._name + "_msd_ca15_topR6_p95_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p91_pass': ["h_" + self._name + "_msd_ca15_topR6_p91_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p91_fail': ["h_" + self._name + "_msd_ca15_topR6_p91_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p92_pass': ["h_" + self._name + "_msd_ca15_topR6_p92_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p92_fail': ["h_" + self._name + "_msd_ca15_topR6_p92_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p93_pass': ["h_" + self._name + "_msd_ca15_topR6_p93_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p93_fail': ["h_" + self._name + "_msd_ca15_topR6_p93_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p94_pass': ["h_" + self._name + "_msd_ca15_topR6_p94_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p94_fail': ["h_" + self._name + "_msd_ca15_topR6_p94_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p95_pass': ["h_" + self._name + "_msd_ca15_topR6_p95_pass", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ca15_topR6_p95_fail': ["h_" + self._name + "_msd_ca15_topR6_p95_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-            }
+                'h_msd_ca15_bbleading_topR6_fail': ["h_" + self._name + "_msd_ca15_bbleading_topR6_fail", "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600]}
+            dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+            for dbcut in dbcuts:
+                dbcutstring = str(dbcut).replace('0.','p')
+                histos1d_ext.update({
+                'h_msd_ca15_topR6_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_ca15_topR6_%s_pass"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_topR6_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_ca15_topR6_%s_fail"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_topR6_N2_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_ca15_topR6_N2_%s_pass"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_topR6_N2_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_ca15_topR6_N2_%s_fail"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_JESUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_JESUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_JESDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_JESDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_JERUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_JERUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_JERDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_JERDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_mutriggerUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_mutriggerUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_mutriggerDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_mutriggerDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_muidUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_muidUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_muidDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_muidDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_muisoUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_muisoUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_muisoDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_muisoDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_PuUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_PuUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_pass_PuDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_pass_PuDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_JESUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_JESUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_JESDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_JESDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_JERUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_JERUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_JERDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_JERDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_mutriggerUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_mutriggerUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_mutriggerDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_mutriggerDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_muidUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_muidUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_muidDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_muidDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_muisoUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_muisoUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_muisoDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_muisoDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_PuUp'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_PuUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ca15_muCR4_N2_%s_fail_PuDown'%dbcutstring: ["h_" + self._name + "_msd_ca15_muCR4_N2_%s_fail_PuDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                })
             histos1d = dict(histos1d.items() + histos1d_ext.items())
 
         msd_binBoundaries = []
@@ -504,158 +527,57 @@ class sampleContainerPhibbCA15:
                 'h_msd_v_pt_ca15_muCR4_pass': ["h_" + self._name + "_msd_v_pt_ca15_muCR4_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
                 'h_msd_v_pt_ca15_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ca15_muCR4_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
                 'h_msd_v_pt_ca15_bbleading_muCR4_pass': ["h_" + self._name + "_msd_v_pt_ca15_bbleading_muCR4_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_bbleading_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ca15_bbleading_muCR4_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p4_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p4_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p4_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p4_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p45_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p45_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p45_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p45_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p5_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p5_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p5_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p5_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p6_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p6_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p6_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p6_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p65_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p65_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p65_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p65_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_fail_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p7_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p7_pass_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_fail_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p75_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p75_pass_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_fail_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p8_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p8_pass_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_fail_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p85_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p85_pass_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_fail_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p9_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p9_pass_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p91_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p91_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p91_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p91_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p92_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p92_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p92_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p92_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p93_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p93_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p93_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p93_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p94_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p94_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p94_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p94_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_fail_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_matched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_matched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_unmatched", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_JERUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_JERDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_JESUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_JESDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_triggerUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_triggerDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_PuUp", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
-                'h_msd_v_pt_ca15_topR6_p95_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ca15_topR6_p95_pass_PuDown", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"]
-            }
+                'h_msd_v_pt_ca15_bbleading_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ca15_bbleading_muCR4_fail", "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"]
+                }
+            dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+            for dbcut in dbcuts:
+                dbcutstring = str(dbcut).replace('0.','p')
+                histos2d_ext.update({
+                'h_msd_v_pt_ca15_topR6_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_matched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_unmatched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_JERUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_JERDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_JESUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_JESDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_triggerUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_triggerDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_PuUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_fail_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_fail_PuDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_matched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_unmatched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_JERUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_JERDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_JESUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_JESDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_triggerUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_triggerDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_PuUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_%s_pass_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_%s_pass_PuDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_matched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_unmatched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_JERUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_JERDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_JESUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_JESDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_triggerUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_triggerDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_PuUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_fail_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_fail_PuDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_matched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_unmatched"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_JERUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_JERDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_JESUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_JESDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_triggerUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_triggerDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_PuUp"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"],
+                'h_msd_v_pt_ca15_topR6_N2_%s_pass_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ca15_topR6_N2_%s_pass_PuDown"%dbcutstring, "; CA15 m_{SD}^{PUPPI} (GeV); CA15 p_{T} (GeV)"]
+            })
 
             histos2d = dict(histos2d.items() + histos2d_ext.items())
 
@@ -935,23 +857,21 @@ class sampleContainerPhibbCA15:
             self.h_npv.Fill(self.npv[0], weight)
 
             # gen-matching for scale/smear systematic
-            dphi_15 = 9999
-            dpt_15 = 9999
-            dmass_15 = 9999
+            dphi_15 = 9999.
+            dpt_15 = 9999.
+            dmass_15 = 9999.
             if (not self._isData):
                 genVPt_15 = self.genVPt[0]
                 genVEta_15 = self.genVEta[0]
                 genVPhi_15 = self.genVPhi[0]
                 genVMass_15 = self.genVMass[0]
-                if genVPt_15 > 0 and genVMass_15 > 0:
-                    dphi_15 = math.fabs(genVPhi_15 - jphi_15)
+                if genVPt_15 > 0 and genVMass_15 > 0:                    
+                    dphi_15 = math.fabs(delta_phi(genVPhi_15, jphi_15))
                     dpt_15 = math.fabs(genVPt_15 - jpt_15) / genVPt_15
                     dmass_15 = math.fabs(genVMass_15 - jmsd_15) / genVMass_15
           
             # Single Muon Control Regions
-            if jpt_15 > PTCUTMUCR and jmsd_15 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
-                    vmuoLoose0_eta) < 2.1 and isTightVJet15 and abs(
-                            vmuoLoose0_phi - jphi_15) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+            if jpt_15 > PTCUTMUCR and jmsd_15 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet15 and abs(vmuoLoose0_phi - jphi_15) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                 if not self._minBranches:
                     ht_ = 0.
                     if (abs(self.AK4Puppijet0_eta[0]) < 2.4 and self.AK4Puppijet0_pt[0] > 30): ht_ = ht_ + \
@@ -1023,17 +943,45 @@ class sampleContainerPhibbCA15:
                         self.h_msd_ca15_muCR4_N2_fail_muisoDown.Fill(jmsd_15, weight_muisoDown)
                         self.h_msd_ca15_muCR4_N2_fail_PuUp.Fill(jmsd_15, weight_mu_pu_up)
                         self.h_msd_ca15_muCR4_N2_fail_PuDown.Fill(jmsd_15, weight_mu_pu_down)
+                    if not self._minBranches:
+                        dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+                        for dbcut in dbcuts:
+                            if jdb_15 > dbcut:                                
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mu)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mutriggerUp)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mutriggerDown)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muidUp)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muidDown)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muisoUp)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muisoDown)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mu_pu_up)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mu_pu_down)
+                            elif jdb_15 > self.DBTAGCUTMIN:                                
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mu)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mutriggerUp)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mutriggerDown)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muidUp)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muidDown)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muisoUp)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_muisoDown)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mu_pu_up)
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_15, weight_mu_pu_down)
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                if eval(
-                                'jpt_15_%s' % syst) > PTCUTMUCR and jmsd_15 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
-                        vmuoLoose0_eta) < 2.1 and isTightVJet15 and jtN2b1sdddt_15 < 0 and abs(
-                                vmuoLoose0_phi - jphi_15) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+                if eval('jpt_15_%s' % syst) > PTCUTMUCR and jmsd_15 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet15 and jtN2b1sdddt_15 < 0 and abs(vmuoLoose0_phi - jphi_15) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                     if jdb_15 > DBTAGCUT:
-                        (getattr(self, 'h_msd_ca15_muCR4_N2_pass_%s' % syst)).Fill(jmsd_15, weight)
+                        getattr(self, 'h_msd_ca15_muCR4_N2_pass_%s' % syst).Fill(jmsd_15, weight)
                     elif jdb_15 > self.DBTAGCUTMIN:
-                        (getattr(self, 'h_msd_ca15_muCR4_N2_fail_%s' % syst)).Fill(jmsd_15, weight)
-
+                        getattr(self, 'h_msd_ca15_muCR4_N2_fail_%s' % syst).Fill(jmsd_15, weight)
+                                                
+                    if not self._minBranches:
+                        dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+                        for dbcut in dbcuts:
+                            if jdb_15 > dbcut:
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_15, weight)
+                            elif jdb_15 > self.DBTAGCUTMIN:
+                                getattr(self, 'h_msd_ca15_muCR4_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_15, weight)
+                        
             if not self._minBranches:
                 jmsd_15_sub1 = self.CA15Puppijet1_msd[0]
                 jmsd_15_sub2 = self.CA15Puppijet2_msd[0]
@@ -1282,266 +1230,74 @@ class sampleContainerPhibbCA15:
 
             ###Double-b optimization for ggH
             if not self._minBranches:
-                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_15 < T21DDTCUT and isTightVJet15:
-                    if jdb_15 > 0.7:
-                        self.h_msd_ca15_topR6_p7_pass.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p7_pass.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p7_pass_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p7_pass_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p7_pass_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p7_pass_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                            self.h_msd_v_pt_ca15_topR6_p7_pass_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                            self.h_msd_v_pt_ca15_topR6_p7_pass_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    else:
-                        self.h_msd_ca15_topR6_p7_fail.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p7_fail.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p7_fail_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p7_fail_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p7_fail_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p7_fail_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                            self.h_msd_v_pt_ca15_topR6_p7_fail_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                            self.h_msd_v_pt_ca15_topR6_p7_fail_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    if jdb_15 > 0.75:
-                        self.h_msd_ca15_topR6_p75_pass.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p75_pass.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p75_pass_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p75_pass_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p75_pass_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p75_pass_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                            self.h_msd_v_pt_ca15_topR6_p75_pass_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                            self.h_msd_v_pt_ca15_topR6_p75_pass_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    else:
-                        self.h_msd_ca15_topR6_p75_fail.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p75_fail.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p75_fail_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p75_fail_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p75_fail_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p75_fail_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                            self.h_msd_v_pt_ca15_topR6_p75_fail_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                            self.h_msd_v_pt_ca15_topR6_p75_fail_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    if jdb_15 > 0.8:
-                        self.h_msd_ca15_topR6_p8_pass.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p8_pass.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p8_pass_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p8_pass_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p8_pass_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p8_pass_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p8_pass_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p8_pass_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    else:
-                        self.h_msd_ca15_topR6_p8_fail.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p8_fail.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p8_fail_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p8_fail_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p8_fail_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p8_fail_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p8_fail_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p8_fail_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    if jdb_15 > 0.85:
-                        self.h_msd_ca15_topR6_p85_pass.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p85_pass.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p85_pass_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p85_pass_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p85_pass_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p85_pass_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p85_pass_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p85_pass_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    else:
-                        self.h_msd_ca15_topR6_p85_fail.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p85_fail.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p85_fail_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p85_fail_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p85_fail_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p85_fail_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p85_fail_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p85_fail_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    if jdb_15 > 0.9:
-                        self.h_msd_ca15_topR6_p9_pass.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p9_pass.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p9_pass_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p9_pass_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p9_pass_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p9_pass_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p9_pass_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p9_pass_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    else:
-                        self.h_msd_ca15_topR6_p9_fail.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p9_fail.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p9_fail_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p9_fail_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p9_fail_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p9_fail_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p9_fail_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p9_fail_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    if jdb_15 > 0.95:
-                        self.h_msd_ca15_topR6_p95_pass.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p95_pass.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p95_pass_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p95_pass_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p95_pass_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p95_pass_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p95_pass_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                           self.h_msd_v_pt_ca15_topR6_p95_pass_unmatched.Fill(jmsd_15, jpt_15, weight)
-                    else:
-                        self.h_msd_ca15_topR6_p95_fail.Fill(jmsd_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p95_fail.Fill(jmsd_15, jpt_15, weight)
-                        self.h_msd_v_pt_ca15_topR6_p95_fail_PuUp.Fill(jmsd_15, jpt_15, weight_pu_up)
-                        self.h_msd_v_pt_ca15_topR6_p95_fail_PuDown.Fill(jmsd_15, jpt_15, weight_pu_down)
-                        self.h_msd_v_pt_ca15_topR6_p95_fail_triggerUp.Fill(jmsd_15, jpt_15, weight_triggerUp)
-                        self.h_msd_v_pt_ca15_topR6_p95_fail_triggerDown.Fill(jmsd_15, jpt_15, weight_triggerDown)
-                        # for signal morphing
-                        if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
-                           self.h_msd_v_pt_ca15_topR6_p95_fail_matched.Fill(jmsd_15, jpt_15, weight)
-                        else: 
-                          self.h_msd_v_pt_ca15_topR6_p95_fail_unmatched.Fill(jmsd_15, jpt_15, weight)
-
-            for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                if eval('jpt_15_%s' % syst) > PTCUT and jmsd_15 > MASSCUT and eval('met_%s' % syst) < METCUT and eval(
-                                'n_dR0p8_4_%s' % syst) < NJETCUT and jt21P_15 < T21DDTCUT and isTightVJet15:
-                    if jdb_15 > 0.7:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p7_pass_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p7_fail_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    if jdb_15 > 0.75:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p75_pass_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p75_fail_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    if jdb_15 > 0.8:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p8_pass_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p8_fail_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    if jdb_15 > 0.85:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p85_pass_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p85_fail_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    if jdb_15 > 0.9:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p9_pass_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p9_fail_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    if jdb_15 > 0.95:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p95_pass_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ca15_topR6_p95_fail_%s' % syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),
-                                                                                    weight)
+                dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+                for dbcut in dbcuts:
+                    # using tau21DDT
+                    if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_15 < T21DDTCUT and isTightVJet15:
+                        if jdb_15 > dbcut:
+                            getattr(self,'h_msd_ca15_topR6_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerDown)
+                            # for signal morphing
+                            if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
+                                getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ca15_topR6_%s_pass_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                        else:
+                            getattr(self,'h_msd_ca15_topR6_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerDown)
+                            # for signal morphing
+                            if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
+                                getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ca15_topR6_%s_fail_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                    for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
+                        if eval('jpt_15_%s' % syst) > PTCUT and jmsd_15 > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jt21P_15 < T21DDTCUT and isTightVJet15:
+                            if jdb_15 > dbcut:
+                                getattr(self, 'h_msd_v_pt_ca15_topR6_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),weight)
+                            else:
+                                getattr(self, 'h_msd_v_pt_ca15_topR6_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),weight)
+                    # using N2DDT
+                    if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_15 < 0 and isTightVJet15:
+                        if jdb_15 > dbcut:
+                            getattr(self,'h_msd_ca15_topR6_N2_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerDown)
+                            # for signal morphing
+                            if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
+                                getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_pass_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                        else:
+                            getattr(self,'h_msd_ca15_topR6_N2_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight_triggerDown)
+                            # for signal morphing
+                            if dphi_15 < 0.8 and dpt_15 < 0.5 and dmass_15 < 0.3:
+                                getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ca15_topR6_N2_%s_fail_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_15, jpt_15, weight)
+                    for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
+                        if eval('jpt_15_%s' % syst) > PTCUT and jmsd_15 > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt_15 < 0 and isTightVJet15:
+                            if jdb_15 > dbcut:
+                                getattr(self, 'h_msd_v_pt_ca15_topR6_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),weight)
+                            else:
+                                getattr(self, 'h_msd_v_pt_ca15_topR6_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_15, eval('jpt_15_%s' % syst),weight)
 
 
-
-#                    if jdb_15 > 0.91:
-#                        self.h_msd_v_pt_ca15_topR6_p91_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_v_pt_ca15_topR6_p91_fail.Fill(jmsd_15, jpt_15, weight)
-#                    if jdb_15 > 0.92:
-#                        self.h_msd_v_pt_ca15_topR6_p92_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_v_pt_ca15_topR6_p92_fail.Fill(jmsd_15, jpt_15, weight)
-#                    if jdb_15 > 0.93:
-#                        self.h_msd_v_pt_ca15_topR6_p93_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_v_pt_ca15_topR6_p93_fail.Fill(jmsd_15, jpt_15, weight)
-#                    if jdb_15 > 0.94:
-#                        self.h_msd_v_pt_ca15_topR6_p94_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_v_pt_ca15_topR6_p94_fail.Fill(jmsd_15, jpt_15, weight)
-#                    if jdb_15 > 0.95:
-#                        self.h_msd_v_pt_ca15_topR6_p95_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_v_pt_ca15_topR6_p95_fail.Fill(jmsd_15, jpt_15, weight)
-
-#                #######tau21 optimization for ggH
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jtN2b1sdddt_15 < 0 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p4_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p4_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p4_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p4_fail.Fill(jmsd_15, jpt_15, weight)
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jt21P_15 < 0.45 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p45_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p45_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p45_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p45_fail.Fill(jmsd_15, jpt_15, weight)
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jt21P_15 < 0.5 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p5_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p5_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p5_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p5_fail.Fill(jmsd_15, jpt_15, weight)
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jt21P_15 < 0.6 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p6_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p6_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p6_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p6_fail.Fill(jmsd_15, jpt_15, weight)
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jt21P_15 < 0.65 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p65_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p65_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p65_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p65_fail.Fill(jmsd_15, jpt_15, weight)
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jt21P_15 < 0.7 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p7_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p7_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p7_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p7_fail.Fill(jmsd_15, jpt_15, weight)
-#                if jpt_15 > PTCUT and jmsd_15 > MASSCUT and met < METCUT and jt21P_15 < 0.75 and isTightVJet15:
-#                    if jdb_15 > DBTAGCUT:
-#                        self.h_msd_ca15_topR6_p75_pass.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p75_pass.Fill(jmsd_15, jpt_15, weight)
-#                    else:
-#                        self.h_msd_ca15_topR6_p75_fail.Fill(jmsd_15, weight)
-#                        self.h_msd_v_pt_ca15_topR6_p75_fail.Fill(jmsd_15, jpt_15, weight)
-#
                 ################################
                 if jpt_15 > PTCUT and jmsd_15 > MASSCUT and jpt_15_sub1 < 300 and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P_15 < 0.4 and isTightVJet15:
                     if jdb_15 > DBTAGCUT:
