@@ -458,8 +458,8 @@ class sampleContainerPhibbCA15:
         for i in range(0, 81):
             msd_binBoundaries.append(40. + i * 7)
         print(msd_binBoundaries)
-        #pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
-        pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
+        pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        #pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
 
         histos2d_fix = {
             'h_rhop_v_t21_ca15': ["h_" + self._name + "_rhop_v_t21_ca15", "; CA15 rho^{DDT}; CA15 <#tau_{21}>", 15, -5,

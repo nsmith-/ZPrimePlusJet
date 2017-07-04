@@ -461,8 +461,8 @@ class sampleContainerPhibbAK8:
         for i in range(0, 81):
             msd_binBoundaries.append(40. + i * 7)
         print(msd_binBoundaries)
-        #pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
-        pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
+        pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        #pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
 
         histos2d_fix = {
             'h_rhop_v_t21_ak8': ["h_" + self._name + "_rhop_v_t21_ak8", "; AK8 rho^{DDT}; AK8 <#tau_{21}>", 15, -5, 10,
@@ -942,26 +942,26 @@ class sampleContainerPhibbAK8:
                     if not self._minBranches:
                         dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
                         for dbcut in dbcuts:
-                            if jdb_15 > dbcut:                                
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerUp)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerDown)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidUp)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidDown)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoUp)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoDown)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_up)
-                                getattr(self, 'h_msd_muCR4_N2_%s_pass_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_down)
-                            elif jdb_15 > self.DBTAGCUTMIN:                                
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerUp)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerDown)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidUp)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidDown)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoUp)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoDown)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_up)
-                                getattr(self, 'h_msd_muCR4_N2_%s_fail_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_down)
+                            if jdb_8 > dbcut:                                
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_up)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_down)
+                            elif jdb_8 > self.DBTAGCUTMIN:                                
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_up)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_down)
 
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
