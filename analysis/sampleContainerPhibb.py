@@ -33,7 +33,7 @@ def delta_phi_david(phi1, phi2):
     return math.acos(math.cos(phi1 - phi2))
 
 #########################################################################################################
-class sampleContainerPhibbAK8_test:
+class sampleContainerPhibb:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1', minBranches=False):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
