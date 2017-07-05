@@ -24,9 +24,9 @@ def main(options, args):
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
-        fileName = 'hist_1DZbb_muonCR.root'
+        fileName = 'hist_1DZbb_muonCR_CA15_newsamples_300.root'
 
-    outfile = ROOT.TFile(options.odir + "/" + fileName, "recreate")
+    outfile = ROOT.TFile.Open(options.odir + "/" + fileName, "recreate")
 
     tfiles = getFiles(muonCR)
 
@@ -68,110 +68,42 @@ def main(options, args):
 
     hall = {}
 
-
-    plots = [
-             'h_msd_v_pt_ca15_topR6_p7_pass', 'h_msd_v_pt_ca15_topR6_p7_fail',
-             'h_msd_v_pt_ca15_topR6_p7_pass_matched', 'h_msd_v_pt_ca15_topR6_p7_fail_matched',
-             'h_msd_v_pt_ca15_topR6_p7_pass_unmatched', 'h_msd_v_pt_ca15_topR6_p7_fail_unmatched',
-             'h_msd_v_pt_ca15_topR6_p7_pass_JESUp', 'h_msd_v_pt_ca15_topR6_p7_fail_JESUp',
-             'h_msd_v_pt_ca15_topR6_p7_pass_JESDown', 'h_msd_v_pt_ca15_topR6_p7_fail_JESDown',
-             'h_msd_v_pt_ca15_topR6_p7_pass_JERUp', 'h_msd_v_pt_ca15_topR6_p7_fail_JERUp',
-             'h_msd_v_pt_ca15_topR6_p7_pass_JERDown', 'h_msd_v_pt_ca15_topR6_p7_fail_JERDown',
-             'h_msd_v_pt_ca15_topR6_p7_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_p7_fail_triggerUp',
-             'h_msd_v_pt_ca15_topR6_p7_pass_triggerDown', 'h_msd_v_pt_ca15_topR6_p7_fail_triggerDown',
-             'h_msd_v_pt_ca15_topR6_p7_pass_PuUp', 'h_msd_v_pt_ca15_topR6_p7_fail_PuUp',
-             'h_msd_v_pt_ca15_topR6_p7_pass_PuDown', 'h_msd_v_pt_ca15_topR6_p7_fail_PuDown',
-             'h_msd_v_pt_ca15_topR6_p75_pass', 'h_msd_v_pt_ca15_topR6_p75_fail',
-             'h_msd_v_pt_ca15_topR6_p75_pass_matched', 'h_msd_v_pt_ca15_topR6_p75_pass_unmatched',
-             'h_msd_v_pt_ca15_topR6_p75_fail_matched', 'h_msd_v_pt_ca15_topR6_p75_fail_unmatched',
-             'h_msd_v_pt_ca15_topR6_p75_pass_JESUp', 'h_msd_v_pt_ca15_topR6_p75_fail_JESUp',
-             'h_msd_v_pt_ca15_topR6_p75_pass_JESDown', 'h_msd_v_pt_ca15_topR6_p75_fail_JESDown',
-             'h_msd_v_pt_ca15_topR6_p75_pass_JERUp', 'h_msd_v_pt_ca15_topR6_p75_fail_JERUp',
-             'h_msd_v_pt_ca15_topR6_p75_pass_JERDown', 'h_msd_v_pt_ca15_topR6_p75_fail_JERDown',
-             'h_msd_v_pt_ca15_topR6_p75_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_p75_fail_triggerUp',
-             'h_msd_v_pt_ca15_topR6_p75_pass_triggerDown', 'h_msd_v_pt_ca15_topR6_p75_fail_triggerDown',
-             'h_msd_v_pt_ca15_topR6_p75_pass_PuUp', 'h_msd_v_pt_ca15_topR6_p75_fail_PuUp',
-             'h_msd_v_pt_ca15_topR6_p75_pass_PuDown', 'h_msd_v_pt_ca15_topR6_p75_fail_PuDown',
-             'h_msd_v_pt_ca15_topR6_p8_pass', 'h_msd_v_pt_ca15_topR6_p8_fail',
-             'h_msd_v_pt_ca15_topR6_p8_pass_matched', 'h_msd_v_pt_ca15_topR6_p8_pass_unmatched',
-             'h_msd_v_pt_ca15_topR6_p8_fail_matched', 'h_msd_v_pt_ca15_topR6_p8_fail_unmatched',
-             'h_msd_v_pt_ca15_topR6_p8_pass_JESUp', 'h_msd_v_pt_ca15_topR6_p8_fail_JESUp',
-             'h_msd_v_pt_ca15_topR6_p8_pass_JESDown', 'h_msd_v_pt_ca15_topR6_p8_fail_JESDown',
-             'h_msd_v_pt_ca15_topR6_p8_pass_JERUp', 'h_msd_v_pt_ca15_topR6_p8_fail_JERUp',
-             'h_msd_v_pt_ca15_topR6_p8_pass_JERDown', 'h_msd_v_pt_ca15_topR6_p8_fail_JERDown',
-             'h_msd_v_pt_ca15_topR6_p8_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_p8_fail_triggerUp',
-             'h_msd_v_pt_ca15_topR6_p8_pass_triggerDown', 'h_msd_v_pt_ca15_topR6_p8_fail_triggerDown',
-             'h_msd_v_pt_ca15_topR6_p8_pass_PuUp', 'h_msd_v_pt_ca15_topR6_p8_fail_PuUp',
-             'h_msd_v_pt_ca15_topR6_p8_pass_PuDown', 'h_msd_v_pt_ca15_topR6_p8_fail_PuDown',
-             'h_msd_v_pt_ca15_topR6_p85_pass', 'h_msd_v_pt_ca15_topR6_p85_fail',
-             'h_msd_v_pt_ca15_topR6_p85_pass_matched', 'h_msd_v_pt_ca15_topR6_p85_pass_unmatched',
-             'h_msd_v_pt_ca15_topR6_p85_fail_matched', 'h_msd_v_pt_ca15_topR6_p85_fail_unmatched',
-             'h_msd_v_pt_ca15_topR6_p85_pass_JESUp', 'h_msd_v_pt_ca15_topR6_p85_fail_JESUp',
-             'h_msd_v_pt_ca15_topR6_p85_pass_JESDown', 'h_msd_v_pt_ca15_topR6_p85_fail_JESDown',
-             'h_msd_v_pt_ca15_topR6_p85_pass_JERUp', 'h_msd_v_pt_ca15_topR6_p85_fail_JERUp',
-             'h_msd_v_pt_ca15_topR6_p85_pass_JERDown', 'h_msd_v_pt_ca15_topR6_p85_fail_JERDown',
-             'h_msd_v_pt_ca15_topR6_p85_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_p85_fail_triggerUp',
-             'h_msd_v_pt_ca15_topR6_p85_pass_triggerDown', 'h_msd_v_pt_ca15_topR6_p85_fail_triggerDown',
-             'h_msd_v_pt_ca15_topR6_p85_pass_PuUp', 'h_msd_v_pt_ca15_topR6_p85_fail_PuUp',
-             'h_msd_v_pt_ca15_topR6_p85_pass_PuDown', 'h_msd_v_pt_ca15_topR6_p85_fail_PuDown',
-             'h_msd_v_pt_ca15_topR6_p9_pass', 'h_msd_v_pt_ca15_topR6_p9_fail',
-             'h_msd_v_pt_ca15_topR6_p9_pass_matched', 'h_msd_v_pt_ca15_topR6_p9_pass_unmatched',
-             'h_msd_v_pt_ca15_topR6_p9_fail_matched', 'h_msd_v_pt_ca15_topR6_p9_fail_unmatched',
-             'h_msd_v_pt_ca15_topR6_p9_pass_JESUp', 'h_msd_v_pt_ca15_topR6_p9_fail_JESUp',
-             'h_msd_v_pt_ca15_topR6_p9_pass_JESDown', 'h_msd_v_pt_ca15_topR6_p9_fail_JESDown',
-             'h_msd_v_pt_ca15_topR6_p9_pass_JERUp', 'h_msd_v_pt_ca15_topR6_p9_fail_JERUp',
-             'h_msd_v_pt_ca15_topR6_p9_pass_JERDown', 'h_msd_v_pt_ca15_topR6_p9_fail_JERDown',
-             'h_msd_v_pt_ca15_topR6_p9_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_p9_fail_triggerUp',
-             'h_msd_v_pt_ca15_topR6_p9_pass_triggerDown', 'h_msd_v_pt_ca15_topR6_p9_fail_triggerDown',
-             'h_msd_v_pt_ca15_topR6_p9_pass_PuUp', 'h_msd_v_pt_ca15_topR6_p9_fail_PuUp',
-             'h_msd_v_pt_ca15_topR6_p9_pass_PuDown', 'h_msd_v_pt_ca15_topR6_p9_fail_PuDown',
-             'h_msd_v_pt_ca15_topR6_p95_pass', 'h_msd_v_pt_ca15_topR6_p95_fail',
-             'h_msd_v_pt_ca15_topR6_p95_pass_matched', 'h_msd_v_pt_ca15_topR6_p95_pass_unmatched',
-             'h_msd_v_pt_ca15_topR6_p95_fail_matched', 'h_msd_v_pt_ca15_topR6_p95_fail_unmatched',
-             'h_msd_v_pt_ca15_topR6_p95_pass_JESUp', 'h_msd_v_pt_ca15_topR6_p95_fail_JESUp',
-             'h_msd_v_pt_ca15_topR6_p95_pass_JESDown', 'h_msd_v_pt_ca15_topR6_p95_fail_JESDown',
-             'h_msd_v_pt_ca15_topR6_p95_pass_JERUp', 'h_msd_v_pt_ca15_topR6_p95_fail_JERUp',
-             'h_msd_v_pt_ca15_topR6_p95_pass_JERDown', 'h_msd_v_pt_ca15_topR6_p95_fail_JERDown',
-             'h_msd_v_pt_ca15_topR6_p95_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_p95_fail_triggerUp',
-             'h_msd_v_pt_ca15_topR6_p95_pass_triggerDown', 'h_msd_v_pt_ca15_topR6_p95_fail_triggerDown',
-             'h_msd_v_pt_ca15_topR6_p95_pass_PuUp', 'h_msd_v_pt_ca15_topR6_p95_fail_PuUp',
-             'h_msd_v_pt_ca15_topR6_p95_pass_PuDown', 'h_msd_v_pt_ca15_topR6_p95_fail_PuDown',
-             ]
-
-
-#    plots = ['h_msd_v_pt_ca15_topR6_N2_pass', 'h_msd_v_pt_ca15_topR6_N2_fail',
-#             # SR with N2DDT @ 26% && db > 0.9, msd corrected
-#             'h_msd_v_pt_ca15_topR6_N2_pass_matched', 'h_msd_v_pt_ca15_topR6_N2_pass_unmatched',
-#             # matched and unmatached for mass up/down
-#             'h_msd_v_pt_ca15_topR6_N2_fail_matched', 'h_msd_v_pt_ca15_topR6_N2_fail_unmatched',
-#             # matched and unmatached for mass up/down
-#             'h_msd_v_pt_ca15_topR6_N2_pass_JESUp', 'h_msd_v_pt_ca15_topR6_N2_pass_JESDown',  # JES up/down
-#             'h_msd_v_pt_ca15_topR6_N2_fail_JESUp', 'h_msd_v_pt_ca15_topR6_N2_fail_JESDown',  # JES up/down
-#             'h_msd_v_pt_ca15_topR6_N2_pass_JERUp', 'h_msd_v_pt_ca15_topR6_N2_pass_JERDown',  # JER up/down
-#             'h_msd_v_pt_ca15_topR6_N2_fail_JERUp', 'h_msd_v_pt_ca15_topR6_N2_fail_JERDown',  # JER up/down
-#             'h_msd_v_pt_ca15_topR6_N2_pass_triggerUp', 'h_msd_v_pt_ca15_topR6_N2_pass_triggerDown',  # trigger up/down
-#             'h_msd_v_pt_ca15_topR6_N2_fail_triggerUp', 'h_msd_v_pt_ca15_topR6_N2_fail_triggerDown',  # trigger up/down
-#             'h_msd_v_pt_ca15_topR6_N2_pass_PuUp', 'h_msd_v_pt_ca15_topR6_N2_pass_PuDown',  # Pu up/downxf
-#             'h_msd_v_pt_ca15_topR6_N2_fail_PuUp', 'h_msd_v_pt_ca15_topR6_N2_fail_PuDown',  # trigger up/down
-#             ]
+    dbcuts = [0.7,0.75,0.8,0.85,0.9,0.95]
+    plots = []
+    for dbcut in dbcuts:
+        plots.extend([
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_matched'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_matched'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_unmatched'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_unmatched'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_JESUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_JESDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_JESDown'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_JERUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_JERDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_JERDown'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_triggerUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_triggerUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_triggerDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_triggerDown'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_ca15_topR6_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ca15_topR6_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p')
+             ])
 
     if options.bb:
         plots = ['h_msd_v_pt_ca15_bbleading_topR6_pass', 'h_msd_v_pt_ca15_bbleading_topR6_fail']
     elif muonCR:
-        plots = ['h_msd_ca15_muCR4_N2_pass', 'h_msd_ca15_muCR4_N2_fail',
-                 'h_msd_ca15_muCR4_N2_pass_JESUp', 'h_msd_ca15_muCR4_N2_pass_JESDown',
-                 'h_msd_ca15_muCR4_N2_fail_JESUp', 'h_msd_ca15_muCR4_N2_fail_JESDown',
-                 'h_msd_ca15_muCR4_N2_pass_JERUp', 'h_msd_ca15_muCR4_N2_pass_JERDown',
-                 'h_msd_ca15_muCR4_N2_fail_JERUp', 'h_msd_ca15_muCR4_N2_fail_JERDown',
-                 'h_msd_ca15_muCR4_N2_pass_mutriggerUp', 'h_msd_ca15_muCR4_N2_pass_mutriggerDown',
-                 'h_msd_ca15_muCR4_N2_fail_mutriggerUp', 'h_msd_ca15_muCR4_N2_fail_mutriggerDown',
-                 'h_msd_ca15_muCR4_N2_pass_muidUp', 'h_msd_ca15_muCR4_N2_pass_muidDown',
-                 'h_msd_ca15_muCR4_N2_fail_muidUp', 'h_msd_ca15_muCR4_N2_fail_muidDown',
-                 'h_msd_ca15_muCR4_N2_pass_muisoUp', 'h_msd_ca15_muCR4_N2_pass_muisoDown',
-                 'h_msd_ca15_muCR4_N2_fail_muisoUp', 'h_msd_ca15_muCR4_N2_fail_muisoDown',
-                 'h_msd_ca15_muCR4_N2_pass_PuUp', 'h_msd_ca15_muCR4_N2_pass_PuDown',
-                 'h_msd_ca15_muCR4_N2_fail_PuUp', 'h_msd_ca15_muCR4_N2_fail_PuDown',
-                 ]
+        for dbcut in dbcuts:
+            plots.extend([
+                 'h_msd_ca15_muCR4_N2_%s_pass'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_pass_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_pass_JESDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_fail_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail_JESDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_pass_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_pass_JERDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_fail_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail_JERDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_pass_mutriggerUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_pass_mutriggerDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_fail_mutriggerUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail_mutriggerDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_pass_muidUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_pass_muidDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_fail_muidUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail_muidDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_pass_muisoUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_pass_muisoDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_fail_muisoUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail_muisoDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_ca15_muCR4_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_ca15_muCR4_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p'),
+                 ])
 
     for plot in plots:
         tag = plot.split('_')[-2] + '_' + plot.split('_')[-1]   # 'pass' or 'fail' or systematicName

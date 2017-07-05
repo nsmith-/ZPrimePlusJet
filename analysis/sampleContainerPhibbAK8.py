@@ -20,6 +20,17 @@ METCUT = 140
 MASSCUT = 40
 NJETCUT = 100
 
+def delta_phi(phi1, phi2):
+  PI = 3.14159265359
+  x = phi1 - phi2
+  while x >=  PI:
+      x -= ( 2*PI )
+  while x <  -PI:
+      x += ( 2*PI )
+  return x
+
+def delta_phi_david(phi1, phi2):
+    return math.acos(math.cos(phi1 - phi2))
 
 #########################################################################################################
 class sampleContainerPhibbAK8:
@@ -403,42 +414,55 @@ class sampleContainerPhibbAK8:
                 'h_msd_ak8_topR4_fail': ["h_" + self._name + "_msd_ak8_topR4_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_bbleading_topR6_pass': ["h_" + self._name + "_msd_ak8_bbleading_topR6_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_msd_ak8_bbleading_topR6_fail': ["h_" + self._name + "_msd_ak8_bbleading_topR6_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p7_pass': ["h_" + self._name + "_msd_ak8_topR6_p7_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p7_fail': ["h_" + self._name + "_msd_ak8_topR6_p7_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p75_pass': ["h_" + self._name + "_msd_ak8_topR6_p75_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p75_fail': ["h_" + self._name + "_msd_ak8_topR6_p75_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p8_pass': ["h_" + self._name + "_msd_ak8_topR6_p8_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p8_fail': ["h_" + self._name + "_msd_ak8_topR6_p8_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p85_pass': ["h_" + self._name + "_msd_ak8_topR6_p85_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p85_fail': ["h_" + self._name + "_msd_ak8_topR6_p85_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p9_pass': ["h_" + self._name + "_msd_ak8_topR6_p9_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p9_fail': ["h_" + self._name + "_msd_ak8_topR6_p9_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p95_pass': ["h_" + self._name + "_msd_ak8_topR6_p95_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-                'h_msd_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_ak8_topR6_p95_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p91_pass': ["h_" + self._name + "_msd_ak8_topR6_p91_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p91_fail': ["h_" + self._name + "_msd_ak8_topR6_p91_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p92_pass': ["h_" + self._name + "_msd_ak8_topR6_p92_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p92_fail': ["h_" + self._name + "_msd_ak8_topR6_p92_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p93_pass': ["h_" + self._name + "_msd_ak8_topR6_p93_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p93_fail': ["h_" + self._name + "_msd_ak8_topR6_p93_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p94_pass': ["h_" + self._name + "_msd_ak8_topR6_p94_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p94_fail': ["h_" + self._name + "_msd_ak8_topR6_p94_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p95_pass': ["h_" + self._name + "_msd_ak8_topR6_p95_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
-               # 'h_msd_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_ak8_topR6_p95_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
                 'h_pt_ca15': ["h_" + self._name + "_pt_ca15", "; CA15 p{T} (GeV);", 100, 300, 3000],
                 'h_msd_ca15': ["h_" + self._name + "_msd_ca15", "; CA15 m_{SD}^{PUPPI} (GeV);", 35, 50, 400],
                 'h_msd_ca15_t21ddtCut': ["h_" + self._name + "_msd_ca15_t21ddtCut", "; CA15 m_{SD}^{PUPPI} (GeV);", 35, 50, 400],
                 'h_t21_ca15': ["h_" + self._name + "_t21_ca15", "; CA15 #tau_{21};", 25, 0, 1.5],
                 'h_t21ddt_ca15': ["h_" + self._name + "_t21ddt_ca15", "; CA15 #tau_{21};", 25, 0, 1.5]
-            }
+            }                
+            dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+            for dbcut in dbcuts:
+                dbcutstring = str(dbcut).replace('0.','p')
+                histos1d_ext.update({
+                'h_msd_ak8_topR6_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_ak8_topR6_%s_pass"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_ak8_topR6_%s_fail"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_N2_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_ak8_topR6_N2_%s_pass"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_topR6_N2_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_ak8_topR6_N2_%s_fail"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_JESUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_JESUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_JESDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_JESDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_JERUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_JERUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_JERDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_JERDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_mutriggerUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_mutriggerUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_mutriggerDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_mutriggerDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_muidUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_muidUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_muidDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_muidDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_muisoUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_muisoUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_muisoDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_muisoDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_PuUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_PuUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_pass_PuDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_pass_PuDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_JESUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_JESUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_JESDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_JESDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_JERUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_JERUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_JERDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_JERDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_mutriggerUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_mutriggerUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_mutriggerDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_mutriggerDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_muidUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_muidUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_muidDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_muidDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_muisoUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_muisoUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_muisoDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_muisoDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_PuUp'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_PuUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                'h_msd_ak8_muCR4_N2_%s_fail_PuDown'%dbcutstring: ["h_" + self._name + "_msd_ak8_muCR4_N2_%s_fail_PuDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV);", 80, 40, 600],
+                })
             histos1d = dict(histos1d.items() + histos1d_ext.items())
 
         msd_binBoundaries = []
         for i in range(0, 81):
             msd_binBoundaries.append(40. + i * 7)
         print(msd_binBoundaries)
-        #pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
-        pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
+        pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        #pt_binBoundaries = [300, 350, 400, 450, 500, 550, 600, 675, 800, 1000]
 
         histos2d_fix = {
             'h_rhop_v_t21_ak8': ["h_" + self._name + "_rhop_v_t21_ak8", "; AK8 rho^{DDT}; AK8 <#tau_{21}>", 15, -5, 10,
@@ -508,167 +532,57 @@ class sampleContainerPhibbAK8:
                 'h_msd_v_pt_ak8_muCR4_pass': ["h_" + self._name + "_msd_v_pt_ak8_muCR4_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ak8_muCR4_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_bbleading_muCR4_pass': ["h_" + self._name + "_msd_v_pt_ak8_bbleading_muCR4_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_bbleading_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ak8_bbleading_muCR4_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p4_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p4_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p4_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p4_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p45_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p45_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p45_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p45_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p5_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p5_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p5_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p5_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p6_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p6_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p6_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p6_pass",  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p65_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p65_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p65_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p65_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_matched", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_unmatched", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_JERUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_JERDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_JESUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_JESDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_triggerUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_triggerDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_PuUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_fail_PuDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p7_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p7_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_fail_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p75_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p75_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_matched",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_fail_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p8_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p8_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_fail_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p85_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p85_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_fail_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p9_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p9_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p91_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p91_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p91_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p91_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p92_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p92_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p92_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p92_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p93_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p93_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p93_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p93_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p94_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p94_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p94_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p94_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_fail_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_matched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_unmatched", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_JERUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_JERDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_JESUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_JESDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_triggerUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_triggerDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_PuUp", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_p95_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_p95_pass_PuDown", ";AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
+                'h_msd_v_pt_ak8_bbleading_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ak8_bbleading_muCR4_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
             }
+            dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+            for dbcut in dbcuts:
+                dbcutstring = str(dbcut).replace('0.','p')
+                histos2d_ext.update({
+                'h_msd_v_pt_ak8_topR6_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_matched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_unmatched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_JERUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_JERDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_JESUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_JESDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_triggerUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_triggerDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_PuUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_fail_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_fail_PuDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_matched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_unmatched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_JERUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_JERDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_JESUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_JESDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_triggerUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_triggerDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_PuUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_%s_pass_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_%s_pass_PuDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_matched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_unmatched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_JERUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_JERDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_JESUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_JESDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_triggerUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_triggerDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_PuUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_fail_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_fail_PuDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_matched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_matched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_unmatched'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_unmatched"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_JERUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_JERUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_JERDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_JERDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_JESUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_JESUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_JESDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_JESDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_triggerUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_triggerUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_triggerDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_triggerDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_PuUp'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_PuUp"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+                'h_msd_v_pt_ak8_topR6_N2_%s_pass_PuDown'%dbcutstring: ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_%s_pass_PuDown"%dbcutstring, "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
+            })
 
             histos2d = dict(histos2d.items() + histos2d_ext.items())
 
@@ -936,16 +850,16 @@ class sampleContainerPhibbAK8:
             self.h_npv.Fill(self.npv[0], weight)
 
             # gen-matching for scale/smear systematic
-            dphi = 9999
-            dpt = 9999
-            dmass = 9999
+            dphi = 9999.
+            dpt = 9999.
+            dmass = 9999.
             if (not self._isData):
                 genVPt = self.genVPt[0]
                 genVEta = self.genVEta[0]
                 genVPhi = self.genVPhi[0]
                 genVMass = self.genVMass[0]
                 if genVPt > 0 and genVMass > 0:
-                    dphi = math.fabs(math.acos(math.cos(genVPhi - jphi_8)))
+                    dphi = math.fabs(delta_phi(genVPhi, jphi_8))
                     dpt = math.fabs(genVPt - jpt_8) / genVPt
                     dmass = math.fabs(genVMass - jmsd_8) / genVMass
 
@@ -1024,12 +938,34 @@ class sampleContainerPhibbAK8:
                         self.h_msd_ak8_muCR4_N2_fail_muisoDown.Fill(jmsd_8, weight_muisoDown)
                         self.h_msd_ak8_muCR4_N2_fail_PuUp.Fill(jmsd_8, weight_mu_pu_up)
                         self.h_msd_ak8_muCR4_N2_fail_PuDown.Fill(jmsd_8, weight_mu_pu_down)
+                        
+                    if not self._minBranches:
+                        dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+                        for dbcut in dbcuts:
+                            if jdb_8 > dbcut:                                
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_up)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_pass_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_down)
+                            elif jdb_8 > self.DBTAGCUTMIN:                                
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_mutriggerUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_mutriggerDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mutriggerDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muidUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muidDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muidDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muisoUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoUp)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_muisoDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_muisoDown)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_up)
+                                getattr(self, 'h_msd_ak8_muCR4_N2_%s_fail_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd_8, weight_mu_pu_down)
+
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                if eval(
-                                'jpt_8_%s' % syst) > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
-                        vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(math.acos(math.cos(
-                                vmuoLoose0_phi - jphi_8))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+                if eval('jpt_8_%s' % syst) > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi_8))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                     if jdb_8 > DBTAGCUT:
                         (getattr(self, 'h_msd_ak8_muCR4_N2_pass_%s' % syst)).Fill(jmsd_8, weight)
                     elif jdb_8 > self.DBTAGCUTMIN:
@@ -1281,264 +1217,74 @@ class sampleContainerPhibbAK8:
 
             ###Double-b optimization for ggH
             if not self._minBranches:
-                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
-                    if jdb_8 > 0.7:
-                        self.h_msd_ak8_topR6_p7_pass.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p7_pass.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p7_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p7_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p7_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p7_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                            self.h_msd_v_pt_ak8_topR6_p7_pass_matched.Fill(jmsd_8, jpt_8, weight)
+                dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+                for dbcut in dbcuts:
+                    # using tau21DDT
+                    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
+                        if jdb_8 > dbcut:
+                            getattr(self,'h_msd_ak8_topR6_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerDown)
+                            # for signal morphing
+                            if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                                getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ak8_topR6_%s_pass_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
                         else:
-                            self.h_msd_v_pt_ak8_topR6_p7_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_ak8_topR6_p7_fail.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p7_fail.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p7_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p7_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p7_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p7_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                            self.h_msd_v_pt_ak8_topR6_p7_fail_matched.Fill(jmsd_8, jpt_8, weight)
+                            getattr(self,'h_msd_ak8_topR6_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerDown)
+                            # for signal morphing
+                            if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                                getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ak8_topR6_%s_fail_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                    for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
+                        if eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
+                            if jdb_8 > dbcut:
+                                getattr(self, 'h_msd_v_pt_ak8_topR6_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                            else:
+                                getattr(self, 'h_msd_v_pt_ak8_topR6_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                    # using N2DDT
+                    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
+                        if jdb_8 > dbcut:
+                            getattr(self,'h_msd_ak8_topR6_N2_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerDown)
+                            # for signal morphing
+                            if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                                getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_pass_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
                         else:
-                            self.h_msd_v_pt_ak8_topR6_p7_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    if jdb_8 > 0.75:
-                        self.h_msd_ak8_topR6_p75_pass.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p75_pass.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p75_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p75_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p75_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p75_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                            self.h_msd_v_pt_ak8_topR6_p75_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                            self.h_msd_v_pt_ak8_topR6_p75_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_ak8_topR6_p75_fail.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p75_fail.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p75_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p75_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p75_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p75_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                            self.h_msd_v_pt_ak8_topR6_p75_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                            self.h_msd_v_pt_ak8_topR6_p75_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    if jdb_8 > 0.8:
-                        self.h_msd_ak8_topR6_p8_pass.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p8_pass.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p8_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p8_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p8_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p8_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p8_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p8_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_ak8_topR6_p8_fail.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p8_fail.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p8_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p8_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p8_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p8_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p8_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p8_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    if jdb_8 > 0.85:
-                        self.h_msd_ak8_topR6_p85_pass.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p85_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p85_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p85_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p85_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p85_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p85_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_ak8_topR6_p85_fail.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p85_fail.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p85_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p85_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p85_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p85_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p85_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p85_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    if jdb_8 > 0.9:
-                        self.h_msd_ak8_topR6_p9_pass.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p9_pass.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p9_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p9_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p9_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p9_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p9_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p9_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_ak8_topR6_p9_fail.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p9_fail.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p9_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p9_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p9_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p9_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p9_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p9_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    if jdb_8 > 0.95:
-                        self.h_msd_ak8_topR6_p95_pass.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p95_pass.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p95_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p95_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p95_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p95_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p95_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                           self.h_msd_v_pt_ak8_topR6_p95_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_ak8_topR6_p95_fail.Fill(jmsd_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p95_fail.Fill(jmsd_8, jpt_8, weight)
-                        self.h_msd_v_pt_ak8_topR6_p95_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                        self.h_msd_v_pt_ak8_topR6_p95_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                        self.h_msd_v_pt_ak8_topR6_p95_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                        self.h_msd_v_pt_ak8_topR6_p95_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                        # for signal morphing
-                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                           self.h_msd_v_pt_ak8_topR6_p95_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                        else:
-                          self.h_msd_v_pt_ak8_topR6_p95_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
-
-            for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                if eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval(
-                                'n_dR0p8_4_%s' % syst) < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
-                    if jdb_8 > 0.7:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p7_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p7_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    if jdb_8 > 0.75:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p75_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p75_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    if jdb_8 > 0.8:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p8_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p8_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    if jdb_8 > 0.85:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p85_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p85_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    if jdb_8 > 0.9:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p9_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p9_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    if jdb_8 > 0.95:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p95_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
-                    else:
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_p95_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
+                            getattr(self,'h_msd_ak8_topR6_N2_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_up)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_pu_down)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail_triggerUp'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerUp)
+                            getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail_triggerDown'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight_triggerDown)
+                            # for signal morphing
+                            if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                                getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail_matched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                            else: 
+                                getattr(self,'h_msd_v_pt_ak8_topR6_N2_%s_fail_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd_8, jpt_8, weight)
+                    for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
+                        if eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
+                            if jdb_8 > dbcut:
+                                getattr(self, 'h_msd_v_pt_ak8_topR6_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                            else:
+                                getattr(self, 'h_msd_v_pt_ak8_topR6_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
 
 
-
-#                    if jdb_8 > 0.91:
-#                        self.h_msd_v_pt_ak8_topR6_p91_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_v_pt_ak8_topR6_p91_fail.Fill(jmsd_8, jpt_8, weight)
-#                    if jdb_8 > 0.92:
-#                        self.h_msd_v_pt_ak8_topR6_p92_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_v_pt_ak8_topR6_p92_fail.Fill(jmsd_8, jpt_8, weight)
-#                    if jdb_8 > 0.93:
-#                        self.h_msd_v_pt_ak8_topR6_p93_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_v_pt_ak8_topR6_p93_fail.Fill(jmsd_8, jpt_8, weight)
-#                    if jdb_8 > 0.94:
-#                        self.h_msd_v_pt_ak8_topR6_p94_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_v_pt_ak8_topR6_p94_fail.Fill(jmsd_8, jpt_8, weight)
-#                    if jdb_8 > 0.95:
-#                        self.h_msd_v_pt_ak8_topR6_p95_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_v_pt_ak8_topR6_p95_fail.Fill(jmsd_8, jpt_8, weight)
-#
-#                #######tau21 optimization for ggH
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p4_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p4_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p4_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p4_fail.Fill(jmsd_8, jpt_8, weight)
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < 0.45 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p45_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p45_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p45_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p45_fail.Fill(jmsd_8, jpt_8, weight)
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < 0.5 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p5_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p5_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p5_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p5_fail.Fill(jmsd_8, jpt_8, weight)
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < 0.6 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p6_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p6_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p6_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p6_fail.Fill(jmsd_8, jpt_8, weight)
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < 0.65 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p65_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p65_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p65_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p65_fail.Fill(jmsd_8, jpt_8, weight)
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < 0.7 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p7_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p7_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p7_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p7_fail.Fill(jmsd_8, jpt_8, weight)
-#                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < 0.75 and isTightVJet:
-#                    if jdb_8 > DBTAGCUT:
-#                        self.h_msd_ak8_topR6_p75_pass.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p75_pass.Fill(jmsd_8, jpt_8, weight)
-#                    else:
-#                        self.h_msd_ak8_topR6_p75_fail.Fill(jmsd_8, weight)
-#                        self.h_msd_v_pt_ak8_topR6_p75_fail.Fill(jmsd_8, jpt_8, weight)
 #
                 ################################
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and jpt_8_sub1 < 300 and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P_8 < 0.4 and isTightVJet:
