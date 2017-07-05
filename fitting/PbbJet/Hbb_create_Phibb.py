@@ -6,7 +6,7 @@ import ROOT
 import sys
 sys.path.append(os.path.expandvars("$CMSSW_BASE/src/DAZSLE/ZPrimePlusJet/analysis"))
 
-from sampleContainerPhibbAK8 import *
+from sampleContainerPhibb import *
 
 def getFiles(muonCR=False):
     #idir_old = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.03/cvernier/"
@@ -168,9 +168,6 @@ def getFiles(muonCR=False):
                      idir_data + 'JetHTRun2016H_03Feb2017_ver2_v1_v3_24.root',
                      idir_data + 'JetHTRun2016H_03Feb2017_ver2_v1_v3_25.root',
                      idir_data + 'JetHTRun2016H_03Feb2017_ver3_v1_v3.root']
-
-
-
     }
 
     if muonCR:
@@ -194,14 +191,15 @@ def main(options, args):
     lumi = options.lumi
     muonCR = options.muonCR
     dbtagmin = options.dbtagmin
+    fillCA15 = options.fillCA15
 
-    #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
-    #fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples.root'
-    fileName = 'hist_1DZbb_pt_scalesmear_AK8_pre.root'
+    if not fillCA15: jet_type = "AK8"
+    else: jet_type = "CA15" 
+    fileName = 'hist_1DZbb_pt_scalesmear_' +jet_type + '_check.root'
     if options.bb:
-        fileName = 'hist_1DZbb_sortByBB.root'
+        fileName = 'hist_1DZbb_sortByBB_' + jet_type + '_check.root'
     elif muonCR:
-        fileName = 'hist_1DZbb_muonCR_AK8_newsamples_300.root'
+        fileName = 'hist_1DZbb_muonCR_' + jet_type + '_check.root'
 
     outfile = ROOT.TFile.Open(options.odir + "/" + fileName, "recreate")
 
@@ -210,39 +208,39 @@ def main(options, args):
 
     print "Signals... "
     sigSamples = {}
-    sigSamples['DMSbb50'] = sampleContainerPhibbAK8('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb100'] = sampleContainerPhibbAK8('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb125'] = sampleContainerPhibbAK8('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb200'] = sampleContainerPhibbAK8('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb300'] = sampleContainerPhibbAK8('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb350'] = sampleContainerPhibbAK8('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb400'] = sampleContainerPhibbAK8('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, False, '1', False)
-    sigSamples['DMSbb500'] = sampleContainerPhibbAK8('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, False, '1', False)
+    sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
 
     print "Backgrounds..."
     bkgSamples = {}
-    bkgSamples['wqq'] = sampleContainerPhibbAK8('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['zqq'] = sampleContainerPhibbAK8('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, False, '1', False)
+    bkgSamples['wqq'] = sampleContainerPhibb('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['zqq'] = sampleContainerPhibb('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
     if not options.skipQCD:
-        bkgSamples['qcd'] = sampleContainerPhibbAK8('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['tqq'] = sampleContainerPhibbAK8('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['stqq'] = sampleContainerPhibbAK8('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['wlnu'] = sampleContainerPhibbAK8('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['zll'] = sampleContainerPhibbAK8('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['vvqq'] = sampleContainerPhibbAK8('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['hqq125'] = sampleContainerPhibbAK8('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['tthqq125'] = sampleContainerPhibbAK8('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['vbfhqq125'] = sampleContainerPhibbAK8('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['whqq125'] = sampleContainerPhibbAK8('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', False)
-    bkgSamples['zhqq125'] = sampleContainerPhibbAK8('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', False)
+        bkgSamples['qcd'] = sampleContainerPhibb('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['tqq'] = sampleContainerPhibb('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['stqq'] = sampleContainerPhibb('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['wlnu'] = sampleContainerPhibb('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['zll'] = sampleContainerPhibb('zll', tfiles['zll'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['vvqq'] = sampleContainerPhibb('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['hqq125'] = sampleContainerPhibb('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['tthqq125'] = sampleContainerPhibb('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['vbfhqq125'] = sampleContainerPhibb('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['whqq125'] = sampleContainerPhibb('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    bkgSamples['zhqq125'] = sampleContainerPhibb('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
 
 
     print "Data..."
     if not options.skipData:
         if muonCR:
-            dataSample = sampleContainerPhibbAK8('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False, '((triggerBits&4)&&passJson)', False)
+            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&4)&&passJson)', False)
         else:
-            dataSample = sampleContainerPhibbAK8('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False, '((triggerBits&2)&&passJson)', False)
+            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
 
     hall = {}
 
@@ -329,7 +327,8 @@ if __name__ == '__main__':
                       help='left bound to btag selection', metavar='dbtagmin')
     parser.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skipQCD')
     parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
-    
+    parser.add_option('-c','--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
+ 
 
     (options, args) = parser.parse_args()
 

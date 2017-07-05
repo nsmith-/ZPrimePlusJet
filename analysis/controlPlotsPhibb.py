@@ -10,7 +10,7 @@ import array
 import glob
 import os
 from plotHelpersPhibb import *
-from sampleContainerPhibbCA15 import *
+from sampleContainerPhibb import *
 DBTMIN=-99
 #
 def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
@@ -18,22 +18,23 @@ def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canv
         c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
         canvases.append(c)	
     else:
-        #c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,True,ofile)
-        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,False,ofile)
+        c = makeCanvasComparisonStack(hs,hb,legname,color,style,'Phibb50',plot.replace('h_','stack_'),odir,lumi,True,ofile)
         c1 = makeCanvasComparison(hall,legname,color,style,plot.replace('h_','signalcomparison_'),odir,lumi,ofile,False)
 #        canvases.append(c)	
         canvases.append(c1)
 ##############################################################################
 def main(options,args,outputExists):
-    idir_old = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.03/cvernier"
     idir = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/norm2/cvernier/"
+    idir_muon = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/"
     idir_data = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
-    #idir = options.idir   
     odir = options.odir
     lumi = options.lumi
+    fillCA15 = options.fillCA15
     isData = options.isData
     muonCR = options.muonCR
 
+    if not fillCA15: print " \n ************************ Running for AK8 ************************ \n"  
+    else : print "\n ************************ Running for CA15 ************************ \n"
     
     legname = {'ggHbb': 'ggH(b#bar{b})',
                'Hbb': 'H(b#bar{b})',
@@ -59,35 +60,25 @@ def main(options,args,outputExists):
                'Phibb100': '#Phi(b#bar{b}), 100 GeV',
                'Phibb125': '#Phi(b#bar{b}), 125 GeV',
                'Phibb200': '#Phi(b#bar{b}), 200 GeV',
-               'Phibb300': '#Phi(b#bar{b}), 300 GeV',
-               'Phibb350': '#Phi(b#bar{b}), 350 GeV',
+               'Phibb300': '#Phi(b#bar{b}), 300 GeV',               
+               'Phibb350': '#Phi(b#bar{b}), 350 GeV',               
                'Phibb400': '#Phi(b#bar{b}), 400 GeV',
                'Phibb500': '#Phi(b#bar{b}), 500 GeV',
                }
 
     if isData and muonCR:
         legname['data'] = 'SingleMuon data'
-    print "IDIR old : ", idir_old
-    print "IDIR now : ", idir
-    print "IDIR new : ", idir_data
-    tfiles = {'Hbb':   [idir_old + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root',
-			idir_old + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root',
-			idir_old + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-			idir_old + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-			idir_old + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',  
-			idir_old + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-			idir_old + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-			idir_old + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-			idir_old + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],	
-              'ggHbb': [idir_old + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
-              'VBFHbb': [idir_old + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
-              'VHbb': [idir_old + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir_old + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
-              'ttHbb':  [idir_old + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
+    print " "
+    tfiles = {
+              'ggHbb': [idir_data+'/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root'],
+              'VBFHbb': [idir + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
+              'VHbb': [idir + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idir + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+              'ttHbb':  [idir + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],#ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
 ############### Signals
               'Phibb50': [idir_data + '/Spin0_ggPhibb1j_g1_50_Scalar_1000pb_weighted.root'],
               'Phibb100': [idir_data + '/Spin0_ggPhibb1j_g1_100_Scalar_1000pb_weighted.root'],
@@ -116,15 +107,23 @@ def main(options,args,outputExists):
               'Diboson': [idir + '/WWTo4Q_13TeV_powheg_1000pb_weighted.root',
                           idir + '/ZZ_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                           idir + '/WZ_13TeV_pythia8_1000pb_weighted.root'],
-################
+              'Hbb':   [idir_data + '/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root',
+			idir + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root',
+			idir + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			idir + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			idir + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',  
+			idir + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			idir + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			idir + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+			idir + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],	
               'DYll': [idir + '/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
               'Wlnu': [idir + '/WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
-                     idir + '/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
-                     idir + '/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
-                     idir + '/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-                     idir + '/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
-                    idir + '/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
-                    idir + '/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
+                       idir + '/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
+                       idir + '/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
+                       idir + '/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
+                       idir + '/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
+                       idir + '/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root',
+                       idir + '/WJetsToLNu_HT_2500ToInf_13TeV_1000pb_weighted.root'],
 ################
               'data': [
 		     idir_data + 'JetHTRun2016B_03Feb2017_ver2_v2_v3.root',
@@ -233,31 +232,30 @@ def main(options,args,outputExists):
                      idir_data + 'JetHTRun2016H_03Feb2017_ver2_v1_v3_24.root',
                      idir_data + 'JetHTRun2016H_03Feb2017_ver2_v1_v3_25.root',
                      idir_data + 'JetHTRun2016H_03Feb2017_ver3_v1_v3.root'],
-              'muon': [idir + '/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
-                       idir + '/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016D_03Feb2017_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016E_03Feb2017_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016F_03Feb2017_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016G_03Feb2017_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016H_03Feb2017_ver2_v1_fixtrig.root',
-                       idir + '/SingleMuonRun2016H_03Feb2017_ver3_v1_fixtrig.root']
+              'muon': [idir_muon + '/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016D_03Feb2017_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016E_03Feb2017_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016F_03Feb2017_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016G_03Feb2017_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016H_03Feb2017_ver2_v1_fixtrig.root',
+                       idir_muon + '/SingleMuonRun2016H_03Feb2017_ver3_v1_fixtrig.root']
             }
 
     color = {'ggHbb': ROOT.kAzure+1,
-             'Hbb': ROOT.kRed,
+             'Hbb': ROOT.kRed-7,
              'VHbb': ROOT.kTeal+1,
              'VBFHbb': ROOT.kBlue-10,
              'Phibb50': ROOT.kAzure+1,
              'Phibb100': ROOT.kRed-2,
-             #'Phibb125': ROOT.kRed,
-             'Phibb125': ROOT.kOrange-9,
+	     'Phibb125': ROOT.kOrange-9,
              'Phibb200': ROOT.kBlue-1,
              'Phibb300': ROOT.kMagenta+1,
              'Phibb350': ROOT.kBlue,
              'Phibb400': ROOT.kBlue-10,
              'Phibb500': ROOT.kSpring,
-             'ttHbb': ROOT.kBlue-1,
+	     'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
              'SingleTop': ROOT.kRed-2,
              'DY':  ROOT.kRed,
@@ -278,13 +276,13 @@ def main(options,args,outputExists):
     style = {'Hbb': 1,
              'ggHbb': 2,             
              'Phibb50': 3,
-             'Phibb100': 4,
-             'Phibb125': 4,
-             'Phibb200': 9,
-             'Phibb300': 5,
-             'Phibb350': 2,
-             'Phibb400': 2,
-             'Phibb500': 2,
+	     'Phibb100': 4,
+	     'Phibb125': 4,
+	     'Phibb200': 9,
+	     'Phibb300': 5,
+	     'Phibb350': 2,
+	     'Phibb400': 2,
+	     'Phibb500': 2,
              'VBFHbb': 3,
 	     'VHbb': 4,
 	     'ttHbb': 5,
@@ -310,7 +308,7 @@ def main(options,args,outputExists):
     canvases = []
     if isData and muonCR:
         plots = []
-        testSample = sampleContainerPhibbCA15('test',[], 1, DBTMIN,lumi)
+        testSample = sampleContainerPhibb('test',[], 1, DBTMIN,lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
@@ -318,10 +316,10 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt_ca15','h_msd_ca15','h_dbtag_ca15','h_n_ak4','h_n_ak4_dR0p8','h_t21_ca15','h_t32_ca15','h_n2b1sdddt_ca15','h_t21ddt_ca15','h_met_ca15','h_npv','h_eta_ca15','h_ht_ca15','h_dbtag_ca15_aftercut','h_n2b1sdddt_ca15_aftercut','h_rho_ca15', 'h_rho_ca15_nocut', 'h_msd_ca15_nocut', 'h_Cuts_ca15']
+        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8', 'h_rho_ak8_nocut', 'h_msd_ak8_nocut','h_Cuts']
     else:
         plots = []
-        testSample = sampleContainerPhibbCA15('test',[], 1, DBTMIN,lumi)
+        testSample = sampleContainerPhibb('test',[], 1, DBTMIN,lumi)
         for attr in dir(testSample):
             try:
                 if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
@@ -338,45 +336,41 @@ def main(options,args,outputExists):
 #                    sys.exit()
         print "Signals... "
         sigSamples = {}
-#No        sigSamples['ggHbb']  = sampleContainerPhibbCA15('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi) 
-#No        sigSamples['VBFHbb'] = sampleContainerPhibbCA15('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ) 
-#No        sigSamples['VHbb'] = sampleContainerPhibbCA15('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi )        
-#No        sigSamples['ttHbb'] = sampleContainerPhibbCA15('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi )    
-        sigSamples['Phibb50'] = sampleContainerPhibbCA15('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi)
-        sigSamples['Phibb100'] = sampleContainerPhibbCA15('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi)
-        sigSamples['Phibb125'] = sampleContainerPhibbCA15('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi)
-        sigSamples['Phibb200'] = sampleContainerPhibbCA15('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi)
-        sigSamples['Phibb300'] = sampleContainerPhibbCA15('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi)
-        sigSamples['Phibb350'] = sampleContainerPhibbCA15('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi)
-        sigSamples['Phibb400'] = sampleContainerPhibbCA15('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi)
-        sigSamples['Phibb500'] = sampleContainerPhibbCA15('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi)
+        sigSamples['Phibb50'] = sampleContainerPhibb('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi, False, fillCA15) 
+        sigSamples['Phibb100'] = sampleContainerPhibb('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi, False, fillCA15)      
+        sigSamples['Phibb125'] = sampleContainerPhibb('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi, False, fillCA15)      
+        sigSamples['Phibb200'] = sampleContainerPhibb('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi, False, fillCA15)      
+        sigSamples['Phibb300'] = sampleContainerPhibb('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi, False, fillCA15)      
+        sigSamples['Phibb350'] = sampleContainerPhibb('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi, False, fillCA15)      
+        sigSamples['Phibb400'] = sampleContainerPhibb('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi, False, fillCA15)   
+        sigSamples['Phibb500'] = sampleContainerPhibb('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi, False, fillCA15)   
         print "Backgrounds..."
         bkgSamples = {}
-        bkgSamples['W']  = sampleContainerPhibbCA15('W',tfiles['W'], 1, DBTMIN,lumi)
-        bkgSamples['DY']  = sampleContainerPhibbCA15('DY',tfiles['DY'], 1, DBTMIN,lumi)
-        bkgSamples['QCD'] = sampleContainerPhibbCA15('QCD',tfiles['QCD'], 1, DBTMIN,lumi)
+        bkgSamples['W']  = sampleContainerPhibb('W',tfiles['W'], 1, DBTMIN,lumi, False, fillCA15)
+        bkgSamples['DY']  = sampleContainerPhibb('DY',tfiles['DY'], 1, DBTMIN,lumi, False, fillCA15)
+        bkgSamples['QCD'] = sampleContainerPhibb('QCD',tfiles['QCD'], 1, DBTMIN,lumi, False, fillCA15)
+        bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb']  , 1, DBTMIN,lumi, False, fillCA15) 
         if isData and muonCR:
-            bkgSamples['Wlnu']  = sampleContainerPhibbCA15('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi)
-###No            bkgSamples['DYll']  = sampleContainerPhibbCA15('DYll',tfiles['DYll'], 1, DBTMIN,lumi)
-###No            bkgSamples['TTbar1Mu']  = sampleContainerPhibbCA15('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-###No            bkgSamples['TTbar1Ele']  = sampleContainerPhibbCA15('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-###No            bkgSamples['TTbar1Tau']  = sampleContainerPhibbCA15('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-###No            bkgSamples['TTbar0Lep']  = sampleContainerPhibbCA15('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
-###No            bkgSamples['TTbar2Lep']  = sampleContainerPhibbCA15('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
+            bkgSamples['Wlnu']  = sampleContainerPhibb('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi, False, fillCA15)
+            bkgSamples['DYll']  = sampleContainerPhibb('DYll',tfiles['DYll'], 100000, DBTMIN,lumi)
+            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==2')
         else:        
-            bkgSamples['TTbar']  = sampleContainerPhibbCA15('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi)
-        bkgSamples['SingleTop'] = sampleContainerPhibbCA15('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi)
-        bkgSamples['Diboson'] = sampleContainerPhibbCA15('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi)
-#No        bkgSamples['Hbb'] = sampleContainerPhibbCA15('Hbb',tfiles['Hbb'], 1, lumi )  
+           bkgSamples['TTbar']  = sampleContainerPhibb('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15)
+        bkgSamples['SingleTop'] = sampleContainerPhibb('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi, False, fillCA15)
+        bkgSamples['Diboson'] = sampleContainerPhibb('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi, False, fillCA15)
 
         if isData:
             print "Data..."
         if isData and muonCR:
-            dataSample = sampleContainerPhibbCA15('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
+            dataSample = sampleContainerPhibb('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
         elif isData:
-            dataSample = sampleContainerPhibbCA15('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)')
+            dataSample = sampleContainerPhibb('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)')
         
-        ofile = ROOT.TFile.Open(odir+'/Plots_CA15_1000pb_weighted.root ','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
@@ -429,7 +423,7 @@ def main(options,args,outputExists):
         else:        
             bkgSamples.extend(['TTbar'])
             
-        ofile = ROOT.TFile.Open(odir+'/Plots_CA15_1000pb_weighted.root','read')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','read')
         for plot in plots:
             hb = {}
             hs = {}
@@ -460,6 +454,7 @@ if __name__ == '__main__':
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
     parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
+    parser.add_option('-c','--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
 
     (options, args) = parser.parse_args()
 
@@ -476,7 +471,7 @@ if __name__ == '__main__':
 
     
     outputExists = False
-    if glob.glob(options.odir+'/Plots_CA15_1000pb_weighted.root'):
+    if glob.glob(options.odir+'/Plots_1000pb_weighted.root'):
         outputExists = True
         
     main(options,args,outputExists)

@@ -20,7 +20,7 @@ def main(options, args):
 
     #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
     #fileName = 'hist_1DZbb_pt_scalesmear_CA15_newsamples.root'
-    fileName = 'hist_1DZbb_pt_scalesmear_CA15_newsamples_300.root'
+    fileName = 'hist_1DZbb_pt_scalesmear_CA15_pre.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
