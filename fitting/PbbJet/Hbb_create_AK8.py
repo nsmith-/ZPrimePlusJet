@@ -197,7 +197,7 @@ def main(options, args):
 
     #fileName = 'hist_1DZbb_pt_scalesmear_CA15.root'
     #fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples.root'
-    fileName = 'hist_1DZbb_pt_scalesmear_AK8_newsamples_300.root'
+    fileName = 'hist_1DZbb_pt_scalesmear_AK8_pre.root'
     if options.bb:
         fileName = 'hist_1DZbb_sortByBB.root'
     elif muonCR:
@@ -240,11 +240,9 @@ def main(options, args):
     print "Data..."
     if not options.skipData:
         if muonCR:
-            dataSample = sampleContainerPhibbAK8('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
-                                     '((triggerBits&4)&&passJson)', True)
+            dataSample = sampleContainerPhibbAK8('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False, '((triggerBits&4)&&passJson)', False)
         else:
-            dataSample = sampleContainerPhibbAK8('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
-                                     '((triggerBits&2)&&passJson)', False)
+            dataSample = sampleContainerPhibbAK8('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False, '((triggerBits&2)&&passJson)', False)
 
     hall = {}
 
