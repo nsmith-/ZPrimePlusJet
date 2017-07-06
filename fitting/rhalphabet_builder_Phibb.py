@@ -99,7 +99,7 @@ class RhalphabetBuilder():
         self._all_data = []
         self._all_pars = []
 
-        self._background_names = ["wqq", "zqq", "qcd", "tqq"]
+        self._background_names = ["wqq", "zqq", "qcd", "tqq", "stqq", "wlnu", "zll", "vvqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125" ]
         self._signal_names = []
         # for Pbb
         #for mass in [50,75,125,100,150,250,300]:
@@ -324,7 +324,7 @@ class RhalphabetBuilder():
             this_pt = self._pass_hists["data_obs"].GetYaxis().GetBinLowEdge(pt_bin)+self._pass_hists["data_obs"].GetYaxis().GetBinWidth(pt_bin)*0.3;
             print "------- this bin pT value ",this_pt
             #Make the rhalphabet fit for this pt bin
-            (rhalphabet_hist_pass, rhalphabet_hist_fail) = self.MakeRhalphabet(["data_obs", "wqq", "zqq", "tqq"], fail_hists_ptbin, this_pt, "cat"+str(pt_bin))
+            (rhalphabet_hist_pass, rhalphabet_hist_fail) = self.MakeRhalphabet(["data_obs", "wqq", "zqq", "tqq", "stqq", "wlnu", "zll", "vvqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"], fail_hists_ptbin, this_pt, "cat"+str(pt_bin))
 
             # Get signals
             (signal_rdhs_pass, signal_rdhs_fail) = self.GetSignalInputs(pass_hists_ptbin, fail_hists_ptbin, "cat"+str(pt_bin))
@@ -573,13 +573,13 @@ class RhalphabetBuilder():
         data_rdh_comb  = r.RooDataHist("comb_data_obs","comb_data_obs",r.RooArgList(self._lMSD),r.RooFit.Index(roocategories),r.RooFit.Import("pass",data_rdh_pass),r.RooFit.Import("fail",data_rdh_fail)) 
 
         roofit_shapes = {}
-        for sample in ["wqq", "zqq", "qcd", "tqq"]:
+        for sample in ["wqq", "zqq", "qcd", "tqq", "stqq", "wlnu", "zll", "vvqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"]:
             roofit_shapes[sample] = self.GetRoofitHistObjects(pass_histograms[sample], fail_histograms[sample], sample, iBin)
 
         total_pdf_pass = r.RooAddPdf("tot_pass"+iBin,"tot_pass"+iBin,r.RooArgList(roofit_shapes["qcd"]["pass_epdf"]))
         total_pdf_fail = r.RooAddPdf("tot_fail"+iBin,"tot_fail"+iBin,r.RooArgList(roofit_shapes["qcd"]["fail_epdf"]))
-        ewk_pdf_pass = r.RooAddPdf("ewk_pass"+iBin,"ewk_pass"+iBin,r.RooArgList(roofit_shapes["wqq"]["pass_epdf"],roofit_shapes["zqq"]["pass_epdf"], roofit_shapes["tqq"]["pass_epdf"]))
-        ewk_pdf_fail = r.RooAddPdf("ewk_fail"+iBin,"ewk_fail"+iBin,r.RooArgList(roofit_shapes["wqq"]["fail_epdf"],roofit_shapes["zqq"]["fail_epdf"], roofit_shapes["tqq"]["fail_epdf"]))
+        ewk_pdf_pass = r.RooAddPdf("ewk_pass"+iBin,"ewk_pass"+iBin,r.RooArgList(roofit_shapes["wqq"]["pass_epdf"],roofit_shapes["zqq"]["pass_epdf"], roofit_shapes["tqq"]["pass_epdf"], roofit_shapes["stqq"]["pass_epdf"], roofit_shapes["wlnu"]["pass_epdf"], roofit_shapes["zll"]["pass_epdf"], roofit_shapes["vvqq"]["pass_epdf"], roofit_shapes["hqq125"]["pass_epdf"], roofit_shapes["tthqq125"]["pass_epdf"], roofit_shapes["vbfhqq125"]["pass_epdf"], roofit_shapes["whqq125"]["pass_epdf"], roofit_shapes["zhqq125"]["pass_epdf"]))
+        ewk_pdf_fail = r.RooAddPdf("ewk_fail"+iBin,"ewk_fail"+iBin,r.RooArgList(roofit_shapes["wqq"]["fail_epdf"],roofit_shapes["zqq"]["fail_epdf"], roofit_shapes["tqq"]["fail_epdf"], roofit_shapes["stqq"]["fail_epdf"], roofit_shapes["wlnu"]["fail_epdf"], roofit_shapes["zll"]["fail_epdf"], roofit_shapes["vvqq"]["fail_epdf"], roofit_shapes["hqq125"]["fail_epdf"], roofit_shapes["tthqq125"]["fail_epdf"], roofit_shapes["vbfhqq125"]["fail_epdf"], roofit_shapes["whqq125"]["fail_epdf"], roofit_shapes["zhqq125"]["fail_epdf"]))
 
         total_simulpdf  = r.RooSimultaneous("tot","tot",roocategories) 
         total_simulpdf.addPdf(total_pdf_pass,"pass") 
@@ -595,8 +595,8 @@ class RhalphabetBuilder():
             data_rdh_fail, 
             #{"qcd":total_pdf_pass, "ewk":ewk_pdf_pass},
             #{"qcd":total_pdf_fail, "ewk":ewk_pdf_fail},
-            {"wqq":roofit_shapes["wqq"]["pass_rdh"], "zqq":roofit_shapes["zqq"]["pass_rdh"], "tqq":roofit_shapes["tqq"]["pass_rdh"]}, 
-            {"wqq":roofit_shapes["wqq"]["fail_rdh"], "zqq":roofit_shapes["zqq"]["fail_rdh"], "tqq":roofit_shapes["tqq"]["fail_rdh"]}, 
+            {"wqq":roofit_shapes["wqq"]["pass_rdh"], "zqq":roofit_shapes["zqq"]["pass_rdh"], "tqq":roofit_shapes["tqq"]["pass_rdh"], "stqq":roofit_shapes["stqq"]["pass_rdh"], "wlnu":roofit_shapes["wlnu"]["pass_rdh"], "zll":roofit_shapes["zll"]["pass_rdh"], "vvqq":roofit_shapes["vvqq"]["pass_rdh"], "hqq125":roofit_shapes["hqq125"]["pass_rdh"], "tthqq125":roofit_shapes["tthqq125"]["pass_rdh"], "vbfhqq125":roofit_shapes["vbfhqq125"]["pass_rdh"], "whqq125":roofit_shapes["whqq125"]["pass_rdh"], "zhqq125":roofit_shapes["zhqq125"]["pass_rdh"]}, 
+            {"wqq":roofit_shapes["wqq"]["fail_rdh"], "zqq":roofit_shapes["zqq"]["fail_rdh"], "tqq":roofit_shapes["tqq"]["fail_rdh"], "stqq":roofit_shapes["stqq"]["fail_rdh"], "wlnu":roofit_shapes["wlnu"]["fail_rdh"], "zll":roofit_shapes["zll"]["fail_rdh"], "vvqq":roofit_shapes["vvqq"]["fail_rdh"], "hqq125":roofit_shapes["hqq125"]["fail_rdh"], "tthqq125":roofit_shapes["tthqq125"]["fail_rdh"], "vbfhqq125":roofit_shapes["vbfhqq125"]["fail_rdh"], "whqq125":roofit_shapes["whqq125"]["fail_rdh"], "zhqq125":roofit_shapes["zhqq125"]["fail_rdh"]}, 
         ]
 
     # Get (RooHistPdf, RooExtendPdf, RooDataHist) for a pair of pass/fail histograms
@@ -656,7 +656,7 @@ class RhalphabetBuilder():
             cuts = ['p75']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'wlnu' in process or 'zll' in process or 'vvqq' in process or 'Sbb' in process):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -745,7 +745,7 @@ class RhalphabetBuilder():
                     self._outfile_validation.cd()
                     h.Write()
 
-            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
+            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'wlnu' in process or 'zll' in process or 'vvqq' in process or 'Sbb' in process):
                 if process == 'wqq':
                     mass = 80.
                 elif process == 'zqq':
@@ -890,7 +890,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     pass_hists_bkg = {}
     fail_hists_bkg = {}
     cuts = {'p75'} # Change cut here
-    background_names = ["wqq", "zqq", "qcd", "tqq"]
+    background_names = ["wqq", "zqq", "qcd", "tqq", "stqq", "wlnu", "zll", "vvqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"]
     for i, bkg in enumerate(background_names):
         for cut in cuts:
             if bkg=='qcd':
@@ -1028,7 +1028,7 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:
                     print (1. + (1. - BB_SF) * passInt / failInt)
-    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'Sbb' in process:
+    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'wlnu' in process or 'zll' in process or 'vvqq' in process or 'Pbb' in process or 'Sbb' in process:
         SF *= V_SF
         if 'zqq' in process:
             print V_SF

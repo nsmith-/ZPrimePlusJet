@@ -30,7 +30,7 @@ def main(options,args):
             cuts = ['p75']         # Change cut here
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
-            bkgs = ['zqq','wqq','qcd','tqq']
+            bkgs = ['zqq','wqq','qcd','tqq','stqq','wlnu','zll','vvqq','hqq125','tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125']
             systs = ['JER','JES','Pu']
             #print " Anter : ", " Low : ", options.lrho, " High : ", options.hrho
             removeUnmatched = options.removeUnmatched
