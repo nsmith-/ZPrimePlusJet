@@ -205,6 +205,59 @@ def main(options, args):
 
     tfiles = getFiles(muonCR)
 
+    
+    all_plots = []
+    testSample = sampleContainerPhibb('test',[], 1, dbtagmin,lumi)
+    for attr in dir(testSample):
+        try:
+            if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') or getattr(testSample,attr).InheritsFrom('TH2'):
+                all_plots.append(attr)
+        except:
+            pass
+
+        
+    dbcuts = [0.7,0.75,0.8,0.85,0.9,0.95]
+    plots = []
+    for dbcut in dbcuts:
+        plots.extend([
+             'h_msd_v_pt_topR6_N2_%s_pass'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_matched'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_matched'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_unmatched'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_unmatched'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_JESUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_JESDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_JESDown'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_JERUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_JERDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_JERDown'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_triggerUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_triggerUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_triggerDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_triggerDown'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p'),
+             'h_msd_v_pt_topR6_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_topR6_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p')
+             ])
+
+    if options.bb:
+        plots = ['h_msd_v_pt_bbleading_topR6_pass', 'h_msd_v_pt_bbleading_topR6_fail']
+    elif muonCR:
+        for dbcut in dbcuts:
+            plots.extend([
+                 'h_msd_muCR4_N2_%s_pass'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_pass_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_pass_JESDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_fail_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail_JESDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_pass_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_pass_JERDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_fail_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail_JERDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_pass_mutriggerUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_pass_mutriggerDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_fail_mutriggerUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail_mutriggerDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_pass_muidUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_pass_muidDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_fail_muidUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail_muidDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_pass_muisoUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_pass_muisoDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_fail_muisoUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail_muisoDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p'),
+                 'h_msd_muCR4_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_muCR4_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p'),
+                 ])
+    for plot in plots:
+        if plot not in all_plots:
+            print "%s does not exist in sample container: are you sure about the name?!"% plot
+            sys.exit()
+    print "all plots exist"
+    
 
     print "Signals... "
     sigSamples = {}
@@ -243,44 +296,6 @@ def main(options, args):
             dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
 
     hall = {}
-
-    dbcuts = [0.7,0.75,0.8,0.85,0.9,0.95]
-    plots = []
-    for dbcut in dbcuts:
-        plots.extend([
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_matched'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_matched'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_unmatched'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_unmatched'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_JESUp'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_JESDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_JESDown'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_JERUp'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_JERDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_JERDown'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_triggerUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_triggerUp'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_triggerDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_triggerDown'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p'),
-             'h_msd_v_pt_ak8_topR6_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p'), 'h_msd_v_pt_ak8_topR6_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p')
-             ])
-
-    if options.bb:
-        plots = ['h_msd_v_pt_ak8_bbleading_topR6_pass', 'h_msd_v_pt_ak8_bbleading_topR6_fail']
-    elif muonCR:
-        for dbcut in dbcuts:
-            plots.extend([
-                 'h_msd_ak8_muCR4_N2_%s_pass'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_pass_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_pass_JESDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_fail_JESUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail_JESDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_pass_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_pass_JERDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_fail_JERUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail_JERDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_pass_mutriggerUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_pass_mutriggerDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_fail_mutriggerUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail_mutriggerDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_pass_muidUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_pass_muidDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_fail_muidUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail_muidDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_pass_muisoUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_pass_muisoDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_fail_muisoUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail_muisoDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_pass_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_pass_PuDown'%str(dbcut).replace('0.','p'),
-                 'h_msd_ak8_muCR4_N2_%s_fail_PuUp'%str(dbcut).replace('0.','p'), 'h_msd_ak8_muCR4_N2_%s_fail_PuDown'%str(dbcut).replace('0.','p'),
-                 ])
-
 
     for plot in plots:
         tag = plot.split('_')[-2] + '_' + plot.split('_')[-1]   # 'pass' or 'fail' or systematicName
