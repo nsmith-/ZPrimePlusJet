@@ -656,7 +656,7 @@ class RhalphabetBuilder():
             cuts = ['p75']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'wlnu' in process or 'zll' in process or 'vvqq' in process or 'Sbb' in process):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -745,7 +745,7 @@ class RhalphabetBuilder():
                     self._outfile_validation.cd()
                     h.Write()
 
-            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'wlnu' in process or 'zll' in process or 'vvqq' in process or 'Sbb' in process):
+            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
                 if process == 'wqq':
                     mass = 80.
                 elif process == 'zqq':
@@ -1028,7 +1028,7 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:
                     print (1. + (1. - BB_SF) * passInt / failInt)
-    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'wlnu' in process or 'zll' in process or 'vvqq' in process or 'Pbb' in process or 'Sbb' in process:
+    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'Sbb' in process:
         SF *= V_SF
         if 'zqq' in process:
             print V_SF
