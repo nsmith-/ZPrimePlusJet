@@ -30,7 +30,7 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, dbtagcut=7, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
@@ -51,6 +51,7 @@ class RhalphabetBuilder():
         self._mass_blind_hi = blind_hi
         self._rho_lo = rho_lo
         self._rho_hi = rho_hi
+        self._dbtagcut = str(dbtagcut)
         # self._mass_nbins = pass_hists[0].GetXaxis().GetNbins()
         # self._mass_lo    = pass_hists[0].GetXaxis().GetBinLowEdge( 1 )
         # self._mass_hi    = pass_hists[0].GetXaxis().GetBinUpEdge( self._mass_nbins )
@@ -58,7 +59,7 @@ class RhalphabetBuilder():
         self._remove_unmatched  = remove_unmatched
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
         print " Rho : ", " Low : ", self._rho_lo, " High : ", self._rho_hi
-
+        print " DBTAG CUT : ", self._dbtagcut 
         #polynomial order for fit
         self._poly_degree_rho = nr #1 = linear ; 2 is quadratic
         self._poly_degree_pt = np #1 = linear ; 2 is quadratic
@@ -165,7 +166,8 @@ class RhalphabetBuilder():
                                                             datahist['%s_%s'%(proc,cat)])
                 getattr(w,'import')(datahist['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
-                if 'hqq125' in proc or 'Sbb' in proc:
+                #if 'hqq125' in proc or 'Sbb' in proc:
+                if 'Sbb' in proc:
                     # signal
                     signorm['%s_%s'%(proc,cat)] = r.RooRealVar('signorm_%s_%s'%(proc,cat),
                                                                 'signorm_%s_%s'%(proc,cat),
@@ -653,7 +655,6 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
-            cuts = ['p75']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
@@ -661,62 +662,61 @@ class RhalphabetBuilder():
                 hout = []
                 histDict = {}
                 for syst in systematics:
-                    for cut in cuts:
-                        if syst == 'mcstat':
-                            matchingString = ''
-                            if self._remove_unmatched and ('wqq' in process or 'zqq' in process):
-                                matchingString = '_matched'
-                            if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                            
-                                tmph = self._inputfile_loose.Get(process + '_' + cut + '_' + cat + matchingString).Clone(process + '_' + cat)
-                                tmph_up = self._inputfile_loose.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
-                                    process + '_' + cat + '_' + syst + 'Up')
-                                tmph_down = self._inputfile_loose.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
-                                    process + '_' + cat + '_' + syst + 'Down')
-                                tmph.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                                tmph_up.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                                tmph_down.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                            else:                            
-                                tmph = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(process + '_' + cat)
-                                tmph_up = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
-                                    process + '_' + cat + '_' + syst + 'Up')
-                                tmph_down = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
-                                    process + '_' + cat + '_' + syst + 'Down')
-                                tmph.Scale(GetSF(process, cut, cat, self._inputfile))
-                                tmph_up.Scale(GetSF(process, cut, cat, self._inputfile))
-                                tmph_down.Scale(GetSF(process, cut, cat, self._inputfile))
-                            tmph_mass = tools.proj('cat', str(iPt), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
-                            tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
-                            tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
-                                                  self._mass_hi)
-                            #print 'Mass : ', tmph_mass, 'Up : ',tmph_mass_up, 'Down : ',tmph_mass_down
-                            for i in range(1, tmph_mass_up.GetNbinsX() + 1):
-                                mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
-                                mcstatdown = max(0., tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))
-                                tmph_mass_up.SetBinContent(i, mcstatup)
-                                tmph_mass_down.SetBinContent(i, mcstatdown)
-                            tmph_mass.SetName(import_object.GetName())
-                            tmph_mass_up.SetName(import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Up')
-                            tmph_mass_down.SetName(import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Down')
-                            histDict[import_object.GetName()] = tmph_mass
-                            histDict[import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Up'] = tmph_mass_up
-                            histDict[
-                                import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Down'] = tmph_mass_down
-                            if 'tqq' in process:
-                                hout.append(tmph_mass)
-                                # hout.append(tmph_mass_up)
-                                # hout.append(tmph_mass_down)
-                        else:
-                            tmph_up = self._inputfile.Get(process + '_' + cut + '_' + cat + '_' + syst + 'Up').Clone()
-                            tmph_down = self._inputfile.Get(process + '_' + cut + '_' + cat + '_' + syst + 'Down').Clone()
-                            tmph_up.Scale(GetSF(process, cut, cat, self._inputfile))
-                            tmph_down.Scale(GetSF(process, cut, cat, self._inputfile))
-                            tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
-                            tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
-                                                  self._mass_hi)
-                            tmph_mass_up.SetName(import_object.GetName() + '_' + syst + 'Up')
-                            tmph_mass_down.SetName(import_object.GetName() + '_' + syst + 'Down')
-                            hout.append(tmph_mass_up)
-                            hout.append(tmph_mass_down)
+                    if syst == 'mcstat':
+                        matchingString = ''
+                        if self._remove_unmatched and ('wqq' in process or 'zqq' in process):
+                            matchingString = '_matched'
+                        if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                            
+                            tmph = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + matchingString).Clone(process + '_' + cat)
+                            tmph_up = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Up')
+                            tmph_down = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Down')
+                            tmph.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                            tmph_up.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                            tmph_down.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                        else:                            
+                            tmph = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + matchingString).Clone(process + '_' + cat)
+                            tmph_up = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Up')
+                            tmph_down = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + matchingString).Clone(
+                                process + '_' + cat + '_' + syst + 'Down')
+                            tmph.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                            tmph_up.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                            tmph_down.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                        tmph_mass = tools.proj('cat', str(iPt), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
+                        tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
+                        tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
+                                              self._mass_hi)
+                        #print 'Mass : ', tmph_mass, 'Up : ',tmph_mass_up, 'Down : ',tmph_mass_down
+                        for i in range(1, tmph_mass_up.GetNbinsX() + 1):
+                            mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
+                            mcstatdown = max(0., tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))
+                            tmph_mass_up.SetBinContent(i, mcstatup)
+                            tmph_mass_down.SetBinContent(i, mcstatdown)
+                        tmph_mass.SetName(import_object.GetName())
+                        tmph_mass_up.SetName(import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Up')
+                        tmph_mass_down.SetName(import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Down')
+                        histDict[import_object.GetName()] = tmph_mass
+                        histDict[import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Up'] = tmph_mass_up
+                        histDict[
+                            import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Down'] = tmph_mass_down
+                        if 'tqq' in process:
+                            hout.append(tmph_mass)
+                            # hout.append(tmph_mass_up)
+                            # hout.append(tmph_mass_down)
+                    else:
+                        tmph_up = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_' + syst + 'Up').Clone()
+                        tmph_down = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_' + syst + 'Down').Clone()
+                        tmph_up.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                        tmph_down.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                        tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
+                        tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
+                                              self._mass_hi)
+                        tmph_mass_up.SetName(import_object.GetName() + '_' + syst + 'Up')
+                        tmph_mass_down.SetName(import_object.GetName() + '_' + syst + 'Down')
+                        hout.append(tmph_mass_up)
+                        hout.append(tmph_mass_down)
                 uncorrelate(histDict, 'mcstat')
                 for key, myhist in histDict.iteritems():
                     if 'mcstat' in key:
@@ -761,15 +761,15 @@ class RhalphabetBuilder():
                 # get the matched and unmatched hist
                 
                 if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                     
-                    tmph_matched = self._inputfile_loose.Get(process + '_' + cat + '_matched').Clone()
-                    tmph_unmatched = self._inputfile_loose.Get(process + '_' + cat + '_unmatched').Clone()
-                    tmph_matched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                    tmph_unmatched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
+                    tmph_matched = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                    tmph_unmatched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
                 else:
-                    tmph_matched = self._inputfile.Get(process + '_' + cut + '_' + cat + '_matched').Clone()
-                    tmph_unmatched = self._inputfile.Get(process + '_' + cut + '_' + cat + '_unmatched').Clone()
-                    tmph_matched.Scale(GetSF(process, cut, cat, self._inputfile))
-                    tmph_unmatched.Scale(GetSF(process, cut, cat, self._inputfile))
+                    tmph_matched = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                    tmph_unmatched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
                 tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo, self._mass_hi)
                 tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                            self._mass_hi)
@@ -882,63 +882,61 @@ class RhalphabetBuilder():
 ##############################################################################
 
 ##-------------------------------------------------------------------------------------
-def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None):
+def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, dbtagcut, fLoose=None):
     pass_hists = {}
     fail_hists = {}
     f.ls()
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
-    cuts = {'p75'} # Change cut here
     background_names = ["wqq", "zqq", "qcd", "tqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"]
     for i, bkg in enumerate(background_names):
-        for cut in cuts:
-            if bkg=='qcd':
-                qcd_fail = f.Get('qcd_' + cut +'_fail')
-                qcd_fail.Scale(1. / scale)
-                qcd_fail.SetBinContent(13, 4, (
-                qcd_fail.GetBinContent(12, 4) + qcd_fail.GetBinContent(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
-                qcd_fail.SetBinError(13, 4, (
-                qcd_fail.GetBinError(12, 4) + qcd_fail.GetBinError(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
-                if useQCD:
-                    qcd_pass = f.Get('qcd_' + cut +'_pass').Clone()
-                    qcd_pass.Scale(1. / scale)
-                else:
-                    qcd_pass_real = f.Get('qcd_' + cut +'_pass').Clone('qcd_pass_real')
-                    qcd_pass_real.Scale(1. / scale)
-                    qcd_pass = qcd_fail.Clone('qcd_pass')
-                    qcd_pass_real_integral = 0
-                    qcd_fail_integral = 0
-                    for i in range(1, qcd_pass_real.GetNbinsX() + 1):
-                        for j in range(1, qcd_pass_real.GetNbinsY() + 1):
-                            if qcd_pass_real.GetXaxis().GetBinCenter(i) > mass_range[0] and qcd_pass_real.GetXaxis().GetBinCenter(
-                                    i) < mass_range[1]:
-                                qcd_pass_real_integral += qcd_pass_real.GetBinContent(i, j)
-                                qcd_fail_integral += qcd_fail.GetBinContent(i, j)
-                    qcd_pass.Scale(qcd_pass_real_integral / qcd_fail_integral)  # qcd_pass = qcd_fail * eff(pass)/eff(fail)
-                pass_hists_bkg["qcd"] = qcd_pass
-                fail_hists_bkg["qcd"] = qcd_fail
-                print 'qcd pass integral', qcd_pass.Integral()
-                print 'qcd fail integral', qcd_fail.Integral()
-            elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq'):
-                hpass_tmp = fLoose.Get(bkg + '_' + cut + '_pass').Clone()
-                hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
-                hpass_tmp.Scale(1. / scale)
-                hfail_tmp.Scale(1. / scale)
-                hpass_tmp.Scale(GetSF(bkg, 'pass', f, fLoose))
-                hfail_tmp.Scale(GetSF(bkg, 'fail', f))
-                pass_hists_bkg[bkg] = hpass_tmp
-                fail_hists_bkg[bkg] = hfail_tmp            
-            else: 
-                print "Attempting to get {}".format(bkg + '_' + cut + '_pass')
-                hpass_tmp = f.Get(bkg + '_' + cut + '_pass').Clone()
-                hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
-                hpass_tmp.Scale(1. / scale)
-                hfail_tmp.Scale(1. / scale)
-                hpass_tmp.Scale(GetSF(bkg, cut, 'pass', f))
-                hfail_tmp.Scale(GetSF(bkg, cut, 'fail', f))
-                pass_hists_bkg[bkg] = hpass_tmp
-                fail_hists_bkg[bkg] = hfail_tmp
+        if bkg=='qcd':
+            qcd_fail = f.Get('qcd_p' + str(dbtagcut) +'_fail')
+            qcd_fail.Scale(1. / scale)
+            qcd_fail.SetBinContent(13, 4, (
+            qcd_fail.GetBinContent(12, 4) + qcd_fail.GetBinContent(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+            qcd_fail.SetBinError(13, 4, (
+            qcd_fail.GetBinError(12, 4) + qcd_fail.GetBinError(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+            if useQCD:
+                qcd_pass = f.Get('qcd_p' + str(dbtagcut) +'_pass').Clone()
+                qcd_pass.Scale(1. / scale)
+            else:
+                qcd_pass_real = f.Get('qcd_p' + str(dbtagcut) +'_pass').Clone('qcd_pass_real')
+                qcd_pass_real.Scale(1. / scale)
+                qcd_pass = qcd_fail.Clone('qcd_pass')
+                qcd_pass_real_integral = 0
+                qcd_fail_integral = 0
+                for i in range(1, qcd_pass_real.GetNbinsX() + 1):
+                    for j in range(1, qcd_pass_real.GetNbinsY() + 1):
+                        if qcd_pass_real.GetXaxis().GetBinCenter(i) > mass_range[0] and qcd_pass_real.GetXaxis().GetBinCenter(
+                                i) < mass_range[1]:
+                            qcd_pass_real_integral += qcd_pass_real.GetBinContent(i, j)
+                            qcd_fail_integral += qcd_fail.GetBinContent(i, j)
+                qcd_pass.Scale(qcd_pass_real_integral / qcd_fail_integral)  # qcd_pass = qcd_fail * eff(pass)/eff(fail)
+            pass_hists_bkg["qcd"] = qcd_pass
+            fail_hists_bkg["qcd"] = qcd_fail
+            print 'qcd pass integral', qcd_pass.Integral()
+            print 'qcd fail integral', qcd_fail.Integral()
+        elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq'):
+            hpass_tmp = fLoose.Get(bkg + '_p' + dbtagcut + '_pass').Clone()
+            hfail_tmp = f.Get(bkg + '_p' + dbtagcut + '_fail').Clone()
+            hpass_tmp.Scale(1. / scale)
+            hfail_tmp.Scale(1. / scale)
+            hpass_tmp.Scale(GetSF(bkg, 'pass', f, fLoose))
+            hfail_tmp.Scale(GetSF(bkg, 'fail', f))
+            pass_hists_bkg[bkg] = hpass_tmp
+            fail_hists_bkg[bkg] = hfail_tmp            
+        else: 
+            print "Attempting to get {}".format(bkg + '_p' + str(dbtagcut) + '_pass')
+            hpass_tmp = f.Get(bkg + '_p' + str(dbtagcut) + '_pass').Clone()
+            hfail_tmp = f.Get(bkg + '_p' + str(dbtagcut) + '_fail').Clone()
+            hpass_tmp.Scale(1. / scale)
+            hfail_tmp.Scale(1. / scale)
+            hpass_tmp.Scale(GetSF(bkg, dbtagcut, 'pass', f))
+            hfail_tmp.Scale(GetSF(bkg, dbtagcut, 'fail', f))
+            pass_hists_bkg[bkg] = hpass_tmp
+            fail_hists_bkg[bkg] = hfail_tmp
 
     # signals
     pass_hists_sig = {}
@@ -952,25 +950,23 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     sigs = ["DMSbb"]
     signal_names = []
-    cuts = ['p75'] # Change cut here
     for mass in masses:
         for sig in sigs:
-            for cut in cuts:
-                print "[debug] Getting " + sig + str(mass) + '_' + cut + "_pass"                
-                passhist = f.Get(sig + str(mass) + "_" + cut + "_pass").Clone()
-                failhist = f.Get(sig + str(mass) + "_" + cut + "_fail").Clone()
-                for hist in [passhist, failhist]:
-                    for i in range(0, hist.GetNbinsX() + 2):
-                        for j in range(0, hist.GetNbinsY() + 2):
-                            if hist.GetBinContent(i, j) <= 0:
-                                hist.SetBinContent(i, j, 0)
-                failhist.Scale(1. / scale)
-                passhist.Scale(1. / scale)
-                failhist.Scale(GetSF(sig + str(mass), cut, 'fail', f))
-                passhist.Scale(GetSF(sig + str(mass), cut, 'pass', f))
-                pass_hists_sig[sig + str(mass)] = passhist
-                fail_hists_sig[sig + str(mass)] = failhist
-                signal_names.append(sig + str(mass))
+            print "[debug] Getting " + sig + str(mass) + '_p' + str(dbtagcut) + "_pass"                
+            passhist = f.Get(sig + str(mass) + "_p" + str(dbtagcut) + "_pass").Clone()
+            failhist = f.Get(sig + str(mass) + "_p" + str(dbtagcut) + "_fail").Clone()
+            for hist in [passhist, failhist]:
+                for i in range(0, hist.GetNbinsX() + 2):
+                    for j in range(0, hist.GetNbinsY() + 2):
+                        if hist.GetBinContent(i, j) <= 0:
+                            hist.SetBinContent(i, j, 0)
+            failhist.Scale(1. / scale)
+            passhist.Scale(1. / scale)
+            failhist.Scale(GetSF(sig + str(mass), dbtagcut, 'fail', f))
+            passhist.Scale(GetSF(sig + str(mass), dbtagcut, 'pass', f))
+            pass_hists_sig[sig + str(mass)] = passhist
+            fail_hists_sig[sig + str(mass)] = failhist
+            signal_names.append(sig + str(mass))
 
     if pseudo:        
         for i, bkg in enumerate(background_names):
@@ -1013,17 +1009,17 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # print fail_hists;
     return (pass_hists,fail_hists)
 
-def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
+def GetSF(process, dbtagcut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
-    print process, cut, cat
+    print process, 'p'+str(dbtagcut), cat
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'Sbb' in process:
         if 'pass' in cat:
             SF *= BB_SF
             if 'zqq' in process:
                 print BB_SF
         else:
-            passInt = f.Get(process + '_' + cut + '_pass').Integral()
-            failInt = f.Get(process + '_' + cut + '_fail').Integral()
+            passInt = f.Get(process + '_p' + str(dbtagcut) + '_pass').Integral()
+            failInt = f.Get(process + '_p' + str(dbtagcut) + '_fail').Integral()
             if failInt > 0:
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:
