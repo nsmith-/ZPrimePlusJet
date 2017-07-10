@@ -30,13 +30,14 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9'):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
         self._freeze = freeze_poly
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
+        self._cuts = cuts.split(',')
 
         self._output_path = "{}/base.root".format(out_dir)
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
@@ -653,7 +654,6 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
-            cuts = ['p75']           # Change cut here
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
@@ -661,7 +661,7 @@ class RhalphabetBuilder():
                 hout = []
                 histDict = {}
                 for syst in systematics:
-                    for cut in cuts:
+                    for cut in self._cuts:
                         if syst == 'mcstat':
                             matchingString = ''
                             if self._remove_unmatched and ('wqq' in process or 'zqq' in process):
@@ -882,17 +882,16 @@ class RhalphabetBuilder():
 ##############################################################################
 
 ##-------------------------------------------------------------------------------------
-def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None):
+def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, cuts='p9'):
     pass_hists = {}
     fail_hists = {}
     f.ls()
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
-    cuts = {'p75'} # Change cut here
-    background_names = ["wqq", "zqq", "qcd", "tqq"]
+    background_names = ["wqq", "zqq", "qcd", "tqq", "hqq125", "whqq125", "zhqq125", "vbfhqq125", "tthqq125"]
     for i, bkg in enumerate(background_names):
-        for cut in cuts:
+        for cut in cuts.split(","):
             if bkg=='qcd':
                 qcd_fail = f.Get('qcd_' + cut +'_fail')
                 qcd_fail.Scale(1. / scale)
@@ -952,10 +951,9 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     sigs = ["DMSbb"]
     signal_names = []
-    cuts = ['p75'] # Change cut here
     for mass in masses:
         for sig in sigs:
-            for cut in cuts:
+            for cut in cuts.split(","):
                 print "[debug] Getting " + sig + str(mass) + '_' + cut + "_pass"                
                 passhist = f.Get(sig + str(mass) + "_" + cut + "_pass").Clone()
                 failhist = f.Get(sig + str(mass) + "_" + cut + "_fail").Clone()
@@ -1016,6 +1014,23 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
 def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
     print process, cut, cat
+    if 'DMSbb' in process:
+        if '50' in process:
+            SF *= 0.8 * 1.574e-02
+        elif '100' in process:
+            SF *= 0.8 * 1.526e-02
+        elif '125' in process:
+            SF *= 0.8 * 1.486e-02
+        elif '200' in process:
+            SF *= 0.8 * 1.359e-02
+        elif '300' in process:
+            SF *= 0.8 * 1.251e-02
+        elif '350' in process:
+            SF *= 0.8 * 1.275e-02
+        elif '400' in process:
+            SF *= 0.8 * 1.144e-02
+        elif '500' in process:
+            SF *= 0.8 * 7.274e-03
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'Sbb' in process:
         if 'pass' in cat:
             SF *= BB_SF

@@ -315,9 +315,9 @@ def main(options, args):
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
             print process + '_' + tag
         if not options.skipData:
-            hall['%s_%s' % ('data_obs', tag2)] = getattr(dataSample, plot)
-            hall['%s_%s' % ('data_obs', tag2)].SetName('%s_%s' % ('data_obs', tag2))
-            print 'data_obs' + '_' + tag2
+            hall['%s_%s' % ('data_obs', tag)] = getattr(dataSample, plot)
+            hall['%s_%s' % ('data_obs', tag)].SetName('%s_%s' % ('data_obs', tag))
+            print 'data_obs' + '_' + tag
     outfile.cd()
 
     for key, h in hall.iteritems():

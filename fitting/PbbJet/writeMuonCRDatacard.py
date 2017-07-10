@@ -8,7 +8,7 @@ import time
 import array
 import os
 
-from buildRhalphabetHbb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
+from buildRhalphabetPhibb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI
 from rhalphabet_builder import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
@@ -195,8 +195,8 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     #for Hbb extraction:
-    sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
+    sigs = ['DMSbb'+str(options.mass)]
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll','tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     #for Wqq/Zbb extraction:
     #sigs = ['zqq','wqq']
     #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','vvqq','stqq','wlnu','zll']
@@ -204,9 +204,12 @@ def main(options, args):
     #sigs = ['zqq']
     #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','wqq','vvqq','stqq','wlnu','zll']
     systs = ['JER','JES','mutrigger','muid','muiso','Pu']
+    cut = options.cuts.split(',')[0] # just take first cut
 
-    
-    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR.root','read')
+    jet_type = 'AK8'
+    if options.fillCA15:
+        jet_type = 'CA15'
+    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_' + jet_type + '_check.root','read')
     
     histoDict = {}
     datahistDict = {}
@@ -214,16 +217,16 @@ def main(options, args):
     for proc in (bkgs+sigs+['data_obs']):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
-            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box)).Clone()
-            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,box,tfile))
+            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box)).Clone()
+            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc+'_'+cut,box,tfile))
             for syst in systs:
                 if proc!='data_obs':
-                    print 'getting histogram for process: %s_%s_%sUp'%(proc,box,syst)
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst)).Clone()
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,box,tfile))
+                    print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,cut,box,syst)).Clone()
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc+'_'+cut,box,tfile))
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst)).Clone()
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,box,tfile))
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,cut,box,syst)).Clone()
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc+'_'+cut,box,tfile))
                     
                 
     
@@ -257,7 +260,12 @@ if __name__ == '__main__':
     parser.add_option('--lumi', dest='lumi', type=float, default = 20,help='lumi in 1/fb ', metavar='lumi')
     parser.add_option('-i','--idir', dest='idir', default = './',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write cards', metavar='odir')
-    
+    parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
+    parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
+    parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
+    parser.add_option('-m', '--mass', dest='mass', default='50', type='string', help='mass value')
+    parser.add_option('--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
+
     (options, args) = parser.parse_args()
 
     main(options, args)

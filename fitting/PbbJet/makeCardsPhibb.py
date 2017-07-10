@@ -27,10 +27,10 @@ def main(options,args):
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
             
-            cuts = ['p75']         # Change cut here
+            cuts = options.cuts.split(',')
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
-            bkgs = ['zqq','wqq','qcd','tqq']
+            bkgs = ['zqq','wqq','qcd','tqq','hqq125','tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125']
             systs = ['JER','JES','Pu']
             #print " Anter : ", " Low : ", options.lrho, " High : ", options.hrho
             removeUnmatched = options.removeUnmatched
@@ -95,7 +95,8 @@ def main(options,args):
                                 ratePuUp = histoDict['%s_%s_%s_PuUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
                                 ratePuDown = histoDict['%s_%s_%s_PuDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
                                 jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
-                                jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate) 
+                                jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-
+rate))/(2.*rate) 
                                 puErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
                             else:
                                 jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
@@ -295,6 +296,7 @@ if __name__ == '__main__':
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
+    parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
 
     (options, args) = parser.parse_args()
 
