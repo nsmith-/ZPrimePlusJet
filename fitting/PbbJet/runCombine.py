@@ -45,8 +45,8 @@ def main(options,args):
     if options.fillCA15:
         fillString = '--fillCA15'
     for massPoint in massIterable(options.mass):
-        exec_me('cp %s/%s/base.root %s/%s/%s/%s/'%(options.odir,jet_type,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
-        exec_me('cp %s/%s/rhalphabase.root %s/%s/%s/%s/'%(options.odir,jet_type,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
+        exec_me('cp %s/%s/%s/base.root %s/%s/%s/%s/'%(options.odir,jet_type,cut,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
+        exec_me('cp %s/%s/%s/rhalphabase.root %s/%s/%s/%s/'%(options.odir,jet_type,cut,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
         exec_me('python writeMuonCRDatacard.py -i ./ -o %s/%s/%s/%s/ %s -c %s --mass %s'%(options.odir,jet_type,cut,options.model+str(massPoint),fillString,cut,massPoint),options.dryRun)
         os.chdir('%s/%s/%s/%s/'%(options.odir,jet_type,cut,options.model+str(massPoint)))
         exec_me('combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt',options.dryRun)
