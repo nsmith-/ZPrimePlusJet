@@ -26,8 +26,9 @@ def main(options,args):
             tfile_loose = None
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
+           
+            cuts = options.cuts.split(',')
 
-            dbtagcut = "p" + str(options.dbtagcut)
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
             bkgs = ['zqq','wqq','qcd','tqq','hqq125','tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125']
@@ -83,24 +84,24 @@ def main(options,args):
                 scaleptErrs = {}
                 for box in boxes:
                     for proc in (sigs+bkgs):
-                        print "Taking integral of {}".format('%s_%s_%s'%(proc,dbtagcut,box))
-                        #print " Anter : ", histoDict['%s_%s_%s'%(proc,dbtagcut,box)].GetName()
-                        rate = histoDict['%s_%s_%s'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                        if rate>0:
-                            rateJESUp = histoDict['%s_%s_%s_JESUp'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                            rateJESDown = histoDict['%s_%s_%s_JESDown'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                            rateJERUp = histoDict['%s_%s_%s_JERUp'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                            rateJERDown = histoDict['%s_%s_%s_JERDown'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                            ratePuUp = histoDict['%s_%s_%s_PuUp'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                            ratePuDown = histoDict['%s_%s_%s_PuDown'%(proc,dbtagcut,box)].Integral(1, numberOfMassBins, i, i)
-                            jesErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
-                            jerErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate) 
-                            puErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
-                        else:
-                            jesErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  1.0
-                            jerErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  1.0
-                            puErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  1.0
-
+                        for cut in cuts:
+                            print "Taking integral of {}".format('%s_%s_%s'%(proc,cut,box))
+                            rate = histoDict['%s_%s_%s'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                            if rate>0:
+                                rateJESUp = histoDict['%s_%s_%s_JESUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                                rateJESDown = histoDict['%s_%s_%s_JESDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                                rateJERUp = histoDict['%s_%s_%s_JERUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                                rateJERDown = histoDict['%s_%s_%s_JERDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                                ratePuUp = histoDict['%s_%s_%s_PuUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                                ratePuDown = histoDict['%s_%s_%s_PuDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
+                                jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
+                                jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-
+rate))/(2.*rate) 
+                                puErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
+                            else:
+                                jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
+                                jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
+                                puErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
                         if i == 2:
                             scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.05
                         elif i == 3:
@@ -290,7 +291,7 @@ if __name__ == '__main__':
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
-    parser.add_option('--dbtagcut', dest='dbtagcut', default=7, type='int', help=' dbtag value cut')
+    parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
 
     (options, args) = parser.parse_args()
 

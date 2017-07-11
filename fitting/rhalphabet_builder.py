@@ -689,7 +689,7 @@ class RhalphabetBuilder():
                         tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
                         tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
                                               self._mass_hi)
-                            print 'Mass : ', tmph_mass, 'Up : ',tmph_mass_up, 'Down : ',tmph_mass_down
+                        print 'Mass : ', tmph_mass, 'Up : ',tmph_mass_up, 'Down : ',tmph_mass_down
 
                         for i in range(1, tmph_mass_up.GetNbinsX() + 1):
                             mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
