@@ -53,7 +53,6 @@ class RhalphabetBuilder():
         self._mass_blind_hi = blind_hi
         self._rho_lo = rho_lo
         self._rho_hi = rho_hi
-        self._dbtagcut = str(dbtagcut)
         # self._mass_nbins = pass_hists[0].GetXaxis().GetNbins()
         # self._mass_lo    = pass_hists[0].GetXaxis().GetBinLowEdge( 1 )
         # self._mass_hi    = pass_hists[0].GetXaxis().GetBinUpEdge( self._mass_nbins )
@@ -61,7 +60,7 @@ class RhalphabetBuilder():
         self._remove_unmatched  = remove_unmatched
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
         print " Rho : ", " Low : ", self._rho_lo, " High : ", self._rho_hi
-        print " DBTAG CUT : ", self._dbtagcut 
+        print " DBTAG CUT : ", self._cuts[0] 
         #polynomial order for fit
         self._poly_degree_rho = nr #1 = linear ; 2 is quadratic
         self._poly_degree_pt = np #1 = linear ; 2 is quadratic
@@ -93,7 +92,7 @@ class RhalphabetBuilder():
         if qcd_fail_integral>0:
             qcdeff = qcd_pass_integral / qcd_fail_integral
             self._lEffQCD.setVal(qcdeff)
-        print "qcdeff = %f"%qcdeff
+            print "qcdeff = %f"%qcdeff
         self._lDM     = r.RooRealVar("dm","dm", 0.,-10,10)
         self._lShift  = r.RooFormulaVar("shift",self._lMSD.GetName()+"-dm",r.RooArgList(self._lMSD,self._lDM)) 
 
@@ -765,15 +764,15 @@ class RhalphabetBuilder():
                 # get the matched and unmatched hist
                 
                 if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                     
-                    tmph_matched = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + '_matched').Clone()
-                    tmph_unmatched = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + '_unmatched').Clone()
-                    tmph_matched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                    tmph_unmatched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
+                    tmph_matched = self._inputfile_loose.Get(process + '_' + self._cuts[0] + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile_loose.Get(process + '_' + self._cuts[0] + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                    tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
                 else:
-                    tmph_matched = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_matched').Clone()
-                    tmph_unmatched = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_unmatched').Clone()
-                    tmph_matched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
-                    tmph_unmatched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                    tmph_matched = self._inputfile.Get(process + '_' + self._cuts[0] + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile.Get(process + '_' + self._cuts[0] + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile))
+                    tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile))
                 tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo, self._mass_hi)
                 tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                            self._mass_hi)
@@ -930,8 +929,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                 hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
                 hpass_tmp.Scale(1. / scale)
                 hfail_tmp.Scale(1. / scale)
-                hpass_tmp.Scale(GetSF(bkg, 'pass', f, fLoose))
-                hfail_tmp.Scale(GetSF(bkg, 'fail', f))
+                hpass_tmp.Scale(GetSF(bkg, cut, 'pass', f, fLoose))
+                hfail_tmp.Scale(GetSF(bkg, cut, 'fail', f))
                 pass_hists_bkg[bkg] = hpass_tmp
                 fail_hists_bkg[bkg] = hfail_tmp            
             else: 
@@ -1017,9 +1016,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # print fail_hists;
     return (pass_hists,fail_hists)
 
-def GetSF(process, dbtagcut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
+def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
-    print process, cut, cat
     if 'DMSbb' in process:
         if '50' in process:
             SF *= 0.8 * 1.574e-02
@@ -1044,8 +1042,8 @@ def GetSF(process, dbtagcut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1)
             if 'zqq' in process:
                 print BB_SF
         else:
-            passInt = f.Get(process + '_p' + str(dbtagcut) + '_pass').Integral()
-            failInt = f.Get(process + '_p' + str(dbtagcut) + '_fail').Integral()
+            passInt = f.Get(process + '_' + cut + '_pass').Integral()
+            failInt = f.Get(process + '_' + cut + '_fail').Integral()
             if failInt > 0:
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:

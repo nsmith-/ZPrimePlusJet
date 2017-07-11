@@ -218,15 +218,15 @@ def main(options, args):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box)).Clone()
-            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc+'_'+cut,box,tfile))
+            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,cut,box,tfile))
             for syst in systs:
                 if proc!='data_obs':
                     print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
                     histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,cut,box,syst)).Clone()
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc+'_'+cut,box,tfile))
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                     histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,cut,box,syst)).Clone()
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc+'_'+cut,box,tfile))
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
                     
                 
     

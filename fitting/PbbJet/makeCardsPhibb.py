@@ -27,7 +27,7 @@ def main(options,args):
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
            
-            cuts = options.cuts.split(',')
+            cut = options.cuts.split(',')[0]
 
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
@@ -46,23 +46,23 @@ def main(options,args):
 
             for proc in (sigs+bkgs):
                 for box in boxes:
-                    print 'getting histogram for process: %s_%s_%s'%(proc,dbtagcut,box)
-                    histoDict['%s_%s_%s'%(proc,dbtagcut,box)] = tfile.Get('%s_%s_%s'%(proc,dbtagcut,box))
+                    print 'getting histogram for process: %s_%s_%s'%(proc,cut,box)
+                    histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box))
                     if tfile_loose is not None:
-                        histoDictLoose['%s_%s_%s'%(proc,dbtagcut,box)] = tfile_loose.Get('%s_%s_%s'%(proc,dbtagcut,box))
+                        histoDictLoose['%s_%s'%(proc,box)] = tfile_loose.Get('%s_%s_%s'%(proc,cut,box))
                         
                     if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc or 'Pbb' in proc or 'Sbb' in proc):
-                        histoDict['%s_%s_%s_matched'%(proc,dbtagcut,box)] = tfile.Get('%s_%s_%s_matched'%(proc,dbtagcut,box))
-                        histoDict['%s_%s_%s_unmatched'%(proc,dbtagcut,box)] = tfile.Get('%s_%s_%s_unmatched'%(proc,dbtagcut,box))
+                        histoDict['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_%s_matched'%(proc,cut,box))
+                        histoDict['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_%s_unmatched'%(proc,cut,box))
                         if tfile_loose is not None:
-                            histoDictLoose['%s_%s_%s_matched'%(proc,dbtagcut,box)] = tfile_loose.Get('%s_%s_matched'%(proc,dbtagcut,box))
-                            histoDictLoose['%s_%s_%s_unmatched'%(proc,dbtagcut,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,dbtagcut,box))
+                            histoDictLoose['%s_%s_matched'%(proc,box)] = tfile_loose.Get('%s_%s_matched'%(proc,cut,box))
+                            histoDictLoose['%s_%s_unmatched'%(proc,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,cut,box))
                         
                     for syst in systs:
-                        print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,dbtagcut,box,syst)
-                        histoDict['%s_%s_%s_%sUp'%(proc,dbtagcut,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,dbtagcut,box,syst))
-                        print 'getting histogram for process: %s_%s_%s_%sDown'%(proc,dbtagcut,box,syst)
-                        histoDict['%s_%s_%s_%sDown'%(proc,dbtagcut,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,dbtagcut,box,syst))
+                        print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
+                        histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,cut,box,syst))
+                        print 'getting histogram for process: %s_%s_%s_%sDown'%(proc,cut,box,syst)
+                        histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,cut,box,syst))
 
             #dctpl = open("datacardPbb.tpl")
             dctpl = open("datacardPhibb.tpl")
@@ -74,7 +74,6 @@ def main(options,args):
                 linel.append(line.strip())
 
             for i in range(1,numberOfPtBins+1):
-
                 jesErrs = {}
                 jerErrs = {}
                 puErrs = {}
@@ -84,45 +83,43 @@ def main(options,args):
                 scaleptErrs = {}
                 for box in boxes:
                     for proc in (sigs+bkgs):
-                        for cut in cuts:
-                            print "Taking integral of {}".format('%s_%s_%s'%(proc,cut,box))
-                            rate = histoDict['%s_%s_%s'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                            if rate>0:
-                                rateJESUp = histoDict['%s_%s_%s_JESUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                                rateJESDown = histoDict['%s_%s_%s_JESDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                                rateJERUp = histoDict['%s_%s_%s_JERUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                                rateJERDown = histoDict['%s_%s_%s_JERDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                                ratePuUp = histoDict['%s_%s_%s_PuUp'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                                ratePuDown = histoDict['%s_%s_%s_PuDown'%(proc,cut,box)].Integral(1, numberOfMassBins, i, i)
-                                jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
-                                jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-
-rate))/(2.*rate) 
-                                puErrs['%s_%s_%s'%(proc,cut,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
-                            else:
-                                jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
-                                jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
-                                puErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
-                        if i == 2:
-                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.05
-                        elif i == 3:
-                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.1
-                        elif i == 4:
-                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.2
-                        elif i == 5:
-                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.3
-                        elif i == 6:
-                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.4
-                        
-                        vErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0+V_SF_ERR/V_SF
-                        if box=='pass':
-                            bbErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0+BB_SF_ERR/BB_SF
+                        print "Taking integral of {}".format('%s_%s'%(proc,box))
+                        rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                        if rate>0:
+                            rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                            rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                            rateJERUp = histoDict['%s_%s_JERUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                            rateJERDown = histoDict['%s_%s_JERDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                            ratePuUp = histoDict['%s_%s_PuUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                            ratePuDown = histoDict['%s_%s_PuDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                            jesErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
+                            jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate) 
+                            puErrs['%s_%s'%(proc,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
                         else:
-                            ratePass = histoDict['%s_%s_%s'%(proc,dbtagcut,'pass')].Integral()
-                            rateFail = histoDict['%s_%s_%s'%(proc,dbtagcut,'fail')].Integral()
+                            jesErrs['%s_%s'%(proc,box)] =  1.0
+                            jerErrs['%s_%s'%(proc,box)] =  1.0
+                            puErrs['%s_%s'%(proc,box)] =  1.0
+                        if i == 2:
+                            scaleptErrs['%s_%s'%(proc,box)] =  0.05
+                        elif i == 3:
+                            scaleptErrs['%s_%s'%(proc,box)] =  0.1
+                        elif i == 4:
+                            scaleptErrs['%s_%s'%(proc,box)] =  0.2
+                        elif i == 5:
+                            scaleptErrs['%s_%s'%(proc,box)] =  0.3
+                        elif i == 6:
+                            scaleptErrs['%s_%s'%(proc,box)] =  0.4
+                        
+                        vErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
+                        if box=='pass':
+                            bbErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR/BB_SF
+                        else:
+                            ratePass = histoDict['%s_%s'%(proc,'pass')].Integral()
+                            rateFail = histoDict['%s_%s'%(proc,'fail')].Integral()
                             if rateFail>0:
-                                bbErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
+                                bbErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
                             else:
-                                bbErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0
+                                bbErrs['%s_%s'%(proc,box)] = 1.0
                                 
                             
                         for j in range(1,numberOfMassBins+1):                    
@@ -131,16 +128,16 @@ rate))/(2.*rate)
                                 if removeUnmatched and (proc =='wqq' or proc=='zqq'):
                                     matchString = '_matched'
                                 if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
-                                    histo = histoDictLoose['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
+                                    histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
                                 else:
-                                    histo = histoDict['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
+                                    histo = histoDict['%s_%s%s'%(proc,box,matchString)]
                                     
                                 error = array.array('d',[0.0])
                                 rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
                                 #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
-                                mcstatErrs['%s_%s_%s'%(proc,dbtagcut,box),i,j] = 1.0+(error[0]/rate)
+                                mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
                             else:
-                                mcstatErrs['%s_%s_%s'%(proc,dbtagcut,box),i,j] = 1.0
+                                mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                             
 
                 jesString = 'JES lnN'
@@ -167,28 +164,28 @@ rate))/(2.*rate)
                             jerString += ' -'
                             puString += ' -'
                         else:
-                            jesString += ' %.3f'%jesErrs['%s_%s_%s'%(proc,dbtagcut,box)]
-                            jerString += ' %.3f'%jerErrs['%s_%s_%s'%(proc,dbtagcut,box)]
-                            puString += ' %.3f'%puErrs['%s_%s_%s'%(proc,dbtagcut,box)]                        
+                            jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
+                            jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
+                            puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]                        
                         if proc in ['qcd','tqq']:
                             if i > 1:
                                 scaleptString += ' -'
                         else:
                             if i > 1:
-                                scaleptString += ' %.3f'%scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                                scaleptString += ' %.3f'%scaleptErrs['%s_%s'%(proc,box)]
                         if proc in ['qcd','tqq','wqq']:
                             bbString += ' -'
                         else:
-                            bbString += ' %.3f'%bbErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                            bbString += ' %.3f'%bbErrs['%s_%s'%(proc,box)]
                         if proc in ['qcd','tqq']:
                             vString += ' -'
                         else:
-                            vString += ' %.3f'%vErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                            vString += ' %.3f'%vErrs['%s_%s'%(proc,box)]
                         for j in range(1,numberOfMassBins+1):
                             for box1 in boxes:                    
                                 for proc1 in sigs+bkgs:                            
                                     if proc1==proc and box1==box :
-                                        mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s_%s'%(proc,dbtagcut,box),i,j]
+                                        mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s'%(proc,box),i,j]
                                     else:                        
                                         mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
@@ -209,8 +206,7 @@ rate))/(2.*rate)
                     elif 'scalept' in l and i>1:
                         newline = scaleptString
                     elif 'TQQEFF' in l:
-                        tqqeff = histoDict['tqq_' + dbtagcut + '_pass'].Integral() / (
-                        histoDict['tqq_' + dbtagcut + '_pass'].Integral() + histoDict['tqq_' + dbtagcut + '_fail'].Integral())
+                        tqqeff = histoDict['tqq_pass'].Integral() / (histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
                         newline = l.replace('TQQEFF','%.4f'%tqqeff)
                     elif 'wznormEW' in l:
                         if i==4:
@@ -250,9 +246,9 @@ rate))/(2.*rate)
                             if removeUnmatched and (proc =='wqq' or proc=='zqq'):
                                 matchString = '_matched'
                             if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
-                                histo = histoDictLoose['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
+                                histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
                             else:
-                                histo = histoDict['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
+                                histo = histoDict['%s_%s%s'%(proc,box,matchString)]
                             if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
                                 massVal = histo.GetXaxis().GetBinCenter(j)
                                 ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
