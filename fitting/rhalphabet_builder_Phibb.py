@@ -735,7 +735,7 @@ class RhalphabetBuilder():
                             h.GetName(), h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i, 0.)
                             h.SetBinError(i, 0.)
-                        print " Anter : ", rhoVal 
+                        #print " Anter : ", rhoVal 
                         if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
                             print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
                             rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))

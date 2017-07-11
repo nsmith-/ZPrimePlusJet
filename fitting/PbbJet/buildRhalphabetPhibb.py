@@ -42,7 +42,7 @@ def main(options, args):
     if options.ifile_loose is not None:
         fLoose = r.TFile.Open(options.ifile_loose)
     #(hpass, hfail) = loadHistograms(f, options.pseudo, options.blind, options.useQCD, options.scale, options.r)
-    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], dbtagcut = options.dbtagcut, fLoose=fLoose)
+    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], cuts = options.cuts, fLoose=fLoose)
     #f.Close()
 
     # Build the workspacees
