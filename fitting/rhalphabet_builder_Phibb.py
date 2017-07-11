@@ -31,6 +31,7 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 
 class RhalphabetBuilder(): 
     def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9'):
+
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
@@ -52,6 +53,7 @@ class RhalphabetBuilder():
         self._mass_blind_hi = blind_hi
         self._rho_lo = rho_lo
         self._rho_hi = rho_hi
+        self._dbtagcut = str(dbtagcut)
         # self._mass_nbins = pass_hists[0].GetXaxis().GetNbins()
         # self._mass_lo    = pass_hists[0].GetXaxis().GetBinLowEdge( 1 )
         # self._mass_hi    = pass_hists[0].GetXaxis().GetBinUpEdge( self._mass_nbins )
@@ -59,7 +61,7 @@ class RhalphabetBuilder():
         self._remove_unmatched  = remove_unmatched
         print "number of mass bins and lo/hi: ", self._mass_nbins, self._mass_lo, self._mass_hi;
         print " Rho : ", " Low : ", self._rho_lo, " High : ", self._rho_hi
-
+        print " DBTAG CUT : ", self._dbtagcut 
         #polynomial order for fit
         self._poly_degree_rho = nr #1 = linear ; 2 is quadratic
         self._poly_degree_pt = np #1 = linear ; 2 is quadratic
@@ -100,7 +102,7 @@ class RhalphabetBuilder():
         self._all_data = []
         self._all_pars = []
 
-        self._background_names = ["wqq", "zqq", "qcd", "tqq"]
+        self._background_names = ["wqq", "zqq", "qcd", "tqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125" ]
         self._signal_names = []
         # for Pbb
         #for mass in [50,75,125,100,150,250,300]:
@@ -166,7 +168,8 @@ class RhalphabetBuilder():
                                                             datahist['%s_%s'%(proc,cat)])
                 getattr(w,'import')(datahist['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
-                if 'hqq125' in proc or 'Sbb' in proc:
+                #if 'hqq125' in proc or 'Sbb' in proc:
+                if 'Sbb' in proc:
                     # signal
                     signorm['%s_%s'%(proc,cat)] = r.RooRealVar('signorm_%s_%s'%(proc,cat),
                                                                 'signorm_%s_%s'%(proc,cat),
@@ -325,7 +328,7 @@ class RhalphabetBuilder():
             this_pt = self._pass_hists["data_obs"].GetYaxis().GetBinLowEdge(pt_bin)+self._pass_hists["data_obs"].GetYaxis().GetBinWidth(pt_bin)*0.3;
             print "------- this bin pT value ",this_pt
             #Make the rhalphabet fit for this pt bin
-            (rhalphabet_hist_pass, rhalphabet_hist_fail) = self.MakeRhalphabet(["data_obs", "wqq", "zqq", "tqq"], fail_hists_ptbin, this_pt, "cat"+str(pt_bin))
+            (rhalphabet_hist_pass, rhalphabet_hist_fail) = self.MakeRhalphabet(["data_obs", "wqq", "zqq", "tqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"], fail_hists_ptbin, this_pt, "cat"+str(pt_bin))
 
             # Get signals
             (signal_rdhs_pass, signal_rdhs_fail) = self.GetSignalInputs(pass_hists_ptbin, fail_hists_ptbin, "cat"+str(pt_bin))
@@ -574,13 +577,13 @@ class RhalphabetBuilder():
         data_rdh_comb  = r.RooDataHist("comb_data_obs","comb_data_obs",r.RooArgList(self._lMSD),r.RooFit.Index(roocategories),r.RooFit.Import("pass",data_rdh_pass),r.RooFit.Import("fail",data_rdh_fail)) 
 
         roofit_shapes = {}
-        for sample in ["wqq", "zqq", "qcd", "tqq"]:
+        for sample in ["wqq", "zqq", "qcd", "tqq", "hqq125", "tthqq125", "vbfhqq125", "whqq125", "zhqq125"]:
             roofit_shapes[sample] = self.GetRoofitHistObjects(pass_histograms[sample], fail_histograms[sample], sample, iBin)
 
         total_pdf_pass = r.RooAddPdf("tot_pass"+iBin,"tot_pass"+iBin,r.RooArgList(roofit_shapes["qcd"]["pass_epdf"]))
         total_pdf_fail = r.RooAddPdf("tot_fail"+iBin,"tot_fail"+iBin,r.RooArgList(roofit_shapes["qcd"]["fail_epdf"]))
-        ewk_pdf_pass = r.RooAddPdf("ewk_pass"+iBin,"ewk_pass"+iBin,r.RooArgList(roofit_shapes["wqq"]["pass_epdf"],roofit_shapes["zqq"]["pass_epdf"], roofit_shapes["tqq"]["pass_epdf"]))
-        ewk_pdf_fail = r.RooAddPdf("ewk_fail"+iBin,"ewk_fail"+iBin,r.RooArgList(roofit_shapes["wqq"]["fail_epdf"],roofit_shapes["zqq"]["fail_epdf"], roofit_shapes["tqq"]["fail_epdf"]))
+        ewk_pdf_pass = r.RooAddPdf("ewk_pass"+iBin,"ewk_pass"+iBin,r.RooArgList(roofit_shapes["wqq"]["pass_epdf"],roofit_shapes["zqq"]["pass_epdf"], roofit_shapes["tqq"]["pass_epdf"], roofit_shapes["hqq125"]["pass_epdf"], roofit_shapes["tthqq125"]["pass_epdf"], roofit_shapes["vbfhqq125"]["pass_epdf"], roofit_shapes["whqq125"]["pass_epdf"], roofit_shapes["zhqq125"]["pass_epdf"]))
+        ewk_pdf_fail = r.RooAddPdf("ewk_fail"+iBin,"ewk_fail"+iBin,r.RooArgList(roofit_shapes["wqq"]["fail_epdf"],roofit_shapes["zqq"]["fail_epdf"], roofit_shapes["tqq"]["fail_epdf"], roofit_shapes["hqq125"]["fail_epdf"], roofit_shapes["tthqq125"]["fail_epdf"], roofit_shapes["vbfhqq125"]["fail_epdf"], roofit_shapes["whqq125"]["fail_epdf"], roofit_shapes["zhqq125"]["fail_epdf"]))
 
         total_simulpdf  = r.RooSimultaneous("tot","tot",roocategories) 
         total_simulpdf.addPdf(total_pdf_pass,"pass") 
@@ -596,8 +599,8 @@ class RhalphabetBuilder():
             data_rdh_fail, 
             #{"qcd":total_pdf_pass, "ewk":ewk_pdf_pass},
             #{"qcd":total_pdf_fail, "ewk":ewk_pdf_fail},
-            {"wqq":roofit_shapes["wqq"]["pass_rdh"], "zqq":roofit_shapes["zqq"]["pass_rdh"], "tqq":roofit_shapes["tqq"]["pass_rdh"]}, 
-            {"wqq":roofit_shapes["wqq"]["fail_rdh"], "zqq":roofit_shapes["zqq"]["fail_rdh"], "tqq":roofit_shapes["tqq"]["fail_rdh"]}, 
+            {"wqq":roofit_shapes["wqq"]["pass_rdh"], "zqq":roofit_shapes["zqq"]["pass_rdh"], "tqq":roofit_shapes["tqq"]["pass_rdh"], "hqq125":roofit_shapes["hqq125"]["pass_rdh"], "tthqq125":roofit_shapes["tthqq125"]["pass_rdh"], "vbfhqq125":roofit_shapes["vbfhqq125"]["pass_rdh"], "whqq125":roofit_shapes["whqq125"]["pass_rdh"], "zhqq125":roofit_shapes["zhqq125"]["pass_rdh"]}, 
+            {"wqq":roofit_shapes["wqq"]["fail_rdh"], "zqq":roofit_shapes["zqq"]["fail_rdh"], "tqq":roofit_shapes["tqq"]["fail_rdh"], "hqq125":roofit_shapes["hqq125"]["fail_rdh"], "tthqq125":roofit_shapes["tthqq125"]["fail_rdh"], "vbfhqq125":roofit_shapes["vbfhqq125"]["fail_rdh"], "whqq125":roofit_shapes["whqq125"]["fail_rdh"], "zhqq125":roofit_shapes["zhqq125"]["fail_rdh"]}, 
         ]
 
     # Get (RooHistPdf, RooExtendPdf, RooDataHist) for a pair of pass/fail histograms
@@ -717,6 +720,7 @@ class RhalphabetBuilder():
                             tmph_mass_down.SetName(import_object.GetName() + '_' + syst + 'Down')
                             hout.append(tmph_mass_up)
                             hout.append(tmph_mass_down)
+
                 uncorrelate(histDict, 'mcstat')
                 for key, myhist in histDict.iteritems():
                     if 'mcstat' in key:
@@ -761,15 +765,15 @@ class RhalphabetBuilder():
                 # get the matched and unmatched hist
                 
                 if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                     
-                    tmph_matched = self._inputfile_loose.Get(process + '_' + cat + '_matched').Clone()
-                    tmph_unmatched = self._inputfile_loose.Get(process + '_' + cat + '_unmatched').Clone()
-                    tmph_matched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                    tmph_unmatched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
+                    tmph_matched = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile_loose.Get(process + '_p' + self._dbtagcut + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                    tmph_unmatched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
                 else:
-                    tmph_matched = self._inputfile.Get(process + '_' + cut + '_' + cat + '_matched').Clone()
-                    tmph_unmatched = self._inputfile.Get(process + '_' + cut + '_' + cat + '_unmatched').Clone()
-                    tmph_matched.Scale(GetSF(process, cut, cat, self._inputfile))
-                    tmph_unmatched.Scale(GetSF(process, cut, cat, self._inputfile))
+                    tmph_matched = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile.Get(process + '_p' + self._dbtagcut + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
+                    tmph_unmatched.Scale(GetSF(process, self._dbtagcut, cat, self._inputfile))
                 tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo, self._mass_hi)
                 tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                            self._mass_hi)
@@ -882,7 +886,9 @@ class RhalphabetBuilder():
 ##############################################################################
 
 ##-------------------------------------------------------------------------------------
+
 def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, cuts='p9'):
+
     pass_hists = {}
     fail_hists = {}
     f.ls()
@@ -1011,7 +1017,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # print fail_hists;
     return (pass_hists,fail_hists)
 
-def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
+def GetSF(process, dbtagcut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
     print process, cut, cat
     if 'DMSbb' in process:
@@ -1031,14 +1037,15 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
             SF *= 0.8 * 1.144e-02
         elif '500' in process:
             SF *= 0.8 * 7.274e-03
+
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'Sbb' in process:
         if 'pass' in cat:
             SF *= BB_SF
             if 'zqq' in process:
                 print BB_SF
         else:
-            passInt = f.Get(process + '_' + cut + '_pass').Integral()
-            failInt = f.Get(process + '_' + cut + '_fail').Integral()
+            passInt = f.Get(process + '_p' + str(dbtagcut) + '_pass').Integral()
+            failInt = f.Get(process + '_p' + str(dbtagcut) + '_fail').Integral()
             if failInt > 0:
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:

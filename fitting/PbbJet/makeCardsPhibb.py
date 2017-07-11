@@ -26,8 +26,9 @@ def main(options,args):
             tfile_loose = None
             if options.ifile_loose is not None:
                 tfile_loose = r.TFile.Open(options.ifile_loose)
-            
+           
             cuts = options.cuts.split(',')
+
             boxes = ['pass', 'fail']
             sigs = ["{}{}".format(model, mass)]
             bkgs = ['zqq','wqq','qcd','tqq','hqq125','tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125']
@@ -44,25 +45,24 @@ def main(options,args):
             histoDictLoose = {}
 
             for proc in (sigs+bkgs):
-                for cut in cuts:
-                    for box in boxes:
-                        print 'getting histogram for process: %s_%s_%s'%(proc,cut,box)
-                        histoDict['%s_%s_%s'%(proc,cut,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box))
+                for box in boxes:
+                    print 'getting histogram for process: %s_%s_%s'%(proc,dbtagcut,box)
+                    histoDict['%s_%s_%s'%(proc,dbtagcut,box)] = tfile.Get('%s_%s_%s'%(proc,dbtagcut,box))
+                    if tfile_loose is not None:
+                        histoDictLoose['%s_%s_%s'%(proc,dbtagcut,box)] = tfile_loose.Get('%s_%s_%s'%(proc,dbtagcut,box))
+                        
+                    if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc or 'Pbb' in proc or 'Sbb' in proc):
+                        histoDict['%s_%s_%s_matched'%(proc,dbtagcut,box)] = tfile.Get('%s_%s_%s_matched'%(proc,dbtagcut,box))
+                        histoDict['%s_%s_%s_unmatched'%(proc,dbtagcut,box)] = tfile.Get('%s_%s_%s_unmatched'%(proc,dbtagcut,box))
                         if tfile_loose is not None:
-                            histoDictLoose['%s_%s_%s'%(proc,cut,box)] = tfile_loose.Get('%s_%s_%s'%(proc,cut,box))
-                            
-                        if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc or 'Pbb' in proc or 'Sbb' in proc):
-                            histoDict['%s_%s_%s_matched'%(proc,cut,box)] = tfile.Get('%s_%s_%s_matched'%(proc,cut,box))
-                            histoDict['%s_%s_%s_unmatched'%(proc,cut,box)] = tfile.Get('%s_%s_%s_unmatched'%(proc,cut,box))
-                            if tfile_loose is not None:
-                                histoDictLoose['%s_%s_%s_matched'%(proc,cut,box)] = tfile_loose.Get('%s_%s_matched'%(proc,cut,box))
-                                histoDictLoose['%s_%s_%s_unmatched'%(proc,cut,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,cut,box))
-                            
-                        for syst in systs:
-                            print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
-                            histoDict['%s_%s_%s_%sUp'%(proc,cut,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,cut,box,syst))
-                            print 'getting histogram for process: %s_%s_%s_%sDown'%(proc,cut,box,syst)
-                            histoDict['%s_%s_%s_%sDown'%(proc,cut,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,cut,box,syst))
+                            histoDictLoose['%s_%s_%s_matched'%(proc,dbtagcut,box)] = tfile_loose.Get('%s_%s_matched'%(proc,dbtagcut,box))
+                            histoDictLoose['%s_%s_%s_unmatched'%(proc,dbtagcut,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,dbtagcut,box))
+                        
+                    for syst in systs:
+                        print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,dbtagcut,box,syst)
+                        histoDict['%s_%s_%s_%sUp'%(proc,dbtagcut,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,dbtagcut,box,syst))
+                        print 'getting histogram for process: %s_%s_%s_%sDown'%(proc,dbtagcut,box,syst)
+                        histoDict['%s_%s_%s_%sDown'%(proc,dbtagcut,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,dbtagcut,box,syst))
 
             #dctpl = open("datacardPbb.tpl")
             dctpl = open("datacardPhibb.tpl")
@@ -102,47 +102,46 @@ rate))/(2.*rate)
                                 jesErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
                                 jerErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
                                 puErrs['%s_%s_%s'%(proc,cut,box)] =  1.0
-
-                            if i == 2:
-                                scaleptErrs['%s_%s_%s'%(proc,cut,box)] =  0.05
-                            elif i == 3:
-                                scaleptErrs['%s_%s_%s'%(proc,cut,box)] =  0.1
-                            elif i == 4:
-                                scaleptErrs['%s_%s_%s'%(proc,cut,box)] =  0.2
-                            elif i == 5:
-                                scaleptErrs['%s_%s_%s'%(proc,cut,box)] =  0.3
-                            elif i == 6:
-                                scaleptErrs['%s_%s_%s'%(proc,cut,box)] =  0.4
-                            
-                            vErrs['%s_%s_%s'%(proc,cut,box)] = 1.0+V_SF_ERR/V_SF
-                            if box=='pass':
-                                bbErrs['%s_%s_%s'%(proc,cut,box)] = 1.0+BB_SF_ERR/BB_SF
+                        if i == 2:
+                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.05
+                        elif i == 3:
+                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.1
+                        elif i == 4:
+                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.2
+                        elif i == 5:
+                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.3
+                        elif i == 6:
+                            scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)] =  0.4
+                        
+                        vErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0+V_SF_ERR/V_SF
+                        if box=='pass':
+                            bbErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0+BB_SF_ERR/BB_SF
+                        else:
+                            ratePass = histoDict['%s_%s_%s'%(proc,dbtagcut,'pass')].Integral()
+                            rateFail = histoDict['%s_%s_%s'%(proc,dbtagcut,'fail')].Integral()
+                            if rateFail>0:
+                                bbErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
                             else:
-                                ratePass = histoDict['%s_%s_%s'%(proc,cut,'pass')].Integral()
-                                rateFail = histoDict['%s_%s_%s'%(proc,cut,'fail')].Integral()
-                                if rateFail>0:
-                                    bbErrs['%s_%s_%s'%(proc,cut,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
+                                bbErrs['%s_%s_%s'%(proc,dbtagcut,box)] = 1.0
+                                
+                            
+                        for j in range(1,numberOfMassBins+1):                    
+                            if options.noMcStatShape:                 
+                                matchString = ''
+                                if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                                    matchString = '_matched'
+                                if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
+                                    histo = histoDictLoose['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
                                 else:
-                                    bbErrs['%s_%s_%s'%(proc,cut,box)] = 1.0
+                                    histo = histoDict['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
                                     
-                                
-                            for j in range(1,numberOfMassBins+1):                    
-                                if options.noMcStatShape:                 
-                                    matchString = ''
-                                    if removeUnmatched and (proc =='wqq' or proc=='zqq'):
-                                        matchString = '_matched'
-                                    if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
-                                        histo = histoDictLoose['%s_%s_%s%s'%(proc,cut,box,matchString)]
-                                    else:
-                                        histo = histoDict['%s_%s_%s%s'%(proc,cut,box,matchString)]
-                                        
-                                    error = array.array('d',[0.0])
-                                    rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
-                                    #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
-                                    mcstatErrs['%s_%s_%s'%(proc,cut,box),i,j] = 1.0+(error[0]/rate)
-                                else:
-                                    mcstatErrs['%s_%s_%s'%(proc,cut,box),i,j] = 1.0
-                                
+                                error = array.array('d',[0.0])
+                                rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
+                                #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
+                                mcstatErrs['%s_%s_%s'%(proc,dbtagcut,box),i,j] = 1.0+(error[0]/rate)
+                            else:
+                                mcstatErrs['%s_%s_%s'%(proc,dbtagcut,box),i,j] = 1.0
+                            
 
                 jesString = 'JES lnN'
                 jerString = 'JER lnN'
@@ -155,46 +154,43 @@ rate))/(2.*rate)
                 qcdGroupString = 'qcd group = qcdeff'
                 for box in boxes:
                     for proc in sigs+bkgs:
-                        for cut in cuts:
-                            for j in range(1,numberOfMassBins+1):
-                                if options.noMcStatShape:
-                                    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
-                                else:
-                                    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
+                        for j in range(1,numberOfMassBins+1):
+                            if options.noMcStatShape:
+                                mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
+                            else:
+                                mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
                             
                 for box in boxes:
                     for proc in sigs+bkgs:
-                        for cut in cuts:
-                            if proc=='qcd':
-                                jesString += ' -'
-                                jerString += ' -'
-                                puString += ' -'
-                            else:
-                                jesString += ' %.3f'%jesErrs['%s_%s_%s'%(proc,cut,box)]
-                                jerString += ' %.3f'%jerErrs['%s_%s_%s'%(proc,cut,box)]
-                                puString += ' %.3f'%puErrs['%s_%s_%s'%(proc,cut,box)]                        
-                            if proc in ['qcd','tqq']:
-                                if i > 1:
-                                    scaleptString += ' -'
-                            else:
-                                if i > 1:
-                                    scaleptString += ' %.3f'%scaleptErrs['%s_%s_%s'%(proc,cut,box)]
-                            if proc in ['qcd','tqq','wqq']:
-                                bbString += ' -'
-                            else:
-                                bbString += ' %.3f'%bbErrs['%s_%s_%s'%(proc,cut,box)]
-                            if proc in ['qcd','tqq']:
-                                vString += ' -'
-                            else:
-                                vString += ' %.3f'%vErrs['%s_%s_%s'%(proc,cut,box)]
-                            for j in range(1,numberOfMassBins+1):
-                                for box1 in boxes:                    
-                                    for proc1 in sigs+bkgs:                            
-                                        for cut1 in cuts:                            
-                                            if proc1==proc and box1==box and cut1==cut:
-                                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s_%s'%(proc,cut,box),i,j]
-                                            else:                        
-                                                mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
+                        if proc=='qcd':
+                            jesString += ' -'
+                            jerString += ' -'
+                            puString += ' -'
+                        else:
+                            jesString += ' %.3f'%jesErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                            jerString += ' %.3f'%jerErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                            puString += ' %.3f'%puErrs['%s_%s_%s'%(proc,dbtagcut,box)]                        
+                        if proc in ['qcd','tqq']:
+                            if i > 1:
+                                scaleptString += ' -'
+                        else:
+                            if i > 1:
+                                scaleptString += ' %.3f'%scaleptErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                        if proc in ['qcd','tqq','wqq']:
+                            bbString += ' -'
+                        else:
+                            bbString += ' %.3f'%bbErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                        if proc in ['qcd','tqq']:
+                            vString += ' -'
+                        else:
+                            vString += ' %.3f'%vErrs['%s_%s_%s'%(proc,dbtagcut,box)]
+                        for j in range(1,numberOfMassBins+1):
+                            for box1 in boxes:                    
+                                for proc1 in sigs+bkgs:                            
+                                    if proc1==proc and box1==box :
+                                        mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s_%s'%(proc,dbtagcut,box),i,j]
+                                    else:                        
+                                        mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
                 tag = "cat"+str(i)
                 os.system("mkdir -pv " + options.odir + "/{}{}".format(model, mass))
@@ -213,8 +209,8 @@ rate))/(2.*rate)
                     elif 'scalept' in l and i>1:
                         newline = scaleptString
                     elif 'TQQEFF' in l:
-                        tqqeff = histoDict['tqq_' + cut + '_pass'].Integral() / (
-                        histoDict['tqq_' + cut + '_pass'].Integral() + histoDict['tqq_' + cut + '_fail'].Integral())
+                        tqqeff = histoDict['tqq_' + dbtagcut + '_pass'].Integral() / (
+                        histoDict['tqq_' + dbtagcut + '_pass'].Integral() + histoDict['tqq_' + dbtagcut + '_fail'].Integral())
                         newline = l.replace('TQQEFF','%.4f'%tqqeff)
                     elif 'wznormEW' in l:
                         if i==4:
@@ -243,33 +239,32 @@ rate))/(2.*rate)
                     dctmp.write(newline + "\n")
                 for box in boxes:
                     for proc in sigs+bkgs:
-                        for cut in cuts:
-                            if options.noMcStatShape and proc!='qcd':                        
-                                print 'include %s%scat%imcstat'%(proc,box,i)
-                                dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
-                                mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
-                                continue
-                            for j in range(1,numberOfMassBins+1):                    
-                                # if stat. unc. is greater than 50% 
-                                matchString = ''
-                                if removeUnmatched and (proc =='wqq' or proc=='zqq'):
-                                    matchString = '_matched'
-                                if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
-                                    histo = histoDictLoose['%s_%s_%s%s'%(proc,cut,box,matchString)]
-                                else:
-                                    histo = histoDict['%s_%s_%s%s'%(proc,cut,box,matchString)]
-                                if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
-                                    massVal = histo.GetXaxis().GetBinCenter(j)
-                                    ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
-                                    rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
-                                    if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < options.lrho or rhoVal > options.hrho):
-                                        dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
-                                        print 'include %s%scat%imcstat%i'%(proc,box,i,j)
-                                        mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
-                                    else:
-                                        print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
+                        if options.noMcStatShape and proc!='qcd':                        
+                            print 'include %s%scat%imcstat'%(proc,box,i)
+                            dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
+                            mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
+                            continue
+                        for j in range(1,numberOfMassBins+1):                    
+                            # if stat. unc. is greater than 50% 
+                            matchString = ''
+                            if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                                matchString = '_matched'
+                            if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
+                                histo = histoDictLoose['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
+                            else:
+                                histo = histoDict['%s_%s_%s%s'%(proc,dbtagcut,box,matchString)]
+                            if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
+                                massVal = histo.GetXaxis().GetBinCenter(j)
+                                ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
+                                rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
+                                if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < options.lrho or rhoVal > options.hrho):
+                                    dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
+                                    print 'include %s%scat%imcstat%i'%(proc,box,i,j)
+                                    mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
                                 else:
                                     print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
+                            else:
+                                print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
                                 
                 for im in range(numberOfMassBins):
                     dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))

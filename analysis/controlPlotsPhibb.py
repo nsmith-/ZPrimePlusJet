@@ -316,7 +316,7 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8', 'h_rho_ak8_nocut', 'h_msd_ak8_nocut','h_Cuts']
+        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv','h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts']
     else:
         plots = []
         testSample = sampleContainerPhibb('test',[], 1, DBTMIN,lumi)
@@ -328,7 +328,7 @@ def main(options,args,outputExists):
                 pass
             
     if not outputExists: 
-        samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500','QCD','SingleTop','Diboson','W','DY','TTbar']
+        samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500','QCD','SingleTop','Diboson','W','DY','TTbar','Hbb']
 #        for s in samples:
 #            for tfile in tfiles[s]:
 #                if not os.path.isfile(tfile):
@@ -352,12 +352,12 @@ def main(options,args,outputExists):
         bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb']  , 1, DBTMIN,lumi, False, fillCA15) 
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainerPhibb('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi, False, fillCA15)
-            bkgSamples['DYll']  = sampleContainerPhibb('DYll',tfiles['DYll'], 100000, DBTMIN,lumi)
-            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 10000, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==2')
+            bkgSamples['DYll']  = sampleContainerPhibb('DYll',tfiles['DYll'], 1, DBTMIN,lumi)
+            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
+            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
+            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==0')
+            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==2')
         else:        
            bkgSamples['TTbar']  = sampleContainerPhibb('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15)
         bkgSamples['SingleTop'] = sampleContainerPhibb('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi, False, fillCA15)
@@ -417,7 +417,7 @@ def main(options,args,outputExists):
         ofile.Close()
     else:        
         sigSamples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
+        bkgSamples = ['QCD','SingleTop','Diboson','W','DY','Hbb']                      
         if isData and muonCR:
             bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
         else:        
