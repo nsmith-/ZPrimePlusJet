@@ -93,7 +93,7 @@ class RhalphabetBuilder():
         if qcd_fail_integral>0:
             qcdeff = qcd_pass_integral / qcd_fail_integral
             self._lEffQCD.setVal(qcdeff)
-        print "qcdeff = %f"%qcdeff
+            print "qcdeff = %f"%qcdeff
         self._lDM     = r.RooRealVar("dm","dm", 0.,-10,10)
         self._lShift  = r.RooFormulaVar("shift",self._lMSD.GetName()+"-dm",r.RooArgList(self._lMSD,self._lDM)) 
 
