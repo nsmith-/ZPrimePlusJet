@@ -38,13 +38,14 @@ def getLimits(file_name):
 def plotUpperLimits():
     # see CMS plot guidelines: https://ghm.web.cern.ch/ghm/plots/
     masses = [50, 100, 125, 200, 300, 350, 400, 500]
+    xsection = [1.574e-02, 1.526e-02, 1.486e-02, 1.359e-02, 1.251e-02, 1.275e-02, 1.144e-02, 7.274e-03]
     N = len(masses)
     print " No of mass points : ", N
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
     median = TGraph(N)      # median line
     obs = TGraph(N)       # observed
-    
+    if options.xsec: theory_xsec = TGraph(N)       # theory cross section
     jet_type = 'AK8'
     if options.fillCA15:
         jet_type = 'CA15'
@@ -56,12 +57,15 @@ def plotUpperLimits():
         print "Opened File ", file_name
         limit = getLimits(file_name)
         up2s.append(limit[4])
-        yellow.SetPoint(    i,    masses[i], limit[4] ) # + 2 sigma
-        green.SetPoint(     i,    masses[i], limit[3] ) # + 1 sigma
-        median.SetPoint(    i,    masses[i], limit[2] ) # median
-        green.SetPoint(  2*N-1-i, masses[i], limit[1] ) # - 1 sigma
-        yellow.SetPoint( 2*N-1-i, masses[i], limit[0] ) # - 2 sigma
-        obs.SetPoint(    i,    masses[i], limit[5] ) # observed
+        if options.xsec: fac = xsection[i]
+        else: fac = 1
+        yellow.SetPoint(    i,    masses[i], limit[4] * fac ) # + 2 sigma
+        green.SetPoint(     i,    masses[i], limit[3] * fac ) # + 1 sigma
+        median.SetPoint(    i,    masses[i], limit[2] * fac ) # median
+        green.SetPoint(  2*N-1-i, masses[i], limit[1] * fac ) # - 1 sigma
+        yellow.SetPoint( 2*N-1-i, masses[i], limit[0] * fac ) # - 2 sigma
+        obs.SetPoint(       i,    masses[i], limit[5] * fac) # observed
+        if options.xsec : theory_xsec.SetPoint(       i,    masses[i], xsection[i]) # theory x-section
 
     W = 800
     H  = 600
@@ -94,8 +98,12 @@ def plotUpperLimits():
     #frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
 #    frame.GetYaxis().SetTitle("95% upper limit on #sigma #times BR / (#sigma #times BR)_{SM}")
     #frame.GetXaxis().SetTitle("background systematic uncertainty [%]")
-    frame.SetMinimum(0)
-    frame.SetMaximum(max(up2s)*1.05)
+    if options.xsec: 
+        frame.SetMinimum(0.001)
+        frame.SetMaximum(100)
+    else:
+        frame.SetMinimum(0)
+        frame.SetMaximum(max(up2s)*1.05)
     frame.GetXaxis().SetLimits(min(masses),max(masses))
 
     yellow.SetFillColor(ROOT.kOrange)
@@ -117,13 +125,19 @@ def plotUpperLimits():
     obs.SetLineWidth(2)
     obs.Draw('PLsame')
 
+    if options.xsec:
+        theory_xsec.SetMarkerStyle(20)
+        theory_xsec.SetLineWidth(2)
+        theory_xsec.Draw('Lsame')
+
     CMS_lumi.CMS_lumi(c,13,11)
     ROOT.gPad.SetTicks(1,1)
     frame.Draw('sameaxis')
 
     x1 = 0.22
     x2 = x1 + 0.24
-    y1 = 0.58
+    if options.xsec: y1 = 0.68
+    else: y1 = 0.58
     y2 = y1 + 0.16
     legend = TLegend(x1,y1,x2,y2)
     legend.SetFillStyle(0)
@@ -135,11 +149,14 @@ def plotUpperLimits():
     legend.AddEntry(green, "#pm 1 std. deviation",'f')
     #legend.AddEntry(green, "Asymptotic CL_{s} #pm 1 std. deviation",'f')
     legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
+    if options.xsec: legend.AddEntry(theory_xsec,"Theory x-sec",'l')
     #legend.AddEntry(yellow, "Asymptotic CL_{s} #pm 2 std. deviation",'f')
     legend.Draw()
 
     print " "
-    c.SaveAs("Limit_" + jet_type + "_" + cut+ ".png")
+    if options.xsec: c.SetLogy()
+    if options.xsec: c.SaveAs("Limit_" + jet_type + "_" + cut+ "_xsec.png") 
+    else: c.SaveAs("Limit_" + jet_type + "_" + cut+ ".png")
     #c.SaveAs("Limit_" + jet_type + "_" + cut+ ".C")    
     c.Close()
 
@@ -154,6 +171,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("--lumi", dest="lumi", default=35.9, type="float", help="luminosity", metavar="lumi")
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
+    parser.add_option('-x','--xsec', dest='xsec', action='store_true',default=False, help='cross_section',metavar='xsec')
     parser.add_option('--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
     parser.add_option('-i', '--ifile', dest='ifile', default='hist_1DZbb.root', help='file with histogram inputs',metavar='ifile')
 
