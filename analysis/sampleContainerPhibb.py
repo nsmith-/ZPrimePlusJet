@@ -795,6 +795,7 @@ class sampleContainerPhibb:
                 jpt_JERDown = self.AK8Puppijet0_pt_JERDown[0]
                 jpt_JESUp = self.AK8Puppijet0_pt_JESUp[0]
                 jpt_JESDown = self.AK8Puppijet0_pt_JESDown[0]
+                #print "AK8", jpt, jpt_JESUp, jpt_JESDown, jpt_JERUp, jpt_JERDown
                 jeta = self.AK8Puppijet0_eta[0]
                 jmsd = self.AK8Puppijet0_msd[0] * self.PUPPIweight(jpt, jeta)
                 jphi = self.AK8Puppijet0_phi[0]
@@ -811,6 +812,7 @@ class sampleContainerPhibb:
                 jpt_JERDown = self.CA15Puppijet0_pt_JERDown[0]
                 jpt_JESUp = self.CA15Puppijet0_pt_JESUp[0]
                 jpt_JESDown = self.CA15Puppijet0_pt_JESDown[0]
+                #print "CA15", jpt, jpt_JESUp, jpt_JESDown, jpt_JERUp, jpt_JERDown
                 jeta = self.CA15Puppijet0_eta[0]
                 jmsd = self.CA15Puppijet0_msd[0] * self.PUPPIweight(jpt, jeta)
                 jphi = self.CA15Puppijet0_phi[0]
@@ -900,6 +902,7 @@ class sampleContainerPhibb:
             met_JERDown = ROOT.TMath.Sqrt((met_x + self.MetXCorrjerDown[0]) * (met_x + self.MetXCorrjerDown[0]) + (
             met_y + self.MetYCorrjerDown[0]) * (met_y + self.MetYCorrjerDown[0]))
 
+            #print "MET", met, met_JESUp, met_JESDown, met_JERUp, met_JERDown
             ratioCA15_04 = self.AK8Puppijet0_ratioCA15_04[0]
 
             ntau = self.ntau[0]
@@ -931,7 +934,7 @@ class sampleContainerPhibb:
                     dmass = math.fabs(genVMass - jmsd) / genVMass
 
             # Single Muon Control Regions
-            if jpt > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+            if jpt > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet==1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                 if not self._minBranches:
                     ht_ = 0.
                     if (abs(self.AK4Puppijet0_eta[0]) < 2.4 and self.AK4Puppijet0_pt[0] > 30): ht_ = ht_ + self.AK4Puppijet0_pt[0]
@@ -1020,13 +1023,21 @@ class sampleContainerPhibb:
                                 getattr(self, 'h_msd_muCR4_N2_%s_fail_PuUp' % str(dbcut).replace('0.','p')).Fill(jmsd, weight_mu_pu_up)
                                 getattr(self, 'h_msd_muCR4_N2_%s_fail_PuDown' % str(dbcut).replace('0.','p')).Fill(jmsd, weight_mu_pu_down)
 
-
+                            for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
+                              #print syst, dbcut, eval('jpt_%s' % syst), jmsd, isTightVJet, jdb
+                              if eval('jpt_%s' % syst) > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet==1 and jtN2b1sdddt < 0 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+                                if jdb > dbcut:
+                                  (getattr(self, 'h_msd_muCR4_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst))).Fill(jmsd, weight)
+                                  #print 'fill h_msd_muCR4_N2_%s_pass_%s'% (str(dbcut).replace('0.','p'),syst)
+                                elif jdb > self.DBTAGCUTMIN:
+                                  (getattr(self, 'h_msd_muCR4_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst))).Fill(jmsd, weight)
+                                  #print 'fill h_msd_muCR4_N2_%s_fail_%s'% (str(dbcut).replace('0.','p'),syst)
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                if eval('jpt_%s' % syst) > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt < 0 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
-                    if jdb > DBTAGCUT:
-                        (getattr(self, 'h_msd_muCR4_N2_pass_%s' % syst)).Fill(jmsd, weight)
-                    elif jdb > self.DBTAGCUTMIN:
-                        (getattr(self, 'h_msd_muCR4_N2_fail_%s' % syst)).Fill(jmsd, weight)
+              if eval('jpt_%s' % syst) > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet==1 and jtN2b1sdddt < 0 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
+                if jdb > DBTAGCUT:
+                  (getattr(self, 'h_msd_muCR4_N2_pass_%s' % syst)).Fill(jmsd, weight)
+                elif jdb > self.DBTAGCUTMIN:
+                  (getattr(self, 'h_msd_muCR4_N2_fail_%s' % syst)).Fill(jmsd, weight)
 
             if not self._minBranches:
                 n_MPt100dR0p8_4_sub1 = self.nAK4PuppijetsMPt100dR08_1[0]
@@ -1077,13 +1088,13 @@ class sampleContainerPhibb:
                     cut[0] = cut[0] + 1
                 if jpt > PTCUT and jmsd > MASSCUT:
                     cut[1] = cut[1] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1:
                     cut[2] = cut[2] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0:
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and nmuLoose == 0:
                     cut[3] = cut[3] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0 and ntau == 0:
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and nmuLoose == 0 and ntau == 0:
                     cut[4] = cut[4] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0 and ntau == 0 and nphoLoose == 0:
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and nmuLoose == 0 and ntau == 0 and nphoLoose == 0:
                     cut[8] = cut[8] + 1
 
                 if jpt > PTCUT:
@@ -1160,31 +1171,31 @@ class sampleContainerPhibb:
                 if jpt > PTCUT and jtN2b1sdddt < 0 and jmsd > MASSCUT:
                     self.h_msd_N2Cut.Fill(jmsd, weight)
 
-                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and isTightVJet==1:
                     self.h_msd_topR1.Fill(jmsd, weight)
                     self.h_msd_v_pt_topR1.Fill(jmsd, jpt, weight)
-                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         self.h_msd_topR2_pass.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR2_pass.Fill(jmsd, jpt, weight)
                     elif jdb > self.DBTAGCUTMIN:
                         self.h_msd_topR2_fail.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR2_fail.Fill(jmsd, jpt, weight)
-                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P < 0.4 and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P < 0.4 and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         self.h_msd_topR3_pass.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR3_pass.Fill(jmsd, jpt, weight)
                     elif jdb > self.DBTAGCUTMIN:
                         self.h_msd_topR3_fail.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR3_fail.Fill(jmsd, jpt, weight)
-                if jpt > PTCUT and jmsd > MASSCUT and jt21P < 0.4 and jt32 > 0.7 and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and jt21P < 0.4 and jt32 > 0.7 and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         self.h_msd_topR4_pass.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR4_pass.Fill(jmsd, jpt, weight)
                     elif jdb > self.DBTAGCUTMIN:
                         self.h_msd_topR4_fail.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR4_fail.Fill(jmsd, jpt, weight)
-                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_MPt100dR0p8_4 < 2 and jt21P < T21DDTCUT and n_fwd_4 < 3 and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and n_MPt100dR0p8_4 < 2 and jt21P < T21DDTCUT and n_fwd_4 < 3 and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         self.h_msd_topR5_pass.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR5_pass.Fill(jmsd, jpt, weight)
@@ -1192,11 +1203,11 @@ class sampleContainerPhibb:
                         self.h_msd_topR5_fail.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR5_fail.Fill(jmsd, jpt, weight)
 
-            if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and isTightVJet:
+            if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and isTightVJet==1:
                 cut[5] = cut[5] + 1
-            #if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet:
+            #if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet==1:
                 #cut[7] = cut[7] + 1
-            if (not self._minBranches) and jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P < T21DDTCUT and isTightVJet:
+            if (not self._minBranches) and jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P < T21DDTCUT and isTightVJet==1:
                 if jdb > DBTAGCUT:
                     # cut[9]=cut[9]+1
                     self.h_msd_topR6_pass.Fill(jmsd, weight)
@@ -1218,9 +1229,9 @@ class sampleContainerPhibb:
                         self.h_msd_v_pt_topR6_fail_matched.Fill(jmsd, jpt, weight)
                     else:
                         self.h_msd_v_pt_topR6_fail_unmatched.Fill(jmsd, jpt, weight)
-	    if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet and jdb > DBTAGCUT and rh < self._hrhocut and rh > self._lrhocut: 	
+	    if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet==1 and jdb > DBTAGCUT and rh < self._hrhocut and rh > self._lrhocut: 	
 		if (not self._minBranches): self.h_n2b1sdddt_aftercut.Fill(jtN2b1sdddt,weight)
-            if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt < 0 and isTightVJet:
+            if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt < 0 and isTightVJet==1:
                 cut[6] = cut[6] + 1
 		if  rh < self._hrhocut and rh > self._lrhocut:
 		    cut[7] = cut[7] + 1
@@ -1254,14 +1265,14 @@ class sampleContainerPhibb:
                         self.h_msd_v_pt_topR6_N2_fail_unmatched.Fill(jmsd, jpt, weight)
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                if (not self._minBranches) and eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jt21P < T21DDTCUT and isTightVJet:
+                if (not self._minBranches) and eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jt21P < T21DDTCUT and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         (getattr(self, 'h_msd_topR6_pass_%s' % syst)).Fill(jmsd, weight)
                         (getattr(self, 'h_msd_v_pt_topR6_pass_%s' % syst)).Fill(jmsd, eval('jpt_%s' % syst), weight)
                     elif jdb > self.DBTAGCUTMIN:
                         (getattr(self, 'h_msd_topR6_fail_%s' % syst)).Fill(jmsd, weight)
                         (getattr(self, 'h_msd_v_pt_topR6_fail_%s' % syst)).Fill(jmsd, eval('jpt_%s' % syst), weight)
-                if eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval( 'n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt < 0 and isTightVJet:
+                if eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval( 'n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt < 0 and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         (getattr(self, 'h_msd_topR6_N2_pass_%s' % syst)).Fill(jmsd, weight)
                         (getattr(self, 'h_msd_v_pt_topR6_N2_pass_%s' % syst)).Fill(jmsd, eval('jpt_%s' % syst), weight)
@@ -1273,7 +1284,7 @@ class sampleContainerPhibb:
                 dbcuts = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
                 for dbcut in dbcuts:
                     # using tau21DDT
-                    if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P < T21DDTCUT and isTightVJet:
+                    if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P < T21DDTCUT and isTightVJet==1:
                         if jdb > dbcut:
                             getattr(self,'h_msd_topR6_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd, weight)
                             getattr(self,'h_msd_v_pt_topR6_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd, jpt, weight)
@@ -1299,13 +1310,12 @@ class sampleContainerPhibb:
                             else: 
                                 getattr(self,'h_msd_v_pt_topR6_%s_fail_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd, jpt, weight)
                     for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                        if eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jt21P < T21DDTCUT and isTightVJet:
-                            if jdb > dbcut:
-                                getattr(self, 'h_msd_v_pt_topR6_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
-                            else:
-                                getattr(self, 'h_msd_v_pt_topR6_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
+                      if eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jt21P < T21DDTCUT and isTightVJet==1:
+                        getattr(self, 'h_msd_v_pt_topR6_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
+                      else:
+                        getattr(self, 'h_msd_v_pt_topR6_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
                     # using N2DDT
-                    if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt < 0 and isTightVJet:
+                    if jpt > PTCUT and jmsd > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt < 0 and isTightVJet==1:
                         if jdb > dbcut:
                             getattr(self,'h_msd_topR6_N2_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd, weight)
                             getattr(self,'h_msd_v_pt_topR6_N2_%s_pass'%str(dbcut).replace('0.','p')).Fill(jmsd, jpt, weight)
@@ -1331,14 +1341,17 @@ class sampleContainerPhibb:
                             else: 
                                 getattr(self,'h_msd_v_pt_topR6_N2_%s_fail_unmatched'%str(dbcut).replace('0.','p')).Fill(jmsd, jpt, weight)
                     for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
-                        if eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt < 0 and isTightVJet:
-                            if jdb > dbcut:
-                                getattr(self, 'h_msd_v_pt_topR6_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
-                            else:
-                                getattr(self, 'h_msd_v_pt_topR6_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
+                      #print dbcut, syst, eval('jpt_%s' % syst), eval('met_%s' % syst), eval('n_dR0p8_4_%s' % syst), jtN2b1sdddt, isTightVJet==1, jdb
+                      if eval('jpt_%s' % syst) > PTCUT and jmsd > MASSCUT and eval('met_%s' % syst) < METCUT and eval('n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt < 0 and isTightVJet==1:
+                        if jdb > dbcut:
+                          getattr(self, 'h_msd_v_pt_topR6_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
+                          #print 'fill h_msd_v_pt_topR6_N2_%s_pass_%s' % (str(dbcut).replace('0.','p'),syst)
+                        else:
+                          getattr(self, 'h_msd_v_pt_topR6_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)).Fill(jmsd, eval('jpt_%s' % syst),weight)
+                          #print 'fill h_msd_v_pt_topR6_N2_%s_fail_%s' % (str(dbcut).replace('0.','p'),syst)
 
                 ################################
-                if jpt > PTCUT and jmsd > MASSCUT and jpt_sub1 < 300 and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P < 0.4 and isTightVJet:
+                if jpt > PTCUT and jmsd > MASSCUT and jpt_sub1 < 300 and met < METCUT and n_dR0p8_4 < NJETCUT and n_TdR0p8_4 < 3 and jt21P < 0.4 and isTightVJet==1:
                     if jdb > DBTAGCUT:
                         self.h_msd_topR7_pass.Fill(jmsd, weight)
                         self.h_msd_v_pt_topR7_pass.Fill(jmsd, jpt, weight)
