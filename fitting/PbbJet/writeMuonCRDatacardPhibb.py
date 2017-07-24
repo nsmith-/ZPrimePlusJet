@@ -198,8 +198,8 @@ def main(options, args):
         for mass in [50, 100, 125, 200, 300, 350, 400, 500]:
             boxes = ['pass', 'fail']
             #for Hbb extraction:
-            sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-            bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
+            sigs = ["{}{}".format(model, mass)]
+            bkgs = ['zqq','wqq','qcd','tqq','hqq125','tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125','vvqq','stqq','wlnu','zll']
             #for Wqq/Zbb extraction:
             #sigs = ['zqq','wqq']
             #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','vvqq','stqq','wlnu','zll']

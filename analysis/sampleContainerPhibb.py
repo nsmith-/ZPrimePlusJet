@@ -1368,14 +1368,22 @@ class sampleContainerPhibb:
         if not self._minBranches and cut[3] > 0.:
             #den = cut[0]
             den = 1
-            self.h_Cuts.SetBinContent(1, float(cut[0] / den * 100.))
-            self.h_Cuts.SetBinContent(2, float(cut[1] / den * 100.))
-            self.h_Cuts.SetBinContent(3, float(cut[2] / den * 100.))
-            self.h_Cuts.SetBinContent(4, float(cut[3] / den * 100.))
-            self.h_Cuts.SetBinContent(5, float(cut[4] / den * 100.))
-            self.h_Cuts.SetBinContent(6, float(cut[5] / den * 100.))
-            self.h_Cuts.SetBinContent(7, float(cut[6] / den * 100.))
-            self.h_Cuts.SetBinContent(8, float(cut[7] / den * 100.))
+            self.h_Cuts.SetBinContent(1, float(cut[0]))# / den * 100.))
+            self.h_Cuts.SetBinContent(2, float(cut[1]))# / den * 100.))
+            self.h_Cuts.SetBinContent(3, float(cut[2]))# / den * 100.))
+            self.h_Cuts.SetBinContent(4, float(cut[3]))# / den * 100.))
+            self.h_Cuts.SetBinContent(5, float(cut[4]))# / den * 100.))
+            self.h_Cuts.SetBinContent(6, float(cut[5]))# / den * 100.))
+            self.h_Cuts.SetBinContent(7, float(cut[6]))# / den * 100.))
+            self.h_Cuts.SetBinContent(8, float(cut[7]))# / den * 100.))
+            print "p_{{T}}>{} GeV".format(PTCUT) , int(cut[0]), " \n"
+            print "m_{{SD}}>{} GeV".format(MASSCUT), int(cut[1]), " \n" 
+            print "tight ID", int(cut[2]), " \n"
+            print "lep veto", int(cut[3]), " \n" 
+            print "tau veto", int(cut[4]), " \n"
+            print "MET<" + str(METCUT), int(cut[5]), " \n" 
+            print "N2^{DDT}<0", int(cut[6]), " \n"
+            print "{}<#rho<{}".format(self._lrhocut, self._hrhocut), int(cut[7]), " \n" 
             print(cut[3] / nent * 100., cut[7], cut[6], cut[9])
             a_Cuts = self.h_Cuts.GetXaxis()
             a_Cuts.SetBinLabel(1, "p_{{T}}>{} GeV".format(PTCUT))
