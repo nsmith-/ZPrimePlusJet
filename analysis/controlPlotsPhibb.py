@@ -316,7 +316,7 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv','h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts']
+        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv','h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts','h_Cuts_p']
     else:
         plots = []
         testSample = sampleContainerPhibb('test',[], 1, DBTMIN,lumi)
@@ -366,9 +366,9 @@ def main(options,args,outputExists):
         if isData:
             print "Data..."
         if isData and muonCR:
-            dataSample = sampleContainerPhibb('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
+            dataSample = sampleContainerPhibb('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, fillCA15, '((triggerBits&4)&&passJson)')
         elif isData:
-            dataSample = sampleContainerPhibb('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)')
+            dataSample = sampleContainerPhibb('data',tfiles['data'], 1, DBTMIN,lumi, isData, fillCA15, '((triggerBits&2)&&passJson)')
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
 
