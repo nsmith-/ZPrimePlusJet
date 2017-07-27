@@ -135,7 +135,11 @@ def main(options,args):
                                 error = array.array('d',[0.0])
                                 rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
                                 #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
-                                mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                                print proc, box, rate, error[0]
+                                if rate>0:
+                                    mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                                else:
+                                    mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                             else:
                                 mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                             

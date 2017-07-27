@@ -48,8 +48,8 @@ def main(options,args):
         exec_me('python writeMuonCRDatacard.py -i ./ -o %s/%s/%s/%s/ %s -c %s --mass %s'%(options.odir,jet_type,cut,options.model+str(massPoint),fillString,cut,massPoint),options.dryRun)
         os.chdir('%s/%s/%s/%s/'%(options.odir,jet_type,cut,options.model+str(massPoint)))
         exec_me('combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt',options.dryRun)
-        exec_me('combine -M Asymptotic -v 2 -t -1 --toysFreq card_rhalphabet_muonCR.txt --saveWorkspace -n %s_%s_lumi-%.1f_%s'%(options.model,massPoint,options.lumi,jet_type),options.dryRun)
-        exec_me('combine -M MaxLikelihoodFit -v 2 -t -1 --toysFreq card_rhalphabet_muonCR.txt --saveNormalizations --plot --saveShapes --saveWithUncertainties --saveWorkspace -n %s_%s_lumi-%.1f_%s'%(options.model,massPoint,options.lumi,jet_type),options.dryRun)
+        exec_me('combine -M Asymptotic -v 2 -t -1 card_rhalphabet_muonCR.txt --saveWorkspace -n %s_%s_lumi-%.1f_%s'%(options.model,massPoint,options.lumi,jet_type),options.dryRun)
+        exec_me('combine -M MaxLikelihoodFit -v 2 -t -1 card_rhalphabet_muonCR.txt --saveNormalizations --plot --saveShapes --saveWithUncertainties --saveWorkspace -n %s_%s_lumi-%.1f_%s'%(options.model,massPoint,options.lumi,jet_type),options.dryRun)
         os.chdir(pwd)
         
         

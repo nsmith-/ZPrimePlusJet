@@ -891,6 +891,9 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     pass_hists = {}
     fail_hists = {}
     f.ls()
+    jet_type = 'AK8'
+    if 'CA15' in f.GetName():
+        jet_type = 'CA15'
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
@@ -900,10 +903,22 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
             if bkg=='qcd':
                 qcd_fail = f.Get('qcd_' + cut +'_fail')
                 qcd_fail.Scale(1. / scale)
-                qcd_fail.SetBinContent(13, 4, (
-                qcd_fail.GetBinContent(12, 4) + qcd_fail.GetBinContent(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
-                qcd_fail.SetBinError(13, 4, (
-                qcd_fail.GetBinError(12, 4) + qcd_fail.GetBinError(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                if jet_type == 'AK8':
+                    qcd_fail.SetBinContent(13, 4, (qcd_fail.GetBinContent(12, 4) + qcd_fail.GetBinContent(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(13, 4, (qcd_fail.GetBinError(12, 4) + qcd_fail.GetBinError(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinContent(13, 1, (qcd_fail.GetBinContent(12, 1) + qcd_fail.GetBinContent(14, 1)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(13, 1, (qcd_fail.GetBinError(12, 1) + qcd_fail.GetBinError(14, 1)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinContent(15, 1, (qcd_fail.GetBinContent(14, 1) + qcd_fail.GetBinContent(16, 1)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(15, 1, (qcd_fail.GetBinError(14, 1) + qcd_fail.GetBinError(16, 1)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                else:
+                    qcd_fail.SetBinContent(13, 4, (qcd_fail.GetBinContent(12, 4) + qcd_fail.GetBinContent(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(13, 4, (qcd_fail.GetBinError(12, 4) + qcd_fail.GetBinError(14, 4)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinContent(13, 1, (qcd_fail.GetBinContent(12, 1) + qcd_fail.GetBinContent(14, 1)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(13, 1, (qcd_fail.GetBinError(12, 1) + qcd_fail.GetBinError(14, 1)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinContent(15, 2, (qcd_fail.GetBinContent(14, 2) + qcd_fail.GetBinContent(16, 2)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(15, 2, (qcd_fail.GetBinError(14, 2) + qcd_fail.GetBinError(16, 2)) / 2.)  # REMOVE HIGH WEIGHT EVENT BIN            
+                    qcd_fail.SetBinContent(69, 6, qcd_fail.GetBinContent(68, 6))  # REMOVE HIGH WEIGHT EVENT BIN
+                    qcd_fail.SetBinError(69, 6, qcd_fail.GetBinError(68, 6))  # REMOVE HIGH WEIGHT EVENT BIN                    
                 if useQCD:
                     qcd_pass = f.Get('qcd_' + cut +'_pass').Clone()
                     qcd_pass.Scale(1. / scale)
