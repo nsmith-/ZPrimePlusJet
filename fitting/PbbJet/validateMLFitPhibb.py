@@ -18,12 +18,30 @@ from tools import *
 msd_binBoundaries = []
 for i in range(0, 81): msd_binBoundaries.append(40 + i * 7)
 pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+MIN_M = {} #
+MAX_M = {} #299 # AK8
 
 from buildRhalphabetPhibb import BLIND_LO, BLIND_HI
 
 ##-------------------------------------------------------------------------------------
 def main(options, args):
+    
     mass = options.mass
+    empty = r.TH2F('empty', 'empty', len(msd_binBoundaries) - 1,
+                array.array('d', msd_binBoundaries), len(pt_binBoundaries) - 1,
+                array.array('d', pt_binBoundaries))
+    for j in range(1, empty.GetNbinsY() + 1):
+        ptVal = empty.GetYaxis().GetBinLowEdge(j) + empty.GetYaxis().GetBinWidth(j) * 0.3        
+        massMin = r.TMath.Sqrt(r.TMath.Exp(options.lrho))*ptVal
+        massMax = r.TMath.Sqrt(r.TMath.Exp(options.hrho))*ptVal
+        print j, massMin, massMax
+        MIN_M['cat%i'%j] = empty.GetXaxis().GetBinUpEdge(empty.GetXaxis().FindBin(massMin))
+        MAX_M['cat%i'%j] = empty.GetXaxis().GetBinLowEdge(empty.GetXaxis().FindBin(massMax))
+        print j, MIN_M['cat%i'%j], MAX_M['cat%i'%j]
+
+    MIN_M['allcats'] = MIN_M['cat1']
+    MAX_M['allcats'] = MAX_M['cat6']
+    
 
     fml = r.TFile.Open(options.idir + "/mlfit%s_%s_lumi-%.1f_%s.root"%(options.model,mass,options.lumi,options.box), 'read')
     fd = r.TFile.Open(options.idir + "/base.root", 'read')
@@ -357,18 +375,9 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 
     data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     data.Draw('pez')
-    if 'cat1' in tag:
-        data.GetXaxis().SetRangeUser(40,201 - 7*5)
-    elif 'cat2' in tag:
-        data.GetXaxis().SetRangeUser(40,201 - 7*3)
-    elif 'cat3' in tag:
-        data.GetXaxis().SetRangeUser(40,201)
-    elif 'cat4' in tag:
-        data.GetXaxis().SetRangeUser(40,201 + 7*2)
-    elif 'cat5' in tag:
-        data.GetXaxis().SetRangeUser(40,201 + 7*7)
-    else:
-        data.GetXaxis().SetRangeUser(40,299)
+    for cat_tag in ['cat1','cat2','cat3','cat4','cat5','cat6','allcats']:
+        if cat_tag in tag:
+            data.GetXaxis().SetRangeUser(MIN_M[cat_tag],MAX_M[cat_tag])
     htot.Draw('E2same')
     #    htotsig.Draw('E2same')
 
@@ -537,18 +546,11 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     iOneWithErrors.SetMarkerSize(0)
     iOneWithErrors.SetLineWidth(2)
     iRatio.Draw('pez')
-    if 'cat1' in tag:
-        iRatio.GetXaxis().SetRangeUser(40,201 - 7*5)
-    elif 'cat2' in tag:
-        iRatio.GetXaxis().SetRangeUser(40,201 - 7*3)
-    elif 'cat3' in tag:
-        iRatio.GetXaxis().SetRangeUser(40,201)
-    elif 'cat4' in tag:
-        iRatio.GetXaxis().SetRangeUser(40,201 + 7*2)
-    elif 'cat5' in tag:
-        iRatio.GetXaxis().SetRangeUser(40,201 + 7*7)
-    else:
-        iRatio.GetXaxis().SetRangeUser(40,299)
+    
+    for cat_tag in ['cat1','cat2','cat3','cat4','cat5','cat6','allcats']:
+        if cat_tag in tag:
+            iRatio.GetXaxis().SetRangeUser(MIN_M[cat_tag],MAX_M[cat_tag])
+            
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s' % tag)
     iOneWithErrorsLine.SetFillStyle(0)
 
@@ -634,7 +636,7 @@ def makeTF(pars, ratio):
 
     #f2 = r.TF2("f2", fun2, ratio.GetXaxis().GetXmin() + 3.5, ratio.GetXaxis().GetXmax() - 3.5,
     #           ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
-    f2 = r.TF2("f2", fun2, ratio.GetXaxis().GetXmin() + 3.5, 299. - 3.5,
+    f2 = r.TF2("f2", fun2, MIN_M['allcats'] + 3.5, MAX_M['allcats'] - 3.5,
                ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
     f2.SetParameters(f2params)
 
@@ -701,7 +703,7 @@ def makeTF(pars, ratio):
         for j in range(Npoints+1):            
             N+=1
             #x = ratio.GetXaxis().GetXmin() + i*(ratio.GetXaxis().GetXmax()-ratio.GetXaxis().GetXmin())/Npoints
-            x = ratio.GetXaxis().GetXmin() + i*(299.-ratio.GetXaxis().GetXmin())/Npoints
+            x = MIN_M['allcats'] + i*(MAX_M['allcats']-MIN_M['allcats'])/Npoints
             y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
             z = f2.Eval(x,y)
             print x, y, z
@@ -710,7 +712,7 @@ def makeTF(pars, ratio):
             #print x, y, z
             f2graph.SetPoint(N,x,y,z)
 
-    rhoxy =  r.TF2("rhoxy","log(x*x/y/y)",30,309,400,1100)
+    rhoxy =  r.TF2("rhoxy","log(x*x/y/y)",30,600,400,1100)
     contours = array.array('d',[options.lrho ,options. hrho])
     rhoxy.SetContour(2,contours)
     rhoxy.Draw("CONT Z LIST")
@@ -729,8 +731,8 @@ def makeTF(pars, ratio):
     rhocurv2.SetFillColor(r.kBlack)
     rhocurv2.SetLineColor(r.kBlack)
     
-    mxy = r.TF2("mxy", "sqrt(exp(x))*y",-6.5, -1.5, 400, 1100)
-    contours = array.array('d',[40 ,299])
+    mxy = r.TF2("mxy", "sqrt(exp(x))*y",-6.5, -0.5, 400, 1100)
+    contours = array.array('d',[MIN_M['allcats'] ,MAX_M['allcats']])
     mxy.SetContour(2,contours)
     mxy.Draw("CONT Z LIST")
     r.gPad.Update()
@@ -815,7 +817,7 @@ def makeTF(pars, ratio):
     c.SetRightMargin(0.20)
     # to plot TGraph:
     f2graph.Draw("colz")
-    f2graph.GetXaxis().SetRangeUser(40,299)
+    f2graph.GetXaxis().SetRangeUser(MIN_M['allcats'],MAX_M['allcats'])
     rhocurv1.Draw('same')
     rhocurv2.Draw('same')
     
@@ -845,7 +847,7 @@ def makeTF(pars, ratio):
     pave_param.SetFillStyle(0)
     pave_param.SetTextAlign(11)
     pave_param.SetTextSize(0.045)
-    text = pave_param.AddText("#rho = #minus6")
+    text = pave_param.AddText("#rho = #minus%.1f"%(-1.*options.lrho))
     text.SetTextAngle(75)
     text.SetTextAlign(22)
     text.SetTextSize(0.045)
@@ -858,7 +860,7 @@ def makeTF(pars, ratio):
     pave_param2.SetFillStyle(0)
     pave_param2.SetTextAlign(11)
     pave_param2.SetTextSize(0.045)
-    text2 = pave_param2.AddText("#rho = #minus2.1")
+    text2 = pave_param2.AddText("#rho = #minus%.1f"%(-1.*options.hrho))
     text2.SetTextAngle(40)
     text2.SetTextAlign(22)
     text2.SetTextSize(0.045)
@@ -903,7 +905,7 @@ def makeTF(pars, ratio):
     pave_param.SetFillStyle(0)
     pave_param.SetTextAlign(11)
     pave_param.SetTextSize(0.045)
-    text = pave_param.AddText("m_{SD} = 40 GeV")
+    text = pave_param.AddText("m_{SD} = %i GeV"%MIN_M['allcats'])
     text.SetTextAngle(-70)
     text.SetTextAlign(22)
     text.SetTextSize(0.045)
@@ -916,7 +918,7 @@ def makeTF(pars, ratio):
     pave_param2.SetFillStyle(0)
     pave_param2.SetTextAlign(11)
     pave_param2.SetTextSize(0.045)
-    text2 = pave_param2.AddText("m_{SD} = 299 GeV")
+    text2 = pave_param2.AddText("m_{SD} = %i GeV"%MAX_M['allcats'])
     text2.SetTextAngle(-72)
     text2.SetTextAlign(22)
     text2.SetTextSize(0.045)
