@@ -969,7 +969,6 @@ class sampleContainerPhibb:
                     if (abs(self.AK4Puppijet2_eta[0]) < 2.4 and self.AK4Puppijet2_pt[0] > 30): ht_ = ht_ + self.AK4Puppijet2_pt[0]
                     if (abs(self.AK4Puppijet3_eta[0]) < 2.4 and self.AK4Puppijet3_pt[0] > 30): ht_ = ht_ + self.AK4Puppijet3_pt[0]
                     self.h_ht.Fill(ht_, weight)
-
                     self.h_msd_muCR1.Fill(jmsd, weight_mu)
                     if jdb > DBTAGCUT:
                         self.h_msd_muCR2.Fill(jmsd, weight_mu)
