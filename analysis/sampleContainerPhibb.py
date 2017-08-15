@@ -346,6 +346,7 @@ class sampleContainerPhibb:
         if not self._minBranches:
             histos1d_ext = {
                 'h_Cuts': ["h_" + self._name + "_Cuts", "; Cut ", 8, 0, 8],
+                'h_Cuts_p': ["h_" + self._name + "_Cuts_p", "; Cut ", 8, 0, 8],
                 'h_n_ak4': ["h_" + self._name + "_n_ak4", "; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],
                 'h_ht': ["h_" + self._name + "_ht", "; HT (GeV);;", 50, 300, 2100],
                 'h_pt_bbleading': ["h_" + self._name + "_pt_bbleading", "; " + self._jet_type + " leading p_{T} (GeV);", 50, 300, 2100],
@@ -381,8 +382,10 @@ class sampleContainerPhibb:
                 'h_t21ddt': ["h_" + self._name + "_t21ddt", "; " + self._jet_type + " #tau_{21}^{DDT};", 25, 0, 1.5],
                 'h_t32': ["h_" + self._name + "_t32", "; " + self._jet_type + " #tau_{32};", 25, 0, 1.5],
                 'h_t32_t21ddtCut': ["h_" + self._name + "_t32_t21ddtCut", "; " + self._jet_type + " #tau_{32};", 20, 0, 1.5],
-                'h_n2b1sd': ["h_" + self._name + "_n2b1sd", "; " + self._jet_type + " N_{2}^{1} (SD);", 25, -0.5, 0.5],
+                'h_n2b1sd': ["h_" + self._name + "_n2b1sd", "; " + self._jet_type + " N_{2}^{1} (SD);", 50, -0.5, 1.5],
+                'h_n2b1sd_norhocut': ["h_" + self._name + "_n2b1sd_norhocut", "; " + self._jet_type + " N_{2}^{1} (SD);", 50, -0.5, 1.5],
                 'h_n2b1sdddt': ["h_" + self._name + "_n2b1sdddt", "; " + self._jet_type + " N_{2}^{1,DDT} (SD);", 25, -0.5, 0.5],
+                'h_n2b1sdddt_norhocut': ["h_" + self._name + "_n2b1sdddt_norhocut", "; " + self._jet_type + " N_{2}^{1,DDT} (SD);", 25, -0.5, 0.5],
                 'h_n2b1sdddt_aftercut': ["h_" + self._name + "_n2b1sdddt_aftercut", "; p_{T}-leading N_{2}^{1,DDT};", 25, -0.5, 0.5],
 		'h_dbtag_aftercut': ["h_" + self._name + "_dbtag_aftercut", "; p_{T}-leading double-b tagger;", 33, -1, 1],
                 'h_msd_raw_SR_fail': ["h_" + self._name + "_msd_raw_SR_fail", "; " + self._jet_type + " m_{SD}^{PUPPI} no corr (GeV);", 80, 40, 600],
@@ -1115,6 +1118,8 @@ class sampleContainerPhibb:
 
 		if jpt > PTCUT and jmsd > MASSCUT:
 	            self.h_rho_nocut.Fill(rh, weight)
+                    self.h_n2b1sd_norhocut.Fill(jtN2b1sd, weight)
+                    self.h_n2b1sdddt_norhocut.Fill(jtN2b1sdddt, weight)
 
                 if jpt > PTCUT:
                     self.h_msd_nocut.Fill(jmsd, weight)
@@ -1353,8 +1358,6 @@ class sampleContainerPhibb:
         print "\n"
         
         if not self._minBranches and cut[3] > 0.:
-            #den = cut[0]
-            den = 1
             self.h_Cuts.SetBinContent(1, float(cut[0]))# / den * 100.))
             self.h_Cuts.SetBinContent(2, float(cut[1]))# / den * 100.))
             self.h_Cuts.SetBinContent(3, float(cut[2]))# / den * 100.))
@@ -1363,15 +1366,6 @@ class sampleContainerPhibb:
             self.h_Cuts.SetBinContent(6, float(cut[5]))# / den * 100.))
             self.h_Cuts.SetBinContent(7, float(cut[6]))# / den * 100.))
             self.h_Cuts.SetBinContent(8, float(cut[7]))# / den * 100.))
-            print "p_{{T}}>{} GeV".format(PTCUT) , int(cut[0]), " \n"
-            print "m_{{SD}}>{} GeV".format(MASSCUT), int(cut[1]), " \n" 
-            print "tight ID", int(cut[2]), " \n"
-            print "lep veto", int(cut[3]), " \n" 
-            print "tau veto", int(cut[4]), " \n"
-            print "MET<" + str(METCUT), int(cut[5]), " \n" 
-            print "N2^{DDT}<0", int(cut[6]), " \n"
-            print "{}<#rho<{}".format(self._lrhocut, self._hrhocut), int(cut[7]), " \n" 
-            print(cut[3] / nent * 100., cut[7], cut[6], cut[9])
             a_Cuts = self.h_Cuts.GetXaxis()
             a_Cuts.SetBinLabel(1, "p_{{T}}>{} GeV".format(PTCUT))
             a_Cuts.SetBinLabel(2, "m_{{SD}}>{} GeV".format(MASSCUT))
@@ -1381,6 +1375,33 @@ class sampleContainerPhibb:
             a_Cuts.SetBinLabel(6, "MET<" + str(METCUT))
             a_Cuts.SetBinLabel(7, "N2^{DDT}<0")
 	    a_Cuts.SetBinLabel(8, "{}<#rho<{}".format(self._lrhocut, self._hrhocut))
+            print "p_{{T}}>{} GeV".format(PTCUT) , int(cut[0]), " \n"
+            print "m_{{SD}}>{} GeV".format(MASSCUT), int(cut[1]), " \n" 
+            print "tight ID", int(cut[2]), " \n"
+            print "lep veto", int(cut[3]), " \n" 
+            print "tau veto", int(cut[4]), " \n"
+            print "MET<" + str(METCUT), int(cut[5]), " \n" 
+            print "N2^{DDT}<0", int(cut[6]), " \n"
+            print "{}<#rho<{}".format(self._lrhocut, self._hrhocut), int(cut[7]), " \n" 
+            print(cut[3] / nent * 100., cut[7], cut[6], cut[9])
+
+            self.h_Cuts_p.SetBinContent(1, float(cut[0]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(2, float(cut[1]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(3, float(cut[2]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(4, float(cut[3]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(5, float(cut[4]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(6, float(cut[5]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(7, float(cut[6]/cut[0])  * 100.)
+            self.h_Cuts_p.SetBinContent(8, float(cut[7]/cut[0])  * 100.)
+            a_Cuts_p = self.h_Cuts_p.GetXaxis()
+            a_Cuts_p.SetBinLabel(1, "p_{{T}}>{} GeV".format(PTCUT))
+            a_Cuts_p.SetBinLabel(2, "m_{{SD}}>{} GeV".format(MASSCUT))
+            a_Cuts_p.SetBinLabel(3, "tight ID")
+            a_Cuts_p.SetBinLabel(4, "lep veto")
+            a_Cuts_p.SetBinLabel(5, "#tau veto")
+            a_Cuts_p.SetBinLabel(6, "MET<" + str(METCUT))
+            a_Cuts_p.SetBinLabel(7, "N2^{DDT}<0")
+	    a_Cuts_p.SetBinLabel(8, "{}<#rho<{}".format(self._lrhocut, self._hrhocut))
             #a_Cuts.SetBinLabel(9, "Double b-tag > " + str(DBTAGCUT))
 
             self.h_rhop_v_t21_Px = self.h_rhop_v_t21.ProfileX()
