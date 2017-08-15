@@ -941,25 +941,25 @@ class sampleContainerPhibb:
             if not self._minBranches:
                 if jpt > PTCUTMUCR:
                     cut_muon[0] = cut_muon[0] + 1
-                if jpt > PTCUT and jmsd > MASSCUT:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT:
                     cut_muon[1] = cut_muon[1] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1:
                     cut_muon[2] = cut_muon[2] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0:
                     cut_muon[3] = cut_muon[3] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0:
                     cut_muon[4] = cut_muon[4] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1:
                     cut_muon[5] = cut_muon[5] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT:
                     cut_muon[6] = cut_muon[6] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1:
                     cut_muon[7] = cut_muon[7] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3.:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3.:
                     cut_muon[8] = cut_muon[8] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >=1:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >=1:
                     cut_muon[9] = cut_muon[9] + 1
-                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >=1 and jtN2b1sdddt < 0:
+                if jpt > PTCUTMUCR and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >=1 and jtN2b1sdddt < 0:
                     cut_muon[10] = cut_muon[10] + 1
             if jpt > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet==1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                 if not self._minBranches:
