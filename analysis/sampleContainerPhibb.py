@@ -347,6 +347,8 @@ class sampleContainerPhibb:
             histos1d_ext = {
                 'h_Cuts': ["h_" + self._name + "_Cuts", "; Cut ", 8, 0, 8],
                 'h_Cuts_p': ["h_" + self._name + "_Cuts_p", "; Cut ", 8, 0, 8],
+                'h_Cuts_muon': ["h_" + self._name + "_Cuts_muon", "; Cut ", 11, 0, 11],
+                'h_Cuts_muon_p': ["h_" + self._name + "_Cuts_muon_p", "; Cut ", 11, 0, 11],
                 'h_n_ak4': ["h_" + self._name + "_n_ak4", "; AK4 n_{jets}, p_{T} > 30 GeV;", 20, 0, 20],
                 'h_ht': ["h_" + self._name + "_ht", "; HT (GeV);;", 50, 300, 2100],
                 'h_pt_bbleading': ["h_" + self._name + "_pt_bbleading", "; " + self._jet_type + " leading p_{T} (GeV);", 50, 300, 2100],
@@ -648,6 +650,8 @@ class sampleContainerPhibb:
         print nent , "\n"        
         cut = []
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
+        cut_muon = []
+        cut_muon = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
         self._tt.SetNotify(self._cutFormula)
         for i in xrange(nent):
@@ -934,6 +938,29 @@ class sampleContainerPhibb:
                     dmass = math.fabs(genVMass - jmsd) / genVMass
 
             # Single Muon Control Regions
+            if not self._minBranches:
+                if jpt > PTCUTMUCR:
+                    cut_muon[0] = cut_muon[0] + 1
+                if jpt > PTCUT and jmsd > MASSCUT:
+                    cut_muon[1] = cut_muon[1] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1:
+                    cut_muon[2] = cut_muon[2] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0:
+                    cut_muon[3] = cut_muon[3] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0:
+                    cut_muon[4] = cut_muon[4] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1:
+                    cut_muon[5] = cut_muon[5] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT:
+                    cut_muon[6] = cut_muon[6] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1:
+                    cut_muon[7] = cut_muon[7] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3.:
+                    cut_muon[8] = cut_muon[8] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >=1:
+                    cut_muon[9] = cut_muon[9] + 1
+                if jpt > PTCUT and jmsd > MASSCUT and isTightVJet==1 and neleLoose == 0 and ntau == 0 and nmuLoose == 1 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >=1 and jtN2b1sdddt < 0:
+                    cut_muon[10] = cut_muon[10] + 1
             if jpt > PTCUTMUCR and jmsd > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(vmuoLoose0_eta) < 2.1 and isTightVJet==1 and abs(math.acos(math.cos(vmuoLoose0_phi - jphi))) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                 if not self._minBranches:
                     ht_ = 0.
@@ -1356,8 +1383,8 @@ class sampleContainerPhibb:
                     self.h_pt_dbtagCut.Fill(jpt, weight)
 
         print "\n"
-        
-        if not self._minBranches and cut[3] > 0.:
+       # Signal 
+        if not self._minBranches and cut[0] > 0.:
             self.h_Cuts.SetBinContent(1, float(cut[0]))# / den * 100.))
             self.h_Cuts.SetBinContent(2, float(cut[1]))# / den * 100.))
             self.h_Cuts.SetBinContent(3, float(cut[2]))# / den * 100.))
@@ -1373,7 +1400,7 @@ class sampleContainerPhibb:
             a_Cuts.SetBinLabel(4, "lep veto")
             a_Cuts.SetBinLabel(5, "#tau veto")
             a_Cuts.SetBinLabel(6, "MET<" + str(METCUT))
-            a_Cuts.SetBinLabel(7, "N2^{DDT}<0")
+            a_Cuts.SetBinLabel(7, "N_{2}^{DDT}<0")
 	    a_Cuts.SetBinLabel(8, "{}<#rho<{}".format(self._lrhocut, self._hrhocut))
             print "p_{{T}}>{} GeV".format(PTCUT) , int(cut[0]), " \n"
             print "m_{{SD}}>{} GeV".format(MASSCUT), int(cut[1]), " \n" 
@@ -1400,9 +1427,59 @@ class sampleContainerPhibb:
             a_Cuts_p.SetBinLabel(4, "lep veto")
             a_Cuts_p.SetBinLabel(5, "#tau veto")
             a_Cuts_p.SetBinLabel(6, "MET<" + str(METCUT))
-            a_Cuts_p.SetBinLabel(7, "N2^{DDT}<0")
+            a_Cuts_p.SetBinLabel(7, "N_{2}^{DDT}<0")
 	    a_Cuts_p.SetBinLabel(8, "{}<#rho<{}".format(self._lrhocut, self._hrhocut))
             #a_Cuts.SetBinLabel(9, "Double b-tag > " + str(DBTAGCUT))
+
+       # Muon 
+        if not self._minBranches and cut[0] > 0.:
+            self.h_Cuts_muon.SetBinContent(1, float(cut_muon[0]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(2, float(cut_muon[1]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(3, float(cut_muon[2]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(4, float(cut_muon[3]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(5, float(cut_muon[4]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(6, float(cut_muon[5]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(7, float(cut_muon[6]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(8, float(cut_muon[7]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(9, float(cut_muon[8]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(10, float(cut_muon[9]))# / den * 100.))
+            self.h_Cuts_muon.SetBinContent(11, float(cut_muon[10]))# / den * 100.))
+            a_Cuts_muon = self.h_Cuts_muon.GetXaxis()
+            a_Cuts_muon.SetBinLabel(1, "p_{{T}}>{} GeV".format(PTCUTMUCR))
+            a_Cuts_muon.SetBinLabel(2, "m_{{SD}}>{} GeV".format(MASSCUT))
+            a_Cuts_muon.SetBinLabel(3, "tight ID")
+            a_Cuts_muon.SetBinLabel(4, "e veto")
+            a_Cuts_muon.SetBinLabel(5, "#tau veto")
+            a_Cuts_muon.SetBinLabel(6, "#mu veto")
+            a_Cuts_muon.SetBinLabel(7, "p_{{T}}(#mu)>{} GeV".format(MUONPTCUT))
+            a_Cuts_muon.SetBinLabel(8, "|#eta(#mu)| < 2.1")
+            a_Cuts_muon.SetBinLabel(9, "#Delta#phi(#mu,j) < #frac{2#pi}{3}")
+            a_Cuts_muon.SetBinLabel(10, "n_MdR0p8_4 >=1")
+            a_Cuts_muon.SetBinLabel(11, "N_{2}^{DDT}<0")
+
+            self.h_Cuts_muon_p.SetBinContent(1, float(cut_muon[0]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(2, float(cut_muon[1]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(3, float(cut_muon[2]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(4, float(cut_muon[3]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(5, float(cut_muon[4]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(6, float(cut_muon[5]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(7, float(cut_muon[6]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(8, float(cut_muon[7]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(9, float(cut_muon[8]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(10, float(cut_muon[9]/cut_muon[0])  * 100.)
+            self.h_Cuts_muon_p.SetBinContent(11, float(cut_muon[10]/cut_muon[0])  * 100.)
+            a_Cuts_muon_p = self.h_Cuts_muon_p.GetXaxis()
+            a_Cuts_muon_p.SetBinLabel(1, "p_{{T}}>{} GeV".format(PTCUTMUCR))
+            a_Cuts_muon_p.SetBinLabel(2, "m_{{SD}}>{} GeV".format(MASSCUT))
+            a_Cuts_muon_p.SetBinLabel(3, "tight ID")
+            a_Cuts_muon_p.SetBinLabel(4, "e veto")
+            a_Cuts_muon_p.SetBinLabel(5, "#tau veto")
+            a_Cuts_muon_p.SetBinLabel(6, "#mu veto")
+            a_Cuts_muon_p.SetBinLabel(7, "p_{{T}}(#mu)>{} GeV".format(MUONPTCUT))
+            a_Cuts_muon_p.SetBinLabel(8, "|#eta(#mu)| < 2.1")
+            a_Cuts_muon_p.SetBinLabel(9, "#Delta#phi(#mu,j) < #frac{2#pi}{3}")
+            a_Cuts_muon_p.SetBinLabel(10, "n_MdR0p8_4 >=1")
+            a_Cuts_muon_p.SetBinLabel(11, "N_{2}^{DDT}<0")
 
             self.h_rhop_v_t21_Px = self.h_rhop_v_t21.ProfileX()
             self.h_rhop_v_t21_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
