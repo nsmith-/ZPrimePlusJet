@@ -177,16 +177,17 @@ def goodnessVals(iFName1):
 
 def ftest(base,alt,ntoys,iLabel,options):
     if not options.justPlot:
-        exec_me('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF -n %s'% (base,base.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/base1.root'%(base.replace('.txt',''),options.odir))
-        exec_me('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (alt,alt.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/base2.root'%(alt.replace('.txt',''),options.odir))
-        exec_me('combine -M GenerateOnly %s --rMax 50 --rMin -50 --toysFrequentist -t %i --expectSignal 1 --saveToys --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,base.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GenerateOnly.mH120.123456.root %s/'%(base.replace('.txt',''),options.odir))
-        exec_me('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,options.odir,base.replace('.txt',''),base.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/toys1.root'%(base.replace('.txt',''),options.odir))
-        exec_me('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --algorithm saturated --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (alt,ntoys,options.odir,base.replace('.txt',''),alt.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/toys2.root'%(alt.replace('.txt',''),options.odir))
+        exec_me('combine -M GoodnessOfFit %s  --rMax 20 --rMin -20 --fixedSignalStrength 0 --algorithm saturated -n %s --freezeNuisances %s'% (base,base.split('/')[-1].replace('.txt',''), options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/base1.root'%(base.split('/')[-1].replace('.txt',''),options.odir),options.dryRun)
+        exec_me('combine -M GoodnessOfFit %s --rMax 20 --rMin -20 --fixedSignalStrength 0 --algorithm saturated  -n %s --freezeNuisances %s' % (alt,alt.split('/')[-1].replace('.txt',''), options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/base2.root'%(alt.split('/')[-1].replace('.txt',''),options.odir),options.dryRun)
+        exec_me('combine -M GenerateOnly %s --rMax 20 --rMin -20 --toysFrequentist -t %i --expectSignal %f --saveToys -n %s' % (base,ntoys,options.r,base.split('/')[-1].replace('.txt','')))
+        exec_me('cp higgsCombine%s.GenerateOnly.mH120.123456.root %s/'%(base.split('/')[-1].replace('.txt',''),options.odir))
+        exec_me('combine -M GoodnessOfFit %s --rMax 20 --rMin -20 -t %i --fixedSignalStrength 0 --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --algorithm saturated -n %s --freezeNuisances %s' % (base,ntoys,options.odir,base.split('/')[-1].replace('.txt',''),base.split('/')[-1].replace('.txt',''), options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/toys1.root'%(base.split('/')[-1].replace('.txt',''),options.odir),options.dryRun)
+        exec_me('combine -M GoodnessOfFit %s --rMax 20 --rMin -20 -t %i --fixedSignalStrength 0 --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --algorithm saturated -n %s --freezeNuisances %s' % (alt,ntoys,options.odir,base.split('/')[-1].replace('.txt',''),alt.split('/')[-1].replace('.txt',''), options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/toys2.root'%(alt.split('/')[-1].replace('.txt',''),options.odir))    
+    if options.dryRun: sys.exit()
     nllBase=fStat("%s/base1.root"%options.odir,"%s/base2.root"%options.odir,options.p1,options.p2,options.n)
     nllToys=fStat("%s/toys1.root"%options.odir,"%s/toys2.root"%options.odir,options.p1,options.p2,options.n)
     lPass=0
@@ -203,12 +204,14 @@ def ftest(base,alt,ntoys,iLabel,options):
 
 def goodness(base,ntoys,iLabel,options):
     if not options.justPlot:
-        exec_me('combine -M GoodnessOfFit %s  --rMax 50 --rMin -50 --algorithm %s --fixedSignalStrength 0 --freezeNuisances tqqnormSF,tqqeffSF -n %s'% (base,options.algo,base.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/goodbase.root'%(base.replace('.txt',''),options.odir))
-        exec_me('combine -M GenerateOnly %s --rMax 50 --rMin -50 --toysFrequentist -t %i --expectSignal 0 --saveToys --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,base.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GenerateOnly.mH120.123456.root %s/'%(base.replace('.txt',''),options.odir))        
-        exec_me('combine -M GoodnessOfFit %s --rMax 50 --rMin -50 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --fixedSignalStrength 0 --algorithm %s --freezeNuisances tqqnormSF,tqqeffSF -n %s' % (base,ntoys,options.odir,base.replace('.txt',''),options.algo,base.replace('.txt','')))
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/goodtoys.root'%(base.replace('.txt',''),options.odir))
+        # --fixedSignalStrength %f  --freezeNuisances tqqnormSF,tqqeffSF 
+        exec_me('combine -M GoodnessOfFit %s  --rMax 20 --rMin -20 --algorithm %s -n %s --freezeNuisances %s'% (base,options.algo,base.split('/')[-1].replace('.txt',''),options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.root %s/goodbase.root'%(base.split('/')[-1].replace('.txt',''),options.odir),options.dryRun)
+        exec_me('combine -M GenerateOnly %s --rMax 20 --rMin -20 --toysFrequentist -t %i --expectSignal %f --saveToys -n %s --freezeNuisances %s' % (base,ntoys,options.r,base.split('/')[-1].replace('.txt',''),options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GenerateOnly.mH120.123456.root %s/'%(base.split('/')[-1].replace('.txt',''),options.odir),options.dryRun)        
+        exec_me('combine -M GoodnessOfFit %s --rMax 20 --rMin -20 -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --algorithm %s -n %s --freezeNuisances %s' % (base,ntoys,options.odir,base.split('/')[-1].replace('.txt',''),options.algo,base.split('/')[-1].replace('.txt',''),options.freezeNuisances),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.123456.root %s/goodtoys.root'%(base.split('/')[-1].replace('.txt',''),options.odir),options.dryRun)        
+    if options.dryRun: sys.exit()
     nllBase=goodnessVals('%s/goodbase.root'%options.odir)
     nllToys=goodnessVals('%s/goodtoys.root'%options.odir)
     lPass=0
@@ -220,14 +223,14 @@ def goodness(base,ntoys,iLabel,options):
     return float(lPass)/float(len(nllToys))
 
 def bias(base,alt,ntoys,mu,iLabel):
-    exec_me('combine -M GenerateOnly     %s --rMax 50 --rMin -50 -t %i --expectSignal %i --saveToys ' % (alt,ntoys,mu))
-    exec_me('combine -M MaxLikelihoodFit %s --rMax 50 --rMin -50 -t %i --saveNLL --toysFile higgsCombineTest.GenerateOnly.mH120.123456.root'  % (base,ntoys))
+    exec_me('combine -M GenerateOnly     %s --rMax 20 --rMin -20 -t %i --expectSignal %i --saveToys ' % (alt,ntoys,mu))
+    exec_me('combine -M MaxLikelihoodFit %s --rMax 20 --rMin -20 -t %i --saveNLL --toysFile higgsCombineTest.GenerateOnly.mH120.123456.root'  % (base,ntoys))
     exec_me('rm  higgsCombineTest.MaxLikelihoodFit.mH120.123456.root')
     exec_me('mv  mlfit.root toys.root')
     plotgaus("toys.root",mu,"pull"+iLabel)
 
 def fit(base,options):
-    exec_me('combine -M MaxLikelihoodFit %s -v 2 --freezeNuisances tqqeffSF,tqqnormSF --rMin=-50 --rMax=50 --saveNormalizations --plot --saveShapes --saveWithUncertainties --minimizerTolerance 0.001 --minimizerStrategy 2'%base)
+    exec_me('combine -M MaxLikelihoodFit %s -v 2 --freezeNuisances tqqeffSF,tqqnormSF --rMin=-20 --rMax=20 --saveNormalizations --plot --saveShapes --saveWithUncertainties --minimizerTolerance 0.001 --minimizerStrategy 2'%base)
     exec_me('mv mlfit.root %s/'%options.odir)
     exec_me('mv higgsCombineTest.MaxLikelihoodFit.mH120.root %s/'%options.odir)
     
@@ -290,6 +293,12 @@ if __name__ == "__main__":
     parser.add_option('--just-plot', action='store_true', dest='justPlot', default=False, help='just plot')
     parser.add_option('--data', action='store_true', dest='isData', default=False, help='is data')
     parser.add_option('-l','--lumi'   ,action='store',type='float',dest='lumi'   ,default=36.4, help='lumi')
+    parser.add_option('-r','--r',dest='r', default=0 ,type='float',help='default value of r')
+    parser.add_option('--rMin',dest='rMin', default=-20 ,type='float',help='minimum of r (signal strength) in profile likelihood plot')
+    parser.add_option('--rMax',dest='rMax', default=20,type='float',help='maximum of r (signal strength) in profile likelihood plot')  
+    parser.add_option('--freezeNuisances'   ,action='store',type='string',dest='freezeNuisances'   ,default='None', help='freeze nuisances')
+    parser.add_option('--dry-run',dest="dryRun",default=False,action='store_true',
+                  help="Just print out commands to run")    
 
 
     (options,args) = parser.parse_args()

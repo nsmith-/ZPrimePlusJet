@@ -1003,8 +1003,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
             pass_hists["data_obs"].Add(pass_hists_sig[signal],r_signal)
             fail_hists["data_obs"].Add(fail_hists_sig[signal],r_signal)
     else:
-        pass_hists["data_obs"] = f.Get('data_obs_pass')
-        fail_hists["data_obs"] = f.Get('data_obs_fail')
+        pass_hists["data_obs"] = f.Get('data_obs_' + cut + '_pass')
+        fail_hists["data_obs"] = f.Get('data_obs_' + cut + '_fail')
     pass_hists.update(pass_hists_bkg)
     pass_hists.update(pass_hists_sig)
     fail_hists.update(fail_hists_bkg)
