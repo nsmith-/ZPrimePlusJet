@@ -123,7 +123,7 @@ if __name__ == "__main__":
         dataString = '--data'
 
     if options.pseudo:
-        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_r%ip%i.txt --datacard-alt %s/card_rhalphabet_r%ip%i.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f --freezeNuisances tqqeffSF,tqqnormSF'%(cardsDir1, options.NR1, options.NP1, cardsDir2, options.NR2, options.NP2, ftestDir, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
+        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_r%ip%i.txt --datacard-alt %s/card_rhalphabet_r%ip%i.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f --freezeNuisances tqqeffSF,tqqnormSF'%(sigDir1, options.NR1, options.NP1, sigDir2, options.NR2, options.NP2, ftestDir, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
     else:
         exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_r%ip%i.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f'%(sigDir1, options.NR1, options.NP1, sigDir2, options.NR2, options.NP2, ftestDir_muonCR, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
      
