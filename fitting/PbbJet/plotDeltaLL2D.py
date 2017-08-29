@@ -4,6 +4,7 @@ from array import array
 from scipy.interpolate import Rbf, interp1d
 import itertools
 import numpy as np
+import glob
 
 def exec_me(command,dryRun=True):
     print command
@@ -102,7 +103,7 @@ def contourFromTH2(h2in, threshold, minPoints=20):
     return finalcurv
 
 
-def interpolate2D(hist,epsilon=1,smooth=0):
+def interpolate2D(hist,epsilon=0.2,smooth=1):
     x = array('d',[])
     y = array('d',[])
     z = array('d',[])
@@ -131,8 +132,9 @@ def interpolate2D(hist,epsilon=1,smooth=0):
     
     for i in range(1, hist.GetNbinsX()+1):
         for j in range(1, hist.GetNbinsY()+1):
-            if hist.GetBinContent(i,j)<=0.:
-                hist.SetBinContent(i,j,myZI[j-1][i-1])
+            #if hist.GetBinContent(i,j)<=0.:
+            hist.SetBinContent(i,j,myZI[j-1][i-1])
+                
     return hist
 
 if __name__ == '__main__':
@@ -178,16 +180,31 @@ if __name__ == '__main__':
     else:
         #dataTag = 'asimov_nosys'
         dataTag = 'asimov'
-    
-    tfile = rt.TFile.Open('higgsCombine2D_%s.MultiDimFit.mH120.root'%(dataTag))
-    limit = tfile.Get('limit')
+
+    limit = rt.TChain('limit') 
+    for ifile in glob.glob('higgsCombine2D_%s.POINTS.*.MultiDimFit.mH120.root'%dataTag):
+        limit.Add(ifile)
+    #tfile = rt.TFile.Open('higgsCombine2D_%s.MultiDimFit.mH120.root'%(dataTag))
+    #limit = tfile.Get('limit')
     fit = bestFit(limit, 'r', 'r_z')
-    limit.Draw("r_z:r>>htemp(21,-4,8,21,0,3)","2*deltaNLL*(quantileExpected>-1)*(deltaNLL>0)*(deltaNLL<100)","colz")
+    print limit.GetEntries()
+    limit.Draw("r_z:r>>htemp(100,-4,8,100,0,3)","2*deltaNLL*(quantileExpected>-1)*(deltaNLL>0)*(deltaNLL<100)","colz")
+    #limit.Draw("r_z:r>>htemp(21,-4,8,21,0,3)","2*deltaNLL*(quantileExpected>-1)*(deltaNLL>0)*(deltaNLL<100)","colz")
     #limit.Draw("r_z:r>>htemp(21,-6,12,21,0,3)","2*deltaNLL*(quantileExpected>-1)*(deltaNLL>0)*(deltaNLL<100)","colz")
     #contours = array('d',[2.3,5.99])
     htemp = rt.gPad.GetPrimitive('htemp')
     if options.isData:
-        htemp.SetBinContent(htemp.FindBin(1.5,0.5),0)
+        htemp.SetBinContent(htemp.FindBin(7.,1.15),0)
+        htemp.SetBinContent(htemp.FindBin(1.3,0.5),0)
+        htemp.SetBinContent(htemp.FindBin(3.6,0.5),0)
+    ## for i in range(2,100):
+    ##     for j in range(2,100):
+    ##         cen = htemp.GetBinContent(i,j)
+    ##         ave = (htemp.GetBinContent(i+1,j) + htemp.GetBinContent(i,j+1) + htemp.GetBinContent(i-1,j) + htemp.GetBinContent(i,j-1) ) /4.
+    ##         if abs(cen-ave)/ave > 0.5:
+    ##             print htemp.GetXaxis().GetBinCenter(i), htemp.GetYaxis().GetBinCenter(j), cen, ave
+    ##             #htemp.SetBinContent(i,j, 16)
+
     htemp = interpolate2D(htemp)
     htemp.GetXaxis().SetTitle('#mu_{H}')
     htemp.GetYaxis().SetTitle('#mu_{Z}')
@@ -227,14 +244,14 @@ if __name__ == '__main__':
     m.DrawMarker(smx,smy)
 
     lumi = 35.9
-    tag1 = rt.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+    tag1 = rt.TLatex(0.65,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.04)
-    tag2 = rt.TLatex(0.17,0.92,"CMS")
+    tag2 = rt.TLatex(0.19,0.82,"CMS")
     tag2.SetNDC(); tag2.SetTextFont(62)
-    tag3 = rt.TLatex(0.27,0.92,"Preliminary")
+    tag3 = rt.TLatex(0.29,0.82,"Preliminary")
     tag3.SetNDC(); tag3.SetTextFont(52)
-    tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); tag3.Draw()
+    tag2.SetTextSize(0.05); tag3.SetTextSize(0.04); tag1.Draw(); tag2.Draw(); #tag3.Draw()
 
 
     leg = rt.TLegend(0.55,0.7,0.8,0.87)
