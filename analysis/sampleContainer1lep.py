@@ -24,7 +24,7 @@ NJETCUT = 100
 #########################################################################################################
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
-                 minBranches=True):
+                 minBranches=False):
         self._name = name
 	print(name)
         self.DBTAGCUTMIN = DBTAGCUTMIN
@@ -248,9 +248,9 @@ class sampleContainer:
         histos1d = {            
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
 	    'h_nmuLoose': ["h_" + self._name + "_nmuLoose", "; number of Loose muons;;", 20, 0, 20],
-	    'hdPhi_muCR4':["h_" + self._name + "_dPhi_muCR4"; " dPhi(muon, AK8 leading p_{T}); ", 50, 0, 3],
-	    'hN2ddt_muCR4':["h_"+self._name + "_N2ddt"; " N2ddt ;", 50, -1, 1],
-            'hN2_muCR4':["h_"+self._name + "_N2"; " N2 ;", 50, -1, 1],
+	    'hdPhi_muCR4':["h_" + self._name + "_dPhi_muCR4", "; dPhi(muon, AK8 leading p_{T}); ", 50, 0, 3],
+	    'hN2ddt_muCR4':["h_"+self._name + "_N2ddt", "; N2ddt ;", 50, -1, 1],
+            'hN2_muCR4':["h_"+self._name + "_N2", "; N2 ;", 50, -1, 1],
 	    'hmet_muCR4':["h_" + self._name + "met_muCR4", "; E_{T}^{miss} (GeV) ;", 50, 0, 500],
             'h_eta_mu_muCR4_N2': ["h_" + self._name + "_eta_mu_muCR4_N2", "; leading muon #eta;", 50, -2.5, 2.5],
             'h_pt_ak8_muCR4_N2': ["h_" + self._name + "_pt_ak8_muCR4_N2", "; AK8 leading p_{T} (GeV);", 50, 300, 2100],
@@ -768,13 +768,12 @@ class sampleContainer:
 
             # Single Muon Control Regions
 		  
-	    if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and and neleLoose == 0 and ntau == 0 and  isTightVJet : 
+	    if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT  and neleLoose == 0 and ntau == 0 and  isTightVJet : 
 		self.h_nmuLoose.Fill(nmuLoose)
 		
             if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
                     vmuoLoose0_eta) < 2.1 and isTightVJet :
 		 #	and abs(vmuoLoose0_phi - jphi_8) > 2. * ROOT.TMath.Pi() / 3. :
-                if not self._minBranches:
                     ht_ = 0.
                     if (abs(self.AK4Puppijet0_eta[0]) < 2.4 and self.AK4Puppijet0_pt[0] > 30): ht_ = ht_ + \
                                                                                                      self.AK4Puppijet0_pt[
@@ -820,12 +819,12 @@ class sampleContainer:
                     if jdb_8 > 0.7 and jt21P_8 < T21DDTCUT:
                         self.h_msd_ak8_muCR6.Fill(jmsd_8, weight_mu)
 
-                if jtN2b1sdddt_8 < 0:
-                    self.h_dbtag_ak8_muCR4_N2.Fill(jdb_8, weight_mu)
-                    self.h_msd_ak8_muCR4_N2.Fill(jmsd_8, weight_mu)
-                    self.h_pt_ak8_muCR4_N2.Fill(jpt_8, weight_mu)
-                    self.h_eta_ak8_muCR4_N2.Fill(jeta_8, weight_mu)
-                    if jdb_8 > DBTAGCUT:
+                    if jtN2b1sdddt_8 < 0:
+                      self.h_dbtag_ak8_muCR4_N2.Fill(jdb_8, weight_mu)
+                      self.h_msd_ak8_muCR4_N2.Fill(jmsd_8, weight_mu)
+                      self.h_pt_ak8_muCR4_N2.Fill(jpt_8, weight_mu)
+                      self.h_eta_ak8_muCR4_N2.Fill(jeta_8, weight_mu)
+                      if jdb_8 > DBTAGCUT:
                         self.h_msd_ak8_muCR4_N2_pass.Fill(jmsd_8, weight_mu)
                         self.h_msd_v_pt_ak8_muCR4_N2_pass.Fill(jmsd_8, jpt_8, weight_mu)
                         self.h_msd_ak8_muCR4_N2_pass_mutriggerUp.Fill(jmsd_8, weight_mutriggerUp)
@@ -836,7 +835,7 @@ class sampleContainer:
                         self.h_msd_ak8_muCR4_N2_pass_muisoDown.Fill(jmsd_8, weight_muisoDown)
                         self.h_msd_ak8_muCR4_N2_pass_PuUp.Fill(jmsd_8, weight_mu_pu_up)
                         self.h_msd_ak8_muCR4_N2_pass_PuDown.Fill(jmsd_8, weight_mu_pu_down)
-                    elif jdb_8 > self.DBTAGCUTMIN:
+                      elif jdb_8 > self.DBTAGCUTMIN:
                         self.h_msd_ak8_muCR4_N2_fail.Fill(jmsd_8, weight_mu)
                         self.h_msd_v_pt_ak8_muCR4_N2_fail.Fill(jmsd_8, jpt_8, weight_mu)
                         self.h_msd_ak8_muCR4_N2_fail_mutriggerUp.Fill(jmsd_8, weight_mutriggerUp)
@@ -932,14 +931,6 @@ class sampleContainer:
                         self.h_pt_bbleading.Fill(i[1], weight)
                         # print(i[0],i[1],i[2])
                         self.h_bb_bbleading.Fill(i[2], weight)
-                    if i[1] > PTCUT and i[0] > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and i[3] < 2 and i[
-                        4] < T21DDTCUT and n_fwd_4 < 3 and i[5]:
-                        if i[2] > DBTAGCUT:
-                            self.h_msd_ak8_bbleading_topR6_pass.Fill(i[0], weight)
-                            self.h_msd_v_pt_ak8_bbleading_topR6_pass.Fill(i[0], i[1], weight)
-                        else:
-                            self.h_msd_ak8_bbleading_topR6_fail.Fill(i[0], weight)
-                            self.h_msd_v_pt_ak8_bbleading_topR6_fail.Fill(i[0], i[1], weight)
 
 		if jpt_8 > PTCUT and jmsd_8 > MASSCUT:
 			self.h_rho_ak8.Fill(rh_8, weight)
@@ -989,28 +980,6 @@ class sampleContainer:
                 cut[6] = cut[6] + 1
             #if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet:
                 #cut[7] = cut[7] + 1
-            if (not self._minBranches) and jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
-                if jdb_8 > DBTAGCUT:
-                    # cut[9]=cut[9]+1
-                    self.h_msd_ak8_topR6_pass.Fill(jmsd_8, weight)
-                    self.h_msd_ak8_raw_SR_pass.Fill(jmsd_8_raw, weight)
-                    self.h_msd_v_pt_ak8_topR6_pass.Fill(jmsd_8, jpt_8, weight)
-                    self.h_msd_v_pt_ak8_topR6_raw_pass.Fill(jmsd_8_raw, jpt_8, weight)
-                    # for signal morphing
-                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                        self.h_msd_v_pt_ak8_topR6_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_v_pt_ak8_topR6_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                elif jdb_8 > self.DBTAGCUTMIN:
-                    self.h_msd_ak8_topR6_fail.Fill(jmsd_8, weight)
-                    self.h_msd_v_pt_ak8_topR6_fail.Fill(jmsd_8, jpt_8, weight)
-                    self.h_msd_ak8_raw_SR_fail.Fill(jmsd_8_raw, weight)
-                    self.h_msd_v_pt_ak8_topR6_raw_fail.Fill(jmsd_8, jpt_8, weight)
-                    # for signal morphing
-                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                        self.h_msd_v_pt_ak8_topR6_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_v_pt_ak8_topR6_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
 	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet and jdb_8 > DBTAGCUT and rh_8<-2.1 and rh_8>-6.: 	
 		if (not self._minBranches): self.h_n2b1sdddt_ak8_aftercut.Fill(jtN2b1sdddt_8,weight)
             if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
