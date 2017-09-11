@@ -24,10 +24,10 @@ def makePlots(plot, hs, hb, hd, hall, legname, color, style, isData, odir, lumi,
     else:
         c = makeCanvasComparisonStack(hs, hb, legname, color, style, 'WHbb', plot.replace('h_', 'stack_'), odir, lumi,
                                       True, ofile)
-        c1 = makeCanvasComparison(hall, legname, color, style, plot.replace('h_', 'signalcomparison_'), odir, lumi,
-                                  ofile, True)
-        #        canvases.append(c)
-        canvases.append(c1)
+    #    c1 = makeCanvasComparison(hall, legname, color, style, plot.replace('h_', 'signalcomparison_'), odir, lumi,
+    #                              ofile, True)
+        canvases.append(c)
+        #canvases.append(c1)
 
 
 ##############################################################################
@@ -36,6 +36,7 @@ def main(options, args, outputExists):
     # odir = "plots_2016_10_31/"
     # idir = options.idir
     idir = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/norm2/cvernier/"
+    idirWH = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/" 	
     idirMuon = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/"
     idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
     odir = options.odir
@@ -78,21 +79,21 @@ def main(options, args, outputExists):
     tfiles = {'Hbb': [idirData + '/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root',
                       idir + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root',
                       idir + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                      idirWH + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                      idirWH + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                       idir + '/ttHTobb_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                       idir + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
                       idir + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
+                      idirWH + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'ggHbb': [idirData + '/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root'],
               # idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root'],
               'VBFHbb': [idir + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
-              'ZHbb': [idir + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root',
-                       idir + '/ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir + '/ggZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'WHbb': [idir + '/WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir + 'WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'ZHbb': [idirWH + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idirWH + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext_1000pb_weighted.root',
+                       idirWH + '/ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idirWH + '/ggZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+              'WHbb': [idirWH + '/WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                       idirWH + 'WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
               'Diboson': [idir + '/WW_13TeV_pythia8_1000pb_weighted.root',
                           idir + '/ZZ_13TeV_pythia8_1000pb_weighted.root',
                           idir + 'WZ_13TeV_pythia8_1000pb_weighted.root'],
@@ -346,6 +347,8 @@ def main(options, args, outputExists):
         # sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi, False, fillCA15)
         # sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi, False, fillCA15)
         # sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi, False, fillCA15)
+	sigSamples['WHbb'] = sampleContainer('WHbb', tfiles['WHbb'], 1, DBTMIN, lumi, False, fillCA15)
+        sigSamples['ZHbb'] = sampleContainer('ZHbb', tfiles['ZHbb'], 1, DBTMIN, lumi, False, fillCA15)
         print "Backgrounds..."
         bkgSamples = {}
         # bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN, lumi, False, fillCA15)
@@ -368,8 +371,6 @@ def main(options, args, outputExists):
             bkgSamples['TTbar'] = sampleContainer('TTbar', tfiles['TTbar'], 1, DBTMIN, lumi, False, fillCA15)
         bkgSamples['SingleTop'] = sampleContainer('SingleTop', tfiles['SingleTop'], 1, DBTMIN, lumi, False, fillCA15)
         bkgSamples['Diboson'] = sampleContainer('Diboson', tfiles['Diboson'], 1, DBTMIN, lumi, False, fillCA15)
-        sigSamples['WHbb'] = sampleContainer('WHbb', tfiles['WHbb'], 1, DBTMIN, lumi, False, fillCA15)
-        sigSamples['ZHbb'] = sampleContainer('ZHbb', tfiles['ZHbb'], 1, DBTMIN, lumi, False, fillCA15)
         # bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi )
 
         if isData:
