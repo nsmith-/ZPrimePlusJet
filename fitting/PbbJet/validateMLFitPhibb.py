@@ -118,12 +118,12 @@ def main(options, args):
             # for r2p2 polynomial
             lParams.append("r0p1") # -> r1p0
             lParams.append("r0p2") # -> r2p0
-            lParams.append("r1p0") # -> r1p0
+            lParams.append("r1p0") # -> r0p1
             lParams.append("r1p1") # -> r1p1
-            lParams.append("r1p2")
-            lParams.append("r2p0")
-            lParams.append("r2p1")
-            lParams.append("r2p2")            
+            lParams.append("r1p2") # -> r2p1
+            lParams.append("r2p0") # -> r0p2
+            lParams.append("r2p1") # -> r1p2
+            lParams.append("r2p2") # -> r2p2           
         elif options.NR == 2 and options.NP == 1:
             # for r2p1 polynomial            
             lParams.append("r2p0")  # -> r1p0
@@ -131,49 +131,101 @@ def main(options, args):
             lParams.append("r1p0")  # -> r0p1
             lParams.append("r0p1")  # -> r1p1
             lParams.append("r2p1")  # -> r2p1
-            lParams.append("r0p2")  # zero
-            lParams.append("r1p2")  # zero
-            lParams.append("r2p2")  # zero
+            while len(lParams) < 9:
+                lParams.append("zero")  # zero
         elif options.NR == 3 and options.NP == 1:
             # for r3p1 polynomial            
             lParams.append("r2p0")  # -> r1p0
             lParams.append("r1p1")  # -> r2p0
+            lParams.append("r2p1")  # -> r3p0
             lParams.append("r1p0")  # -> r0p1
-            lParams.append("r0p1")  # -> r1p1
-            lParams.append("r2p1")  # -> r2p1
-            lParams.append("r0p2")
-            lParams.append("r1p2")
-            lParams.append("r2p2")
+            lParams.append("r3p0")  # -> r1p1
+            lParams.append("r1p1")  # -> r2p1
+            lParams.append("r3p1")  # -> r3p1
+            while len(lParams) < 16:
+                lParams.append("zero")  # zero
         elif options.NR == 3 and options.NP == 2:
             # for r3p2 polynomial            
-            lParams.append("r2p0")  # -> r1p0
-            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r3p0")  # -> r1p0
+            lParams.append("r2p1")  # -> r2p0
+            lParams.append("r1p2")  # -> r3p0
             lParams.append("r1p0")  # -> r0p1
             lParams.append("r0p1")  # -> r1p1
-            lParams.append("r2p1")  # -> r2p1
-            lParams.append("r0p2")
-            lParams.append("r1p2")
-            lParams.append("r2p2")
-        elif options.NR == 3 and options.NP == 3:
-            # for r3p2 polynomial            
-            lParams.append("r2p0")  # -> r1p0
-            lParams.append("r1p1")  # -> r2p0
-            lParams.append("r1p0")  # -> r0p1
-            lParams.append("r0p1")  # -> r1p1
-            lParams.append("r2p1")  # -> r2p1
-            lParams.append("r0p2")
-            lParams.append("r1p2")
-            lParams.append("r2p2")            
+            lParams.append("r3p1")  # -> r2p1
+            lParams.append("r2p2")  # -> r3p1   
+            lParams.append("r2p0")  # -> r0p2         
+            lParams.append("r1p1")  # -> r1p2
+            lParams.append("r0p2")  # -> r2p2
+            lParams.append("r3p2")  # -> r3p2
+            while len(lParams) < 16:
+                lParams.append("zero")  # zero
         elif options.NR == 4 and options.NP == 1:
             # for r4p1 polynomial            
             lParams.append("r2p0")  # -> r1p0
-            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r4p0")  # -> r2p0
+            lParams.append("r1p1")  # -> r3p0
+            lParams.append("r3p1")  # -> r4p0
             lParams.append("r1p0")  # -> r0p1
-            lParams.append("r0p1")  # -> r1p1
+            lParams.append("r3p0")  # -> r1p1
+            lParams.append("r0p1")  # -> r2p1
+            lParams.append("r2p1")  # -> r3p1
+            lParams.append("r4p1")  # -> r4p1
+            while len(lParams) < 25:
+                lParams.append("zero")  # zero
+        elif options.NR == 4 and options.NP == 2:
+            # for r4p2 polynomial            
+            lParams.append("r3p0")  # -> r1p0
+            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r4p1")  # -> r3p0
+            lParams.append("r2p2")  # -> r4p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r4p0")  # -> r1p1
             lParams.append("r2p1")  # -> r2p1
-            lParams.append("r0p2")
-            lParams.append("r1p2")
-            lParams.append("r2p2")
+            lParams.append("r0p2")  # -> r3p1
+            lParams.append("r3p2")  # -> r4p1
+            lParams.append("r2p0")  # -> r0p2
+            lParams.append("r0p1")  # -> r1p2
+            lParams.append("r3p1")  # -> r2p2
+            lParams.append("r1p2")  # -> r3p2
+            lParams.append("r4p2")  # -> r4p2
+            while len(lParams) < 25:
+                lParams.append("zero")  # zero
+        elif options.NR == 5 and options.NP == 1:
+            # for r5p1 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r4p0")  # -> r2p0
+            lParams.append("r0p1")  # -> r3p0
+            lParams.append("r2p1")  # -> r4p0
+            lParams.append("r4p1")  # -> r5p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r3p0")  # -> r1p1
+            lParams.append("r5p0")  # -> r2p1
+            lParams.append("r1p1")  # -> r3p1
+            lParams.append("r3p1")  # -> r4p1
+            lParams.append("r5p1")  # -> r5p1
+            while len(lParams) < 36:
+                lParams.append("zero")  # zero
+        elif options.NR == 5 and options.NP == 2:
+            # for r5p2 polynomial            
+            lParams.append("r3p0")  # -> r1p0
+            lParams.append("r0p1")  # -> r2p0
+            lParams.append("r3p1")  # -> r3p0
+            lParams.append("r0p2")  # -> r4p0
+            lParams.append("r3p2")  # -> r5p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r4p0")  # -> r1p1
+            lParams.append("r1p1")  # -> r2p1
+            lParams.append("r4p1")  # -> r3p1
+            lParams.append("r1p2")  # -> r4p1
+            lParams.append("r4p2")  # -> r5p1
+            lParams.append("r2p0")  # -> r0p2
+            lParams.append("r5p0")  # -> r1p2
+            lParams.append("r2p1")  # -> r2p2
+            lParams.append("r5p1")  # -> r3p2
+            lParams.append("r2p2")  # -> r4p2
+            lParams.append("r5p2")  # -> r5p2
+            while len(lParams) < 36:
+                lParams.append("zero")  # zero
 
         pars = []
         for p in lParams:
@@ -649,33 +701,71 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 
 def fun2(x, par):
     rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho)
+    poly0 = par[0] * (   1.0 + par[1] * rho + par[2] * rho * rho)
     poly1 = par[0] * (par[3] + par[4] * rho + par[5] * rho * rho) * x[1]
     poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
     return poly0 + poly1 + poly2
 
 def fun3(x, par):
     rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho + par[3] * rho * rho * rho)
-    poly1 = par[0] * (par[4] + par[5] * rho + par[6] * rho * rho + par[7] * rho * rho * rho) * x[1]
-    poly2 = par[0] * (par[8] + par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho)
+    poly1 = par[0] * ( par[4] +  par[5] * rho +  par[6] * rho * rho +  par[7] * rho * rho * rho) * x[1]
+    poly2 = par[0] * ( par[8] +  par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
     poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3
+
+def fun4(x, par):
+    rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[5] +  par[6] * rho +  par[7] * rho * rho +  par[8] * rho * rho * rho +  par[9] * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[10] + par[11] * rho + par[12] * rho * rho + par[13] * rho * rho * rho + par[14] * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[15] + par[16] * rho + par[17] * rho * rho + par[18] * rho * rho * rho + par[19] * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[20] + par[21] * rho + par[22] * rho * rho + par[23] * rho * rho * rho + par[24] * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4
+
+def fun5(x, par):
+    rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
 
 def fun2rho(x, par):
     rho = x[0]
-    poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
-    poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*x[1]
-    poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
-    return poly0+poly1+poly2
+    poly0 = par[0] * (   1.0 + par[1] * rho + par[2] * rho * rho)
+    poly1 = par[0] * (par[3] + par[4] * rho + par[5] * rho * rho) * x[1]
+    poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
+    return poly0 + poly1 + poly2
 
 def fun3rho(x, par):
     rho = x[0]
-    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho + par[3] * rho * rho * rho)
-    poly1 = par[0] * (par[4] + par[5] * rho + par[6] * rho * rho + par[7] * rho * rho * rho) * x[1]
-    poly2 = par[0] * (par[8] + par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho)
+    poly1 = par[0] * ( par[4] +  par[5] * rho +  par[6] * rho * rho +  par[7] * rho * rho * rho) * x[1]
+    poly2 = par[0] * ( par[8] +  par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
     poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3
+
+def fun4rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[5] +  par[6] * rho +  par[7] * rho * rho +  par[8] * rho * rho * rho +  par[9] * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[10] + par[11] * rho + par[12] * rho * rho + par[13] * rho * rho * rho + par[14] * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[15] + par[16] * rho + par[17] * rho * rho + par[18] * rho * rho * rho + par[19] * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[20] + par[21] * rho + par[22] * rho * rho + par[23] * rho * rho * rho + par[24] * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4
+
+def fun5rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
 
 def makeTF(pars, ratio):
     ratio.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
@@ -691,12 +781,24 @@ def makeTF(pars, ratio):
     f2params = array.array('d', pars)
     npar = len(f2params)
 
-    if npar < 10:
+    if npar == 9:
+        print 'using fun2'
         fun = fun2
         funrho = fun2rho
-    else:
+    elif npar == 16:
+        print 'using fun3'
         fun = fun3
         funrho = fun3rho
+    elif npar == 25:
+        print 'using fun4'
+        fun = fun4
+        funrho = fun4rho
+    else:
+        print 'using fun5'
+        fun = fun5
+        funrho = fun5rho
+
+    #sys.exit()
         
     #f2 = r.TF2("f2", fun2, ratio.GetXaxis().GetXmin() + 3.5, ratio.GetXaxis().GetXmax() - 3.5,
     #           ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
