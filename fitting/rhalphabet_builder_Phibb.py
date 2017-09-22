@@ -30,7 +30,7 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9'):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9', scale = 1):
 
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
@@ -39,6 +39,7 @@ class RhalphabetBuilder():
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
         self._cuts = cuts.split(',')
+        self._scale = scale
 
         self._output_path = "{}/base.root".format(out_dir)
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
@@ -674,6 +675,9 @@ class RhalphabetBuilder():
                                     process + '_' + cat + '_' + syst + 'Up')
                                 tmph_down = self._inputfile_loose.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
                                     process + '_' + cat + '_' + syst + 'Down')
+                                tmph.Scale(1./self._scale)
+                                tmph_up.Scale(1./self._scale)
+                                tmph_down.Scale(1./self._scale)
                                 tmph.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
                                 tmph_up.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
                                 tmph_down.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
@@ -682,7 +686,10 @@ class RhalphabetBuilder():
                                 tmph_up = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
                                     process + '_' + cat + '_' + syst + 'Up')
                                 tmph_down = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
-                                    process + '_' + cat + '_' + syst + 'Down')
+                                    process + '_' + cat + '_' + syst + 'Down')                                
+                                tmph.Scale(1./self._scale)
+                                tmph_up.Scale(1./self._scale)
+                                tmph_down.Scale(1./self._scale)
                                 tmph.Scale(GetSF(process, cut, cat, self._inputfile))
                                 tmph_up.Scale(GetSF(process, cut, cat, self._inputfile))
                                 tmph_down.Scale(GetSF(process, cut, cat, self._inputfile))
@@ -709,7 +716,9 @@ class RhalphabetBuilder():
                                 # hout.append(tmph_mass_down)
                         else:
                             tmph_up = self._inputfile.Get(process + '_' + cut + '_' + cat + '_' + syst + 'Up').Clone()
-                            tmph_down = self._inputfile.Get(process + '_' + cut + '_' + cat + '_' + syst + 'Down').Clone()
+                            tmph_down = self._inputfile.Get(process + '_' + cut + '_' + cat + '_' + syst + 'Down').Clone()                            
+                            tmph_up.Scale(1./self._scale)
+                            tmph_down.Scale(1./self._scale)
                             tmph_up.Scale(GetSF(process, cut, cat, self._inputfile))
                             tmph_down.Scale(GetSF(process, cut, cat, self._inputfile))
                             tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
@@ -766,11 +775,15 @@ class RhalphabetBuilder():
                 if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:                     
                     tmph_matched = self._inputfile_loose.Get(process + '_' + self._cuts[0] + '_' + cat + '_matched').Clone()
                     tmph_unmatched = self._inputfile_loose.Get(process + '_' + self._cuts[0] + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(1./self._scale)
+                    tmph_unmatched.Scale(1./self._scale)
                     tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
                     tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
                 else:
                     tmph_matched = self._inputfile.Get(process + '_' + self._cuts[0] + '_' + cat + '_matched').Clone()
                     tmph_unmatched = self._inputfile.Get(process + '_' + self._cuts[0] + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(1./self._scale)
+                    tmph_unmatched.Scale(1./self._scale)
                     tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile))
                     tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile))
                 tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo, self._mass_hi)

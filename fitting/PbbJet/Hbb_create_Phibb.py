@@ -293,7 +293,7 @@ def main(options, args):
         if muonCR:
             dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&4)&&passJson)', False)
         else:
-            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
+            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 10, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
 
     hall = {}
 

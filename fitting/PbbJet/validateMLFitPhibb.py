@@ -114,24 +114,66 @@ def main(options, args):
         rfr = r.RooFitResult(fml.Get(options.fit))
         lParams = []
         lParams.append("qcdeff")
-        # for r2p2 polynomial
-        # lParams.append("r0p1") # -> r1p0
-        # lParams.append("r0p2") # -> r2p0
-        # lParams.append("r1p0") # -> r1p0
-        # lParams.append("r1p1") # -> r1p1
-        # lParams.append("r1p2")
-        # lParams.append("r2p0")
-        # lParams.append("r2p1")
-        # lParams.append("r2p2")
-        # for r2p1 polynomial
-        lParams.append("r2p0")  # -> r1p0
-        lParams.append("r1p1")  # -> r2p0
-        lParams.append("r1p0")  # -> r0p1
-        lParams.append("r0p1")  # -> r1p1
-        lParams.append("r2p1")  # -> r2p1
-        lParams.append("r0p2")
-        lParams.append("r1p2")
-        lParams.append("r2p2")
+        if options.NR == 2 and options.NP == 2:
+            # for r2p2 polynomial
+            lParams.append("r0p1") # -> r1p0
+            lParams.append("r0p2") # -> r2p0
+            lParams.append("r1p0") # -> r1p0
+            lParams.append("r1p1") # -> r1p1
+            lParams.append("r1p2")
+            lParams.append("r2p0")
+            lParams.append("r2p1")
+            lParams.append("r2p2")            
+        elif options.NR == 2 and options.NP == 1:
+            # for r2p1 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r0p1")  # -> r1p1
+            lParams.append("r2p1")  # -> r2p1
+            lParams.append("r0p2")  # zero
+            lParams.append("r1p2")  # zero
+            lParams.append("r2p2")  # zero
+        elif options.NR == 3 and options.NP == 1:
+            # for r3p1 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r0p1")  # -> r1p1
+            lParams.append("r2p1")  # -> r2p1
+            lParams.append("r0p2")
+            lParams.append("r1p2")
+            lParams.append("r2p2")
+        elif options.NR == 3 and options.NP == 2:
+            # for r3p2 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r0p1")  # -> r1p1
+            lParams.append("r2p1")  # -> r2p1
+            lParams.append("r0p2")
+            lParams.append("r1p2")
+            lParams.append("r2p2")
+        elif options.NR == 3 and options.NP == 3:
+            # for r3p2 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r0p1")  # -> r1p1
+            lParams.append("r2p1")  # -> r2p1
+            lParams.append("r0p2")
+            lParams.append("r1p2")
+            lParams.append("r2p2")            
+        elif options.NR == 4 and options.NP == 1:
+            # for r4p1 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r1p1")  # -> r2p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r0p1")  # -> r1p1
+            lParams.append("r2p1")  # -> r2p1
+            lParams.append("r0p2")
+            lParams.append("r1p2")
+            lParams.append("r2p2")
 
         pars = []
         for p in lParams:
@@ -612,6 +654,13 @@ def fun2(x, par):
     poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
     return poly0 + poly1 + poly2
 
+def fun3(x, par):
+    rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
+    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho + par[3] * rho * rho * rho)
+    poly1 = par[0] * (par[4] + par[5] * rho + par[6] * rho * rho + par[7] * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[8] + par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3
 
 def fun2rho(x, par):
     rho = x[0]
@@ -619,6 +668,14 @@ def fun2rho(x, par):
     poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*x[1]
     poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
     return poly0+poly1+poly2
+
+def fun3rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho + par[3] * rho * rho * rho)
+    poly1 = par[0] * (par[4] + par[5] * rho + par[6] * rho * rho + par[7] * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[8] + par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3
 
 def makeTF(pars, ratio):
     ratio.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
@@ -634,9 +691,16 @@ def makeTF(pars, ratio):
     f2params = array.array('d', pars)
     npar = len(f2params)
 
+    if npar < 10:
+        fun = fun2
+        funrho = fun2rho
+    else:
+        fun = fun3
+        funrho = fun3rho
+        
     #f2 = r.TF2("f2", fun2, ratio.GetXaxis().GetXmin() + 3.5, ratio.GetXaxis().GetXmax() - 3.5,
     #           ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
-    f2 = r.TF2("f2", fun2, MIN_M['allcats'] + 3.5, MAX_M['allcats'] - 3.5,
+    f2 = r.TF2("f2", fun, MIN_M['allcats'] + 3.5, MAX_M['allcats'] - 3.5,
                ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
     f2.SetParameters(f2params)
 
@@ -767,7 +831,8 @@ def makeTF(pars, ratio):
             z = ratio.GetBinContent(i,j)
             #print N, x, y, z
             ratiorhograph.SetPoint(N,x,y,z)
-    f2rho = r.TF2("f2",fun2rho,options.lrho,options.hrho,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+            
+    f2rho = r.TF2("f2",funrho,options.lrho,options.hrho,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
     f2rho.SetParameters(f2params)
     f2rhograph = r.TGraph2D()
     N = -1
@@ -948,6 +1013,8 @@ if __name__ == '__main__':
                       metavar='ratio')
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
+    parser.add_option('--nr', dest='NR', default=2, type='int', help='order of rho (or mass) polynomial')
+    parser.add_option('--np', dest='NP', default=1, type='int', help='order of pt polynomial')
 
     (options, args) = parser.parse_args()
 
