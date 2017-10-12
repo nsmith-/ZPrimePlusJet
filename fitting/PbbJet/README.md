@@ -13,17 +13,17 @@ python Hbb_create_Phibb.py --lumi 35.9 -o ./ -c --skip-data 2>&1 | tee log_CA15_
 Running limits:
 ```bash
 # AK8
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p7 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p75 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p8 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p85 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p9 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500
+python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p7 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p75 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p8 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p85 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p9 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
 # CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p7 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p75 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p8 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p85 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p9 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p7 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p75 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p8 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p85 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p9 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
 ```
 
 Plotting limits:
