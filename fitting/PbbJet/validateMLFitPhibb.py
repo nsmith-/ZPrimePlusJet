@@ -226,6 +226,23 @@ def main(options, args):
             lParams.append("r5p2")  # -> r5p2
             while len(lParams) < 36:
                 lParams.append("zero")  # zero
+        elif options.NR == 6 and options.NP == 1:
+            # for r6p1 polynomial            
+            lParams.append("r2p0")  # -> r1p0
+            lParams.append("r4p0")  # -> r2p0
+            lParams.append("r6p0")  # -> r3p0
+            lParams.append("r1p1")  # -> r4p0
+            lParams.append("r3p1")  # -> r5p0
+            lParams.append("r5p1")  # -> r6p0
+            lParams.append("r1p0")  # -> r0p1
+            lParams.append("r3p0")  # -> r1p1
+            lParams.append("r5p0")  # -> r2p1
+            lParams.append("r0p1")  # -> r3p1
+            lParams.append("r2p1")  # -> r4p1
+            lParams.append("r4p1")  # -> r5p1
+            lParams.append("r6p1")  # -> r6p1
+            while len(lParams) < 49:
+                lParams.append("zero")  # zero
 
         pars = []
         for p in lParams:
@@ -733,6 +750,17 @@ def fun5(x, par):
     poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
 
+def fun6(x, par):
+    rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho +  par[6] * rho * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[7] +  par[8] * rho +  par[9] * rho * rho + par[10] * rho * rho * rho + par[11] * rho * rho * rho * rho + par[12] * rho * rho * rho * rho * rho + par[13] * rho * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[14] + par[15] * rho + par[16] * rho * rho + par[17] * rho * rho * rho + par[18] * rho * rho * rho * rho + par[19] * rho * rho * rho * rho * rho + par[20] * rho * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[21] + par[22] * rho + par[23] * rho * rho + par[24] * rho * rho * rho + par[25] * rho * rho * rho * rho + par[26] * rho * rho * rho * rho * rho + par[27] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[28] + par[29] * rho + par[30] * rho * rho + par[31] * rho * rho * rho + par[32] * rho * rho * rho * rho + par[33] * rho * rho * rho * rho * rho + par[34] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[35] + par[36] * rho + par[37] * rho * rho + par[38] * rho * rho * rho + par[39] * rho * rho * rho * rho + par[40] * rho * rho * rho * rho * rho + par[41] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    poly6 = par[0] * (par[42] + par[43] * rho + par[44] * rho * rho + par[45] * rho * rho * rho + par[46] * rho * rho * rho * rho + par[47] * rho * rho * rho * rho * rho + par[48] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5 + poly6
+
 def fun2rho(x, par):
     rho = x[0]
     poly0 = par[0] * (   1.0 + par[1] * rho + par[2] * rho * rho)
@@ -767,6 +795,17 @@ def fun5rho(x, par):
     poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
 
+def fun6rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho +  par[6] * rho * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[7] +  par[8] * rho +  par[9] * rho * rho + par[10] * rho * rho * rho + par[11] * rho * rho * rho * rho + par[12] * rho * rho * rho * rho * rho + par[13] * rho * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[14] + par[15] * rho + par[16] * rho * rho + par[17] * rho * rho * rho + par[18] * rho * rho * rho * rho + par[19] * rho * rho * rho * rho * rho + par[20] * rho * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[21] + par[22] * rho + par[23] * rho * rho + par[24] * rho * rho * rho + par[25] * rho * rho * rho * rho + par[26] * rho * rho * rho * rho * rho + par[27] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[28] + par[29] * rho + par[30] * rho * rho + par[31] * rho * rho * rho + par[32] * rho * rho * rho * rho + par[33] * rho * rho * rho * rho * rho + par[34] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[35] + par[36] * rho + par[37] * rho * rho + par[38] * rho * rho * rho + par[39] * rho * rho * rho * rho + par[40] * rho * rho * rho * rho * rho + par[41] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    poly6 = par[0] * (par[42] + par[43] * rho + par[44] * rho * rho + par[45] * rho * rho * rho + par[46] * rho * rho * rho * rho + par[47] * rho * rho * rho * rho * rho + par[48] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5 + poly6
+
 def makeTF(pars, ratio):
     ratio.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     ratio.GetYaxis().SetTitle('p_{T} (GeV)')
@@ -793,10 +832,14 @@ def makeTF(pars, ratio):
         print 'using fun4'
         fun = fun4
         funrho = fun4rho
-    else:
+    elif npar == 36:
         print 'using fun5'
         fun = fun5
         funrho = fun5rho
+    else:
+        print 'using fun6'
+        fun = fun6
+        funrho = fun6rho
 
     #sys.exit()
         

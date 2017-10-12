@@ -29,12 +29,14 @@ def main(options,args):
                                                                                                                            cut, cut,
                                                                                                                            options.lrho,
                                                                                                                            options.hrho),options.dryRun)
-    exec_me('python buildRhalphabetPhibb.py -i %s -o %s/%s/%s/ --remove-unmatched  --prefit --use-qcd --pseudo -c %s --lrho %f --hrho %f'%(options.ifile,
+    exec_me('python buildRhalphabetPhibb.py -i %s -o %s/%s/%s/ --remove-unmatched  --prefit --use-qcd --pseudo -c %s --lrho %f --hrho %f --nr %i --np %i'%(options.ifile,
                                                                                                                                             options.odir,
                                                                                                                                             jet_type,
                                                                                                                                             cut, cut,
                                                                                                                                             options.lrho,
-                                                                                                                                            options.hrho),options.dryRun)
+                                                                                                                                            options.hrho,
+                                                                                                                                            options.NR,
+                                                                                                                                            optinos.NP),options.dryRun)
 
                                                                                                                                             
     pwd = os.environ['PWD']
@@ -64,7 +66,9 @@ if __name__ == '__main__':
     parser.add_option("--lumi", dest="lumi", default=35.9, type="float", help="luminosity", metavar="lumi")
     parser.add_option('-i', '--ifile', dest='ifile', default='hist_1DZbb.root', help='file with histogram inputs',metavar='ifile')
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
-    parser.add_option('-o', '--odir', dest='odir', default='./', help='directory to write histograms', metavar='odir')
+    parser.add_option('-o', '--odir', dest='odir', default='./', help='directory to write histograms', metavar='odir')    
+    parser.add_option('--nr' ,action='store',type='int',dest='NR'   ,default=2, help='order of rho polynomial for model')
+    parser.add_option('--np' ,action='store',type='int',dest='NP'   ,default=1, help='order of pt polynomial for model')
     parser.add_option('--dry-run',dest="dryRun",default=False,action='store_true',
                   help="Just print out commands to run")
 

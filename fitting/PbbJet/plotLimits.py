@@ -80,7 +80,7 @@ def plotUpperLimits(options,args):
             file_names[str(mass)] = file_name
             limits[str(mass)] = getLimits(file_name)
             print len( limits[str(mass)])
-            if len( limits[str(mass)])>0:
+            if len( limits[str(mass)])>5:
                 masses.append(mass)
             
             

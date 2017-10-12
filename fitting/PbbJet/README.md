@@ -41,3 +41,15 @@ python plotLimits.py --xsec -c p8 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --
 python plotLimits.py --xsec -c p85 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
 python plotLimits.py --xsec -c p9 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
 ```
+
+Running F-tests AK8 and CA15 (2, 1) vs (3, 1) polynomial on 10% of data (lower order is model 1):
+```bash
+python runFtest.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -t 100 --scale 10 --nr1 2 --np1 1 --nr2 3 --np2 1 -n 150 --lumi 3.59 -r 0 -o ftest_2017_08_23 -b AK8 -c p9 --lrho -6.0 --hrho -2.1 --mass 125
+python runFtest.py -i hist_1DZbb_pt_scalesmear_CA15_check.root -t 100 --scale 10 --nr1 2 --np1 1 --nr2 3 --np2 1 -n 273 --lumi 3.59 -r 0 -o ftest_2017_08_23 -b CA15 -c p75 --lrho -4.7 --hrho -1.0 --mass 300 
+```
+
+Running F-test for AK8 and CA15 (2, 1) vs (3, 1) polynomial on MC (lower order is model 1):
+```bash
+python runFtest.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -t 100 --scale 1 --nr1 2 --np1 1 --nr2 3 --np2 1 -n 150 --lumi 35.9 -r 0 -o ftest_2017_08_23 -b AK8 -c p9 --lrho -6.0 --hrho -2.1 --mass 125 --pseudo
+python runFtest.py -i hist_1DZbb_pt_scalesmear_CA15_check.root -t 100 --scale 1 --nr1 2 --np1 1 --nr2 3 --np2 1 -n 273 --lumi 35.9 -r 0 -o ftest_2017_08_23 -b CA15 -c p75 --lrho -4.7 --hrho -1.0 --mass 300 --pseudo
+```
