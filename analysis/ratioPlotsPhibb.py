@@ -16,7 +16,7 @@ from sampleContainerPhibb import *
 MIN_M = {} #
 MAX_M = {} #299 # AK8
 
-def makePlots(hb,style,odir,lumi,ofile,canvases,rho_lo,rho_hi):
+def makePlots(hb,style,odir,lumi,ofile,canvases,rho_lo,rho_hi,nr,np):
     hist_pass_cat = []
     hist_fail_cat = []
     msd_binBoundaries=range(40,607,7)
@@ -36,10 +36,10 @@ def makePlots(hb,style,odir,lumi,ofile,canvases,rho_lo,rho_hi):
         hist_pass_cat.append(hist_pass)
         hist_fail_cat.append(hist_fail)
 
-    c1, f2params = makeCanvasRatio2D(hb['QCD']['fail'],hb['QCD']['pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6_N2',odir,lumi,ofile=ofile, rho_lo=rho_lo, rho_hi=rho_hi)
+    c1, f2params = makeCanvasRatio2D(hb['QCD']['fail'],hb['QCD']['pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6_N2',odir,lumi,ofile=ofile, rho_lo=rho_lo, rho_hi=rho_hi,nr=nr,np=np)
     canvases.append(c1)
     for i in range(1,len(ptBinBoundaries)):
-        c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_N2_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params, MIN_M['cat%i'%i], MAX_M['cat%i'%i])
+        c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_N2_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params, MIN_M['cat%i'%i], MAX_M['cat%i'%i],nr,np)
         canvases.append(c)
     
 ##############################################################################
@@ -72,8 +72,8 @@ def main(options,args,outputExists):
         
     hb = {}
     hb['QCD'] = {}
-    hb['QCD']['pass'] = ofile.Get('qcd_p75_pass')
-    hb['QCD']['fail'] = ofile.Get('qcd_p75_fail')
+    hb['QCD']['pass'] = ofile.Get('qcd_%s_pass'%options.cuts)
+    hb['QCD']['fail'] = ofile.Get('qcd_%s_fail'%options.cuts)
 
     for histogram in hb['QCD'].values():
         for i in range(1, histogram.GetNbinsX()+1):
@@ -116,7 +116,7 @@ def main(options,args,outputExists):
 		     'muon':1
             }
                 
-    makePlots(hb,style,odir,lumi,ofile,canvases,options.lrho,options.hrho)
+    makePlots(hb,style,odir,lumi,ofile,canvases,options.lrho,options.hrho,options.NR,options.NP)
         
         
 
@@ -132,6 +132,9 @@ if __name__ == '__main__':
     parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
+    parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
+    parser.add_option('--nr', dest='NR', default=2, type='int', help='order of rho (or mass) polynomial')
+    parser.add_option('--np', dest='NP', default=1, type='int', help='order of pt polynomial')
 
 
     (options, args) = parser.parse_args()
