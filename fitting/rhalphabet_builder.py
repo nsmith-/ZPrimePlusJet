@@ -10,7 +10,7 @@ import array
 import re
 
 #r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
+#r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 # r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 # r.gInterpreter.GenerateDictionary("std::map<std::string, RooDataHist*>", "map;string;RooDataHist.h")
 
@@ -33,15 +33,18 @@ V_SF_ERR = 0.043
 ##############################################################################
 
 class RhalphabetBuilder():
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201,
+    def __init__(self, pass_hists, fail_hists, pass_hists_signal, fail_hists_signal, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201,
                  blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi=-2.1, blind=False, mass_fit=False, freeze_poly=False,
-                 remove_unmatched=False, input_file_loose=None):
+                 remove_unmatched=False, input_file_loose=None, input_file_signal=None):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
+        self._pass_hists_signal = pass_hists_signal
+        self._fail_hists_signal = fail_hists_signal
         self._mass_fit = mass_fit
         self._freeze = freeze_poly
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
+        self._inputfile_signal = input_file_signal
 
         self._output_path = "{}/base.root".format(out_dir)
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
@@ -74,6 +77,13 @@ class RhalphabetBuilder():
         for ipt in range(0,self._nptbins+1):
             self._ptbins.append(pass_hists["data_obs"].GetYaxis().GetBinLowEdge(ipt+1))
 
+        self._nGENptbins = pass_hists_signal["hqq125"].GetZaxis().GetNbins()
+	print "number of GEN pt bins: ", self._nGENptbins
+	self._GENptbins = []
+	if self._inputfile_signal is not None:
+	    for ipt in range(0,self._nGENptbins+1):
+		self._GENptbins.append(pass_hists_signal["hqq125"].GetZaxis().GetBinLowEdge(ipt+1))
+	print "GEN pt bins: ", self._GENptbins
         # define RooRealVars
         self._lMSD = r.RooRealVar("x", "x", self._mass_lo, self._mass_hi)
         self._lMSD.setRange('Low', self._mass_lo, self._mass_blind_lo)
@@ -115,7 +125,12 @@ class RhalphabetBuilder():
         # for Hbb
         for mass in [125]:
             for sig in ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]:
-                self._signal_names.append(sig + str(mass))
+		if input_file_signal is not None:
+		    for GENpt_bin in range(1, self._nGENptbins + 1):
+		    	self._signal_names.append(sig + str(mass)+"_GenpT"+str(GENpt_bin))
+		else:
+	            self._signal_names.append(sig + str(mass))
+	print "self._signal_names: ", self._signal_names
 
     def run(self):
         self.LoopOverPtBins()
@@ -130,6 +145,8 @@ class RhalphabetBuilder():
         wbase = {}
         for cat in categories:
             wbase[cat] = fbase.Get('w_%s' % cat)
+	    print "w_s%: "
+	    print ('w_%s' %cat)
         x = wbase[categories[0]].var('x')
         rooCat = r.RooCategory('cat', 'cat')
 
@@ -147,62 +164,155 @@ class RhalphabetBuilder():
         #total_unc = 3.0 # -> cat6 has 300% SF w.r.t. cat1
         iptlo = self._ptbins[0]
         ipthi = self._ptbins[-2]
-        for cat in categories:
-            iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
-            ipt = self._ptbins[iptbin]
-            rooCat.defineType(cat)
-            datahist['%s_%s' % (proc, cat)] = wbase[cat].data('%s_%s' % (proc, cat))
-            myint = datahist['%s_%s' % (proc, cat)].sumEntries()
-            all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
-            all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
-            all_int += myint
-            print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+	if self._inputfile_signal is None:
+            for cat in categories:
+            	iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
+            	ipt = self._ptbins[iptbin]
+            	rooCat.defineType(cat)
+            	datahist['%s_%s' % (proc, cat)] = wbase[cat].data('%s_%s' % (proc, cat))
+            	myint = datahist['%s_%s' % (proc, cat)].sumEntries()
+            	all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+            	all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+            	all_int += myint
+            	print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+                print "all_int_rescale_Up: ", all_int_rescale_Up
+                print "all_int_rescale_Down: ", all_int_rescale_Down
 
-        for cat in categories:           
-            iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
-            ipt = self._ptbins[iptbin]
-            rooCat.defineType(cat)
-            histpdf['%s_%s' % (proc, cat)] = r.RooHistPdf('histpdf_%s_%s' % (proc, cat),
+	else:
+            for cat in categories:
+                rooCat.defineType(cat)
+		for GENpt_bin in range(1, self._nGENptbins + 1): 
+                    iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
+                    ipt = self._ptbins[iptbin]
+		    print "%s_GenpT%s_%s: "
+		    print ('%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat))
+                    datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)] = wbase[cat].data('%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat))
+                    myint = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
+                    all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+                    all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+                    all_int += myint
+                print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+		print "all_int_rescale_Up: ", all_int_rescale_Up
+		print "all_int_rescale_Down: ", all_int_rescale_Down
+
+	if self._inputfile_signal is None:
+            for cat in categories:           
+            	iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
+            	ipt = self._ptbins[iptbin]
+            	rooCat.defineType(cat)
+            	histpdf['%s_%s' % (proc, cat)] = r.RooHistPdf('histpdf_%s_%s' % (proc, cat),
                                                           'histpdf_%s_%s' % (proc, cat),
                                                           r.RooArgSet(wbase[cat].var('x')),
                                                           datahist['%s_%s' % (proc, cat)])
 
-            hist_up = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
-            hist_down = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
+            	hist_up = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
+		print "Integral: ", hist_up.Integral()
+            	hist_down = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
 
-            rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
-            rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
+            	rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
+            	rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
+                print "rescaled_int_up: ", rescaled_int_up
+                print "rescaled_int_down: ", rescaled_int_down
 
-            hist_up.Scale(rescaled_int_up/hist_up.Integral())
-            hist_down.Scale(rescaled_int_down/hist_down.Integral())
+            	hist_up.Scale(rescaled_int_up/hist_up.Integral())
+            	hist_down.Scale(rescaled_int_down/hist_down.Integral())
 
-            # validation
-            self._outfile_validation.cd()
-            hist_up.SetName('%s_%s_%s'%(proc,cat,'hqq125ptShapeUp'))
-            hist_up.Write()
-            hist_down.SetName('%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'))
-            hist_down.Write()
+            	# validation
+            	self._outfile_validation.cd()
+            	hist_up.SetName('%s_%s_%s'%(proc,cat,'hqq125ptShapeUp'))
+            	hist_up.Write()
+            	hist_down.SetName('%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'))
+            	hist_down.Write()
 
 
-            hptpdfUp_s[cat] = r.RooDataHist('%s_%s_%s'%(proc,cat,'hqq125ptShapeUp'), '%s_%s_%s'%(proc,cat,'hqq125ptShapeUp'), r.RooArgList(x), hist_up)
-            hptpdfDown_s[cat] = r.RooDataHist('%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'), '%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'), r.RooArgList(x), hist_down)
+            	hptpdfUp_s[cat] = r.RooDataHist('%s_%s_%s'%(proc,cat,'hqq125ptShapeUp'), '%s_%s_%s'%(proc,cat,'hqq125ptShapeUp'), r.RooArgList(x), hist_up)
+            	hptpdfDown_s[cat] = r.RooDataHist('%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'), '%s_%s_%s'%(proc,cat,'hqq125ptShapeDown'), r.RooArgList(x), hist_down)
 
-            getattr(wbase[cat], 'import')(hptpdfUp_s[cat], r.RooFit.RecycleConflictNodes())
-            getattr(wbase[cat], 'import')(hptpdfDown_s[cat], r.RooFit.RecycleConflictNodes())
+            	getattr(wbase[cat], 'import')(hptpdfUp_s[cat], r.RooFit.RecycleConflictNodes())
+            	getattr(wbase[cat], 'import')(hptpdfDown_s[cat], r.RooFit.RecycleConflictNodes())
+	else:
+	    for cat in categories:
+                rooCat.defineType(cat)
+                for GENpt_bin in range(1, self._nGENptbins + 1):
+		    iptbin = int(cat[-1])-1
+		    ipt = self._ptbins[iptbin]
+            	    histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)] = r.RooHistPdf('histpdf_%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat),
+                                                          'histpdf_%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat),
+                                                          r.RooArgSet(wbase[cat].var('x')),
+                                                          datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)])
+
+            	    hist_up = histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].createHistogram("x")
+	            print "Integral: ", hist_up.Integral()
+            	    hist_down = histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].createHistogram("x")
+
+            	    rescaled_int_up = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
+            	    rescaled_int_down = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
+		    print "rescaled_int_up: ", rescaled_int_up
+		    print "rescaled_int_down: ", rescaled_int_down
+
+		    if hist_up.Integral() != 0:
+            	        hist_up.Scale(rescaled_int_up/hist_up.Integral())
+			print "Scaling"
+		    if hist_down.Integral() != 0:
+            	        hist_down.Scale(rescaled_int_down/hist_down.Integral())
+
+            	    # validation
+            	    self._outfile_validation.cd()
+            	    hist_up.SetName('%s_GenpT%s_%s_%s'%(proc,str(GENpt_bin),cat,'hqq125ptShapeUp'))
+            	    hist_up.Write()
+            	    hist_down.SetName('%s_GenpT%s_%s_%s'%(proc,str(GENpt_bin),cat,'hqq125ptShapeDown'))
+            	    hist_down.Write()
+
+
+            	    hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)] = r.RooDataHist('%s_GenpT%s_%s_%s'%(proc,str(GENpt_bin),cat,'hqq125ptShapeUp'), '%s_GenpT%s_%s_%s'%(proc,str(GENpt_bin),cat,'hqq125ptShapeUp'), r.RooArgList(x), hist_up)
+            	    hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)] = r.RooDataHist('%s_GenpT%s_%s_%s'%(proc,str(GENpt_bin),cat,'hqq125ptShapeDown'), '%s_GenpT%s_%s_%s'%(proc,str(GENpt_bin),cat,'hqq125ptShapeDown'), r.RooArgList(x), hist_down)
+
+            	    getattr(wbase[cat], 'import')(hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)], r.RooFit.RecycleConflictNodes())
+            	    getattr(wbase[cat], 'import')(hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)], r.RooFit.RecycleConflictNodes())
+
 
         up = 0
         down = 0
         nom = 0
-        for cat in categories:
-            nom  += datahist['%s_%s' % (proc, cat)].sumEntries()
-            up += hptpdfUp_s[cat].sumEntries()
-            down += hptpdfDown_s[cat].sumEntries()
-            print cat, datahist['%s_%s' % (proc, cat)].sumEntries()
-            print cat, hptpdfUp_s[cat].sumEntries()
-            print cat, hptpdfDown_s[cat].sumEntries()
-        print "total", nom
-        print "total", up
-        print "total", down
+	if self._inputfile_signal is None:
+            for cat in categories:
+            	nom  += datahist['%s_%s' % (proc, cat)].sumEntries()
+            	up += hptpdfUp_s[cat].sumEntries()
+            	down += hptpdfDown_s[cat].sumEntries()
+		print "nom:"
+            	print cat, datahist['%s_%s' % (proc, cat)].sumEntries()
+		print "up:"
+            	print cat, hptpdfUp_s[cat].sumEntries()
+		print "down:"
+            	print cat, hptpdfDown_s[cat].sumEntries()
+            print "total", nom
+            print "total", up
+            print "total", down
+	else:
+	    for cat in categories:
+		up2 = 0
+		down2 = 0
+		nom2 = 0
+		for GENpt_bin in range(1, self._nGENptbins + 1):
+		    nom  += datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
+		    up += hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+		    down += hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+                    nom2  += datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
+                    up2 += hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+                    down2 += hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+		    print "nom:"
+		    print GENpt_bin, cat, datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
+                    print "up:"
+                    print GENpt_bin, cat, hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+                    print "down:"
+                    print GENpt_bin, cat, hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+		print "cat: ", cat
+		print "nom: ", nom2
+		print "up: ", up2
+		print "down: ", down2
+            print "total nom: ", nom
+            print "total up: ", up
+            print "total down: ", down
         
         icat = 0
         for cat in categories:
@@ -235,6 +345,7 @@ class RhalphabetBuilder():
         rooCat = r.RooCategory('cat', 'cat')
 
         mu = w.var('mu')
+
         epdf_b = {}
         epdf_s = {}
         datahist = {}
@@ -274,7 +385,7 @@ class RhalphabetBuilder():
                                                                   0, 10. * datahist['%s_%s' % (proc, cat)].sumEntries())
                     signorm['%s_%s' % (proc, cat)].setConstant(True)
                     getattr(w, 'import')(signorm['%s_%s' % (proc, cat)], r.RooFit.RecycleConflictNodes())
-                    histpdfnorm['%s_%s' % (proc, cat)] = r.RooFormulaVar('histpdfnorm_%s_%s' % (proc, cat),
+		    histpdfnorm['%s_%s' % (proc, cat)] = r.RooFormulaVar('histpdfnorm_%s_%s' % (proc, cat),
                                                                          '@0*@1', r.RooArgList(mu, signorm[
                             '%s_%s' % (proc, cat)]))
                     pdfs_s.add(histpdf['%s_%s' % (proc, cat)])
@@ -420,7 +531,24 @@ class RhalphabetBuilder():
             for name, hist in self._fail_hists.iteritems():
                 fail_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
+	    if self._inputfile_signal is None:
+		for name, hist in self._pass_hists_signal.iteritems():
+		    pass_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+		for name, hist in self._fail_hists_signal.iteritems():
+		    fail_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+	    else:
+		for GENpt_bin in range(1, self._nGENptbins + 1):
+		    for name, hist in self._pass_hists_signal.iteritems():
+		    	pass_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D("cat", str(pt_bin), str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+                    for name, hist in self._fail_hists_signal.iteritems():
+                    	fail_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D("cat", str(pt_bin), str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
 
+	    print "passing 1D hists: ", pass_hists_ptbin
+            print "failling 1D hists: ", fail_hists_ptbin
             # make RooDataset, RooPdfs, and histograms
             # GetWorkspaceInputs returns: RooDataHist (data), then RooHistPdf of each electroweak
             (data_pass_rdh, data_fail_rdh, pass_rhps, fail_rhps) = self.GetWorkspaceInputs(pass_hists_ptbin,
@@ -783,6 +911,8 @@ class RhalphabetBuilder():
             roofit_shapes = self.GetRoofitHistObjects(iHP[signal_name], iHF[signal_name], signal_name, iBin)
             lPSigs[signal_name] = roofit_shapes["pass_rdh"]
             lFSigs[signal_name] = roofit_shapes["fail_rdh"]
+	print "lPSigs: ", lPSigs
+	print "lFSigs: ", lFSigs
         return (lPSigs, lFSigs)
 
     # def MakeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
@@ -794,12 +924,16 @@ class RhalphabetBuilder():
         iPt = category[-1:]
 
         for import_object in import_objects:
+	    print "printing import_object:"
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
+	    print "import_object.GetName(): ", import_object.GetName()
+	    print "process: ", process
+	    print "cat: ", cat
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat', 'Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or ('hqq' in process and self._inputfile_signal is None)):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -900,6 +1034,89 @@ class RhalphabetBuilder():
                     self._outfile_validation.cd()
                     h.Write()
 
+	    if do_syst and 'hqq' in process and self._inputfile_signal is not None:
+	        cat = import_object.GetName().split('_')[2]
+		Genptbin = import_object.GetName().split('_')[1]
+		print "Higgs cat: ", cat
+		print "Genptbin: ", Genptbin
+		print "Genptbin[5]: ", Genptbin[5]
+                hout = []
+                histDict = {}
+                for syst in systematics:
+                    if syst == 'mcstat':
+                        matchingString = ''
+                        tmph = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
+                        tmph_up = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(
+                        process + '_' + cat + '_' + syst + 'Up')
+                        tmph_down = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(
+                        process + '_' + cat + '_' + syst + 'Down')
+                        tmph.Scale(GetSF(process, cat, self._inputfile_signal))
+                        tmph_up.Scale(GetSF(process, cat, self._inputfile_signal))
+                        tmph_down.Scale(GetSF(process, cat, self._inputfile_signal))
+                        tmph_mass = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
+                        tmph_mass_up = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_up, self._mass_nbins, self._mass_lo,
+                                                  self._mass_hi)
+                        tmph_mass_down = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_down, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+                        for i in range(1, tmph_mass_up.GetNbinsX() + 1):
+                            mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
+                            mcstatdown = max(0., tmph_mass_down.GetBinContent(i) - tmph_mass_down.GetBinError(i))
+                            tmph_mass_up.SetBinContent(i, mcstatup)
+                            tmph_mass_down.SetBinContent(i, mcstatdown)
+                        tmph_mass.SetName(import_object.GetName())
+                        tmph_mass_up.SetName(
+                            import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Up')
+                        tmph_mass_down.SetName(
+                            import_object.GetName() + '_' + import_object.GetName().replace('_', '') + syst + 'Down')
+                        histDict[import_object.GetName()] = tmph_mass
+                        histDict[import_object.GetName() + '_' + import_object.GetName().replace('_',
+                                                                                                 '') + syst + 'Up'] = tmph_mass_up
+                        histDict[
+                            import_object.GetName() + '_' + import_object.GetName().replace('_',
+
+                '') + syst + 'Down'] = tmph_mass_down
+                    else:
+                        print process, cat, syst
+                        tmph_up = self._inputfile_signal.Get(process + '_' + cat + '_' + syst + 'Up').Clone()
+                        tmph_down = self._inputfile_signal.Get(process + '_' + cat + '_' + syst + 'Down').Clone()
+                        tmph_up.Scale(GetSF(process, cat, self._inputfile_signal))
+                        tmph_down.Scale(GetSF(process, cat, self._inputfile_signal))
+                        tmph_mass_up = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_up, self._mass_nbins, self._mass_lo,
+                                                  self._mass_hi)
+                        tmph_mass_down = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_down, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+                        tmph_mass_up.SetName(import_object.GetName() + '_' + syst + 'Up')
+                        tmph_mass_down.SetName(import_object.GetName() + '_' + syst + 'Down')
+                        hout.append(tmph_mass_up)
+                        hout.append(tmph_mass_down)
+                uncorrelate(histDict, 'mcstat')
+                for key, myhist in histDict.iteritems():
+                    if 'mcstat' in key:
+                        print key
+                        hout.append(myhist)
+                # blind if necessary and output to workspace
+                for h in hout:
+                    for i in range(1, h.GetNbinsX() + 1):
+                        massVal = h.GetXaxis().GetBinCenter(i)
+                        rhoVal = r.TMath.Log(massVal * massVal / pt_val / pt_val)
+                        if self._blind and massVal > self._mass_blind_lo and massVal < self._mass_blind_hi:
+                            print "blinding signal region for %s, mass bin [%i,%i] " % (
+                                h.GetName(), h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
+                            h.SetBinContent(i, 0.)
+                            h.SetBinError(i, 0.)
+                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
+                                h.GetXaxis().GetBinUpEdge(i))
+                            h.SetBinContent(i, 0.)
+                            h.SetBinError(i, 0.)
+                    tmprdh = r.RooDataHist(h.GetName(), h.GetName(), r.RooArgList(self._lMSD), h)
+                    getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
+                    # validation
+                    self._outfile_validation.cd()
+                    h.Write()
+
+
             if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process):
                 if process == 'wqq':
                     mass = 80.
@@ -919,14 +1136,28 @@ class RhalphabetBuilder():
                         GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
                     tmph_unmatched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose,
                                                False))  # doesn't matter if removing unmatched so just remove that option
+                    tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo,
+                                               self._mass_hi)
+                    tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
+                                                 self._mass_hi)
+		elif self._inputfile_signal is not None and 'hqq' in process:
+		    Genptbin = import_object.GetName().split('_')[1]
+                    tmph_matched = self._inputfile_signal.Get(process + '_' + cat + '_matched').Clone()
+                    tmph_unmatched = self._inputfile_signal.Get(process + '_' + cat + '_unmatched').Clone()
+                    tmph_matched.Scale(GetSF(process, cat, self._inputfile_signal))
+                    tmph_unmatched.Scale(GetSF(process, cat, self._inputfile_signal))
+                    tmph_mass_matched = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_matched, self._mass_nbins, self._mass_lo,
+                                               self._mass_hi)
+                    tmph_mass_unmatched = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_unmatched, self._mass_nbins, self._mass_lo,
+                                                 self._mass_hi)
                 else:
                     tmph_matched = self._inputfile.Get(process + '_' + cat + '_matched').Clone()
                     tmph_unmatched = self._inputfile.Get(process + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(GetSF(process, cat, self._inputfile))
                     tmph_unmatched.Scale(GetSF(process, cat, self._inputfile))
-                tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo,
+	            tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo,
                                                self._mass_hi)
-                tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
+                    tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                                  self._mass_hi)
 
                 # smear/shift the matched
@@ -1039,11 +1270,14 @@ class RhalphabetBuilder():
 ##############################################################################
 
 ##-------------------------------------------------------------------------------------
-def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None):
+def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, fSignal=None):
     pass_hists = {}
     fail_hists = {}
     f.ls()
 
+    print "SIGNAL FILE:"
+    if fSignal is not None:
+	fSignal.ls()
     # backgrounds
     pass_hists_bkg = {}
     fail_hists_bkg = {}
@@ -1142,10 +1376,71 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
         fail_hists["data_obs"] = f.Get('data_obs_fail')
 
     pass_hists.update(pass_hists_bkg)
-    pass_hists.update(pass_hists_sig)
+#    pass_hists.update(pass_hists_sig)
     fail_hists.update(fail_hists_bkg)
-    fail_hists.update(fail_hists_sig)
+#    fail_hists.update(fail_hists_sig)
 
+    if fSignal is not None:
+	pass_hists_sig = {}
+	fail_hists_sig = {}
+	for mass in masses:
+	    for sig in sigs:
+		passhist = fSignal.Get(sig + str(mass) + "_pass").Clone()
+		failhist = fSignal.Get(sig + str(mass) + "_fail").Clone()
+		for hist in [passhist, failhist]:
+                    for i in range(0, hist.GetNbinsX() + 2):
+                        for j in range(0, hist.GetNbinsY() + 2):
+			    for k in range(0, hist.GetNbinsZ() + 2):
+                            	if hist.GetBinContent(i, j, k) <= 0:
+                                    hist.SetBinContent(i, j, k, 0)
+            	failhist.Scale(1. / scale)
+	        passhist.Scale(1. / scale)
+        	failhist.Scale(GetSF(sig + str(mass), 'fail', f))
+            	passhist.Scale(GetSF(sig + str(mass), 'pass', f))
+            	pass_hists_sig[sig + str(mass)] = passhist
+            	fail_hists_sig[sig + str(mass)] = failhist
+            	signal_names.append(sig + str(mass))
+	
+
+    for histogram in (pass_hists_sig.values() + fail_hists_sig.values()):
+	for i in range(1, histogram.GetNbinsX() + 1):
+            for j in range(1, histogram.GetNbinsY() + 1):
+		if fSignal is not None:
+		    for k in range(1, histogram.GetNbinsZ() + 1):
+			massVal = histogram.GetXaxis().GetBinCenter(i)
+			ptVal = histogram.GetYaxis().GetBinLowEdge(j) + histogram.GetYaxis().GetBinWidth(j) * 0.3
+			rhoVal = r.TMath.Log(massVal * massVal / ptVal / ptVal)
+			if blind and histogram.GetXaxis().GetBinCenter(i) > blind_range[
+			    0] and histogram.GetXaxis().GetBinCenter(i) < blind_range[1]:
+                            print "blinding signal region for %s, mass bin [%i,%i] " % (
+                            histogram.GetName(), histogram.GetXaxis().GetBinLowEdge(i), histogram.GetXaxis().GetBinUpEdge(i))
+                            histogram.SetBinContent(i, j, k, 0.)
+			if rhoVal < rho_range[0] or rhoVal > rho_range[1]:
+			    print "removing rho = %.2f for %s, RECO pt bin [%i, %i], mass bin [%i,%i], gen pt bin [%i,%i]" % (
+                            	rhoVal, histogram.GetName(), histogram.GetYaxis().GetBinLowEdge(j),
+                            	histogram.GetYaxis().GetBinUpEdge(j),
+                            	histogram.GetXaxis().GetBinLowEdge(i), histogram.GetXaxis().GetBinUpEdge(i), histogram.GetZaxis().GetBinLowEdge(k),histogram.GetZaxis().GetBinUpEdge(k))
+                            histogram.SetBinContent(i, j, k, 0.)
+
+		else:
+                    massVal = histogram.GetXaxis().GetBinCenter(i)
+                    ptVal = histogram.GetYaxis().GetBinLowEdge(j) + histogram.GetYaxis().GetBinWidth(j) * 0.3
+                    rhoVal = r.TMath.Log(massVal * massVal / ptVal / ptVal)
+                    if blind and histogram.GetXaxis().GetBinCenter(i) > blind_range[
+                        0] and histogram.GetXaxis().GetBinCenter(i) < blind_range[1]:
+                    	print "blinding signal region for %s, mass bin [%i,%i] " % (
+                    	histogram.GetName(), histogram.GetXaxis().GetBinLowEdge(i), histogram.GetXaxis().GetBinUpEdge(i))
+                    	histogram.SetBinContent(i, j, 0.)
+                    if rhoVal < rho_range[0] or rhoVal > rho_range[1]:
+                    	print "removing rho = %.2f for %s, pt bin [%i, %i], mass bin [%i,%i]" % (
+                            rhoVal, histogram.GetName(), histogram.GetYaxis().GetBinLowEdge(j),
+                            histogram.GetYaxis().GetBinUpEdge(j),
+                            histogram.GetXaxis().GetBinLowEdge(i), histogram.GetXaxis().GetBinUpEdge(i))
+                    	histogram.SetBinContent(i, j, 0.)
+        histogram.SetDirectory(0)
+
+
+	
     for histogram in (pass_hists.values() + fail_hists.values()):
         for i in range(1, histogram.GetNbinsX() + 1):
             for j in range(1, histogram.GetNbinsY() + 1):
@@ -1168,7 +1463,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
         # print "lengths = ", len(pass_hists), len(fail_hists)
     # print pass_hists;
     # print fail_hists;
-    return (pass_hists, fail_hists)
+    return (pass_hists, fail_hists, pass_hists_sig, fail_hists_sig)
 
 
 def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):

@@ -10,10 +10,10 @@ import time
 import array
 
 #r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
-r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
+#r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
 
 # including other directories
-# sys.path.insert(0, '../.')
+sys.path.insert(0, '../.')
 from tools import *
 from hist import *
 from rhalphabet_builder import RhalphabetBuilder, LoadHistograms, GetSF
@@ -38,14 +38,17 @@ def main(options, args):
     fLoose = None
     if options.ifile_loose is not None:
         fLoose = r.TFile.Open(options.ifile_loose)
+    fSignal = None
+    if options.ifile_signal is not None:
+        fSignal = r.TFile.Open(options.ifile_signal)
     #(hpass, hfail) = loadHistograms(f, options.pseudo, options.blind, options.useQCD, options.scale, options.r)
-    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[RHO_LO,RHO_HI], fLoose=fLoose)
+    (pass_hists,fail_hists,pass_hists_signal,fail_hists_signal) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[RHO_LO,RHO_HI], fLoose=fLoose, fSignal=fSignal)
     #f.Close()
 
     # Build the workspacees
     #dazsleRhalphabetBuilder(hpass, hfail, f, odir, options.NR, options.NP)
 
-    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose)
+    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, pass_hists_signal, fail_hists_signal, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=RHO_LO, rho_hi=RHO_HI, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose, input_file_signal=fSignal)
     rhalphabuilder.run()
     if options.addHptShape:
         rhalphabuilder.addHptShape()	
@@ -63,6 +66,8 @@ if __name__ == '__main__':
                       metavar='ifile')
     parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)',
                       metavar='ifile_loose')
+    parser.add_option('--ifile-signal', dest='ifile_signal', default=None, help='second file with 3D histogram inputs for the signal samples',
+                      metavar='ifile_signal')
     parser.add_option('-o', '--odir', dest='odir', default='./', help='directory to write plots', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default=False, help='use MC', metavar='pseudo')
     parser.add_option('--blind', action='store_true', dest='blind', default=False, help='blind signal region',
