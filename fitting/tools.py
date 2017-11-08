@@ -78,12 +78,33 @@ def smear(iVar,iDataHist,iScale=0.1):
     return [lUp,lDown]    
 
 def proj(iLabel,iBin,iH,iNBins,iXMin,iXMax):
-    lH = r.TH1F(iH.GetName()+"_"+iLabel+iBin,iH.GetName()+"_"+iLabel+iBin,iNBins,iXMin,iXMax)
+    lH = r.TH1D(iH.GetName()+"_"+iLabel+iBin,iH.GetName()+"_"+iLabel+iBin,iNBins,iXMin,iXMax)
     for iM in range(1,iH.GetNbinsX()+1):
         if iH.GetXaxis().GetBinCenter(iM) < lH.GetXaxis().GetXmin() or iH.GetXaxis().GetBinCenter(iM) > lH.GetXaxis().GetXmax():
             continue
         lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinContent(iM,int(iBin)))
         lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinError(iM,int(iBin)))
+    lH.SetDirectory(0)
+    return lH
+
+def projMuCR(iLabel,iBin,iH,iNBins,iXMin,iXMax):
+    lH = r.TH1D(iLabel,iLabel,iNBins,iXMin,iXMax)
+    for iM in range(1,iH.GetNbinsX()+1):
+        if iH.GetXaxis().GetBinCenter(iM) < lH.GetXaxis().GetXmin() or iH.GetXaxis().GetBinCenter(iM) > lH.GetXaxis().GetXmax():
+            continue
+        lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinContent(iM,int(iBin)))
+        lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinError(iM,int(iBin)))
+    lH.SetDirectory(0)
+    return lH
+
+
+def proj3D(iLabel,iBin,iGENptBin,iH,iNBins,iXMin,iXMax):
+    lH = r.TH1D(iH.GetName()+"_"+iLabel+iBin+"_"+iGENptBin,iH.GetName()+"_"+iLabel+iBin+"_"+iGENptBin,iNBins,iXMin,iXMax)
+    for iM in range(1,iH.GetNbinsX()+1):
+        if iH.GetXaxis().GetBinCenter(iM) < lH.GetXaxis().GetXmin() or iH.GetXaxis().GetBinCenter(iM) > lH.GetXaxis().GetXmax():
+            continue
+        lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinContent(iM,int(iBin),int(iGENptBin)))
+        lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),iH.GetBinError(iM,int(iBin),int(iGENptBin)))
     lH.SetDirectory(0)
     return lH
 

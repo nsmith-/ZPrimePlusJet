@@ -175,8 +175,6 @@ class RhalphabetBuilder():
             	all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
             	all_int += myint
             	print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
-                print "all_int_rescale_Up: ", all_int_rescale_Up
-                print "all_int_rescale_Down: ", all_int_rescale_Down
 
 	else:
             for cat in categories:
@@ -184,16 +182,13 @@ class RhalphabetBuilder():
 		for GENpt_bin in range(1, self._nGENptbins + 1): 
                     iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
                     ipt = self._ptbins[iptbin]
-		    print "%s_GenpT%s_%s: "
-		    print ('%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat))
                     datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)] = wbase[cat].data('%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat))
                     myint = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
                     all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
                     all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
                     all_int += myint
+		    print "all_int: ", all_int
                 print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
-		print "all_int_rescale_Up: ", all_int_rescale_Up
-		print "all_int_rescale_Down: ", all_int_rescale_Down
 
 	if self._inputfile_signal is None:
             for cat in categories:           
@@ -206,13 +201,10 @@ class RhalphabetBuilder():
                                                           datahist['%s_%s' % (proc, cat)])
 
             	hist_up = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
-		print "Integral: ", hist_up.Integral()
             	hist_down = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
 
             	rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
             	rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
-                print "rescaled_int_up: ", rescaled_int_up
-                print "rescaled_int_down: ", rescaled_int_down
 
             	hist_up.Scale(rescaled_int_up/hist_up.Integral())
             	hist_down.Scale(rescaled_int_down/hist_down.Integral())
@@ -242,13 +234,10 @@ class RhalphabetBuilder():
                                                           datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)])
 
             	    hist_up = histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].createHistogram("x")
-	            print "Integral: ", hist_up.Integral()
             	    hist_down = histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].createHistogram("x")
 
             	    rescaled_int_up = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
             	    rescaled_int_down = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
-		    print "rescaled_int_up: ", rescaled_int_up
-		    print "rescaled_int_down: ", rescaled_int_down
 
 		    if hist_up.Integral() != 0:
             	        hist_up.Scale(rescaled_int_up/hist_up.Integral())
@@ -279,15 +268,6 @@ class RhalphabetBuilder():
             	nom  += datahist['%s_%s' % (proc, cat)].sumEntries()
             	up += hptpdfUp_s[cat].sumEntries()
             	down += hptpdfDown_s[cat].sumEntries()
-		print "nom:"
-            	print cat, datahist['%s_%s' % (proc, cat)].sumEntries()
-		print "up:"
-            	print cat, hptpdfUp_s[cat].sumEntries()
-		print "down:"
-            	print cat, hptpdfDown_s[cat].sumEntries()
-            print "total", nom
-            print "total", up
-            print "total", down
 	else:
 	    for cat in categories:
 		up2 = 0
@@ -300,19 +280,6 @@ class RhalphabetBuilder():
                     nom2  += datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
                     up2 += hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
                     down2 += hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
-		    print "nom:"
-		    print GENpt_bin, cat, datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
-                    print "up:"
-                    print GENpt_bin, cat, hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
-                    print "down:"
-                    print GENpt_bin, cat, hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
-		print "cat: ", cat
-		print "nom: ", nom2
-		print "up: ", up2
-		print "down: ", down2
-            print "total nom: ", nom
-            print "total up: ", up
-            print "total down: ", down
         
         icat = 0
         for cat in categories:
@@ -547,8 +514,6 @@ class RhalphabetBuilder():
                     	fail_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D("cat", str(pt_bin), str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
 
-	    print "passing 1D hists: ", pass_hists_ptbin
-            print "failling 1D hists: ", fail_hists_ptbin
             # make RooDataset, RooPdfs, and histograms
             # GetWorkspaceInputs returns: RooDataHist (data), then RooHistPdf of each electroweak
             (data_pass_rdh, data_fail_rdh, pass_rhps, fail_rhps) = self.GetWorkspaceInputs(pass_hists_ptbin,
@@ -911,8 +876,6 @@ class RhalphabetBuilder():
             roofit_shapes = self.GetRoofitHistObjects(iHP[signal_name], iHF[signal_name], signal_name, iBin)
             lPSigs[signal_name] = roofit_shapes["pass_rdh"]
             lFSigs[signal_name] = roofit_shapes["fail_rdh"]
-	print "lPSigs: ", lPSigs
-	print "lFSigs: ", lFSigs
         return (lPSigs, lFSigs)
 
     # def MakeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
@@ -928,9 +891,6 @@ class RhalphabetBuilder():
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
-	    print "import_object.GetName(): ", import_object.GetName()
-	    print "process: ", process
-	    print "cat: ", cat
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat', 'Pu']
             if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or ('hqq' in process and self._inputfile_signal is None)):
@@ -960,6 +920,7 @@ class RhalphabetBuilder():
                                 GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched,
                                       iPt))
                         else:
+			    print process, cat, syst
                             tmph = self._inputfile.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
                             tmph_up = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
                                 process + '_' + cat + '_' + syst + 'Up')
@@ -1045,6 +1006,7 @@ class RhalphabetBuilder():
                 for syst in systematics:
                     if syst == 'mcstat':
                         matchingString = ''
+			print process, cat, syst
                         tmph = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
                         tmph_up = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(
                         process + '_' + cat + '_' + syst + 'Up')
@@ -1073,8 +1035,7 @@ class RhalphabetBuilder():
                                                                                                  '') + syst + 'Up'] = tmph_mass_up
                         histDict[
                             import_object.GetName() + '_' + import_object.GetName().replace('_',
-
-                '') + syst + 'Down'] = tmph_mass_down
+										             '') + syst + 'Down'] = tmph_mass_down
                     else:
                         print process, cat, syst
                         tmph_up = self._inputfile_signal.Get(process + '_' + cat + '_' + syst + 'Up').Clone()
@@ -1095,6 +1056,7 @@ class RhalphabetBuilder():
                         print key
                         hout.append(myhist)
                 # blind if necessary and output to workspace
+#		entries = 0.
                 for h in hout:
                     for i in range(1, h.GetNbinsX() + 1):
                         massVal = h.GetXaxis().GetBinCenter(i)
@@ -1115,7 +1077,6 @@ class RhalphabetBuilder():
                     # validation
                     self._outfile_validation.cd()
                     h.Write()
-
 
             if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process):
                 if process == 'wqq':
@@ -1159,7 +1120,6 @@ class RhalphabetBuilder():
                                                self._mass_hi)
                     tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                                  self._mass_hi)
-
                 # smear/shift the matched
                 hist_container = hist([mass], [tmph_mass_matched])
                 # mass_shift = 0.99
@@ -1240,6 +1200,9 @@ class RhalphabetBuilder():
                                 h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i, 0.)
                     tmprdh = r.RooDataHist(h.GetName(), h.GetName(), r.RooArgList(self._lMSD), h)
+                    print "checking workspace:"
+                    print h.GetName()
+                    print "integral: ", tmprdh.sumEntries()
                     getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                     if h.GetName().find("scale") > -1:
                         pName = h.GetName().replace("scale", "scalept")
@@ -1460,9 +1423,6 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                     histogram.SetBinContent(i, j, 0.)
         histogram.SetDirectory(0)
 
-        # print "lengths = ", len(pass_hists), len(fail_hists)
-    # print pass_hists;
-    # print fail_hists;
     return (pass_hists, fail_hists, pass_hists_sig, fail_hists_sig)
 
 

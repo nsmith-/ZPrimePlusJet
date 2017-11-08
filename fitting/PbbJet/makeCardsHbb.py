@@ -28,19 +28,11 @@ def main(options,args):
         tfile_loose = r.TFile.Open(options.ifile_loose)
     if options.ifile_signal is not None:
 	tfile_signal = r.TFile.Open(options.ifile_signal)
+        histo_temp = tfile_signal.Get('tthqq125_pass')
+        numberOfGenPtBins = histo_temp.GetZaxis().GetNbins()
         
     boxes = ['pass', 'fail']
-#    if tfile_signal is None:
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-#    else:
-#        sigs = ['tthqq125_GenpT1','whqq125_GenpT1','hqq125_GenpT1','zhqq125_GenpT1','vbfhqq125_GenpT1',
-#		'tthqq125_GenpT2','whqq125_GenpT2','hqq125_GenpT2','zhqq125_GenpT2','vbfhqq125_GenpT2',
-#		'tthqq125_GenpT3','whqq125_GenpT3','hqq125_GenpT3','zhqq125_GenpT3','vbfhqq125_GenpT3',
-#		'tthqq125_GenpT4','whqq125_GenpT4','hqq125_GenpT4','zhqq125_GenpT4','vbfhqq125_GenpT4',
-#		'tthqq125_GenpT5','whqq125_GenpT5','hqq125_GenpT5','zhqq125_GenpT5','vbfhqq125_GenpT5',
-#		'tthqq125_GenpT6','whqq125_GenpT6','hqq125_GenpT6','zhqq125_GenpT6','vbfhqq125_GenpT6',
-#		'tthqq125_GenpT7','whqq125_GenpT7','hqq125_GenpT7','zhqq125_GenpT7','vbfhqq125_GenpT7',
-#		'tthqq125_GenpT8','whqq125_GenpT8','hqq125_GenpT8','zhqq125_GenpT8','vbfhqq125_GenpT8']
     bkgs = ['zqq','wqq','qcd','tqq']
     systs = ['JER','JES','Pu']
 
@@ -50,7 +42,6 @@ def main(options,args):
     nSig = len(sigs)
     numberOfMassBins = 23    
     numberOfPtBins = 6
-    numberOfGenPtBins = 7
 
     histoDict = {}
     histoDictLoose = {}
@@ -85,30 +76,20 @@ def main(options,args):
 		    histoDictSignal['%s_%s_%sUp'%(proc,box,syst)] = tfile_signal.Get('%s_%s_%sUp'%(proc,box,syst))
                     histoDictSignal['%s_%s_%sDown'%(proc,box,syst)] = tfile_signal.Get('%s_%s_%sDown'%(proc,box,syst))
 
-    if tfile_signal is None:
-    	dctpl = open("datacard.tpl")
-    else:
-	dctpl = open("datacard_7GenpTbins.tpl")
-    #dctpl = open("datacardZbb.tpl")
-    #dctpl = open("datacardZonly.tpl")
+    sigs_temp = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     if tfile_signal is None:
         sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     else:
-        sigs = ['tthqq125_GenpT1','whqq125_GenpT1','hqq125_GenpT1','zhqq125_GenpT1','vbfhqq125_GenpT1',
-               'tthqq125_GenpT2','whqq125_GenpT2','hqq125_GenpT2','zhqq125_GenpT2','vbfhqq125_GenpT2',
-               'tthqq125_GenpT3','whqq125_GenpT3','hqq125_GenpT3','zhqq125_GenpT3','vbfhqq125_GenpT3',
-               'tthqq125_GenpT4','whqq125_GenpT4','hqq125_GenpT4','zhqq125_GenpT4','vbfhqq125_GenpT4',
-               'tthqq125_GenpT5','whqq125_GenpT5','hqq125_GenpT5','zhqq125_GenpT5','vbfhqq125_GenpT5',
-               'tthqq125_GenpT6','whqq125_GenpT6','hqq125_GenpT6','zhqq125_GenpT6','vbfhqq125_GenpT6',
-               'tthqq125_GenpT7','whqq125_GenpT7','hqq125_GenpT7','zhqq125_GenpT7','vbfhqq125_GenpT7']
+	sigs = []
+	for i in range(1, numberOfGenPtBins + 1):
+	    for proc in sigs_temp:
+		sigs.append(proc + '_GenpT' + str(i))
 
-    linel = [];
-    for line in dctpl: 
-        print line.strip().split()
-        linel.append(line.strip())
+    nSig = len(sigs)
 
     for i in range(1,numberOfPtBins+1):
 
+    	rates = {}
         jesErrs = {}
         jerErrs = {}
         puErrs = {}
@@ -119,11 +100,11 @@ def main(options,args):
         for box in boxes:
             for proc in (sigs+bkgs):
 		if 'hqq' in proc and tfile_signal is not None:
-#		    for k in range(1,numberOfGenPtBins+1):
 			k = int(proc[-1])
 			proc2 = proc[:-7]
 #			print "proc2: ", proc2
                     	rate = histoDictSignal['%s_%s'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
+			rates['%s_GenpT%s_%s'%(proc2,str(k),box)] = rate
                     	if rate>0:
                     	    rateJESUp = histoDictSignal['%s_%s_JESUp'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
                     	    rateJESDown = histoDictSignal['%s_%s_JESDown'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
@@ -180,6 +161,7 @@ def main(options,args):
                         
 		else:
                     rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                    rates['%s_%s'%(proc,box)] = rate
                     if rate>0:
                         rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                         rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
@@ -235,12 +217,40 @@ def main(options,args):
                         else:
                             mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0		    
 
-	############# Start changing from here######################
-        jesString = 'JES lnN'
-        jerString = 'JER lnN'
-        puString = 'Pu lnN'
-        bbString = 'bbeff lnN'
-        vString = 'veff lnN'
+	divider = '------------------------------------------------------------\n'
+    	datacard = 'imax 2 number of channels\n' + \
+       'jmax * number of processes minus 1\n' + \
+      'kmax * number of nuisance parameters\n' + \
+      divider + \
+      'shapes * fail_cat%s base.root w_fail_cat%s:$PROCESS_fail_cat%s w_fail_cat%s:$PROCESS_fail_cat%s_$SYSTEMATIC\n'%(str(i),str(i),str(i),str(i),str(i)) + \
+      'shapes qcd fail_cat%s rhalphabase.root w_fail_cat%s:$PROCESS_fail_cat%s\n'%(str(i),str(i),str(i)) +\
+      'shapes * pass_cat%s base.root w_pass_cat%s:$PROCESS_pass_cat%s w_pass_cat%s:$PROCESS_pass_cat%s_$SYSTEMATIC\n'%(str(i),str(i),str(i),str(i),str(i)) + \
+      'shapes qcd pass_cat%s rhalphabase.root w_pass_cat%s:$PROCESS_pass_cat%s\n'%(str(i),str(i),str(i)) + \
+      divider + \
+      'bin pass_cat%s fail_cat%s\n'%(str(i),str(i)) + \
+      'observation -1.0 -1.0\n' + \
+      divider
+    	binString = 'bin'
+    	processString = 'process'
+    	processNumberString = 'process'
+    	rateString = 'rate'
+    	lumiString = 'lumi\tlnN'
+    	hqq125ptString = 'hqq125pt lnN'
+	hqq125ptShapeString = 'hqq125ptShape shape'
+    	veffString = 'veff\tlnN'
+    	bbeffString = 'bbeff\tlnN'
+    	znormEWString = 'znormEW\tlnN'
+    	znormQString = 'znormQ\tlnN'
+    	wznormEWString = 'wznormEW lnN'
+    	elevetoString = 'eleveto\tlnN'
+    	muvetoString = 'muveto\tlnN'
+    	triggerString = 'trigger\tlnN'
+    	jesString = 'JES\tlnN'
+    	jerString = 'JER\tlnN'
+    	puString = 'Pu\tlnN'
+    	scaleString = 'scale shape'
+    	smearString = 'smear\tshape'
+    	mcStatErrString = {}
         scaleptString = 'scalept shape'
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group ='
@@ -250,7 +260,6 @@ def main(options,args):
                 for j in range(1,numberOfMassBins+1):
                     if options.noMcStatShape:
 			if 'hqq' in proc and tfile_signal is not None:
-#			    for k in range(1,numberOfGenPtBins+1):
 			    k = int(proc[-1])
 			    proc2 = proc[:-7]
                             mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box),i,j] = '%sGenpT%s%scat%imcstat%i lnN'%(proc2,str(k),box,i,j)
@@ -258,7 +267,6 @@ def main(options,args):
 			    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
                     else:
 			if 'hqq' in proc and tfile_signal is not None:
-#			    for k in range(1,numberOfGenPtBins+1):
 			    k = int(proc[-1])
                             proc2 = proc[:-7]
                             mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box),i,j] = '%sGenpT%s%scat%imcstat%i shape'%(proc2,str(k),box,i,j)
@@ -266,20 +274,98 @@ def main(options,args):
 			    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
 
         for box in boxes:
+	    h = -1
             for proc in sigs+bkgs:
+		h += 1
                 if proc=='qcd':
                     jesString += ' -'
                     jerString += ' -'
                     puString += ' -'
+                    binString += ' %s_cat%s'%(box,str(i))
+                    processString += ' %s'%(proc)
+                    processNumberString += ' %i'%(h-nSig+1)
+                    rateString += ' 1.0'
+		    lumiString += ' -'
+		    hqq125ptString += ' -'
+		    hqq125ptShapeString += ' -'
+		    znormQString += ' -'
+		    znormEWString += ' -'
+		    wznormEWString += ' -'
+		    elevetoString += ' -'
+		    muvetoString += ' -'
+		    triggerString += ' -'
+		    scaleString += ' -'
+		    smearString += ' -'
                 else:
 		    if 'hqq' in proc and tfile_signal is not None:
-#			for k in range(1,numberOfGenPtBins+1):
 			k = int(proc[-1])
                         proc2 = proc[:-7]
+			if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
+			binString += ' %s_cat%s'%(box,str(i))
+	                processString += ' %s_GenpT%s'%(proc2,str(k))
+        	        processNumberString += ' %i'%(h-nSig+1)
+		        rateString += ' -1'
+                        lumiString += ' 1.025'
+			if proc2 == 'hqq125':
+			    hqq125ptString += ' 1.30'
+			    hqq125ptShapeString += ' 1'
+			else:
+			    hqq125ptString += ' -'
+			    hqq125ptShapeString += ' -'
+			znormQString += ' -'
+			wznormEWString += ' -'
+			znormEWString += ' -'
+                        elevetoString += ' 1.005'
+                        muvetoString += ' 1.005'
+                        triggerString += ' 1.02'
+			scaleString += ' 0.1'
+			smearString += ' 0.5'
                     	jesString += ' %.3f'%jesErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
                     	jerString += ' %.3f'%jerErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
                     	puString += ' %.3f'%puErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
 		    else:
+                        if rates['%s_%s'%(proc,box)] <= 0.0: continue
+                        binString += ' %s_cat%s'%(box,str(i))
+                        processString += ' %s'%(proc)
+                        processNumberString += ' %i'%(h-nSig+1)
+                        rateString += ' -1'
+                        if proc == 'tqq':
+                            lumiString += ' -'
+                        else:
+                            lumiString += ' 1.025'
+                        if proc == 'hqq125':
+                            hqq125ptString += ' 1.30'
+                            hqq125ptShapeString += ' 1'
+                        else:
+                            hqq125ptString += ' -'
+                            hqq125ptShapeString += ' -'
+			if proc == 'zqq' or proc == 'wqq':
+			    znormQString += ' 1.1'
+			    if i == 1 or i ==2:
+				znormEWString += ' 1.15'
+			    elif i ==3:
+                                znormEWString += ' 1.25'
+			    elif i==4 or i==5 or i==6:
+                                znormEWString += ' 1.35'
+			else:
+			    znormQString += ' -'
+			    znormEWString += ' -'
+                        if proc == 'wqq':
+			    if i==1 or i==2 or i==3:
+			    	wznormEWString += ' 1.05'
+			    elif i==4 or i==5 or i==6:
+                                wznormEWString += ' 1.15'
+			else:
+			    wznormEWString += ' -'
+                        elevetoString += ' 1.005'
+                        muvetoString += ' 1.005'
+                        triggerString += ' 1.02'
+			if proc == 'tqq':
+			    scaleString += ' -'
+			    smearString += ' -'
+			else:
+			    scaleString += ' 0.1'
+			    smearString += ' 0.5'
                     	jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     	jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
                     	puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]
@@ -290,101 +376,95 @@ def main(options,args):
                 else:
                     if i > 1:
 			if 'hqq' in proc and tfile_signal is not None:
-#                            for k in range(1,numberOfGenPtBins+1):
 			    k = int(proc[-1])
                             proc2 = proc[:-7]
+			    if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
                             scaleptString += ' %.3f'%scaleptErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
 			else:
+			    if rates['%s_%s'%(proc,box)] <= 0.0: continue
 			    scaleptString += ' %.3f'%scaleptErrs['%s_%s'%(proc,box)]
                 if proc in ['qcd','tqq','wqq']:
-                    bbString += ' -'
+                    bbeffString += ' -'
                 else:
 		    if 'hqq' in proc and tfile_signal is not None:
-#                    	for k in range(1,numberOfGenPtBins+1):
 			k = int(proc[-1])
                         proc2 = proc[:-7]
-			bbString += ' %.3f'%bbErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
+			if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
+			bbeffString += ' %.3f'%bbErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
 		    else:
-			bbString += ' %.3f'%bbErrs['%s_%s'%(proc,box)]
+			if rates['%s_%s'%(proc,box)] <= 0.0: continue
+			bbeffString += ' %.3f'%bbErrs['%s_%s'%(proc,box)]
                 if proc in ['qcd','tqq']:
-                    vString += ' -'
+                    veffString += ' -'
                 else:
 		    if 'hqq' in proc and tfile_signal is not None:
-#                        for k in range(1,numberOfGenPtBins+1):
 			k = int(proc[-1])
                         proc2 = proc[:-7]
-                    	vString += ' %.3f'%vErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
+			if rates['%s_%s'%(proc,box)] <= 0.0: continue
+                    	veffString += ' %.3f'%vErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
 		    else:
-			vString += ' %.3f'%vErrs['%s_%s'%(proc,box)]
+			if rates['%s_%s'%(proc,box)] <= 0.0: continue
+			veffString += ' %.3f'%vErrs['%s_%s'%(proc,box)]
                 for j in range(1,numberOfMassBins+1):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
                             if proc1==proc and box1==box:
 				if 'hqq' in proc and tfile_signal is not None:
-#				    for k in range(1,numberOfGenPtBins+1):
 				    k = int(proc1[-1])
                             	    proc2 = proc1[:-7]
+				    if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
                                     mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s'%(proc1,box),i,j,k]
-                            	else:                        
+                            	else:
+				    if rates['%s_%s'%(proc,box)] <= 0.0: continue
                                     mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s'%(proc,box),i,j]
 			    else:
+				if rates['%s_%s'%(proc,box)] <= 0.0: continue
 				mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
         tag = "cat"+str(i)
         dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
-        for l in linel:
-            if 'JES' in l:
-                newline = jesString
-            elif 'JER' in l:
-                newline = jerString
-            elif 'Pu' in l:
-                newline = puString
-            elif 'bbeff' in l:
-                newline = bbString
-            elif 'veff' in l:
-                newline = vString
-            elif 'scalept' in l and i>1:
-                newline = scaleptString
-            elif 'TQQEFF' in l:
-                tqqeff = histoDict['tqq_pass'].Integral() / (
-                histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
-                newline = l.replace('TQQEFF','%.4f'%tqqeff)
-            elif 'wznormEW' in l:
-                if i==4:
-                    newline = l.replace('1.05','1.15')
-                elif i==5:
-                    newline = l.replace('1.05','1.15')
-                elif i==6:
-                    newline = l.replace('1.05','1.15')
-                else:
-                    newline = l
-            elif 'znormEW' in l:
-                if i==3:
-                    newline = l.replace('1.15','1.25')
-                elif i==4:
-                    newline = l.replace('1.15','1.35')
-                elif i==5:
-                    newline = l.replace('1.15','1.35')
-                elif i==6:
-                    newline = l.replace('1.15','1.35')      
-                else:
-                    newline = l              
-            else:
-                newline = l
-            if "CATX" in l:
-                newline = newline.replace('CATX',tag)
-            dctmp.write(newline + "\n")
+
+
+	binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n'; hqq125ptString+='\n';
+    	veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; wznormEWString+='\n'; triggerString+='\n'; elevetoString+='\n'; muvetoString+='\n';
+    	jesString+='\n'; jerString+='\n'; puString+='\n'; scaleptString+='\n'; hqq125ptShapeString+='\n'; scaleString+='\n'; smearString+='\n';
+
+    	datacard+=binString+processString+processNumberString+rateString+divider
+
+	if i == 1:
+    	    datacard+=lumiString+hqq125ptString+hqq125ptShapeString+veffString+bbeffString+znormQString+znormEWString+wznormEWString+jerString+jesString+puString+triggerString+muvetoString+elevetoString+scaleString+smearString
+	else:
+            datacard+=lumiString+hqq125ptString+hqq125ptShapeString+veffString+bbeffString+znormQString+znormEWString+wznormEWString+jerString+jesString+puString+triggerString+muvetoString+elevetoString+scaleString+scaleptString+smearString
+
+	tqqeff = histoDict['tqq_pass'].Integral()/(histoDict['tqq_pass'].Integral() + histoDict['tqq_fail'].Integral())
+
+	datacard+='tqqpasscat%snorm rateParam pass_cat%s tqq (@0*@1) tqqnormSF,tqqeffSF\n'%(str(i),str(i)) + \
+        'tqqfailcat%snorm rateParam fail_cat%s tqq (@0*(1.0-@1*%.4f)/(1.0-%.4f)) tqqnormSF,tqqeffSF\n'%(str(i),str(i),tqqeff,tqqeff) + \
+        'tqqnormSF extArg 1.0 [0.0,10.0]\n' + \
+        'tqqeffSF extArg 1.0 [0.0,10.0]\n' + \
+	'r1p0 flatParam\n' + \
+	'r2p0 flatParam\n' + \
+	'r0p1 flatParam\n' + \
+	'r1p1 flatParam\n' + \
+	'r2p1 flatParam\n' + \
+	'qcdeff flatParam\n'
+
+
+
+    	dctmp.write(datacard)
+
         for box in boxes:
             for proc in sigs+bkgs:
                 if options.noMcStatShape and proc!='qcd':
 		    if 'hqq' in proc and tfile_signal is not None:
-#                        for k in range(1,numberOfGenPtBins+1):
 			k = int(proc[-1])
                         proc2 = proc[:-7]
+                        if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
                     	print 'include %sGenpT%s%scat%imcstat'%(proc2,str(k),box,i)
                     	dctmp.write(mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box),i,1].replace('mcstat1','mcstat') + "\n")
                     	mcStatGroupString += ' %sGenpT%s%scat%imcstat'%(proc2,str(k),box,i)
 		    else:
+                        if rates['%s_%s'%(proc,box)] <= 0.0: continue
                         print 'include %s%scat%imcstat'%(proc,box,i)
                         dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
                         mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
@@ -401,7 +481,6 @@ def main(options,args):
                     else:
                         histo = histoDict['%s_%s%s'%(proc,box,matchString)]
 		    if (tfile_loose is not None) and 'hqq' in proc:
-#			for k in range(1,numberOfGenPtBins+1):
 			k = int(proc[-1])
                         proc2 = proc[:-7]
 			if abs(histo.GetBinContent(j,i,k)) > 0. and histo.GetBinError(j,i,k) > 0.5*histo.GetBinContent(j,i,k):
@@ -409,6 +488,7 @@ def main(options,args):
         	            ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
 	                    rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
 	                    if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
+	                        if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
 	                        dctmp.write(mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box),i,j] + "\n")
         	                print 'include %sGenpT%s%scat%imcstat%i'%(proc2,str(k),box,i,j)
                 	        mcStatGroupString += ' %sGenpT%s%scat%imcstat%i'%(proc2,str(k),box,i,j)
@@ -422,7 +502,8 @@ def main(options,args):
                             ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
                             rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
                             if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
-                            	dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
+	                        if rates['%s_%s'%(proc,box)] <= 0.0: continue
+                          	dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
                             	print 'include %s%scat%imcstat%i'%(proc,box,i,j)
                             	mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
                             else:

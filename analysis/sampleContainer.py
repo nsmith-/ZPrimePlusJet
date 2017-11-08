@@ -74,13 +74,13 @@ class sampleContainer:
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 
-        f_pu = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root", "read")
+        f_pu = ROOT.TFile.Open("analysis/ggH/puWeights_All.root", "read")
         self._puw = f_pu.Get("puw")
         self._puw_up = f_pu.Get("puw_p")
         self._puw_down = f_pu.Get("puw_m")
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root",
+        f_h2ddt = ROOT.TFile.Open("analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root",
                                   "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)
         self._trans_h2ddt = f_h2ddt.Get("h2ddt")
         self._trans_h2ddt.SetDirectory(0)
@@ -89,7 +89,7 @@ class sampleContainer:
         # get trigger efficiency object
 
         f_trig = ROOT.TFile.Open(
-            "$ZPRIMEPLUSJET_BASE/analysis/ggH/RUNTriggerEfficiencies_SingleMuon_Run2016_V2p1_v03.root", "read")
+            "analysis/ggH/RUNTriggerEfficiencies_SingleMuon_Run2016_V2p1_v03.root", "read")
         self._trig_denom = f_trig.Get("DijetTriggerEfficiencySeveralTriggers/jet1SoftDropMassjet1PtDenom_cutJet")
         self._trig_numer = f_trig.Get("DijetTriggerEfficiencySeveralTriggers/jet1SoftDropMassjet1PtPassing_cutJet")
         self._trig_denom.SetDirectory(0)
@@ -110,13 +110,13 @@ class sampleContainer:
         lumi_BCDEF = 19.721
         lumi_total = lumi_GH + lumi_BCDEF
 
-        f_mutrig_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_Period4.root", "read")
+        f_mutrig_GH = ROOT.TFile.Open("analysis/ggH/EfficienciesAndSF_Period4.root", "read")
         self._mutrig_eff_GH = f_mutrig_GH.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff_GH.Sumw2()
         self._mutrig_eff_GH.SetDirectory(0)
         f_mutrig_GH.Close()
 
-        f_mutrig_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF.root", "read")
+        f_mutrig_BCDEF = ROOT.TFile.Open("analysis/ggH/EfficienciesAndSF_RunBtoF.root", "read")
         self._mutrig_eff_BCDEF = f_mutrig_BCDEF.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff_BCDEF.Sumw2()
         self._mutrig_eff_BCDEF.SetDirectory(0)
@@ -128,13 +128,13 @@ class sampleContainer:
 
         # get muon ID efficiency object
 
-        f_muid_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_GH.root", "read")
+        f_muid_GH = ROOT.TFile.Open("analysis/ggH/EfficienciesAndSF_GH.root", "read")
         self._muid_eff_GH = f_muid_GH.Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA")
         self._muid_eff_GH.Sumw2()
         self._muid_eff_GH.SetDirectory(0)
         f_muid_GH.Close()
 
-        f_muid_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_BCDEF.root", "read")
+        f_muid_BCDEF = ROOT.TFile.Open("analysis/ggH/EfficienciesAndSF_BCDEF.root", "read")
         self._muid_eff_BCDEF = f_muid_BCDEF.Get(
             "MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA")
         self._muid_eff_BCDEF.Sumw2()
@@ -147,13 +147,13 @@ class sampleContainer:
 
         # get muon ISO efficiency object
 
-        f_muiso_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_ISO_GH.root", "read")
+        f_muiso_GH = ROOT.TFile.Open("analysis/ggH/EfficienciesAndSF_ISO_GH.root", "read")
         self._muiso_eff_GH = f_muiso_GH.Get("LooseISO_LooseID_pt_eta/efficienciesDATA/pt_abseta_DATA")
         self._muiso_eff_GH.Sumw2()
         self._muiso_eff_GH.SetDirectory(0)
         f_muiso_GH.Close()
 
-        f_muiso_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_ISO_BCDEF.root", "read")
+        f_muiso_BCDEF = ROOT.TFile.Open("analysis/ggH/EfficienciesAndSF_ISO_BCDEF.root", "read")
         self._muiso_eff_BCDEF = f_muiso_BCDEF.Get("LooseISO_LooseID_pt_eta/efficienciesDATA/pt_abseta_DATA")
         self._muiso_eff_BCDEF.Sumw2()
         self._muiso_eff_BCDEF.SetDirectory(0)
@@ -633,6 +633,62 @@ class sampleContainer:
                                              "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
         }
 
+        histos2d_muCR4 = {
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_JESUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_JESUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_JESDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_JESDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_JESUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_JESUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_JESDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_JESDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_JERUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_JERUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_JERDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_JERDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_JERUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_JERUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_JERDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_JERDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_mutriggerUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_mutriggerUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_mutriggerUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_mutriggerUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_mutriggerDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_mutriggerDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_mutriggerDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_mutriggerDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_muidDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_muidDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_muidDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_muidDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_muidUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_muidUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_muidUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_muidUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_muisoDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_muisoDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_muisoDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_muisoDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_muisoUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_muisoUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_muisoUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_muisoUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_PuDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_PuDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_PuDown': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_PuDown",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_pass_PuUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_pass_PuUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"],
+            'h_msd_v_GenPt_ak8_muCR4_N2_fail_PuUp': ["h_" + self._name + "_msd_v_GenPt_ak8_muCR4_N2_fail_PuUp",
+                                             "; AK8 m_{SD}^{PUPPI} (GeV); Gen Higgs p_{T} (GeV)"]
+        }
+
+
         if not self._minBranches:
             histos2d_ext = {
                 'h_msd_v_pt_ak8_topR1': ["h_" + self._name + "_msd_v_pt_ak8_topR1",
@@ -753,15 +809,51 @@ class sampleContainer:
 
             histos2d = dict(histos2d.items() + histos2d_ext.items())
 
+	histos3d = {
+		'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JESUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JESUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JESDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JESDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JERUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JERUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JERDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_JERDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_triggerUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_triggerUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_triggerDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_triggerDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_PuUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_PuUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_PuDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_PuDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_matched': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_matched", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_unmatched': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_unmatched", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JESUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JESUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JESDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JESDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JERUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JERUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JERDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_JERDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_triggerUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_triggerUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_triggerDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_triggerDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_PuUp': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_PuUp", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_PuDown': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_PuDown", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_matched': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_matched", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"],
+                'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_unmatched': ["h_" + self._name + "msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_unmatched", "; AK8 m_{SD}^{PUPPI} (GeV); AK8 RECO p_{T} (GeV); AK8 Gen p_{T} (GeV)"]
+	}
+
+	Gen_pt_binBondaries = [0, 200, 350, 500, 550, 600, 675, 800, 10000]
+
         for key, val in histos1d.iteritems():
-            setattr(self, key, ROOT.TH1F(val[0], val[1], val[2], val[3], val[4]))
+            setattr(self, key, ROOT.TH1D(val[0], val[1], val[2], val[3], val[4]))
             (getattr(self, key)).Sumw2()
         for key, val in histos2d_fix.iteritems():
-            setattr(self, key, ROOT.TH2F(val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7]))
+            setattr(self, key, ROOT.TH2D(val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7]))
             (getattr(self, key)).Sumw2()
         for key, val in histos2d.iteritems():
-            tmp = ROOT.TH2F(val[0], val[1], len(msd_binBoundaries) - 1, array.array('d', msd_binBoundaries),
+            tmp = ROOT.TH2D(val[0], val[1], len(msd_binBoundaries) - 1, array.array('d', msd_binBoundaries),
                             len(pt_binBoundaries) - 1, array.array('d', pt_binBoundaries))
+            setattr(self, key, tmp)
+            (getattr(self, key)).Sumw2()
+	for key, val in histos3d.iteritems():
+	    tmp = ROOT.TH3D(val[0], val[1], len(msd_binBoundaries) - 1, array.array('d', msd_binBoundaries),
+                            len(pt_binBoundaries) - 1, array.array('d', pt_binBoundaries), len(Gen_pt_binBondaries) -1, array.array('d', Gen_pt_binBondaries))
+	    setattr(self, key, tmp)
+        for key, val in histos2d_muCR4.iteritems():
+            tmp = ROOT.TH2D(val[0], val[1], len(msd_binBoundaries) - 1, array.array('d', msd_binBoundaries),
+                            len(Gen_pt_binBondaries) - 1, array.array('d', Gen_pt_binBondaries))
             setattr(self, key, tmp)
             (getattr(self, key)).Sumw2()
 
@@ -803,6 +895,8 @@ class sampleContainer:
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             # print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
+	    if fbweight < 0:
+		fbweight = fbweight*(-1)
             # if self._name=='tqq' or 'TTbar' in self._name:
             #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
             vjetsKF = 1.
@@ -1090,6 +1184,16 @@ class sampleContainer:
                         self.h_msd_ak8_muCR4_N2_pass_muisoDown.Fill(jmsd_8, weight_muisoDown)
                         self.h_msd_ak8_muCR4_N2_pass_PuUp.Fill(jmsd_8, weight_mu_pu_up)
                         self.h_msd_ak8_muCR4_N2_pass_PuDown.Fill(jmsd_8, weight_mu_pu_down)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass.Fill(jmsd_8, genVPt, weight_mu)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_mutriggerUp.Fill(jmsd_8, genVPt, weight_mutriggerUp)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_mutriggerDown.Fill(jmsd_8, genVPt, weight_mutriggerDown)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_muidUp.Fill(jmsd_8, genVPt, weight_muidUp)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_muidDown.Fill(jmsd_8, genVPt, weight_muidDown)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_muisoUp.Fill(jmsd_8, genVPt, weight_muisoUp)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_muisoDown.Fill(jmsd_8, genVPt, weight_muisoDown)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_PuUp.Fill(jmsd_8, genVPt, weight_mu_pu_up)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_pass_PuDown.Fill(jmsd_8, genVPt, weight_mu_pu_down)
+
                     elif jdb_8 > self.DBTAGCUTMIN:
                         self.h_msd_ak8_muCR4_N2_fail.Fill(jmsd_8, weight_mu)
                         self.h_msd_v_pt_ak8_muCR4_N2_fail.Fill(jmsd_8, jpt_8, weight_mu)
@@ -1101,6 +1205,16 @@ class sampleContainer:
                         self.h_msd_ak8_muCR4_N2_fail_muisoDown.Fill(jmsd_8, weight_muisoDown)
                         self.h_msd_ak8_muCR4_N2_fail_PuUp.Fill(jmsd_8, weight_mu_pu_up)
                         self.h_msd_ak8_muCR4_N2_fail_PuDown.Fill(jmsd_8, weight_mu_pu_down)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail.Fill(jmsd_8, genVPt, weight_mu)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_mutriggerUp.Fill(jmsd_8, genVPt, weight_mutriggerUp)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_mutriggerDown.Fill(jmsd_8, genVPt, weight_mutriggerDown)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_muidUp.Fill(jmsd_8, genVPt, weight_muidUp)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_muidDown.Fill(jmsd_8, genVPt, weight_muidDown)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_muisoUp.Fill(jmsd_8, genVPt, weight_muisoUp)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_muisoDown.Fill(jmsd_8, genVPt, weight_muisoDown)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_PuUp.Fill(jmsd_8, genVPt, weight_mu_pu_up)
+                        self.h_msd_v_GenPt_ak8_muCR4_N2_fail_PuDown.Fill(jmsd_8, genVPt, weight_mu_pu_down)
+
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
                 if eval(
@@ -1109,8 +1223,10 @@ class sampleContainer:
                                 vmuoLoose0_phi - jphi_8) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                     if jdb_8 > DBTAGCUT:
                         (getattr(self, 'h_msd_ak8_muCR4_N2_pass_%s' % syst)).Fill(jmsd_8, weight)
+			(getattr(self, 'h_msd_v_GenPt_ak8_muCR4_N2_pass_%s' % syst)).Fill(jmsd_8, genVPt, weight)
                     elif jdb_8 > self.DBTAGCUTMIN:
                         (getattr(self, 'h_msd_ak8_muCR4_N2_fail_%s' % syst)).Fill(jmsd_8, weight)
+			(getattr(self, 'h_msd_v_GenPt_ak8_muCR4_N2_fail_%s' % syst)).Fill(jmsd_8, genVPt, weight)
 
             if not self._minBranches:
                 jmsd_8_sub1 = self.AK8Puppijet1_msd[0]
@@ -1311,12 +1427,22 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_topR6_N2_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
                     self.h_msd_v_pt_ak8_topR6_N2_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                     self.h_msd_v_pt_ak8_topR6_N2_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass.Fill(jmsd_8, jpt_8, genVPt, weight)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_triggerUp.Fill(jmsd_8, jpt_8, genVPt, weight_triggerUp)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_triggerDown.Fill(jmsd_8, jpt_8, genVPt, weight_triggerDown)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_PuUp.Fill(jmsd_8, jpt_8, genVPt, weight_pu_up)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_PuDown.Fill(jmsd_8, jpt_8, genVPt, weight_pu_down)
+		    if weight < 0:
+			print "weight negative!!"
+			print "weight: ", weight
 
                     # for signal morphing
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_topR6_N2_pass_matched.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_matched.Fill(jmsd_8, jpt_8, genVPt, weight)
                     else:
                         self.h_msd_v_pt_ak8_topR6_N2_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_unmatched.Fill(jmsd_8, jpt_8, genVPt, weight)
                 elif jdb_8 > self.DBTAGCUTMIN:
                     self.h_msd_ak8_topR6_N2_fail.Fill(jmsd_8, weight)
                     self.h_msd_v_pt_ak8_topR6_N2_fail.Fill(jmsd_8, jpt_8, weight)
@@ -1324,12 +1450,22 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_topR6_N2_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
                     self.h_msd_v_pt_ak8_topR6_N2_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                     self.h_msd_v_pt_ak8_topR6_N2_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail.Fill(jmsd_8, jpt_8, genVPt, weight)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_triggerUp.Fill(jmsd_8, jpt_8, genVPt, weight_triggerUp)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_triggerDown.Fill(jmsd_8, jpt_8, genVPt, weight_triggerDown)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_PuUp.Fill(jmsd_8, jpt_8, genVPt, weight_pu_up)
+                    self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_PuDown.Fill(jmsd_8, jpt_8, genVPt, weight_pu_down)
+                    if weight < 0:
+                        print "weight negative!!"
+                        print "weight: ", weight
 
                     # for signal morphing
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_topR6_N2_fail_matched.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_matched.Fill(jmsd_8, jpt_8, genVPt, weight)
                     else:
                         self.h_msd_v_pt_ak8_topR6_N2_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_unmatched.Fill(jmsd_8, jpt_8, genVPt, weight)
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
                 if (not self._minBranches) and eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval(
@@ -1348,9 +1484,13 @@ class sampleContainer:
                         (getattr(self, 'h_msd_ak8_topR6_N2_pass_%s' % syst)).Fill(jmsd_8, weight)
                         (getattr(self, 'h_msd_v_pt_ak8_topR6_N2_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
                                                                                        weight)
+                        (getattr(self, 'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst), genVPt,
+                                                                                       weight)
                     elif jdb_8 > self.DBTAGCUTMIN:
                         (getattr(self, 'h_msd_ak8_topR6_N2_fail_%s' % syst)).Fill(jmsd_8, weight)
                         (getattr(self, 'h_msd_v_pt_ak8_topR6_N2_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
+                                                                                       weight)
+                        (getattr(self, 'h_msd_v_RecoPt_v_GenPt_ak8_topR6_N2_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst), genVPt,
                                                                                        weight)
 
             ###Double-b optimization for ggH
