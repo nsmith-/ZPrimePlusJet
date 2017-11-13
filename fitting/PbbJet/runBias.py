@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     dataString = '--data'
 
-    exec_me('python limit.py -M Bias --datacard %s/card_rhalphabet_muonCR_r%ip%i.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s -t %i --lumi %f %s -r %s --rMin %s --rMax %s --mass %s'%(sigDir1, options.NR1, options.NP1, sigDir1, options.NR1, options.NP1, cardsDir1, options.toys, options.lumi, dataString, options.r, options.rMin, options.rMax, options.mass),options.dryRun)
+    exec_me('python limit.py -M Bias --datacard %s/card_rhalphabet_muonCR_r%ip%i.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s -t %i --lumi %f %s -r %s --rMin %s --rMax %s --mass %s'%(sigDir1, options.NR1, options.NP1, sigDir1, options.NR1, options.NP1, sigDir1, options.toys, options.lumi, dataString, options.r, options.rMin, options.rMax, options.mass),options.dryRun)
      
 
      

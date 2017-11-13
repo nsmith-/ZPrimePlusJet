@@ -271,10 +271,10 @@ def goodness(base,ntoys,iLabel,options):
 
 def bias(base,alt,ntoys,mu,iLabel,options):
     if not options.justPlot:
-        exec_me('combine -M GenerateOnly     %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys --freezeNuisances %s -n %s -m %s' % (alt,options.rMax,options.rMin,ntoys,mu,options.freezeNuisances,alt.split('/')[-1].replace('.txt',''), options.mass), options.dryRun)
-        exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.123456.root -n %s -m %s'  % (base,options.rMax,options.rMin,ntoys,alt.split('/')[-1].replace('.txt',''), options.mass,base.split('/')[-1].replace('.txt',''), options.mass), options.dryRun)
-        #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH120.123456.root'%(alt.split('/')[-1].replace('.txt','')), options.dryRun)
-        exec_me('mv  mlfit%s.root %s/biastoys.root'%(base.split('/')[-1].replace('.txt',''), options.odir), options.dryRun)
+        exec_me('combine -M GenerateOnly     %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys --freezeNuisances %s -n %s -m %s' % (alt,options.rMax,options.rMin,ntoys,mu,options.freezeNuisances,alt.split('/')[-1].replace('.txt','_%s'%options.mass), options.mass), options.dryRun)
+        exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.123456.root -n %s -m %s'  % (base,options.rMax,options.rMin,ntoys,alt.split('/')[-1].replace('.txt','_%s'%options.mass), options.mass, base.split('/')[-1].replace('.txt','_%s'%options.mass), options.mass), options.dryRun)
+        #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH%s.123456.root'%(alt.split('/')[-1].replace('.txt','_%s'%options.mass),options.mass), options.dryRun)
+        exec_me('cp  mlfit%s.root %s/biastoys.root'%(base.split('/')[-1].replace('.txt','_%s'%options.mass), options.odir), options.dryRun)
     if options.dryRun: sys.exit()
     plotgaus("%s/biastoys.root"%options.odir,mu,"pull"+iLabel,options)
 
