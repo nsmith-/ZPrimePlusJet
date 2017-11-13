@@ -1061,7 +1061,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     
     return c        
 
-def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,pt=None,f2params=None):
+def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,pt=None,f2params=None, minM=40, maxM=201, nr=2, np=1):
     leg_y = 0.88 - (6)*0.04
     leg = ROOT.TLegend(0.5,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
@@ -1106,14 +1106,15 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     h_numer.SetLineColor(color[1])
     h_denom.Draw('hist')
     h_numer.Draw('pezsame')
+    h_denom.GetXaxis().SetRangeUser(minM,maxM)
 
     if pt is not None and f2params is not None:
         f1params = array.array('d',list(f2params))
         f1params.append(pt)
         npar = len(f2params)
-        f2 = ROOT.TF2("f2",fun2,h_denom.GetXaxis().GetXmin(),h_denom.GetXaxis().GetXmax(),h_denom.GetYaxis().GetXmin(),h_denom.GetYaxis().GetXmax(),npar)
+        f2 = ROOT.TF2("f2",eval('fun%s'%nr),h_denom.GetXaxis().GetXmin(),h_denom.GetXaxis().GetXmax(),h_denom.GetYaxis().GetXmin(),h_denom.GetYaxis().GetXmax(),npar)
         f2.SetParameters(f2params)
-        f1 = ROOT.TF1("f1",fun1,h_denom.GetXaxis().GetXmin(),h_denom.GetXaxis().GetXmax(),npar+1)
+        f1 = ROOT.TF1("f1",eval('fun%s_1'%nr),h_denom.GetXaxis().GetXmin(),h_denom.GetXaxis().GetXmax(),npar+1)
         f1.SetParameters(f1params)
 
         h_pred = h_denom.Clone('h_pred')
@@ -1147,7 +1148,8 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     print ksScore
     print chiScore
     ratio.SetStats(0)
-    ratio.GetYaxis().SetRangeUser(0.3,1.7)	
+    ratio.GetYaxis().SetRangeUser(0.,2.5)	
+    ratio.GetXaxis().SetRangeUser(minM,maxM)	
     ratio.GetYaxis().SetNdivisions(504)
     ratio.GetYaxis().SetTitle("Ratio")
     ratio.GetXaxis().SetTitle(h_denom.GetXaxis().GetTitle())    
@@ -1159,8 +1161,10 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     ratio.GetXaxis().SetLabelSize(0.12)
 	
     
-    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
-                      ratio.GetXaxis().GetXmax(), 1.0)
+    #line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+    #                  ratio.GetXaxis().GetXmax(), 1.0)
+    line = ROOT.TLine(minM, 1.0,
+                      maxM, 1.0)
     line.SetLineColor(ROOT.kGray)
     line.SetLineStyle(2)
     line.Draw()
@@ -1177,6 +1181,7 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     
     if pt is not None:
         f1.SetLineColor(ROOT.kRed)
+        print 'pt f1.draw'
         f1.Draw("csame")
         
     tKsChi.DrawLatex(0.7,0.895,"#chi^{2}_{ }#lower[0.1]{/^{}#it{NDF} = %.2f}"%(chiScore))
@@ -1212,14 +1217,46 @@ def fun2rho(x, par):
     poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
     return poly0+poly1+poly2
 
-def fun1(x, par):
+def fun2_1(x, par):
     rho = ROOT.TMath.Log((x[0]*x[0])/(par[9]*par[9]))
     poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
     poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*par[9]
     poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*par[9]*par[9]
     return poly0+poly1+poly2
 
-def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None):
+
+def fun5(x, par):
+    rho = ROOT.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
+
+
+def fun5rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
+
+def fun5_1(x, par):
+    rho = ROOT.TMath.Log((x[0] * x[0]) / (par[36] * par[36]))
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * par[36]
+    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * par[36] * par[36]
+    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * par[36] * par[36] * par[36]
+    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * par[36] * par[36] * par[36] * par[36]
+    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * par[36] * par[36] * par[36] * par[36] * par[36]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
+
+def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",lumi=30,ofile=None, rho_lo = -6, rho_hi = -2.1, nr = 2, np = 1):
     leg_y = 0.88 - (6)*0.04
     leg = ROOT.TLegend(0.5,leg_y,0.88,0.88)
     leg.SetFillStyle(0)
@@ -1252,16 +1289,15 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
     ratio.SetLineColor(ROOT.kBlue+1)
 
 
-    f2params = array.array('d',[1,0,0,0,0,0,0,0,0])
-    npar = len(f2params)
-    f2 = ROOT.TF2("f2",fun2,ratio.GetXaxis().GetXmin(),ratio.GetXaxis().GetXmax(),ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+    ndim = nr # assuming nr = max(np, nr)
+    npar = (ndim+1)*(ndim+1)
+    f2params = array.array('d',[0]*npar)
+    f2params[0] = 1
+    f2 = ROOT.TF2("f2",eval('fun%s'%nr),ratio.GetXaxis().GetXmin(),ratio.GetXaxis().GetXmax(),ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
     f2.SetParameters(f2params)
-    #f2.FixParameter(2,0)
-    #f2.FixParameter(5,0)
-    #f2.FixParameter(8,0)
-    f2.FixParameter(6,0)
-    f2.FixParameter(7,0)
-    f2.FixParameter(8,0)
+    for i in range(0, npar):
+        if i > ((np+1)*nr+1): # assuming np = max(np, nr)
+            f2.FixParameter(i,0)
     fr = ratio.Fit('f2','RNS')
     #f2.Draw("surf")
     ratio.Draw('surf1')
@@ -1269,13 +1305,13 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
     
     f2graph = ROOT.TGraph2D()
     N = -1
-    for i in range(101):
-        for j in range(101):
+    for i in range(21):
+        for j in range(21):
             N+=1
-            x = ratio.GetXaxis().GetXmin() + i*(ratio.GetXaxis().GetXmax()-ratio.GetXaxis().GetXmin())/100
-            y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/100
+            x = ratio.GetXaxis().GetXmin() + i*(ratio.GetXaxis().GetXmax()-ratio.GetXaxis().GetXmin())/20.
+            y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/20.
             z = f2.Eval(x,y)
-            if math.log(x*x/(y*y)) < -6 or math.log(x*x/(y*y)) > -2.1:
+            if math.log(x*x/(y*y)) < rho_lo or math.log(x*x/(y*y)) > rho_hi:
                 z = 0
             #print x, y, z
             f2graph.SetPoint(N,x,y,z)
@@ -1339,7 +1375,7 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
     #c.Clear()
     c.SetLogz(0)
 
-    ratiorho = ROOT.TH2D('ratiorho','ratiorho',100,-6,-2.1,100,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax())
+    ratiorho = ROOT.TH2D('ratiorho','ratiorho',20,rho_lo,rho_hi,20,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax())
     ratiorho.GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())    
     ratiorho.GetXaxis().SetTitle('#rho')
     ratiorho.GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
@@ -1354,18 +1390,18 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
             z = ratio.GetBinContent(i,j)
             #print N, x, y, z
             ratiorhograph.SetPoint(N,x,y,z)
-    f2rho = ROOT.TF2("f2",fun2rho,-6,-2.1,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+    f2rho = ROOT.TF2("f2",eval('fun%srho'%nr),rho_lo,rho_hi,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
     f2rho.SetParameters(f2params)
     f2rhograph = ROOT.TGraph2D()
     N = -1
-    for i in range(101):
-        for j in range(101):
+    for i in range(21):
+        for j in range(21):
             N+=1
-            x = -6 + i*(-2.1+6)/100
-            y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/100
+            x = rho_lo + i*(rho_hi-rho_lo)/20.
+            y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/20.
             z = f2rho.Eval(x,y)
             m = math.sqrt(math.exp(x))*y
-            if m < 40 or m > 201:
+            if m < ratio.GetXaxis().GetBinLowEdge(1) or m > ratio.GetXaxis().GetBinUpEdge(ratio.GetNbinsX()):
                 z = 0
             #print x, y, z
             f2rhograph.SetPoint(N,x,y,z)
