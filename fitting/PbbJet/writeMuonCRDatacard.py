@@ -7,9 +7,12 @@ import sys
 import time
 import array
 import os
+import re
 
 from buildRhalphabetPhibb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI
 from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
+
+from hist import *
 
 def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     obsRate = {}
@@ -127,10 +130,15 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     jerString = 'JER\tlnN'
     puString = 'Pu\tlnN'
     mcStatErrString = {}
-    for proc in sigs+bkgs:
-        for box in boxes:
-            mcStatErrString['%s_%s'%(proc,box)] = '%s%smuonCRmcstat\tlnN'%(proc,box)
-
+    if options.noMcStatShape:
+        for proc in sigs+bkgs:
+            for box in boxes:
+                mcStatErrString['%s_%s'%(proc,box)] = '%s%smuonCRmcstat\tlnN'%(proc,box)
+    else:
+        for key, histo in histoDict.iteritems():
+            if 'mcstat' in key and 'Up' in key: 
+                mcStatErrString[key] = key.split('_')[-1].replace('Up','') + '\tshape'
+            
     for box in boxes:
         i = -1
         for proc in sigs+bkgs:
@@ -153,19 +161,28 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             jesString += '\t%.3f'%jesErrs['%s_%s'%(proc,box)]
             jerString += '\t%.3f'%jerErrs['%s_%s'%(proc,box)]
             puString += '\t%.3f'%puErrs['%s_%s'%(proc,box)]
-            for proc1 in sigs+bkgs:
-                for box1 in boxes:
+            for box1 in boxes:
+                for proc1 in sigs+bkgs:
                     if proc1==proc and box1==box:
-                        mcStatErrString['%s_%s'%(proc1,box1)] += '\t%.3f'% mcStatErrs['%s_%s'%(proc,box)]
+                        if options.noMcStatShape: mcStatErrString['%s_%s'%(proc1,box1)] += '\t%.3f'% mcStatErrs['%s_%s'%(proc,box)]
                     else:                        
-                        mcStatErrString['%s_%s'%(proc1,box1)] += '\t-'
+                        if options.noMcStatShape: mcStatErrString['%s_%s'%(proc1,box1)] += '\t-'
+            
+    for key, value in mcStatErrString.iteritems():
+        for box in boxes:
+            for proc in sigs+bkgs:
+                if rates['%s_%s'%(proc,box)] <= 0.0: continue
+                if re.match('%s_%s'%(proc,box),key):
+                    if not options.noMcStatShape: mcStatErrString[key] += '\t1.000'
+                else:
+                    if not options.noMcStatShape: mcStatErrString[key] += '\t-'                    
+                
             
     binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n'; hqq125ptString+='\n';
     veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; wznormEWString+='\n'; mutriggerString+='\n'; muidString+='\n'; muisoString+='\n'; 
     jesString+='\n'; jerString+='\n'; puString+='\n';     
-    for proc in (sigs+bkgs):
-        for box in boxes:
-            mcStatErrString['%s_%s'%(proc,box)] += '\n'
+    for key, value in mcStatErrString.iteritems():   
+        mcStatErrString[key] += '\n'
             
     datacard+=binString+processString+processNumberString+rateString+divider
 
@@ -174,8 +191,10 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
 
     for proc in (sigs+bkgs):
         for box in boxes:
-            if rates['%s_%s'%(proc,box)] <= 0.0: continue
-            datacard+=mcStatErrString['%s_%s'%(proc,box)]
+            if rates['%s_%s'%(proc,box)] <= 0.0: continue            
+            for key, value in mcStatErrString.iteritems():
+                if re.match('%s_%s'%(proc,box),key):
+                    datacard += mcStatErrString[key]
 
     # now top rate params
     tqqeff = histoDict['tqq_pass'].Integral()/(histoDict['tqq_pass'].Integral()+histoDict['tqq_fail'].Integral())
@@ -219,6 +238,9 @@ def main(options, args):
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box)).Clone()
             histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,cut,box,tfile))
+            for i in range(1, histoDict['%s_%s'%(proc,box)].GetNbinsX()+1):
+                massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(i)
+                
             for syst in systs:
                 if proc!='data_obs':
                     print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
@@ -227,8 +249,26 @@ def main(options, args):
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                     histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,cut,box,syst)).Clone()
                     histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
-                    
-                
+            if proc!='data_obs':
+                histoDict['%s_%s_%sUp'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sUp'%(proc,box,'mcstat'))
+                histoDict['%s_%s_%sDown'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sDown'%(proc,box,'mcstat'))
+                for i in range(1, histoDict['%s_%s'%(proc,box)].GetNbinsX() + 1):
+                    mcstatup = histoDict['%s_%s'%(proc,box)].GetBinContent(i) + histoDict['%s_%s'%(proc,box)].GetBinError(i)
+                    mcstatdown = max(0.,histoDict['%s_%s'%(proc,box)].GetBinContent(i) - histoDict['%s_%s'%(proc,box)].GetBinError(i))
+                    histoDict['%s_%s_%sUp'%(proc,box,'mcstat')].SetBinContent(i, mcstatup)
+                    histoDict['%s_%s_%sDown'%(proc,box,'mcstat')].SetBinContent(i, mcstatdown)
+
+    uncorrelate(histoDict, 'mcstat', suppressLevel=0.5)
+    newHistoDict = {}
+    for key, histo in histoDict.iteritems():
+        if 'mcstat' in key:
+            proc = key.split('_')[0]
+            box = key.split('_')[1]
+            newHistoDict[key.replace('mcstat','%s%smcstat'%(proc,box))] = histoDict[key]
+        else:
+            newHistoDict[key] = histoDict[key]
+    histoDict = newHistoDict
+                            
     
     outFile = 'datacard_muonCR.root'
     
@@ -265,6 +305,7 @@ if __name__ == '__main__':
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
     parser.add_option('-m', '--mass', dest='mass', default='50', type='string', help='mass value')
     parser.add_option('--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
+    parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
 
     (options, args) = parser.parse_args()
 

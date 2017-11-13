@@ -32,7 +32,9 @@ if __name__ == '__main__':
         for key in tfile.GetListOfKeys():
             hist = tfile.Get(key.GetName())            
             if isinstance(hist, rt.TH2):
-                hist_rebin = rebin2D(hist,x,y)
+                #hist_rebin = rebin2D(hist,x,y)
+                for i in range(1,hist.GetBinsX()+1):
+                    
             else:
                 hist_rebin = rebin1D(hist,x)
             tfile_rebin.cd()
