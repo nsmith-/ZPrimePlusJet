@@ -1,3 +1,6 @@
+# Example usage:
+# python signalInterpolationsPhibb.py --input_file hist_1DZbb_pt_scalesmear_CA15_check.root --output_file hist_1DZbb_pt_scalesmear_CA15_interpolations.root --jet_type CA15 --interpolate --output_range 100,425,25
+
 import os
 import sys
 from math import sqrt, floor
@@ -241,9 +244,6 @@ if __name__ == "__main__":
 										sys.exit(1)
 								input_histograms[ptbin][mass] = input_file.Get("{}{}_{}_{}{}".format(model, mass, wp, region, syst)).ProjectionX("{}{}_{}_ptbin{}".format(model, mass, region, ptbin), ptbin, ptbin)
 								input_histograms[ptbin][mass].SetDirectory(0)
-								# Save a copy to the output file
-								output_file.cd()
-								input_file.Get("{}{}_{}_{}{}".format(model, mass, wp, region, syst)).Write()
 							print input_histograms[ptbin]
 							interpolator = HistogramInterpolator(input_histograms[ptbin])
 							for mass in output_masses:
@@ -262,7 +262,13 @@ if __name__ == "__main__":
 									output_histograms[mass].SetBinContent(msdbin, ptbin, output_histograms_1D[ptbin][mass].GetBinContent(msdbin))
 									output_histograms[mass].SetBinError(msdbin, ptbin, output_histograms_1D[ptbin][mass].GetBinContent(msdbin))
 							output_file.cd()
+							print "[debug] Writing {}".format(output_histograms[mass].GetName())
 							output_histograms[mass].Write()
+
+						# Save a copy of the input histograms to the output file
+						output_file.cd()
+						for mass in input_masses:
+							input_file.Get("{}{}_{}_{}{}".format(model, mass, wp, region, syst)).Write()
 		input_file.Close()
 		output_file.Close()
 
