@@ -278,7 +278,7 @@ if __name__ == "__main__":
 		# Top-level loop
 		for region in ["pass", "fail"]:
 			for model in models:
-				for syst in ['','_JERUp','_JERDown','_JESUp','_JESDown','_MuTriggerUp','_MuTriggerDown','_MuIDUp','_MuIDDown','_MuIsoUp','_MuIsoDown','_PUUp','_PUDown']:
+				for syst in ['','_JERUp','_JERDown','_JESUp','_JESDown','_MuTriggerUp','_MuTriggerDown','_MuIDUp','_MuIDDown','_MuIsoUp','_MuIsoDown','_PUUp','_PUDown', "_matched", "_unmatched"]:
 					input_histograms = {}
 					output_histograms = {}
 					for mass in input_masses:
