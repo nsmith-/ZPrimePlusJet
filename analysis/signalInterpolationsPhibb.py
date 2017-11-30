@@ -5,7 +5,8 @@ import os
 import sys
 from math import sqrt, floor
 from ROOT import *
-from DAZSLE.ZPrimePlusJet.histogram_interpolator import HistogramInterpolator 
+from histogram_interpolator import HistogramInterpolator
+#from DAZSLE.ZPrimePlusJet.histogram_interpolator import HistogramInterpolator 
 #import DAZSLE.PhiBBPlusJet.analysis_configuration as config
 #import DAZSLE.ZPrimePlusJet.xbb_config as config
 #gInterpreter.Declare("#include \"MyTools/RootUtils/interface/SeabornInterface.h\"")
@@ -195,15 +196,16 @@ if __name__ == "__main__":
 	# Create list of input and output masses
 	input_masses = [int(x) for x in args.input_masses.split(",")]
 	if args.output_masses:
+		output_masses = []
 		for x in args.output_masses.split(","):
-			if not x in input_masses:
+			if int(x) not in input_masses:
 				output_masses.append(int(x))
 	elif args.output_range:
 		output_args = [int(x) for x in args.output_range.split(",")]
 		output_masses = []
 		print output_args
 		for x in xrange(output_args[0], output_args[1], output_args[2]):
-			if not x in input_masses:
+			if x not in input_masses:
 				output_masses.append(x)
 	else:
 		print "[signal_interpolations] ERROR : Must specify output_masses or output_range"
@@ -224,7 +226,7 @@ if __name__ == "__main__":
 		for region in ["pass", "fail"]:
 			for model in models:
 				for wp in ["p7", "p75", "p8", "p85", "p9"]:
-					for syst in ["", "_JESUp", "_JERUp", "_PuUp", "_triggerUp", "_JESDown", "_JERDown", "_PuDown", "_triggerDown"]:
+					for syst in ["", "_JESUp", "_JERUp", "_PuUp", "_triggerUp", "_JESDown", "_JERDown", "_PuDown", "_triggerDown","_matched","_unmatched"]:
 						input_histograms = {}
 						output_histograms_1D = {}
 						model_histogram = None
@@ -278,30 +280,31 @@ if __name__ == "__main__":
 		# Top-level loop
 		for region in ["pass", "fail"]:
 			for model in models:
-				for syst in ['','_JERUp','_JERDown','_JESUp','_JESDown','_MuTriggerUp','_MuTriggerDown','_MuIDUp','_MuIDDown','_MuIsoUp','_MuIsoDown','_PUUp','_PUDown', "_matched", "_unmatched"]:
-					input_histograms = {}
-					output_histograms = {}
-					for mass in input_masses:
-						if model == "ZPrime" and mass > 300:
-							continue
-						print "[debug] Trying to get " + "{}{}_{}_{}{}".format(model, mass, wp, region, syst) + " from file " + input_file.GetPath()
-						input_histograms[mass] = input_file.Get("{}{}_{}_{}{}".format(model, mass, wp, region, syst)).Clone()
-						if not input_histograms[mass]:
-							print "ERROR : Couldn't find histogram {}{}_{}{} in file {}".format(model, mass, region, syst, input_file.GetPath())
-							sys.exit(1)
-						input_histograms[mass].SetDirectory(0)
-						# Save a copy of the input to the output file
-						output_file.cd()
-						input_histograms[mass].Write()
-					print input_histograms
-					interpolator = HistogramInterpolator(input_histograms)
-					for mass in output_masses:
-						if model == "ZPrime" and mass > 300:
-							continue
-						output_histograms[mass] = interpolator.make_interpolation(mass)
-						output_histograms[mass].SetName("{}{}_{}_{}{}".format(model, mass, wp, region, syst))
-						output_file.cd()
-						output_histograms[mass].Write()
+				for wp in ["p7", "p75", "p8", "p85", "p9"]:
+					for syst in ['','_JERUp','_JERDown','_JESUp','_JESDown','_mutriggerUp','_mutriggerDown','_muidUp','_muidDown','_muisoUp','_muisoDown','_PuUp','_PuDown']:
+						input_histograms = {}
+						output_histograms = {}
+						for mass in input_masses:
+							if model == "ZPrime" and mass > 300:
+								continue
+							print "[debug] Trying to get " + "{}{}_{}_{}{}".format(model, mass, wp, region, syst) + " from file " + input_file.GetPath()
+							input_histograms[mass] = input_file.Get("{}{}_{}_{}{}".format(model, mass, wp, region, syst)).Clone()
+							if not input_histograms[mass]:
+								print "ERROR : Couldn't find histogram {}{}_{}{} in file {}".format(model, mass, region, syst, input_file.GetPath())
+								sys.exit(1)
+							input_histograms[mass].SetDirectory(0)
+							# Save a copy of the input to the output file
+							output_file.cd()
+							input_histograms[mass].Write()
+						print input_histograms
+						interpolator = HistogramInterpolator(input_histograms)
+						for mass in output_masses:
+							if model == "ZPrime" and mass > 300:
+								continue
+							output_histograms[mass] = interpolator.make_interpolation(mass)
+							output_histograms[mass].SetName("{}{}_{}_{}{}".format(model, mass, wp, region, syst))
+							output_file.cd()
+							output_histograms[mass].Write()
 		print "Saved interpolations to {}".format(output_file.GetPath())
 		input_file.Close()
 		output_file.Close()

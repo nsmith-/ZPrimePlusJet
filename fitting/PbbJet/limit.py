@@ -132,7 +132,7 @@ def plotftest(iToys,iCentral,prob,iLabel,options):
     if options.method=='FTest':
         fdist = r.TF1("fDist", "[0]*TMath::FDist(x, [1], [2])", 0,max(max(iToys),iCentral)+1)
         fdist.SetParameter(0,lH.Integral()*((max(max(iToys),iCentral)+1)/70.))
-        fdist.FixParameter(1,options.p2-options.p1)
+        fdist.SetParameter(1,options.p2-options.p1)
         fdist.SetParameter(2,options.n-options.p2)
         fdist.Draw('same')
         #lH.Fit(fdist,'mle')

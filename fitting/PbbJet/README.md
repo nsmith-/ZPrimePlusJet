@@ -13,33 +13,17 @@ python Hbb_create_Phibb.py --lumi 35.9 -o ./ -c --skip-data 2>&1 | tee log_CA15_
 Running limits:
 ```bash
 # AK8
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p7 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p75 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p8 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p85 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_check.root -o cards_2017_07_08/  -c p9 --lrho -6.0 --hrho -2.1 --model DMSbb --mass 50,100,125,200,300,350,400,500 --nr 2 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_interpolations_merge.root  -o cards_AK8_p9_r2p1_interp/ -c p9 --lrho -6.0 --hrho -2.1 --model DMSbb --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500' -b AK8 --nr 2 --np 1 
 # CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p7 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p75 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p8 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p85 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_check.root  -o cards_2017_07_08/  -c p9 --lrho -4.7 --hrho -1.0 --model DMSbb --mass 50,100,125,200,300,350,400,500 -b CA15 --nr 5 --np 1
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_interpolations_merge.root  -o cards_CA15_p9_r3p1_interp/ -c p9 --lrho -4.7 --hrho -1.0 --model DMSbb --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500' -b CA15 --nr 3 --np 1 
 ```
 
 Plotting limits:
 ```bash
 # AK8
-python plotLimits.py --xsec -c p7 -b AK8 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p75 -b AK8 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p8 -b AK8 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p85 -b AK8 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p9 -b AK8 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
+python plotLimits.py --gq -c p9 -b CA15 -i cards_AK8_p9_r2p1_interp/ --xsecMin 0 --xsecMax 15 -o cards_AK8_p9_r3p1_interp/ --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500'
 # CA15
-python plotLimits.py --xsec -c p7 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p75 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p8 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p85 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
-python plotLimits.py --xsec -c p9 -b CA15 -i cards_2017_07_08/ --xsecMin 1e-3 --xsecMax 1e3
+python plotLimits.py --gq -c p9 -b CA15 -i cards_CA15_p9_r3p1_interp/ --xsecMin 0 --xsecMax 15 -o cards_CA15_p9_r3p1_interp/ --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500'
 ```
 
 Running F-tests AK8 and CA15 (2, 1) vs (3, 1) polynomial on 10% of data (lower order is model 1):

@@ -14,6 +14,8 @@ from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 from hist import *
 
+re_sbb = re.compile("Sbb(?P<mass>\d+)")
+
 def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
     obsRate = {}
     for box in boxes:
@@ -228,15 +230,28 @@ def main(options, args):
     jet_type = 'AK8'
     if options.fillCA15:
         jet_type = 'CA15'
-    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_' + jet_type + '_check.root','read')
+    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR_' + jet_type + '_interpolations_merge_rebin.root','read')
     
     histoDict = {}
     datahistDict = {}
+    adjProc = {}
+    
+    keys = [key.GetName() for key in tfile.GetListOfKeys() if 'Sbb' in key.GetName()]
+    re_matches = [re_sbb.search(key) for key in keys]
+    masses_present = sorted(list(set([int(re_match.group("mass")) for re_match in re_matches])))
+    mass = int(options.mass)
+    deltaM = [abs(m - mass) for m in masses_present]
+    adjMass = masses_present[deltaM.index(min(deltaM))]
+    # fix process for signal
+    adjProc['DMSbb'+str(options.mass)] = 'DMSbb'+str(adjMass)
+    # keep process for everything else
+    for proc in (bkgs+['data_obs']):
+        adjProc[proc] = proc
     
     for proc in (bkgs+sigs+['data_obs']):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
-            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box)).Clone()
+            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(adjProc[proc],cut,box)).Clone()
             histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,cut,box,tfile))
             for i in range(1, histoDict['%s_%s'%(proc,box)].GetNbinsX()+1):
                 massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(i)
@@ -244,10 +259,10 @@ def main(options, args):
             for syst in systs:
                 if proc!='data_obs':
                     print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(proc,cut,box,syst)).Clone()
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(adjProc[proc],cut,box,syst)).Clone()
                     histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(proc,cut,box,syst)).Clone()
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(adjProc[proc],cut,box,syst)).Clone()
                     histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
             if proc!='data_obs':
                 histoDict['%s_%s_%sUp'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sUp'%(proc,box,'mcstat'))

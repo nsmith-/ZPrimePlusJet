@@ -8,6 +8,7 @@ import math
 import sys
 import time
 import array
+from runCombine import massIterable
 
 #r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
 r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
@@ -18,17 +19,21 @@ from tools import *
 from hist import *
 from rhalphabet_builder_Phibb import RhalphabetBuilder, LoadHistograms, GetSF
 
-#MASS_BINS = 23
-#MASS_LO = 40
-#MASS_HI = 201
-MASS_BINS =80 
+MASS_BINS = 80
 MASS_LO = 40
 MASS_HI = 600
+#MASS_BINS = 76 
+#MASS_LO = 68
+#MASS_HI = 600
 BLIND_LO = 110
 BLIND_HI = 131
 #RHO_LO = -6
 #RHO_HI = -2.1
 
+#msd_binBoundaries = []
+#for i in range(0, 81):
+#    msd_binBoundaries.append(40. + i * 7)
+#pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
 
 def main(options, args):
     ifile = options.ifile
@@ -42,13 +47,13 @@ def main(options, args):
     if options.ifile_loose is not None:
         fLoose = r.TFile.Open(options.ifile_loose)
     #(hpass, hfail) = loadHistograms(f, options.pseudo, options.blind, options.useQCD, options.scale, options.r)
-    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], fLoose=fLoose, cuts = options.cuts)
+    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], fLoose=fLoose, cuts = options.cuts, masses = massIterable(options.masses))
     #f.Close()
 
     # Build the workspacees
     #dazsleRhalphabetBuilder(hpass, hfail, f, odir, options.NR, options.NP)
 
-    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=options.lrho, rho_hi=options.hrho, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose, cuts=options.cuts, scale=options.scale)
+    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=options.lrho, rho_hi=options.hrho, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose, cuts=options.cuts, scale=options.scale, masses=massIterable(options.masses))
 
     rhalphabuilder.run()
     if options.prefit:
@@ -85,8 +90,8 @@ if __name__ == '__main__':
     parser.add_option('--loadfit', dest='loadfit', default=None, help='load qcd polynomial parameters from alternative rhalphabase.root',metavar='loadfit')
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
-
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
+    parser.add_option('--masses',dest='masses', default='50,100,125,200,300,350,400,500',type='string',help='masses of resonance')
 
     (options, args) = parser.parse_args()
 

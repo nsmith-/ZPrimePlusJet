@@ -22,23 +22,37 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
-    msd_binBoundaries = range(68,607,7)
-    pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
-    x = array('d',msd_binBoundaries)
-    y = array('d',pt_binBoundaries)
+
     for arg in args:
         tfile_rebin = rt.TFile.Open(arg.replace('.root','_rebin.root'),'RECREATE')
         tfile = rt.TFile.Open(arg,'READ')
+        if 'CA15' in arg:
+            msd_binBoundaries = range(47,299+7,7) # muon CR
+            #msd_binBoundaries = range(68,600+7,7) # SR
+            pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        elif 'AK8' in arg:
+            msd_binBoundaries = range(40,201+7,7) # muon CR
+            pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+        x = array('d',msd_binBoundaries)
+        y = array('d',pt_binBoundaries)
         for key in tfile.GetListOfKeys():
             hist = tfile.Get(key.GetName())            
             if isinstance(hist, rt.TH2):
                 #hist_rebin = rebin2D(hist,x,y)
-                for i in range(1,hist.GetBinsX()+1):
-                    
+                for i in range(1,hist.GetNbinsX()+1):
+                    for j in range(1,hist.GetNbinsY()+1):
+                        if hist.GetXaxis().GetBinCenter(i) < x[0] or hist.GetXaxis().GetBinCenter(i) > x[-1]:
+                            hist.SetBinContent(i,j,0)
+                            hist.SetBinError(i,j,0)
             else:
-                hist_rebin = rebin1D(hist,x)
+                #hist_rebin = rebin1D(hist,x)
+                for i in range(1,hist.GetNbinsX()+1):
+                    if hist.GetXaxis().GetBinCenter(i) < x[0] or hist.GetXaxis().GetBinCenter(i) > x[-1]:
+                        hist.SetBinContent(i,0)
+                        hist.SetBinError(i,0)
             tfile_rebin.cd()
-            hist_rebin.Write(hist.GetName())
+            #hist_rebin.Write(hist.GetName())
+            hist.Write(hist.GetName())
             
 
         

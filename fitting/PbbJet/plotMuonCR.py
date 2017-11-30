@@ -18,8 +18,10 @@ def main(options, args):
 
 
     #bkgs = ['qcd','tqq','stqq','zqq','wqq','wlnu','vvqq','zll','total_background']
-    bkgs = ['qcd','tqq','stqq','zqq','wqq','wlnu','vvqq','total_background']
-    sigs = ['hqq125','tthqq125','whqq125','zhqq125']
+    #bkgs = ['qcd','tqq','stqq','zqq','wqq','wlnu','vvqq','total_background']
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll','tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','total_background']
+    #sigs = ['hqq125','tthqq125','whqq125','zhqq125']
+    sigs = ['DMSbb'+str(options.mass)]
     data = ['data']
     boxes = ['fail_muonCR','pass_muonCR']
 
@@ -202,7 +204,9 @@ if __name__ == '__main__':
     parser.add_option('-i','--idir', dest='idir', default = './',help='directory with data', metavar='idir')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write cards', metavar='odir')
     parser.add_option('--fit', dest='fit', default = 'prefit',help='choice is either prefit, fit_s or fit_b', metavar='fit')
-    
+    parser.add_option('--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
+    parser.add_option('--mass', dest='mass', default=125, type= 'int', help='mass value')
+        
     (options, args) = parser.parse_args()
     import tdrstyle
     tdrstyle.setTDRStyle()

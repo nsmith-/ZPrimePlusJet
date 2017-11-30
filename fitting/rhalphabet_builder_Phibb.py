@@ -30,7 +30,7 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9', scale = 1):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9', scale = 1, masses = [50,100,125,200,300,350,400,500]):
 
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
@@ -108,7 +108,8 @@ class RhalphabetBuilder():
         #for mass in [50,75,125,100,150,250,300]:
         #    self._signal_names.append("Pbb_" + str(mass))
         # for Hbb
-        for mass in [50,100,125,200,300,350,400,500]:
+        self._masses = masses
+        for mass in self._masses:
             self._signal_names.append("DMSbb" + str(mass))
 
     def run(self):
@@ -899,7 +900,7 @@ class RhalphabetBuilder():
 
 ##-------------------------------------------------------------------------------------
 
-def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, cuts='p9'):
+def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, cuts='p9', masses=[50,100,125,200,300,350,400,500]):
 
     pass_hists = {}
     fail_hists = {}
@@ -980,7 +981,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     #sigs = ['Pbb_']
     #signal_names = []
     # for Hbb
-    masses = [50,100,125,200,300,350,400,500]
+    #masses = [50,100,125,200,300,350,400,500]
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     sigs = ["DMSbb"]
     signal_names = []
@@ -1046,23 +1047,30 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
 
 def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
     SF = 1
+    adjProc = process
+        
     if 'DMSbb' in process:
-        if '50' in process:
-            SF *= 0.8 * 1.574e-02
-        elif '100' in process:
-            SF *= 0.8 * 1.526e-02
-        elif '125' in process:
-            SF *= 0.8 * 1.486e-02
-        elif '200' in process:
-            SF *= 0.8 * 1.359e-02
-        elif '300' in process:
-            SF *= 0.8 * 1.251e-02
-        elif '350' in process:
-            SF *= 0.8 * 1.275e-02
-        elif '400' in process:
-            SF *= 0.8 * 1.144e-02
-        elif '500' in process:
-            SF *= 0.8 * 7.274e-03
+        tgraph = r.TGraph(8)
+        tgraph.SetPoint(0,  50, 0.8 * 1.574e-02)
+        tgraph.SetPoint(1, 100, 0.8 * 1.526e-02)
+        tgraph.SetPoint(2, 125, 0.8 * 1.486e-02)
+        tgraph.SetPoint(3, 200, 0.8 * 1.359e-02)
+        tgraph.SetPoint(4, 300, 0.8 * 1.251e-02)
+        tgraph.SetPoint(5, 350, 0.8 * 1.275e-02)
+        tgraph.SetPoint(6, 400, 0.8 * 1.144e-02)
+        tgraph.SetPoint(7, 500, 0.8 * 7.274e-03)
+        
+        re_match = re_sbb.search(process)
+        mass = int(re_match.group("mass"))
+        SF *= tgraph.Eval(mass,0,'S')
+        
+        keys = [key.GetName() for key in f.GetListOfKeys() if 'Sbb' in key.GetName()]
+        re_matches = [re_sbb.search(key) for key in keys]
+        masses_present = sorted(list(set([int(re_match.group("mass")) for re_match in re_matches])))
+        deltaM = [abs(m - mass) for m in masses_present]
+        adjMass = masses_present[deltaM.index(min(deltaM))]
+        # fix process for signal
+        adjProc = 'DMSbb'+str(adjMass)
 
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'Sbb' in process:
         if 'pass' in cat:
@@ -1070,8 +1078,8 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
             if 'zqq' in process:
                 print BB_SF
         else:
-            passInt = f.Get(process + '_' + cut + '_pass').Integral()
-            failInt = f.Get(process + '_' + cut + '_fail').Integral()
+            passInt = f.Get(adjProc + '_' + cut + '_pass').Integral()
+            failInt = f.Get(adjProc + '_' + cut + '_fail').Integral()
             if failInt > 0:
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:
@@ -1094,6 +1102,7 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
         SF *= passInt/passIntLoose
         if 'zqq' in process:
             print passInt/passIntLoose
+            
     # remove cross section from MH=125 signal templates (template normalized to luminosity*efficiency*acceptance)
     ## if process=='hqq125':
     ##     SF *= 1./48.85*5.824E-01

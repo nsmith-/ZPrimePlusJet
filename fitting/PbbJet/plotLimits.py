@@ -4,6 +4,7 @@ import CMS_lumi, tdrstyle
 import subprocess # to execute shell command
 rt.gROOT.SetBatch(True)
 import glob
+import math
 
 # CMS style
 CMS_lumi.cmsText = "CMS"
@@ -12,6 +13,7 @@ CMS_lumi.cmsTextSize = 0.65
 CMS_lumi.outOfFrame = True
 tdrstyle.setTDRStyle()
 
+from runCombine import massIterable
 
 # GET limits from root file
 def getLimits(file_name):
@@ -46,34 +48,69 @@ def getLimits(file_name):
     return limits
 
 
-def massIterable(massList):
-    if len(massList.split(','))==1:
-        massIterableList = [massList]
-    else:
-        massIterableList = list(eval(massList))
-    return massIterableList
+xsections = rt.TGraph(8)
+xsections.SetPoint(0,  50, 0.8 * 1.574e-02)
+xsections.SetPoint(1, 100, 0.8 * 1.526e-02)
+xsections.SetPoint(2, 125, 0.8 * 1.486e-02)
+xsections.SetPoint(3, 200, 0.8 * 1.359e-02)
+xsections.SetPoint(4, 300, 0.8 * 1.251e-02)
+xsections.SetPoint(5, 350, 0.8 * 1.275e-02)
+xsections.SetPoint(6, 400, 0.8 * 1.144e-02)
+xsections.SetPoint(7, 500, 0.8 * 7.274e-03)
 
-xsections = {'50': 1.574e-02*0.8,
-            '100': 1.526e-02*0.8,
-            '125': 1.486e-02*0.8,
-            '200': 1.359e-02*0.8,
-            '300': 1.251e-02*0.8,
-            '350': 1.275e-02*0.8,
-            '400': 1.144e-02*0.8,
-            '500': 7.274e-03*0.8
+theory_xsec = rt.TGraph(8)
+theory_xsec.SetPoint(0,  50, 1.574e-02)
+theory_xsec.SetPoint(1, 100, 1.526e-02)
+theory_xsec.SetPoint(2, 125, 1.486e-02)
+theory_xsec.SetPoint(3, 200, 1.359e-02)
+theory_xsec.SetPoint(4, 300, 1.251e-02)
+theory_xsec.SetPoint(5, 350, 1.275e-02)
+theory_xsec.SetPoint(6, 400, 1.144e-02)
+theory_xsec.SetPoint(7, 500, 7.274e-03)
+
+br = rt.TGraph(8)
+br.SetPoint(0,  50, 0.904965)
+br.SetPoint(1, 100, 0.888511)
+br.SetPoint(2, 125, 0.874462)
+br.SetPoint(3, 200, 0.810039)
+br.SetPoint(4, 300, 0.657186)
+br.SetPoint(5, 350, 0.143152)
+br.SetPoint(6, 400, 0.0045991)
+br.SetPoint(7, 500, 0.00154471)
+
+tenpercentwidth = {'50': 52.3443,
+            '100': 51.0427,
+            '125': 50.5416,
+            '200': 48.5446,
+            '300': 43.6933,
+            '350': 20.3893,
+            '400': 3.65424,
+            '500': 2.11755
             }
-
+    
 # PLOT upper limits
 def plotUpperLimits(options,args):
     # see CMS plot guidelines: https://ghm.web.cern.ch/ghm/plots/
-    all_masses = [50, 100, 125, 200, 300, 350, 400, 500]
+    all_masses = massIterable(options.masses)
     masses = []
-    jet_type = options.box
-    cut = options.cuts.split(',')[0]
+    jet_type = {}
+    cut = {}
+    if len(options.box.split('_')) > 1:
+        for mass in all_masses:
+            if mass < 150:
+                jet_type[str(mass)] = options.box.split('_')[0]
+                cut[str(mass)] = options.cuts.split('_')[0]
+            else:
+                jet_type[str(mass)] = options.box.split('_')[1]
+                cut[str(mass)] = options.cuts.split('_')[1]
+    else:
+        for mass in all_masses:
+            jet_type[str(mass)] = options.box
+
     file_names = {}
     limits = {}
     for mass in all_masses:
-        file_name = options.idir + "/%s/%s/DMSbb%s/higgsCombineDMSbb_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type,cut,str(mass),str(mass),options.lumi,jet_type)
+        file_name = options.idir + "/%s/%s/DMSbb%s/higgsCombineDMSbb_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type[str(mass)],cut[str(mass)],str(mass),str(mass),options.lumi,jet_type[str(mass)])
         print file_name
         if glob.glob(file_name):
             print "Opened File ", file_name
@@ -90,8 +127,10 @@ def plotUpperLimits(options,args):
     green = rt.TGraph(2*N)     # green band
     median = rt.TGraph(N)      # median line
     obs = rt.TGraph(N)       # observed
-    if options.xsec:
-        theory_xsec = rt.TGraph(N)       # theory cross section
+    theory_xsec = rt.TGraph(N)       # theory cross section
+    
+
+    
 
     up2s = [ ]
     i = -1
@@ -99,18 +138,26 @@ def plotUpperLimits(options,args):
         i += 1
         limit = limits[str(mass)]
         up2s.append(limit[4])
-        if options.xsec:
-            fac = xsections[str(mass)]
+        if options.xsec or options.gq:
+            fac = xsections.Eval(mass,0,'S')
         else:
             fac = 1
-        yellow.SetPoint(    i,    mass, limit[4] * fac ) # + 2 sigma
-        green.SetPoint(     i,    mass, limit[3] * fac ) # + 1 sigma
-        median.SetPoint(    i,    mass, limit[2] * fac ) # median
-        green.SetPoint(  2*N-1-i, mass, limit[1] * fac ) # - 1 sigma
-        yellow.SetPoint( 2*N-1-i, mass, limit[0] * fac ) # - 2 sigma
-        obs.SetPoint(       i,    mass, limit[5] * fac) # observed
-        if options.xsec:
-            theory_xsec.SetPoint(       i,    mass, xsections[str(mass)]) # theory x-section
+        if options.gq:
+            yellow.SetPoint(    i,    mass, math.sqrt(limit[4]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # + 2 sigma
+            green.SetPoint(     i,    mass, math.sqrt(limit[3]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # + 1 sigma
+            median.SetPoint(    i,    mass, math.sqrt(limit[2]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # median
+            green.SetPoint(  2*N-1-i, mass, math.sqrt(limit[1]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # - 1 sigma
+            yellow.SetPoint( 2*N-1-i, mass, math.sqrt(limit[0]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # - 2 sigma
+            obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # observed
+        else:
+            yellow.SetPoint(    i,    mass, limit[4] * fac ) # + 2 sigma
+            green.SetPoint(     i,    mass, limit[3] * fac ) # + 1 sigma
+            median.SetPoint(    i,    mass, limit[2] * fac ) # median
+            green.SetPoint(  2*N-1-i, mass, limit[1] * fac ) # - 1 sigma
+            yellow.SetPoint( 2*N-1-i, mass, limit[0] * fac ) # - 2 sigma
+            obs.SetPoint(       i,    mass, limit[5] * fac) # observed
+        print mass,  limit[2]*fac
+            
 
     W = 800
     H  = 600
@@ -129,7 +176,7 @@ def plotUpperLimits(options,args):
     c.SetBottomMargin( B/H )
     c.SetTickx(0)
     c.SetTicky(0)
-    c.SetGrid()
+    #c.SetGrid()
     c.cd()
     frame = c.DrawFrame(1.4,0.001, 4.1, 10)
     frame.GetYaxis().CenterTitle()
@@ -162,7 +209,10 @@ def plotUpperLimits(options,args):
     h_limit.SetMinimum(options.xsecMin)
     h_limit.SetMaximum(options.xsecMax)
     h_limit.GetXaxis().SetTitle('Resonance mass [GeV]')
-    h_limit.GetYaxis().SetTitle("#sigma [pb]")
+    if options.gq:
+        h_limit.GetYaxis().SetTitle("g_{q}")
+    elif options.xsec:
+        h_limit.GetYaxis().SetTitle("#sigma #times B [pb]")
     h_limit.GetYaxis().SetTitleOffset(0.9)
     #h_limit.Draw('F')
     
@@ -189,10 +239,11 @@ def plotUpperLimits(options,args):
     obs.SetLineWidth(2)
     obs.Draw('PLsame')
 
+    theory_xsec.SetMarkerStyle(20)
+    theory_xsec.SetLineColor(rt.kBlue+2)
+    theory_xsec.SetLineWidth(2)
+    #theory_xsec.SetLineStyle(2)
     if options.xsec:
-        theory_xsec.SetMarkerStyle(20)
-        theory_xsec.SetLineColor(rt.kBlue+2)
-        theory_xsec.SetLineWidth(2)
         theory_xsec.Draw('Lsame')
 
     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}"%options.lumi
@@ -201,7 +252,10 @@ def plotUpperLimits(options,args):
     #rt.gPad.SetTicks(1,1)
     #frame.Draw('sameaxis')
 
-    x1 = 0.65
+    if options.gq:
+        x1 = 0.67
+    else:
+        x1 = 0.6
     x2 = x1 + 0.24
     if options.xsec: 
         y1 = 0.72
@@ -215,20 +269,43 @@ def plotUpperLimits(options,args):
     legend.SetTextFont(42)
     legend.AddEntry(obs, "Observed",'lp')
     #legend.AddEntry(median, "Asymptotic CL_{s} expected",'L')
-    legend.AddEntry(green, "Expeted #pm 1 s.d.",'lf')
+    legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
     legend.AddEntry(yellow,"Expected #pm 2 s.d.",'lf')
     if options.xsec:
-        legend.AddEntry(theory_xsec,"#Phi(b#bar{b})",'l')
+        legend.AddEntry(theory_xsec,"gg#Phi, g_{q}=1, H_{T}>400 GeV",'l')
     legend.Draw()
 
+    if len(options.box.split('_')) > 1:
+        
+        line1 = rt.TLine(150,2,150,10)
+        line1.SetLineStyle(2)
+        line1.SetLineWidth(2)
+        line1.SetLineColor(rt.kGray+1)
+        line1.Draw()
+        lab = rt.TLatex()
+        lab.SetTextSize(0.035)
+        lab.SetTextFont(42)
+        lab.SetTextColor(rt.kGray+1)
+        lab.SetTextAlign(33)
+        lab.DrawLatex(150-10,9,"#leftarrow")
+        lab.SetTextAlign(13)
+        lab.DrawLatex(150+10,9,"#rightarrow") 
+        lab.SetTextAlign(23)
+        lab.DrawLatex(150-20,8.5,"#splitline{anti-k_{T}}{R=0.8}")
+        lab.DrawLatex(150+20,8.5,"#splitline{CA}{R=1.5}")
+        lab.Draw()
+
     print " "
-    if options.xsec: 
+    if options.gq: 
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_gq.pdf") 
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_gq.C") 
+    elif options.xsec: 
         c.SetLogy()
-        c.SaveAs("Limit_" + jet_type + "_" + cut+ "_xsec.pdf") 
-        c.SaveAs("Limit_" + jet_type + "_" + cut+ "_xsec.C") 
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_xsec.pdf") 
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_xsec.C") 
     else: 
-        c.SaveAs("Limit_" + jet_type + "_" + cut+ ".pdf")
-        c.SaveAs("Limit_" + jet_type + "_" + cut+ ".C")
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + ".pdf")
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + ".C")
     c.Close()
 
 # MAIN
@@ -238,12 +315,14 @@ def main(options,args):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--model',dest="model", default="DMSbb",type="string", help="signal model name")
-    parser.add_option('--mass',dest="mass", default='750',type="string", help="mass of resonance")
+    parser.add_option('--masses',dest='masses', default='50,100,125,200,300,350,400,500',type='string',help='masses of resonance')
     parser.add_option('-b','--box',dest="box", default="AK8",type="string", help="box name")
     parser.add_option("--lumi", dest="lumi", default=35.9, type="float", help="luminosity", metavar="lumi")
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
     parser.add_option('-x','--xsec', dest='xsec', action='store_true',default=False, help='cross_section',metavar='xsec')
+    parser.add_option('-g','--gq', dest='gq', action='store_true',default=False, help='gq',metavar='xsec')
     parser.add_option('-i', '--idir', dest='idir', default='./', help='input directory',metavar='idir')
+    parser.add_option('-o', '--odir', dest='odir', default='./', help='input directory',metavar='odir')
     parser.add_option('--massMin',dest="massMin", default=50.,type="float", help="minimum mass")
     parser.add_option('--massMax',dest="massMax", default=500.,type="float", help="maximum mass")
     parser.add_option('--xsecMin',dest="xsecMin", default=1e-3,type="float", help="minimum xsec")

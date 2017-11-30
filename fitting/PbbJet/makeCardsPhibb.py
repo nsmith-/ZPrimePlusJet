@@ -14,14 +14,14 @@ import array
 sys.path.insert(0, '../.')
 from tools import *
 
-from buildRhalphabetPhibb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI
+from buildRhalphabetPhibb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,massIterable
 from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
     for model in ["DMSbb"]: # [PS, Zp]
-        for mass in [50, 100, 125, 200, 300, 350, 400, 500]:	
+        for mass in massIterable(options.masses):
             tfile = r.TFile.Open(options.ifile)
             tfile_loose = None
             if options.ifile_loose is not None:
@@ -194,7 +194,14 @@ def main(options,args):
                                         mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
 
                 tag = "cat"+str(i)
-                os.system("mkdir -pv " + options.odir + "/{}{}".format(model, mass))
+                
+                import errno
+                try:
+                    os.makedirs(options.odir + "/{}{}".format(model, mass))
+                except OSError as exc:
+                    if exc.errno != errno.EEXIST:
+                        raise
+                    pass
                 dctmp = open(options.odir+"/{}{}/card_rhalphabet_{}.txt".format(model, mass, tag), 'w')
                 for l in linel:
                     if 'JES' in l:
@@ -291,6 +298,7 @@ if __name__ == '__main__':
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
+    parser.add_option('--masses',dest='masses', default='50,100,125,200,300,350,400,500',type='string',help='masses of resonance')
 
     (options, args) = parser.parse_args()
 

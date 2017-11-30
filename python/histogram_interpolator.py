@@ -45,9 +45,15 @@ class HistogramInterpolator:
 		# Ensure left and right histograms have entries (RooIntegralMorph crashes otherwise)
 		if self._hists[left_val].GetEntries() < 10 or self._hists[right_val].GetEntries() < 10:
 			print "[HistogramInterpolator::make_interpolation] WARNING : Left and/or right histogram has low number of entries (left={}, right={}). Setting output to zero.".format(self._hists[left_val].GetEntries(), self._hists[right_val].GetEntries())
-			int_hist = self._hists[left_val].Clone()
+			if abs(float(right_val - int_val)) < abs(float(left_val - int_val)): int_hist = self._hists[right_val].Clone() # Choose right val if closer
+			else: int_hist = self._hists[left_val].Clone() # Default to left val if they're the same distance
 			int_hist.SetName("interpolated_hist_{}".format(int_val))
-			int_hist.Reset()
+			# Normalize using linear interpolation of histogram integrals
+			alpha = 1. - float(int_val - left_val) / (right_val - left_val)
+			left_norm = self._hists[left_val].Integral()
+			right_norm = self._hists[right_val].Integral()
+			int_norm = left_norm + (right_norm - left_norm)*(1. - alpha)
+			if int_hist.Integral() > 0: int_hist.Scale(int_norm/int_hist.Integral())
 			return int_hist
 
 		# Do morphing using RooIntegralMorph

@@ -23,20 +23,20 @@ def main(options,args):
 
     cut = options.cuts.split(',')[0]
 
-    exec_me('python makeCardsPhibb.py -i %s  -o %s/%s/%s --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f'%(options.ifile,
+    exec_me('python makeCardsPhibb.py -i %s  -o %s/%s/%s --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f --masses %s'%(options.ifile,
                                                                                                                            options.odir,
                                                                                                                            jet_type,
                                                                                                                            cut, cut,
                                                                                                                            options.lrho,
-                                                                                                                           options.hrho),options.dryRun)
-    exec_me('python buildRhalphabetPhibb.py -i %s -o %s/%s/%s/ --remove-unmatched  --prefit --use-qcd --pseudo -c %s --lrho %f --hrho %f --nr %i --np %i'%(options.ifile,
+                                                                                                                           options.hrho,repr(options.masses)),options.dryRun)
+    exec_me('python buildRhalphabetPhibb.py -i %s -o %s/%s/%s/ --remove-unmatched  --prefit --use-qcd --pseudo -c %s --lrho %f --hrho %f --nr %i --np %i --masses %s'%(options.ifile,
                                                                                                                                             options.odir,
                                                                                                                                             jet_type,
                                                                                                                                             cut, cut,
                                                                                                                                             options.lrho,
                                                                                                                                             options.hrho,
                                                                                                                                             options.NR,
-                                                                                                                                            optinos.NP),options.dryRun)
+                                                                                                                                            options.NP,repr(options.masses)),options.dryRun)
 
                                                                                                                                             
     pwd = os.environ['PWD']
@@ -44,10 +44,10 @@ def main(options,args):
     fillString = ''
     if options.box=='CA15':
         fillString = '--fillCA15'
-    for massPoint in massIterable(options.mass):
+    for massPoint in massIterable(options.masses):
         exec_me('cp %s/%s/%s/base.root %s/%s/%s/%s/'%(options.odir,jet_type,cut,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
         exec_me('cp %s/%s/%s/rhalphabase.root %s/%s/%s/%s/'%(options.odir,jet_type,cut,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
-        exec_me('python writeMuonCRDatacard.py -i ./ -o %s/%s/%s/%s/ %s -c %s --mass %s'%(options.odir,jet_type,cut,options.model+str(massPoint),fillString,cut,massPoint),options.dryRun)
+        exec_me('python writeMuonCRDatacard.py -i ./ -o %s/%s/%s/%s/ %s -c %s --mass %s --no-mcstat-shape'%(options.odir,jet_type,cut,options.model+str(massPoint),fillString,cut,massPoint),options.dryRun)
         os.chdir('%s/%s/%s/%s/'%(options.odir,jet_type,cut,options.model+str(massPoint)))
         exec_me('combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt',options.dryRun)
         exec_me('combine -M Asymptotic -v 2 -t -1 card_rhalphabet_muonCR.txt --saveWorkspace -n %s_%s_lumi-%.1f_%s'%(options.model,massPoint,options.lumi,jet_type),options.dryRun)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     parser = OptionParser()
     parser.add_option('--model',dest="model", default="DMSbb",type="string", help="signal model name")
-    parser.add_option('--mass',dest="mass", default='750',type="string", help="mass of resonance")
+    parser.add_option('--masses',dest='masses', default='50,100,125,200,300,350,400,500',type="string", help="masses of resonance")
     parser.add_option('-b','--box',dest="box", default="AK8",type="string", help="box name")
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
