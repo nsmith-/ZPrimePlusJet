@@ -36,7 +36,7 @@ def makePlots(hb,style,odir,lumi,ofile,canvases,rho_lo,rho_hi,nr,np):
         hist_pass_cat.append(hist_pass)
         hist_fail_cat.append(hist_fail)
 
-    c1, f2params = makeCanvasRatio2D(hb['QCD']['fail'],hb['QCD']['pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6_N2',odir,lumi,ofile=ofile, rho_lo=rho_lo, rho_hi=rho_hi,nr=nr,np=np)
+    c1, f2params = makeCanvasRatio2D(hb['QCD']['fail'],hb['QCD']['pass'],['QCD fail, p_{T} > 500 GeV','QCD pass, p_{T}>500 GeV'],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_v_pt_ak8_topR6_N2',odir,lumi,ofile=ofile, rho_lo=rho_lo, rho_hi=rho_hi,nr=nr,np=np, minM = MIN_M['allcats'], maxM = MAX_M['allcats'])
     canvases.append(c1)
     for i in range(1,len(ptBinBoundaries)):
         c = makeCanvasRatio(hist_fail_cat[i-1],hist_pass_cat[i-1],['QCD fail, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i]),'QCD pass, %i < p_{T} < %i GeV'%(ptBinBoundaries[i-1],ptBinBoundaries[i])],[ROOT.kBlue,ROOT.kBlack],style,'ratio_msd_ak8_topR6_N2_cat%i'%i,odir,lumi,ofile,(ptBinBoundaries[i-1]+ptBinBoundaries[i])/2.,f2params, MIN_M['cat%i'%i], MAX_M['cat%i'%i],nr,np)
@@ -59,6 +59,9 @@ def main(options,args,outputExists):
         MIN_M['cat%i'%j] = empty.GetXaxis().GetBinUpEdge(empty.GetXaxis().FindBin(massMin))
         MAX_M['cat%i'%j] = empty.GetXaxis().GetBinLowEdge(empty.GetXaxis().FindBin(massMax))
         print j, MIN_M['cat%i'%j], MAX_M['cat%i'%j]
+    
+    MIN_M['allcats'] = MIN_M['cat1']
+    MAX_M['allcats'] = MAX_M['cat6']
     
     ifile = options.ifile
     odir = options.odir
@@ -148,21 +151,23 @@ if __name__ == '__main__':
     ROOT.gStyle.SetPaintTextFormat("1.1f")
     ROOT.gStyle.SetOptFit(0000)
     ROOT.gROOT.SetBatch()
+    ROOT.gStyle.SetPalette(ROOT.kBird)
+    #ROOT.gStyle.SetPalette(1)
 
-    stops = [ 0.0, 1.0]
-    red =   [ 1.0, 0.3]
-    green = [ 1.0, 0.3]
-    blue =  [ 1.0, 1.0]
+    #stops = [ 0.0, 1.0]
+    #red =   [ 1.0, 0.3]
+    #green = [ 1.0, 0.3]
+    #blue =  [ 1.0, 1.0]
 
-    s = array.array('d', stops)
-    r = array.array('d', red)
-    g = array.array('d', green)
-    b = array.array('d', blue)
+    #s = array.array('d', stops)
+    #r = array.array('d', red)
+    #g = array.array('d', green)
+    #b = array.array('d', blue)
 
-    npoints = len(s)
-    ROOT.TColor.CreateGradientColorTable(npoints, s, r, g, b, 999)
+    #npoints = len(s)
+    #ROOT.TColor.CreateGradientColorTable(npoints, s, r, g, b, 999)
 
-    ROOT.gStyle.SetNumberContours(999)
+    #ROOT.gStyle.SetNumberContours(999)
 
     outputExists = True
         
