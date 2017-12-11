@@ -1,0 +1,81 @@
+imax 2 number of channels
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
+------------------------------------------------------------
+shapes * fail_cat2 base.root w_fail_cat2:$PROCESS_fail_cat2 w_fail_cat2:$PROCESS_fail_cat2_$SYSTEMATIC
+shapes qcd fail_cat2 rhalphabase.root w_fail_cat2:$PROCESS_fail_cat2
+shapes * pass_cat2 base.root w_pass_cat2:$PROCESS_pass_cat2 w_pass_cat2:$PROCESS_pass_cat2_$SYSTEMATIC
+shapes qcd pass_cat2 rhalphabase.root w_pass_cat2:$PROCESS_pass_cat2
+------------------------------------------------------------
+bin pass_cat2 fail_cat2
+observation -1.0 -1.0
+------------------------------------------------------------
+bin pass_cat2 pass_cat2 pass_cat2 pass_cat2 pass_cat2 pass_cat2 pass_cat2 fail_cat2 fail_cat2 fail_cat2 fail_cat2 fail_cat2 fail_cat2 fail_cat2
+process xhqq125 hqq125_GenpT3 hqq125_GenpT4 zqq wqq qcd tqq xhqq125 hqq125_GenpT3 hqq125_GenpT4 zqq wqq qcd tqq
+process -4 -1 0 1 2 3 4 -4 -1 0 1 2 3 4
+rate -1 -1 -1 -1 -1 1.0 -1 -1 -1 -1 -1 -1 1.0 -1
+------------------------------------------------------------
+lumi	lnN 1.025 1.025 1.025 1.025 1.025 - - 1.025 1.025 1.025 1.025 1.025 - -
+hqq125pt lnN - 1.30 1.30 - - - - - 1.30 1.30 - - - -
+hqq125ptShape shape - 1 1 - - - - - 1 1 - - - -
+veff	lnN 1.043 1.043 1.043 1.043 1.043 - - 1.043 1.043 1.043 1.043 1.043 - -
+bbeff	lnN 1.033 1.033 1.033 1.033 - - - 0.994 0.984 0.984 0.998 - - -
+znormQ	lnN - - - 1.1 1.1 - - - - - 1.1 1.1 - -
+znormEW	lnN - - - 1.35 1.35 - - - - - 1.35 1.35 - -
+wznormEW lnN - - - - 1.15 - - - - - - 1.15 - -
+JER	lnN 0.956/0.971 1.755/1.349 0.940/1.043 0.995/0.956 0.907/0.885 - 0.943/0.940 0.970/0.978 0.880/1.028 0.993/0.977 0.939/0.961 0.978/0.974 - 0.972/0.970
+JES	lnN 0.962/1.032 0.913/1.168 0.996/1.028 0.971/1.031 0.920/1.049 - 0.961/1.031 0.974/1.028 0.839/1.088 0.990/1.023 0.957/1.034 0.968/1.025 - 0.973/1.029
+Pu	lnN 1.009 1.056 1.006 1.036 1.044 - 1.011 1.007 1.030 1.006 1.012 1.008 - 1.007
+trigger	lnN 1.02 1.02 1.02 1.02 1.02 - 1.02 1.02 1.02 1.02 1.02 1.02 - 1.02
+muveto	lnN 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005
+eleveto	lnN 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005
+scale shape 0.1 0.1 0.1 0.1 0.1 - - 0.1 0.1 0.1 0.1 0.1 - -
+scalept shape 0.400 0.400 0.400 0.400 0.400 - - 0.400 0.400 0.400 0.400 0.400 - -
+smear	shape 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 - -
+tqqpasscat2norm rateParam pass_cat2 tqq (@0*@1) tqqnormSF,tqqeffSF
+tqqfailcat2norm rateParam fail_cat2 tqq (@0*(1.0-@1*0.0510)/(1.0-0.0510)) tqqnormSF,tqqeffSF
+tqqnormSF extArg 1.0 [0.0,10.0]
+tqqeffSF extArg 1.0 [0.0,10.0]
+r1p0 flatParam
+r2p0 flatParam
+r0p1 flatParam
+r1p1 flatParam
+r2p1 flatParam
+qcdeff flatParam
+xhqq125passcat2mcstat lnN	1.045	-	-	-	-	-	-	-	-	-	-	-	-	-
+hqq125GenpT3passcat2mcstat lnN	-	1.290	-	-	-	-	-	-	-	-	-	-	-	-
+hqq125GenpT4passcat2mcstat lnN	-	-	1.085	-	-	-	-	-	-	-	-	-	-	-
+zqqpasscat2mcstat lnN	-	-	-	1.122	-	-	-	-	-	-	-	-	-	-
+wqqpasscat2mcstat lnN	-	-	-	-	1.225	-	-	-	-	-	-	-	-	-
+tqqpasscat2mcstat lnN	-	-	-	-	-	-	1.037	-	-	-	-	-	-	-
+xhqq125failcat2mcstat lnN	-	-	-	-	-	-	-	1.019	-	-	-	-	-	-
+hqq125GenpT3failcat2mcstat lnN	-	-	-	-	-	-	-	-	1.147	-	-	-	-	-
+hqq125GenpT4failcat2mcstat lnN	-	-	-	-	-	-	-	-	-	1.061	-	-	-	-
+zqqfailcat2mcstat lnN	-	-	-	-	-	-	-	-	-	-	1.037	-	-	-
+wqqfailcat2mcstat lnN	-	-	-	-	-	-	-	-	-	-	-	1.025	-	-
+tqqfailcat2mcstat lnN	-	-	-	-	-	-	-	-	-	-	-	-	-	1.008
+qcd_fail_cat2_Bin1 flatParam 
+qcd_fail_cat2_Bin2 flatParam 
+qcd_fail_cat2_Bin3 flatParam 
+qcd_fail_cat2_Bin4 flatParam 
+qcd_fail_cat2_Bin5 flatParam 
+qcd_fail_cat2_Bin6 flatParam 
+qcd_fail_cat2_Bin7 flatParam 
+qcd_fail_cat2_Bin8 flatParam 
+qcd_fail_cat2_Bin9 flatParam 
+qcd_fail_cat2_Bin10 flatParam 
+qcd_fail_cat2_Bin11 flatParam 
+qcd_fail_cat2_Bin12 flatParam 
+qcd_fail_cat2_Bin13 flatParam 
+qcd_fail_cat2_Bin14 flatParam 
+qcd_fail_cat2_Bin15 flatParam 
+qcd_fail_cat2_Bin16 flatParam 
+qcd_fail_cat2_Bin17 flatParam 
+qcd_fail_cat2_Bin18 flatParam 
+qcd_fail_cat2_Bin19 flatParam 
+qcd_fail_cat2_Bin20 flatParam 
+qcd_fail_cat2_Bin21 flatParam 
+qcd_fail_cat2_Bin22 flatParam 
+qcd_fail_cat2_Bin23 flatParam 
+mcstat group = xhqq125passcat2mcstat hqq125GenpT3passcat2mcstat hqq125GenpT4passcat2mcstat zqqpasscat2mcstat wqqpasscat2mcstat tqqpasscat2mcstat xhqq125failcat2mcstat hqq125GenpT3failcat2mcstat hqq125GenpT4failcat2mcstat zqqfailcat2mcstat wqqfailcat2mcstat tqqfailcat2mcstat
+qcd group = qcdeff qcd_fail_cat2_Bin1 qcd_fail_cat2_Bin2 qcd_fail_cat2_Bin3 qcd_fail_cat2_Bin4 qcd_fail_cat2_Bin5 qcd_fail_cat2_Bin6 qcd_fail_cat2_Bin7 qcd_fail_cat2_Bin8 qcd_fail_cat2_Bin9 qcd_fail_cat2_Bin10 qcd_fail_cat2_Bin11 qcd_fail_cat2_Bin12 qcd_fail_cat2_Bin13 qcd_fail_cat2_Bin14 qcd_fail_cat2_Bin15 qcd_fail_cat2_Bin16 qcd_fail_cat2_Bin17 qcd_fail_cat2_Bin18 qcd_fail_cat2_Bin19 qcd_fail_cat2_Bin20 qcd_fail_cat2_Bin21 qcd_fail_cat2_Bin22 qcd_fail_cat2_Bin23
