@@ -34,7 +34,7 @@ V_SF_ERR = 0.043
 
 class RhalphabetBuilder():
     def __init__(self, pass_hists, fail_hists, pass_hists_signal, fail_hists_signal, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201,
-                 blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi=-2.1, blind=False, mass_fit=False, freeze_poly=False,
+                 blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi=-2.1, nRecopTbins=0, blind=False, mass_fit=False, freeze_poly=False,
                  remove_unmatched=False, input_file_loose=None, input_file_signal=None):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
@@ -70,12 +70,30 @@ class RhalphabetBuilder():
         self._poly_degree_rho = nr  # 1 = linear ; 2 is quadratic
         self._poly_degree_pt = np  # 1 = linear ; 2 is quadratic
 
-        self._nptbins = pass_hists["data_obs"].GetYaxis().GetNbins()
+        self._nptbins = nRecopTbins
         self._pt_lo = pass_hists["data_obs"].GetYaxis().GetBinLowEdge(1)
         self._pt_hi = pass_hists["data_obs"].GetYaxis().GetBinUpEdge(self._nptbins)
         self._ptbins = []
-        for ipt in range(0,self._nptbins+1):
-            self._ptbins.append(pass_hists["data_obs"].GetYaxis().GetBinLowEdge(ipt+1))
+        if nRecopTbins == 6:
+            for ipt in range(0,self._nptbins+1):
+            	self._ptbins.append(pass_hists["data_obs"].GetYaxis().GetBinLowEdge(ipt+1))
+        elif nRecopTbins == 1:
+            self._ptbins.append(450)
+            self._ptbins.append(1000)
+	elif nRecopTbins == 2:
+	    self._ptbins.append(450)
+	    self._ptbins.append(600)
+	    self._ptbins.append(1000)
+	elif nRecopTbins == 3:
+	    self._ptbins.append(450)
+	    self._ptbins.append(500)
+	    self._ptbins.append(675)
+	    self._ptbins.append(1000)
+#        elif nRecopTbins == 3:
+#            self._ptbins.append(450)
+#            self._ptbins.append(550)
+#            self._ptbins.append(800)
+#            self._ptbins.append(1000)
 
         self._nGENptbins = pass_hists_signal["hqq125"].GetZaxis().GetNbins()
 	print "number of GEN pt bins: ", self._nGENptbins
@@ -124,12 +142,14 @@ class RhalphabetBuilder():
         #    self._signal_names.append("Pbb_" + str(mass))
         # for Hbb
         for mass in [125]:
-            for sig in ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]:
+            for sig in ["hqq"]:
 		if input_file_signal is not None:
 		    for GENpt_bin in range(1, self._nGENptbins + 1):
 		    	self._signal_names.append(sig + str(mass)+"_GenpT"+str(GENpt_bin))
 		else:
 	            self._signal_names.append(sig + str(mass))
+	    for sig in ["xhqq"]:
+		self._signal_names.append(sig + str(mass))
 	print "self._signal_names: ", self._signal_names
 
     def run(self):
@@ -138,8 +158,19 @@ class RhalphabetBuilder():
     def addHptShape(self):
         fbase = r.TFile.Open(self._output_path, 'update')
 
-        categories = ['pass_cat1', 'pass_cat2', 'pass_cat3', 'pass_cat4', 'pass_cat5', 'pass_cat6',
+	if self._nptbins == 6: 
+            categories = ['pass_cat1', 'pass_cat2', 'pass_cat3', 'pass_cat4', 'pass_cat5', 'pass_cat6',
                       'fail_cat1', 'fail_cat2', 'fail_cat3', 'fail_cat4', 'fail_cat5', 'fail_cat6']
+	elif self._nptbins == 3:
+            categories = ['pass_cat1', 'pass_cat2', 'pass_cat3',
+                      'fail_cat1', 'fail_cat2', 'fail_cat3']
+        elif self._nptbins == 2:
+            categories = ['pass_cat1', 'pass_cat2',
+                      'fail_cat1', 'fail_cat2']
+        elif self._nptbins == 1:
+            categories = ['pass_cat1',
+                      'fail_cat1']
+
 
         sigs = self._signal_names
         wbase = {}
@@ -163,18 +194,28 @@ class RhalphabetBuilder():
         #total_unc = 1.6 # -> cat6 has 160% SF w.r.t. cat1
         #total_unc = 3.0 # -> cat6 has 300% SF w.r.t. cat1
         iptlo = self._ptbins[0]
-        ipthi = self._ptbins[-2]
+        ipthi = 800.
+#        ipthi = self._ptbins[-2]
+	print "ipthi: ", ipthi
+	print "iptlo: ", iptlo
 	if self._inputfile_signal is None:
             for cat in categories:
             	iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
             	ipt = self._ptbins[iptbin]
+		print "ipt: ", ipt
+                print "%s_%s: "
+                print ('%s_%s' % (proc, cat))
             	rooCat.defineType(cat)
             	datahist['%s_%s' % (proc, cat)] = wbase[cat].data('%s_%s' % (proc, cat))
             	myint = datahist['%s_%s' % (proc, cat)].sumEntries()
+		print "myint: ", myint
             	all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
             	all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
             	all_int += myint
             	print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+                print "all_int: ", all_int
+                print "all_int_rescale_Up: ", all_int_rescale_Up
+                print "all_int_rescale_Down: ", all_int_rescale_Down
 
 	else:
             for cat in categories:
@@ -182,13 +223,20 @@ class RhalphabetBuilder():
 		for GENpt_bin in range(1, self._nGENptbins + 1): 
                     iptbin = int(cat[-1])-1 # returns 0 for cat1, 1 for cat2, etc.
                     ipt = self._ptbins[iptbin]
+		    print "ipt: ", ipt
+		    print "%s_GenpT%s_%s: "
+		    print ('%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat))
                     datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)] = wbase[cat].data('%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat))
                     myint = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
+                    print "myint: ", myint
                     all_int_rescale_Up += myint * (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
                     all_int_rescale_Down += myint / (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
                     all_int += myint
 		    print "all_int: ", all_int
                 print cat, (1 + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo))
+		print "all_int: ", all_int
+		print "all_int_rescale_Up: ", all_int_rescale_Up
+		print "all_int_rescale_Down: ", all_int_rescale_Down
 
 	if self._inputfile_signal is None:
             for cat in categories:           
@@ -201,10 +249,13 @@ class RhalphabetBuilder():
                                                           datahist['%s_%s' % (proc, cat)])
 
             	hist_up = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
+		print "integral: ", hist_up.Integral()
             	hist_down = histpdf['%s_%s' % (proc, cat)].createHistogram("x")
 
             	rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
             	rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
+                print "rescaled_int_up: ", rescaled_int_up
+                print "rescaled_int_down: ", rescaled_int_down
 
             	hist_up.Scale(rescaled_int_up/hist_up.Integral())
             	hist_down.Scale(rescaled_int_down/hist_down.Integral())
@@ -234,10 +285,13 @@ class RhalphabetBuilder():
                                                           datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)])
 
             	    hist_up = histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].createHistogram("x")
+	            print "integral: ", hist_up.Integral()
             	    hist_down = histpdf['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].createHistogram("x")
 
             	    rescaled_int_up = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
             	    rescaled_int_down = datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
+		    print "rescaled_int_up: ", rescaled_int_up
+		    print "rescaled_int_down: ", rescaled_int_down
 
 		    if hist_up.Integral() != 0:
             	        hist_up.Scale(rescaled_int_up/hist_up.Integral())
@@ -268,6 +322,15 @@ class RhalphabetBuilder():
             	nom  += datahist['%s_%s' % (proc, cat)].sumEntries()
             	up += hptpdfUp_s[cat].sumEntries()
             	down += hptpdfDown_s[cat].sumEntries()
+		print "nom:"
+            	print cat, datahist['%s_%s' % (proc, cat)].sumEntries()
+		print "up:"
+            	print cat, hptpdfUp_s[cat].sumEntries()
+		print "down:"
+            	print cat, hptpdfDown_s[cat].sumEntries()
+            print "total", nom
+            print "total", up
+            print "total", down
 	else:
 	    for cat in categories:
 		up2 = 0
@@ -280,6 +343,19 @@ class RhalphabetBuilder():
                     nom2  += datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
                     up2 += hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
                     down2 += hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+		    print "nom:"
+		    print GENpt_bin, cat, datahist['%s_GenpT%s_%s' % (proc, str(GENpt_bin), cat)].sumEntries()
+                    print "up:"
+                    print GENpt_bin, cat, hptpdfUp_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+                    print "down:"
+                    print GENpt_bin, cat, hptpdfDown_s['GenpT%s_%s'%(str(GENpt_bin), cat)].sumEntries()
+		print "cat: ", cat
+		print "nom: ", nom2
+		print "up: ", up2
+		print "down: ", down2
+            print "total nom: ", nom
+            print "total up: ", up
+            print "total down: ", down
         
         icat = 0
         for cat in categories:
@@ -294,8 +370,18 @@ class RhalphabetBuilder():
         fbase = r.TFile.Open(self._output_path, 'update')
         fralphabase = r.TFile.Open(self._rhalphabet_output_path, 'update')
 
-        categories = ['pass_cat1', 'pass_cat2', 'pass_cat3', 'pass_cat4', 'pass_cat5', 'pass_cat6',
+        if self._nptbins == 6:
+            categories = ['pass_cat1', 'pass_cat2', 'pass_cat3', 'pass_cat4', 'pass_cat5', 'pass_cat6',
                       'fail_cat1', 'fail_cat2', 'fail_cat3', 'fail_cat4', 'fail_cat5', 'fail_cat6']
+        elif self._nptbins == 3:
+            categories = ['pass_cat1', 'pass_cat2', 'pass_cat3',
+                      'fail_cat1', 'fail_cat2', 'fail_cat3']
+        elif self._nptbins == 2:
+            categories = ['pass_cat1', 'pass_cat2',
+                      'fail_cat1', 'fail_cat2']
+        elif self._nptbins == 1:
+            categories = ['pass_cat1',
+                      'fail_cat1']
 
         bkgs = self._background_names
         sigs = self._signal_names
@@ -485,44 +571,58 @@ class RhalphabetBuilder():
     def LoopOverPtBins(self):
 
         print "number of pt bins = ", self._nptbins;
-        for pt_bin in range(1, self._nptbins + 1):
+        for pt_bin in range(1, len(self._ptbins)):
             # for pt_bin in range(1,2):
             print "------- pT bin number ", pt_bin
+	    print "self._ptbins[pt_bin-1]: ", self._ptbins[pt_bin-1]
+	    print "self._ptbins[pt_bin]: ", self._ptbins[pt_bin]
 
             # 1d histograms in each pT bin (in the order... data, w, z, qcd, top, signals)
             pass_hists_ptbin = {}
             fail_hists_ptbin = {}
             for name, hist in self._pass_hists.iteritems():
-                pass_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
+                pass_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
             for name, hist in self._fail_hists.iteritems():
-                fail_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
+                fail_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
 	    if self._inputfile_signal is None:
 		for name, hist in self._pass_hists_signal.iteritems():
-		    pass_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
+		    pass_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
 		for name, hist in self._fail_hists_signal.iteritems():
-		    fail_hists_ptbin[name] = tools.proj("cat", str(pt_bin), hist, self._mass_nbins, self._mass_lo,
+		    fail_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
 	    else:
-		for GENpt_bin in range(1, self._nGENptbins + 1):
-		    for name, hist in self._pass_hists_signal.iteritems():
-		    	pass_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D("cat", str(pt_bin), str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
+		for name, hist in self._pass_hists_signal.iteritems():
+		    print "name: ", name
+		    if name == 'hqq125':
+			for GENpt_bin in range(1, self._nGENptbins + 1):
+		    	    pass_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
-                    for name, hist in self._fail_hists_signal.iteritems():
-                    	fail_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D("cat", str(pt_bin), str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
+		    else:
+                        pass_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
+		for name, hist in self._fail_hists_signal.iteritems():
+                    if name == 'hqq125':
+                        for GENpt_bin in range(1, self._nGENptbins + 1):
+                            fail_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+		    else:
+                        fail_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
+                                                    self._mass_hi)
+			
 
+
+	    print "passing 1D hists: ", pass_hists_ptbin
+            print "failling 1D hists: ", fail_hists_ptbin
             # make RooDataset, RooPdfs, and histograms
             # GetWorkspaceInputs returns: RooDataHist (data), then RooHistPdf of each electroweak
             (data_pass_rdh, data_fail_rdh, pass_rhps, fail_rhps) = self.GetWorkspaceInputs(pass_hists_ptbin,
                                                                                            fail_hists_ptbin,
                                                                                            "cat" + str(pt_bin))
             # Get approximate pt bin value
-            this_pt = self._pass_hists["data_obs"].GetYaxis().GetBinLowEdge(pt_bin) + self._pass_hists[
-                                                                                          "data_obs"].GetYaxis().GetBinWidth(
-                pt_bin) * 0.3;
+            this_pt = self._ptbins[pt_bin-1] + (self._ptbins[pt_bin]-self._ptbins[pt_bin-1]) * 0.3;
             print "------- this bin pT value ", this_pt
 
             # Make the rhalphabet fit for this pt bin
@@ -561,7 +661,7 @@ class RhalphabetBuilder():
         self._lEffQCD.setConstant(False)
 
         polynomial_variables = []
-        self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", -30, 30)
+        self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", -40, 40)
         print "polynomial_variables=",
         print polynomial_variables
 
@@ -630,9 +730,9 @@ class RhalphabetBuilder():
             self._all_pars.extend([pass_bin_var, fail_bin_var])
             # print  fail_bin_var.GetName(),"flatParam",lPass#,lPass+"/("+lFail+")*@0"
 
-        # print "Printing pass_bins:"
-        # for i in xrange(pass_bins.getSize()):
-        #    pass_bins[i].Print()
+        print "Printing pass_bins:"
+        for i in xrange(pass_bins.getSize()):
+           pass_bins[i].Print()
         pass_rparh = r.RooParametricHist(rhalph_bkgd_name + "_pass_" + category, rhalph_bkgd_name + "_pass_" + category,
                                          self._lMSD, pass_bins, fail_histograms["data_obs"])
         fail_rparh = r.RooParametricHist(rhalph_bkgd_name + "_fail_" + category, rhalph_bkgd_name + "_fail_" + category,
@@ -876,6 +976,8 @@ class RhalphabetBuilder():
             roofit_shapes = self.GetRoofitHistObjects(iHP[signal_name], iHF[signal_name], signal_name, iBin)
             lPSigs[signal_name] = roofit_shapes["pass_rdh"]
             lFSigs[signal_name] = roofit_shapes["fail_rdh"]
+	print "lPSigs: ", lPSigs
+	print "lFSigs: ", lFSigs
         return (lPSigs, lFSigs)
 
     # def MakeWorkspace(self,iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
@@ -886,14 +988,24 @@ class RhalphabetBuilder():
         # get the pT bin
         iPt = category[-1:]
 
+	entries = 0.
+	entries2 = 0.
+        entries3 = 0.
+        entries4 = 0.
+        entries5 = 0.
+        entries6 = 0.
+	loops = 0.
         for import_object in import_objects:
 	    print "printing import_object:"
             import_object.Print()
             process = import_object.GetName().split('_')[0]
             cat = import_object.GetName().split('_')[1]
+	    print "import_object.GetName(): ", import_object.GetName()
+	    print "process: ", process
+	    print "cat: ", cat
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat', 'Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or ('hqq' in process and self._inputfile_signal is None)):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or ('hqq' in process and self._inputfile_signal is None) or 'xhqq125' in process):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -912,27 +1024,46 @@ class RhalphabetBuilder():
                                 process + '_' + cat + '_' + syst + 'Down')
                             tmph.Scale(
                                 GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched,
-                                      iPt))
+                                      iPt, self._ptbins[iPt-1], self._ptbins[iPt]))
                             tmph_up.Scale(
                                 GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched,
-                                      iPt))
+                                      iPt, self._ptbins[iPt-1], self._ptbins[iPt]))
                             tmph_down.Scale(
                                 GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched,
-                                      iPt))
+                                      iPt, self._ptbins[iPt-1], self._ptbins[iPt]))
                         else:
+#			    print "checking workspace"
 			    print process, cat, syst
                             tmph = self._inputfile.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
                             tmph_up = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
                                 process + '_' + cat + '_' + syst + 'Up')
                             tmph_down = self._inputfile.Get(process + '_' + cat + matchingString).Clone(
                                 process + '_' + cat + '_' + syst + 'Down')
+#			    print "integral: ", tmph.Integral()
                             tmph.Scale(GetSF(process, cat, self._inputfile))
                             tmph_up.Scale(GetSF(process, cat, self._inputfile))
                             tmph_down.Scale(GetSF(process, cat, self._inputfile))
-                        tmph_mass = tools.proj('cat', str(iPt), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
-                        tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo,
+                        for j in range(1, tmph.GetNbinsY() + 1):
+                            for i in range(1, tmph.GetNbinsX() + 1):
+                                massVal = tmph.GetXaxis().GetBinCenter(i)
+                                pt_val2 = tmph.GetYaxis().GetBinLowEdge(j) + tmph.GetYaxis().GetBinWidth(j) *0.3;
+                                rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                                if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                    print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                    rhoVal, tmph.GetName(), pt_val2, tmph.GetXaxis().GetBinLowEdge(i),
+                                    tmph.GetXaxis().GetBinUpEdge(i))
+                                    tmph.SetBinContent(i,j, 0.)
+                                    tmph.SetBinError(i,j, 0.)
+                                    tmph_up.SetBinContent(i,j, 0.)
+                                    tmph_up.SetBinError(i,j, 0.)
+                                    tmph_down.SetBinContent(i,j, 0.)
+                                    tmph_down.SetBinError(i,j, 0.)
+
+                        tmph_mass = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
+#			print "integral: ", tmph_mass.Integral()
+                        tmph_mass_up = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_up, self._mass_nbins, self._mass_lo,
                                                   self._mass_hi)
-                        tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
+                        tmph_mass_down = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_down, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
                         for i in range(1, tmph_mass_up.GetNbinsX() + 1):
                             mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
@@ -955,17 +1086,33 @@ class RhalphabetBuilder():
                             # hout.append(tmph_mass_up)
                             # hout.append(tmph_mass_down)
                     else:
+#                        print "checking workspace"
                         print process, cat, syst
                         tmph_up = self._inputfile.Get(process + '_' + cat + '_' + syst + 'Up').Clone()
                         tmph_down = self._inputfile.Get(process + '_' + cat + '_' + syst + 'Down').Clone()
                         tmph_up.Scale(GetSF(process, cat, self._inputfile))
                         tmph_down.Scale(GetSF(process, cat, self._inputfile))
-                        tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo,
+                        for j in range(1, tmph_up.GetNbinsY() + 1):
+                            for i in range(1, tmph_up.GetNbinsX() + 1):
+                                massVal = tmph_up.GetXaxis().GetBinCenter(i)
+                                pt_val2 = tmph_up.GetYaxis().GetBinLowEdge(j) + tmph_up.GetYaxis().GetBinWidth(j) *0.3;
+                                rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                                if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                    print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                    rhoVal, tmph_up.GetName(), pt_val2, tmph_up.GetXaxis().GetBinLowEdge(i),
+                                    tmph_up.GetXaxis().GetBinUpEdge(i))
+                                    tmph_up.SetBinContent(i,j, 0.)
+                                    tmph_up.SetBinError(i,j, 0.)
+                                    tmph_down.SetBinContent(i,j, 0.)
+                                    tmph_down.SetBinError(i,j, 0.)
+
+                        tmph_mass_up = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_up, self._mass_nbins, self._mass_lo,
                                                   self._mass_hi)
-                        tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
+                        tmph_mass_down = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_down, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
                         tmph_mass_up.SetName(import_object.GetName() + '_' + syst + 'Up')
                         tmph_mass_down.SetName(import_object.GetName() + '_' + syst + 'Down')
+#                        print "integral: ", tmph_mass_up.Integral()
                         hout.append(tmph_mass_up)
                         hout.append(tmph_mass_down)
                 uncorrelate(histDict, 'mcstat')
@@ -983,19 +1130,22 @@ class RhalphabetBuilder():
                                 h.GetName(), h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i, 0.)
                             h.SetBinError(i, 0.)
-                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
-                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
-                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
-                                h.GetXaxis().GetBinUpEdge(i))
-                            h.SetBinContent(i, 0.)
-                            h.SetBinError(i, 0.)
+#                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+#                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+#                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
+#                                h.GetXaxis().GetBinUpEdge(i))
+#                            h.SetBinContent(i, 0.)
+#                            h.SetBinError(i, 0.)
                     tmprdh = r.RooDataHist(h.GetName(), h.GetName(), r.RooArgList(self._lMSD), h)
+#                    print "checking workspace:"
+#                    print h.GetName()
+#                    print "integral: ", tmprdh.sumEntries()
                     getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                     # validation
                     self._outfile_validation.cd()
                     h.Write()
 
-	    if do_syst and 'hqq' in process and self._inputfile_signal is not None:
+	    if do_syst and process == 'hqq125' and self._inputfile_signal is not None:
 	        cat = import_object.GetName().split('_')[2]
 		Genptbin = import_object.GetName().split('_')[1]
 		print "Higgs cat: ", cat
@@ -1006,19 +1156,39 @@ class RhalphabetBuilder():
                 for syst in systematics:
                     if syst == 'mcstat':
                         matchingString = ''
+# 			print "checking workspace"
 			print process, cat, syst
                         tmph = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(process + '_' + cat)
                         tmph_up = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(
                         process + '_' + cat + '_' + syst + 'Up')
                         tmph_down = self._inputfile_signal.Get(process + '_' + cat + matchingString).Clone(
                         process + '_' + cat + '_' + syst + 'Down')
+#			print "integral: ", tmph.Integral()
                         tmph.Scale(GetSF(process, cat, self._inputfile_signal))
                         tmph_up.Scale(GetSF(process, cat, self._inputfile_signal))
                         tmph_down.Scale(GetSF(process, cat, self._inputfile_signal))
-                        tmph_mass = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
-                        tmph_mass_up = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_up, self._mass_nbins, self._mass_lo,
+                        for j in range(1, tmph.GetNbinsY() + 1):
+                            for i in range(1, tmph.GetNbinsX() + 1):
+				for k in range(1, tmph.GetNbinsZ() + 1):
+                                    massVal = tmph.GetXaxis().GetBinCenter(i)
+                                    pt_val2 = tmph.GetYaxis().GetBinLowEdge(j) + tmph.GetYaxis().GetBinWidth(j) *0.3;
+                                    rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                                    if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                    	print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                    	rhoVal, tmph.GetName(), pt_val2, tmph.GetXaxis().GetBinLowEdge(i),
+                                    	tmph.GetXaxis().GetBinUpEdge(i))
+                                    	tmph.SetBinContent(i,j,k, 0.)
+                                    	tmph.SetBinError(i,j,k, 0.)
+                                   	tmph_up.SetBinContent(i,j,k, 0.)
+                                   	tmph_up.SetBinError(i,j,k, 0.)
+                                    	tmph_down.SetBinContent(i,j,k, 0.)
+                                    	tmph_down.SetBinError(i,j,k, 0.)
+
+                        tmph_mass = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
+#			print "integral: ", tmph_mass.Integral()
+                        tmph_mass_up = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph_up, self._mass_nbins, self._mass_lo,
                                                   self._mass_hi)
-                        tmph_mass_down = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_down, self._mass_nbins, self._mass_lo,
+                        tmph_mass_down = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph_down, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
                         for i in range(1, tmph_mass_up.GetNbinsX() + 1):
                             mcstatup = tmph_mass_up.GetBinContent(i) + tmph_mass_up.GetBinError(i)
@@ -1037,17 +1207,34 @@ class RhalphabetBuilder():
                             import_object.GetName() + '_' + import_object.GetName().replace('_',
 										             '') + syst + 'Down'] = tmph_mass_down
                     else:
+#			print "checking workspace"
                         print process, cat, syst
                         tmph_up = self._inputfile_signal.Get(process + '_' + cat + '_' + syst + 'Up').Clone()
                         tmph_down = self._inputfile_signal.Get(process + '_' + cat + '_' + syst + 'Down').Clone()
                         tmph_up.Scale(GetSF(process, cat, self._inputfile_signal))
                         tmph_down.Scale(GetSF(process, cat, self._inputfile_signal))
-                        tmph_mass_up = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_up, self._mass_nbins, self._mass_lo,
+                        for j in range(1, tmph_up.GetNbinsY() + 1):
+                            for i in range(1, tmph_up.GetNbinsX() + 1):
+                                for k in range(1, tmph_up.GetNbinsZ() + 1):
+                                    massVal = tmph_up.GetXaxis().GetBinCenter(i)
+                                    pt_val2 = tmph_up.GetYaxis().GetBinLowEdge(j) + tmph_up.GetYaxis().GetBinWidth(j) *0.3;
+                                    rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                                    if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                    	print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                    	rhoVal, tmph_up.GetName(), pt_val2, tmph_up.GetXaxis().GetBinLowEdge(i),
+                                    	tmph_up.GetXaxis().GetBinUpEdge(i))
+                                    	tmph_up.SetBinContent(i,j,k, 0.)
+                                    	tmph_up.SetBinError(i,j,k, 0.)
+                                    	tmph_down.SetBinContent(i,j,k, 0.)
+                                    	tmph_down.SetBinError(i,j,k, 0.)
+
+                        tmph_mass_up = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph_up, self._mass_nbins, self._mass_lo,
                                                   self._mass_hi)
-                        tmph_mass_down = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_down, self._mass_nbins, self._mass_lo,
+                        tmph_mass_down = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph_down, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
                         tmph_mass_up.SetName(import_object.GetName() + '_' + syst + 'Up')
                         tmph_mass_down.SetName(import_object.GetName() + '_' + syst + 'Down')
+#			print "integral: ", tmph_mass_up.Integral()
                         hout.append(tmph_mass_up)
                         hout.append(tmph_mass_down)
                 uncorrelate(histDict, 'mcstat')
@@ -1066,17 +1253,24 @@ class RhalphabetBuilder():
                                 h.GetName(), h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i, 0.)
                             h.SetBinError(i, 0.)
-                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
-                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
-                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
-                                h.GetXaxis().GetBinUpEdge(i))
-                            h.SetBinContent(i, 0.)
-                            h.SetBinError(i, 0.)
+#                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+#                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+#                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
+#                                h.GetXaxis().GetBinUpEdge(i))
+#                            h.SetBinContent(i, 0.)
+#                            h.SetBinError(i, 0.)
                     tmprdh = r.RooDataHist(h.GetName(), h.GetName(), r.RooArgList(self._lMSD), h)
+#		    if 'vbfhqq125' in h.GetName() and 'pass' in h.GetName() and 'cat1' in h.GetName():
+#			entries += tmprdh.sumEntries()
+#		    print "checking workspace:"
+#		    print h.GetName()
+#		    print "integral: ", tmprdh.sumEntries()
                     getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                     # validation
                     self._outfile_validation.cd()
                     h.Write()
+#		print "checking sum of entries:"
+#		print "integral: ", entries
 
             if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process):
                 if process == 'wqq':
@@ -1090,36 +1284,90 @@ class RhalphabetBuilder():
 
                 # get the matched and unmatched hist
 
+
                 if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:
                     tmph_matched = self._inputfile_loose.Get(process + '_' + cat + '_matched').Clone()
+#        	    print import_object.GetName()
+#	            print "integral: ", tmph_matched.Integral()
                     tmph_unmatched = self._inputfile_loose.Get(process + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(
-                        GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                        GetSF(process, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt, self._ptbins[iPt-1], self._ptbins[iPt]))
                     tmph_unmatched.Scale(GetSF(process, cat, self._inputfile, self._inputfile_loose,
                                                False))  # doesn't matter if removing unmatched so just remove that option
-                    tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo,
+                    for j in range(1, tmph_matched.GetNbinsY() + 1):
+                        for i in range(1, tmph_matched.GetNbinsX() + 1):
+                            massVal = tmph_matched.GetXaxis().GetBinCenter(i)
+                            pt_val2 = tmph_matched.GetYaxis().GetBinLowEdge(j) + tmph_matched.GetYaxis().GetBinWidth(j) *0.3;
+                            rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                            if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                rhoVal, tmph_matched.GetName(), pt_val2, tmph_matched.GetXaxis().GetBinLowEdge(i),
+                                tmph_matched.GetXaxis().GetBinUpEdge(i))
+                                tmph_matched.SetBinContent(i,j, 0.)
+                                tmph_matched.SetBinError(i,j, 0.)
+                                tmph_unmatched.SetBinContent(i,j, 0.)
+                                tmph_unmatched.SetBinError(i,j, 0.)
+
+                    tmph_mass_matched = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_matched, self._mass_nbins, self._mass_lo,
                                                self._mass_hi)
-                    tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
+                    tmph_mass_unmatched = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_unmatched, self._mass_nbins, self._mass_lo,
                                                  self._mass_hi)
-		elif self._inputfile_signal is not None and 'hqq' in process:
+		elif self._inputfile_signal is not None and process == 'hqq125':
 		    Genptbin = import_object.GetName().split('_')[1]
                     tmph_matched = self._inputfile_signal.Get(process + '_' + cat + '_matched').Clone()
+#                    print import_object.GetName()
+#                    print "integral: ", tmph_matched.Integral()
                     tmph_unmatched = self._inputfile_signal.Get(process + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(GetSF(process, cat, self._inputfile_signal))
                     tmph_unmatched.Scale(GetSF(process, cat, self._inputfile_signal))
-                    tmph_mass_matched = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_matched, self._mass_nbins, self._mass_lo,
+                    for j in range(1, tmph_matched.GetNbinsY() + 1):
+                        for i in range(1, tmph_matched.GetNbinsX() + 1):
+                            for k in range(1, tmph_matched.GetNbinsZ() + 1):
+                                massVal = tmph_matched.GetXaxis().GetBinCenter(i)
+                                pt_val2 = tmph_matched.GetYaxis().GetBinLowEdge(j) + tmph_matched.GetYaxis().GetBinWidth(j) *0.3;
+                                rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                                if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                    print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                    rhoVal, tmph_matched.GetName(), pt_val2, tmph_matched.GetXaxis().GetBinLowEdge(i),
+                                    tmph_matched.GetXaxis().GetBinUpEdge(i))
+                                    tmph_matched.SetBinContent(i,j,k, 0.)
+                                    tmph_matched.SetBinError(i,j,k, 0.)
+                                    tmph_unmatched.SetBinContent(i,j,k, 0.)
+                                    tmph_unmatched.SetBinError(i,j,k, 0.)
+
+                    tmph_mass_matched = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph_matched, self._mass_nbins, self._mass_lo,
                                                self._mass_hi)
-                    tmph_mass_unmatched = tools.proj3D('cat', str(iPt), str(Genptbin[5]), tmph_unmatched, self._mass_nbins, self._mass_lo,
+                    tmph_mass_unmatched = tools.proj3D_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], str(Genptbin[5]), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                                  self._mass_hi)
                 else:
                     tmph_matched = self._inputfile.Get(process + '_' + cat + '_matched').Clone()
+#                    print import_object.GetName()
+#                    print "integral: ", tmph_matched.Integral()
                     tmph_unmatched = self._inputfile.Get(process + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(GetSF(process, cat, self._inputfile))
                     tmph_unmatched.Scale(GetSF(process, cat, self._inputfile))
-	            tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo,
+                    for j in range(1, tmph_matched.GetNbinsY() + 1):
+                        for i in range(1, tmph_matched.GetNbinsX() + 1):
+                            massVal = tmph_matched.GetXaxis().GetBinCenter(i)
+                            pt_val2 = tmph_matched.GetYaxis().GetBinLowEdge(j) + tmph_matched.GetYaxis().GetBinWidth(j) *0.3;
+                            rhoVal = r.TMath.Log(massVal * massVal / pt_val2 / pt_val2)
+                            if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+                                print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+                                rhoVal, tmph_matched.GetName(), pt_val2, tmph_matched.GetXaxis().GetBinLowEdge(i),
+                                tmph_matched.GetXaxis().GetBinUpEdge(i))
+                                tmph_matched.SetBinContent(i,j, 0.)
+                                tmph_matched.SetBinError(i,j, 0.)
+                                tmph_unmatched.SetBinContent(i,j, 0.)
+                                tmph_unmatched.SetBinError(i,j, 0.)
+
+	            tmph_mass_matched = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_matched, self._mass_nbins, self._mass_lo,
                                                self._mass_hi)
-                    tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
+                    tmph_mass_unmatched = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_unmatched, self._mass_nbins, self._mass_lo,
                                                  self._mass_hi)
+#		print tmph_mass_matched.GetName()
+#		print "integral: ", tmph_mass_matched.Integral()
+#                if tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_1' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_2' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_3' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_4' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_5' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_6' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_7' or tmph_mass_matched.GetName() == 'whqq125_pass_matched_cat5_8':
+#                    entries += tmph_mass_matched.Integral()
                 # smear/shift the matched
                 hist_container = hist([mass], [tmph_mass_matched])
                 # mass_shift = 0.99
@@ -1143,6 +1391,11 @@ class RhalphabetBuilder():
                 # get new central value
                 shift_val = mass - mass * mass_shift
                 tmp_shifted_h = hist_container.shift(tmph_mass_matched, shift_val)
+#                print "checking workspace:"
+#                print tmp_shifted_h[0].GetName()
+#                print "integral: ", tmp_shifted_h[0].Integral()
+#                if tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_1dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_2dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_3dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_4dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_5dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_6dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_7dh0_scaleUp' or tmp_shifted_h[0].GetName() == 'whqq125_pass_matched_cat5_8dh0_scaleUp':
+#                    entries += tmp_shifted_h[0].Integral()
                 # get new central value and new smeared value
                 smear_val = res_shift - 1
                 tmp_smeared_h = hist_container.smear(tmp_shifted_h[0], smear_val)
@@ -1170,6 +1423,11 @@ class RhalphabetBuilder():
                 # get res up/down
                 hmatchedsys_smear = hist_container.smear(hmatched_new_central, res_shift_unc)
 
+#                print "checking workspace:"
+#                print hmatched_new_central.GetName()
+#                print "integral: ", hmatched_new_central.Integral()
+#                if hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_1dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_2dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_3dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_4dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_5dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_6dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_7dh0_scaleUpdh0_smearUp' or hmatched_new_central.GetName() == 'vbfhqq125_pass_matched_cat1_8dh0_scaleUpdh0_smearUp':
+#                    entries += hmatched_new_central.Integral()
                 if not (self._remove_unmatched and ('wqq' in process or 'zqq' in process)):
                     # add back the unmatched
                     hmatched_new_central.Add(tmph_mass_unmatched)
@@ -1183,6 +1441,12 @@ class RhalphabetBuilder():
                 hmatchedsys_smear[0].SetName(import_object.GetName() + "_smearUp")
                 hmatchedsys_smear[1].SetName(import_object.GetName() + "_smearDown")
 
+#                print "checking workspace:"
+#		print hmatched_new_central.GetName() 
+#		print "integral: ", hmatched_new_central.Integral()
+#                if hmatched_new_central.GetName() == 'vbfhqq125_GenpT1_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT2_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT3_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT4_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT5_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT6_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT7_pass_cat1' or hmatched_new_central.GetName() == 'vbfhqq125_GenpT8_pass_cat1':
+#                    entries += hmatched_new_central.Integral()
+#		    loops += 1
                 hout = [hmatched_new_central, hmatchedsys_shift[0], hmatchedsys_shift[1], hmatchedsys_smear[0],
                         hmatchedsys_smear[1]]
                 # blind if necessary and output to workspace
@@ -1194,15 +1458,27 @@ class RhalphabetBuilder():
                             print "blinding signal region for %s, mass bin [%i,%i] " % (
                                 h.GetName(), h.GetXaxis().GetBinLowEdge(i), h.GetXaxis().GetBinUpEdge(i))
                             h.SetBinContent(i, 0.)
-                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
-                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
-                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
-                                h.GetXaxis().GetBinUpEdge(i))
-                            h.SetBinContent(i, 0.)
+#                        if rhoVal < self._rho_lo or rhoVal > self._rho_hi:
+#                            print "removing rho = %.2f for %s, pt_val = %.2f, mass bin [%i,%i]" % (
+#                                rhoVal, h.GetName(), pt_val, h.GetXaxis().GetBinLowEdge(i),
+#                                h.GetXaxis().GetBinUpEdge(i))
+#                            h.SetBinContent(i, 0.)
                     tmprdh = r.RooDataHist(h.GetName(), h.GetName(), r.RooArgList(self._lMSD), h)
-                    print "checking workspace:"
-                    print h.GetName()
-                    print "integral: ", tmprdh.sumEntries()
+#                    print "checking workspace:"
+#                    print h.GetName()
+#                    print "integral: ", tmprdh.sumEntries()
+#		    if h.GetName() == 'tthqq125_GenpT1_fail_cat1' or h.GetName() == 'tthqq125_GenpT2_fail_cat1' or h.GetName() == 'tthqq125_GenpT3_fail_cat1' or h.GetName() == 'tthqq125_GenpT4_fail_cat1' or h.GetName() == 'tthqq125_GenpT5_fail_cat1' or h.GetName() == 'tthqq125_GenpT6_fail_cat1' or h.GetName() == 'tthqq125_GenpT7_fail_cat1' or h.GetName() == 'tthqq125_GenpT8_fail_cat1':
+#			entries += tmprdh.sumEntries()
+#                    if h.GetName() == 'tthqq125_GenpT1_fail_cat2' or h.GetName() == 'tthqq125_GenpT2_fail_cat2' or h.GetName() == 'tthqq125_GenpT3_fail_cat2' or h.GetName() == 'tthqq125_GenpT4_fail_cat2' or h.GetName() == 'tthqq125_GenpT5_fail_cat2' or h.GetName() == 'tthqq125_GenpT6_fail_cat2' or h.GetName() == 'tthqq125_GenpT7_fail_cat2' or h.GetName() == 'tthqq125_GenpT8_fail_cat2':
+#                        entries2 += tmprdh.sumEntries()
+#                    if h.GetName() == 'tthqq125_GenpT1_fail_cat3' or h.GetName() == 'tthqq125_GenpT2_fail_cat3' or h.GetName() == 'tthqq125_GenpT3_fail_cat3' or h.GetName() == 'tthqq125_GenpT4_fail_cat3' or h.GetName() == 'tthqq125_GenpT5_fail_cat3' or h.GetName() == 'tthqq125_GenpT6_fail_cat3' or h.GetName() == 'tthqq125_GenpT7_fail_cat3' or h.GetName() == 'tthqq125_GenpT8_fail_cat3':
+#                        entries3 += tmprdh.sumEntries()
+#                    if h.GetName() == 'tthqq125_GenpT1_fail_cat4' or h.GetName() == 'tthqq125_GenpT2_fail_cat4' or h.GetName() == 'tthqq125_GenpT3_fail_cat4' or h.GetName() == 'tthqq125_GenpT4_fail_cat4' or h.GetName() == 'tthqq125_GenpT5_fail_cat4' or h.GetName() == 'tthqq125_GenpT6_fail_cat4' or h.GetName() == 'tthqq125_GenpT7_fail_cat4' or h.GetName() == 'tthqq125_GenpT8_fail_cat4':
+#                        entries4 += tmprdh.sumEntries()
+#                    if h.GetName() == 'tthqq125_GenpT1_fail_cat5' or h.GetName() == 'tthqq125_GenpT2_fail_cat5' or h.GetName() == 'tthqq125_GenpT3_fail_cat5' or h.GetName() == 'tthqq125_GenpT4_fail_cat5' or h.GetName() == 'tthqq125_GenpT5_fail_cat5' or h.GetName() == 'tthqq125_GenpT6_fail_cat5' or h.GetName() == 'tthqq125_GenpT7_fail_cat5' or h.GetName() == 'tthqq125_GenpT8_fail_cat5':
+#                        entries5 += tmprdh.sumEntries()
+#                    if h.GetName() == 'tthqq125_GenpT1_fail_cat6' or h.GetName() == 'tthqq125_GenpT2_fail_cat6' or h.GetName() == 'tthqq125_GenpT3_fail_cat6' or h.GetName() == 'tthqq125_GenpT4_fail_cat6' or h.GetName() == 'tthqq125_GenpT5_fail_cat6' or h.GetName() == 'tthqq125_GenpT6_fail_cat6' or h.GetName() == 'tthqq125_GenpT7_fail_cat6' or h.GetName() == 'tthqq125_GenpT8_fail_cat6':
+#                        entries6 += tmprdh.sumEntries()
                     getattr(workspace, 'import')(tmprdh, r.RooFit.RecycleConflictNodes())
                     if h.GetName().find("scale") > -1:
                         pName = h.GetName().replace("scale", "scalept")
@@ -1217,6 +1493,14 @@ class RhalphabetBuilder():
             else:
                 print "Importing {}".format(import_object.GetName())
                 getattr(workspace, 'import')(import_object, r.RooFit.RecycleConflictNodes())
+        print "checking sum of entries:"
+        print "entries: ", entries
+        print "entries2: ", entries2
+        print "entries3: ", entries3
+        print "entries4: ", entries4
+        print "entries5: ", entries5
+        print "entries6: ", entries6
+	print "loops: ", loops
 
         if category.find("pass_cat1") == -1:
             workspace.writeToFile(output_path, False)
@@ -1238,6 +1522,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     fail_hists = {}
     f.ls()
 
+    print "fLoose: ", fLoose
     print "SIGNAL FILE:"
     if fSignal is not None:
 	fSignal.ls()
@@ -1302,25 +1587,26 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # signal_names = []
     # for Hbb
     masses = [125]  # 50,75,125,100,150,200,250,300]
-    sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
+    sigs = ["hqq", "xhqq"]
     signal_names = []
 
-    for mass in masses:
-        for sig in sigs:
-            passhist = f.Get(sig + str(mass) + "_pass").Clone()
-            failhist = f.Get(sig + str(mass) + "_fail").Clone()
-            for hist in [passhist, failhist]:
-                for i in range(0, hist.GetNbinsX() + 2):
-                    for j in range(0, hist.GetNbinsY() + 2):
-                        if hist.GetBinContent(i, j) <= 0:
-                            hist.SetBinContent(i, j, 0)
-            failhist.Scale(1. / scale)
-            passhist.Scale(1. / scale)
-            failhist.Scale(GetSF(sig + str(mass), 'fail', f))
-            passhist.Scale(GetSF(sig + str(mass), 'pass', f))
-            pass_hists_sig[sig + str(mass)] = passhist
-            fail_hists_sig[sig + str(mass)] = failhist
-            signal_names.append(sig + str(mass))
+    if pseudo:
+    	for mass in masses:
+            for sig in sigs:
+            	passhist = f.Get(sig + str(mass) + "_pass").Clone()
+            	failhist = f.Get(sig + str(mass) + "_fail").Clone()
+            	for hist in [passhist, failhist]:
+                    for i in range(0, hist.GetNbinsX() + 2):
+                    	for j in range(0, hist.GetNbinsY() + 2):
+                            if hist.GetBinContent(i, j) <= 0:
+                            	hist.SetBinContent(i, j, 0)
+            	failhist.Scale(1. / scale)
+            	passhist.Scale(1. / scale)
+            	failhist.Scale(GetSF(sig + str(mass), 'fail', f))
+            	passhist.Scale(GetSF(sig + str(mass), 'pass', f))
+            	pass_hists_sig[sig + str(mass)] = passhist
+            	fail_hists_sig[sig + str(mass)] = failhist
+            	signal_names.append(sig + str(mass))
 
     if pseudo:
         for i, bkg in enumerate(background_names):
@@ -1343,26 +1629,44 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     fail_hists.update(fail_hists_bkg)
 #    fail_hists.update(fail_hists_sig)
 
+    sigs = ["hqq", "xhqq"]
     if fSignal is not None:
 	pass_hists_sig = {}
 	fail_hists_sig = {}
 	for mass in masses:
 	    for sig in sigs:
-		passhist = fSignal.Get(sig + str(mass) + "_pass").Clone()
-		failhist = fSignal.Get(sig + str(mass) + "_fail").Clone()
-		for hist in [passhist, failhist]:
-                    for i in range(0, hist.GetNbinsX() + 2):
-                        for j in range(0, hist.GetNbinsY() + 2):
-			    for k in range(0, hist.GetNbinsZ() + 2):
-                            	if hist.GetBinContent(i, j, k) <= 0:
-                                    hist.SetBinContent(i, j, k, 0)
-            	failhist.Scale(1. / scale)
-	        passhist.Scale(1. / scale)
-        	failhist.Scale(GetSF(sig + str(mass), 'fail', f))
-            	passhist.Scale(GetSF(sig + str(mass), 'pass', f))
-            	pass_hists_sig[sig + str(mass)] = passhist
-            	fail_hists_sig[sig + str(mass)] = failhist
-            	signal_names.append(sig + str(mass))
+		if sig == 'hqq':
+		    passhist = fSignal.Get(sig + str(mass) + "_pass").Clone()
+		    failhist = fSignal.Get(sig + str(mass) + "_fail").Clone()
+		    for hist in [passhist, failhist]:
+                    	for i in range(0, hist.GetNbinsX() + 2):
+                            for j in range(0, hist.GetNbinsY() + 2):
+			    	for k in range(0, hist.GetNbinsZ() + 2):
+                            	    if hist.GetBinContent(i, j, k) <= 0:
+                                    	hist.SetBinContent(i, j, k, 0)
+            	    failhist.Scale(1. / scale)
+	            passhist.Scale(1. / scale)
+        	    failhist.Scale(GetSF(sig + str(mass), 'fail', f))
+            	    passhist.Scale(GetSF(sig + str(mass), 'pass', f))
+            	    pass_hists_sig[sig + str(mass)] = passhist
+            	    fail_hists_sig[sig + str(mass)] = failhist
+            	    signal_names.append(sig + str(mass))
+		else:
+            	    passhist = f.Get(sig + str(mass) + "_pass").Clone()
+            	    failhist = f.Get(sig + str(mass) + "_fail").Clone()
+            	    for hist in [passhist, failhist]:
+                	for i in range(0, hist.GetNbinsX() + 2):
+                    	    for j in range(0, hist.GetNbinsY() + 2):
+                        	if hist.GetBinContent(i, j) <= 0:
+                            	    hist.SetBinContent(i, j, 0)
+            	    failhist.Scale(1. / scale)
+            	    passhist.Scale(1. / scale)
+            	    failhist.Scale(GetSF(sig + str(mass), 'fail', f))
+            	    passhist.Scale(GetSF(sig + str(mass), 'pass', f))
+            	    pass_hists_sig[sig + str(mass)] = passhist
+            	    fail_hists_sig[sig + str(mass)] = failhist
+            	    signal_names.append(sig + str(mass))
+
 	
 
     for histogram in (pass_hists_sig.values() + fail_hists_sig.values()):
@@ -1423,10 +1727,13 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                     histogram.SetBinContent(i, j, 0.)
         histogram.SetDirectory(0)
 
+        # print "lengths = ", len(pass_hists), len(fail_hists)
+    # print pass_hists;
+    # print fail_hists;
     return (pass_hists, fail_hists, pass_hists_sig, fail_hists_sig)
 
 
-def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
+def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, iYLow=0, iYHigh=0):
     SF = 1
     print process, cat
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process:
@@ -1451,8 +1758,8 @@ def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
     if fLoose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:
         if iPt > -1:
             nbinsX = f.Get(process + '_pass' + matchingString).GetXaxis().GetNbins()
-            passInt = f.Get(process + '_pass' + matchingString).Integral(1, nbinsX, int(iPt), int(iPt))
-            passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral(1, nbinsX, int(iPt), int(iPt))
+            passInt = f.Get(process + '_pass' + matchingString).Integral(1, nbinsX, iYLow, iYHigh)
+            passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral(1, nbinsX, iYLow, iYHigh)
         else:
             passInt = f.Get(process + '_pass' + matchingString).Integral()
             passIntLoose = fLoose.Get(process + '_pass' + matchingString).Integral()

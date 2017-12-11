@@ -14,8 +14,8 @@ import array
 sys.path.insert(0, '../.')
 from tools import *
 
-from buildRhalphabetHbb import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
-from rhalphabet_builder import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
+from buildRhalphabetHbb_temp import MASS_BINS,MASS_LO,MASS_HI,BLIND_LO,BLIND_HI,RHO_LO,RHO_HI
+from rhalphabet_builder_temp import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 
 ##-------------------------------------------------------------------------------------
@@ -28,11 +28,11 @@ def main(options,args):
         tfile_loose = r.TFile.Open(options.ifile_loose)
     if options.ifile_signal is not None:
 	tfile_signal = r.TFile.Open(options.ifile_signal)
-        histo_temp = tfile_signal.Get('tthqq125_pass')
+        histo_temp = tfile_signal.Get('hqq125_pass')
         numberOfGenPtBins = histo_temp.GetZaxis().GetNbins()
         
     boxes = ['pass', 'fail']
-    sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
+    sigs = ['xhqq125','hqq125']
     bkgs = ['zqq','wqq','qcd','tqq']
     systs = ['JER','JES','Pu']
 
@@ -41,7 +41,7 @@ def main(options,args):
     nBkgd = len(bkgs)
     nSig = len(sigs)
     numberOfMassBins = 23    
-    numberOfPtBins = 6
+    numberOfPtBins = options.nRecoBins
 
     histoDict = {}
     histoDictLoose = {}
@@ -53,16 +53,16 @@ def main(options,args):
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
             if tfile_loose is not None:
                 histoDictLoose['%s_%s'%(proc,box)] = tfile_loose.Get('%s_%s'%(proc,box))
-            if tfile_signal is not None:
-		histoDictSignal['%s_%s'%(proc,box)] = tfile_signal.Get('%s_%s'%(proc,box))    
-            if removeUnmatched and (proc =='wqq' or proc=='zqq' or ('hqq' in proc and tfile_signal is None)):
+            if tfile_signal is not None and proc == 'hqq125':
+		histoDictSignal['%s_%s'%(proc,box)] = tfile_signal.Get('%s_%s'%(proc,box))
+            if removeUnmatched and (proc =='wqq' or proc=='zqq' or ('hqq' in proc and tfile_signal is None) or proc == 'xhqq125'):
                 histoDict['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_matched'%(proc,box))
                 histoDict['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_unmatched'%(proc,box))
                 if tfile_loose is not None:
                     histoDictLoose['%s_%s_matched'%(proc,box)] = tfile_loose.Get('%s_%s_matched'%(proc,box))
                     histoDictLoose['%s_%s_unmatched'%(proc,box)] = tfile_loose.Get('%s_%s_unmatched'%(proc,box))
                     
-	    elif removeUnmatched and 'hqq' in proc and tfile_signal is not None:
+	    elif removeUnmatched and proc == 'hqq125' and tfile_signal is not None:
 		histoDictSignal['%s_%s_matched'%(proc,box)] = tfile_signal.Get('%s_%s_matched'%(proc,box))
                 histoDictSignal['%s_%s_unmatched'%(proc,box)] = tfile_signal.Get('%s_%s_unmatched'%(proc,box))
 
@@ -72,26 +72,64 @@ def main(options,args):
                 histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%sUp'%(proc,box,syst))
                 print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
-		if tfile_signal is not None:
+		if tfile_signal is not None and proc == 'hqq125':
 		    histoDictSignal['%s_%s_%sUp'%(proc,box,syst)] = tfile_signal.Get('%s_%s_%sUp'%(proc,box,syst))
                     histoDictSignal['%s_%s_%sDown'%(proc,box,syst)] = tfile_signal.Get('%s_%s_%sDown'%(proc,box,syst))
 
-    sigs_temp = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
+    sigs_temp = ['xhqq125','hqq125']
     if tfile_signal is None:
-        sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
+        sigs = ['xhqq125','hqq125']
     else:
 	sigs = []
-	for i in range(1, numberOfGenPtBins + 1):
-	    for proc in sigs_temp:
-		sigs.append(proc + '_GenpT' + str(i))
+        for proc in sigs_temp:
+	    if proc == 'hqq125':
+                for i in range(1, numberOfGenPtBins + 1):
+#                for i in range(2, numberOfGenPtBins + 1):
+		    sigs.append(proc + '_GenpT' + str(i))
+	    else:
+		sigs.append(proc)
 
     nSig = len(sigs)
+
+    RecoBins = []
+    nCombinedRecoBins = []
+    if numberOfPtBins == 6:
+        RecoBins.append(1)
+        RecoBins.append(2)
+        RecoBins.append(3)
+        RecoBins.append(4)
+        RecoBins.append(5)
+        RecoBins.append(6)
+	nCombinedRecoBins.append(0)
+        nCombinedRecoBins.append(0)
+        nCombinedRecoBins.append(0)
+        nCombinedRecoBins.append(0)
+        nCombinedRecoBins.append(0)
+        nCombinedRecoBins.append(0)	
+    if numberOfPtBins == 3:
+        RecoBins.append(1)
+        RecoBins.append(2)
+        RecoBins.append(5)
+        nCombinedRecoBins.append(0)
+        nCombinedRecoBins.append(2)
+        nCombinedRecoBins.append(1)
+    if numberOfPtBins == 2:
+        RecoBins.append(1)
+        RecoBins.append(4)
+        nCombinedRecoBins.append(2)
+        nCombinedRecoBins.append(2)
+    if numberOfPtBins == 1:
+        RecoBins.append(1)
+        nCombinedRecoBins.append(5)
+
 
     for i in range(1,numberOfPtBins+1):
 
     	rates = {}
-        jesErrs = {}
-        jerErrs = {}
+        jesErrsUp = {}
+        jesErrsDown = {}
+        jerErrsUp = {}
+        jerErrsDown = {}
         puErrs = {}
         bbErrs = {}
         vErrs = {}
@@ -99,36 +137,46 @@ def main(options,args):
         scaleptErrs = {}
         for box in boxes:
             for proc in (sigs+bkgs):
-		if 'hqq' in proc and tfile_signal is not None:
+		if 'GenpT' in proc and tfile_signal is not None:
 			k = int(proc[-1])
 			proc2 = proc[:-7]
-#			print "proc2: ", proc2
-                    	rate = histoDictSignal['%s_%s'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
+			print "proc: ", proc
+			print "box: ", box
+                    	rate = histoDictSignal['%s_%s'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
 			rates['%s_GenpT%s_%s'%(proc2,str(k),box)] = rate
                     	if rate>0:
-                    	    rateJESUp = histoDictSignal['%s_%s_JESUp'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
-                    	    rateJESDown = histoDictSignal['%s_%s_JESDown'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
-                    	    rateJERUp = histoDictSignal['%s_%s_JERUp'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
-                    	    rateJERDown = histoDictSignal['%s_%s_JERDown'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
-                    	    ratePuUp = histoDictSignal['%s_%s_PuUp'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
-                    	    ratePuDown = histoDictSignal['%s_%s_PuDown'%(proc2,box)].Integral(1, numberOfMassBins, i, i, k, k)
-                    	    jesErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
-                    	    jerErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate) 
+                    	    rateJESUp = histoDictSignal['%s_%s_JESUp'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
+                    	    rateJESDown = histoDictSignal['%s_%s_JESDown'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
+                    	    rateJERUp = histoDictSignal['%s_%s_JERUp'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
+                    	    rateJERDown = histoDictSignal['%s_%s_JERDown'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
+                    	    ratePuUp = histoDictSignal['%s_%s_PuUp'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
+                    	    ratePuDown = histoDictSignal['%s_%s_PuDown'%(proc2,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1], k, k)
+                    	    jesErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(rateJESUp-rate)/(rate)   
+                            jesErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(rateJESDown-rate)/(rate)
+                            jerErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(rateJERUp-rate)/(rate)
+                    	    jerErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(rateJERDown-rate)/(rate) 
                     	    puErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
+			    print "rateJERUp: ", rateJERUp
+			    print "rateJERDown: ", rateJERDown
+			    print "rate: ", rate
+                            print "1.0+(rateJERUp-rate)/(rate): ", 1.0+(rateJERUp-rate)/(rate)
+			    print "1.0+(rateJERDown-rate)/(rate): ", 1.0+(rateJERDown-rate)/(rate)
                     	else:
-                    	    jesErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
-                    	    jerErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
+                            jesErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
+                    	    jesErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
+                            jerErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
+                    	    jerErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
 			    puErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  1.0
 
-                    	if i == 2:
+                    	if RecoBins[i-1]+nCombinedRecoBins[i-1] == 2:
                     	    scaleptErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  0.05
-                    	elif i == 3:
+                    	elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 3:
                     	    scaleptErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  0.1
-                    	elif i == 4:
+                    	elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 4:
                     	    scaleptErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  0.2
-                    	elif i == 5:
+                    	elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 5:
                     	    scaleptErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  0.3
-                    	elif i == 6:
+                    	elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 6:
                     	    scaleptErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] =  0.4
                 
                     	vErrs['%s_GenpT%s_%s'%(proc2,str(k),box)] = 1.0+V_SF_ERR/V_SF
@@ -149,7 +197,7 @@ def main(options,args):
                             	histo = histoDictSignal['%s_%s%s'%(proc2,box,matchString)]
                             
                             	error = array.array('d',[0.0])
-                            	rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,k,k,error)                 
+                            	rate = histo.IntegralAndError(1,histo.GetNbinsX(),RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1],k,k,error)                 
                             	#mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
 				if rate > 0:
                             	    mcstatErrs['%s_%s'%(proc,box),i,j,k] = 1.0+(error[0]/rate)
@@ -160,32 +208,36 @@ def main(options,args):
                             	mcstatErrs['%s_%s'%(proc,box),i,j,k] = 1.0
                         
 		else:
-                    rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
+                    rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
                     rates['%s_%s'%(proc,box)] = rate
                     if rate>0:
-                        rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                        rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                        rateJERUp = histoDict['%s_%s_JERUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                        rateJERDown = histoDict['%s_%s_JERDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                        ratePuUp = histoDict['%s_%s_PuUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                        ratePuDown = histoDict['%s_%s_PuDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                        jesErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)
-                        jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate)
+                        rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
+                        rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
+                        rateJERUp = histoDict['%s_%s_JERUp'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
+                        rateJERDown = histoDict['%s_%s_JERDown'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
+                        ratePuUp = histoDict['%s_%s_PuUp'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
+                        ratePuDown = histoDict['%s_%s_PuDown'%(proc,box)].Integral(1, numberOfMassBins, RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1])
+                        jesErrsUp['%s_%s'%(proc,box)] =  1.0+(rateJESUp-rate)/(rate)
+                        jesErrsDown['%s_%s'%(proc,box)] =  1.0+(rateJESDown-rate)/(rate)
+                        jerErrsUp['%s_%s'%(proc,box)] =  1.0+(rateJERUp-rate)/(rate)
+                        jerErrsDown['%s_%s'%(proc,box)] =  1.0+(rateJERDown-rate)/(rate)
                         puErrs['%s_%s'%(proc,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
                     else:
-                        jesErrs['%s_%s'%(proc,box)] =  1.0
-                        jerErrs['%s_%s'%(proc,box)] =  1.0
+                        jesErrsUp['%s_%s'%(proc,box)] =  1.0
+                        jesErrsDown['%s_%s'%(proc,box)] =  1.0
+                        jerErrsUp['%s_%s'%(proc,box)] =  1.0
+                        jerErrsDown['%s_%s'%(proc,box)] =  1.0
 			puErrs['%s_%s'%(proc,box)] =  1.0
 
-                    if i == 2:
+                    if RecoBins[i-1]+nCombinedRecoBins[i-1] == 2:
                         scaleptErrs['%s_%s'%(proc,box)] =  0.05
-                    elif i == 3:
+                    elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 3:
                         scaleptErrs['%s_%s'%(proc,box)] =  0.1
-                    elif i == 4:
+                    elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 4:
                         scaleptErrs['%s_%s'%(proc,box)] =  0.2
-                    elif i == 5:
+                    elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 5:
                         scaleptErrs['%s_%s'%(proc,box)] =  0.3
-                    elif i == 6:
+                    elif RecoBins[i-1]+nCombinedRecoBins[i-1] == 6:
                         scaleptErrs['%s_%s'%(proc,box)] =  0.4
 
                     vErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
@@ -211,7 +263,7 @@ def main(options,args):
                                 histo = histoDict['%s_%s%s'%(proc,box,matchString)]
 
                             error = array.array('d',[0.0])
-                            rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)
+                            rate = histo.IntegralAndError(1,histo.GetNbinsX(),RecoBins[i-1], RecoBins[i-1]+nCombinedRecoBins[i-1],error)
                             #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
                             mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
                         else:
@@ -259,14 +311,14 @@ def main(options,args):
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
                     if options.noMcStatShape:
-			if 'hqq' in proc and tfile_signal is not None:
+			if 'GenpT' in proc and tfile_signal is not None:
 			    k = int(proc[-1])
 			    proc2 = proc[:-7]
                             mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box),i,j] = '%sGenpT%s%scat%imcstat%i lnN'%(proc2,str(k),box,i,j)
 			else:
 			    mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
                     else:
-			if 'hqq' in proc and tfile_signal is not None:
+			if 'GenpT' in proc and tfile_signal is not None:
 			    k = int(proc[-1])
                             proc2 = proc[:-7]
                             mcStatStrings['%s_GenpT%s_%s'%(proc2,str(k),box),i,j] = '%sGenpT%s%scat%imcstat%i shape'%(proc2,str(k),box,i,j)
@@ -297,7 +349,7 @@ def main(options,args):
 		    scaleString += ' -'
 		    smearString += ' -'
                 else:
-		    if 'hqq' in proc and tfile_signal is not None:
+		    if 'GenpT' in proc and tfile_signal is not None:
 			k = int(proc[-1])
                         proc2 = proc[:-7]
 			if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
@@ -320,8 +372,11 @@ def main(options,args):
                         triggerString += ' 1.02'
 			scaleString += ' 0.1'
 			smearString += ' 0.5'
-                    	jesString += ' %.3f'%jesErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
-                    	jerString += ' %.3f'%jerErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
+                    	jesString += ' %.3f/%.3f'%(jesErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)],jesErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)])
+			if jerErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)]==0:
+                    	    jerString += ' %.3f/%.3f'%(jerErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)],0.001)
+			else:
+                            jerString += ' %.3f/%.3f'%(jerErrsDown['%s_GenpT%s_%s'%(proc2,str(k),box)],jerErrsUp['%s_GenpT%s_%s'%(proc2,str(k),box)])
                     	puString += ' %.3f'%puErrs['%s_GenpT%s_%s'%(proc2,str(k),box)]
 		    else:
                         if rates['%s_%s'%(proc,box)] <= 0.0: continue
@@ -341,19 +396,19 @@ def main(options,args):
                             hqq125ptShapeString += ' -'
 			if proc == 'zqq' or proc == 'wqq':
 			    znormQString += ' 1.1'
-			    if i == 1 or i ==2:
+			    if RecoBins[i-1]+nCombinedRecoBins[i-1] == 1 or RecoBins[i-1]+nCombinedRecoBins[i-1] ==2:
 				znormEWString += ' 1.15'
-			    elif i ==3:
+			    elif RecoBins[i-1]+nCombinedRecoBins[i-1] ==3:
                                 znormEWString += ' 1.25'
-			    elif i==4 or i==5 or i==6:
+			    elif RecoBins[i-1]+nCombinedRecoBins[i-1]==4 or RecoBins[i-1]+nCombinedRecoBins[i-1]==5 or RecoBins[i-1]+nCombinedRecoBins[i-1]==6:
                                 znormEWString += ' 1.35'
 			else:
 			    znormQString += ' -'
 			    znormEWString += ' -'
                         if proc == 'wqq':
-			    if i==1 or i==2 or i==3:
+			    if RecoBins[i-1]+nCombinedRecoBins[i-1]==1 or RecoBins[i-1]+nCombinedRecoBins[i-1]==2 or RecoBins[i-1]+nCombinedRecoBins[i-1]==3:
 			    	wznormEWString += ' 1.05'
-			    elif i==4 or i==5 or i==6:
+			    elif RecoBins[i-1]+nCombinedRecoBins[i-1]==4 or RecoBins[i-1]+nCombinedRecoBins[i-1]==5 or RecoBins[i-1]+nCombinedRecoBins[i-1]==6:
                                 wznormEWString += ' 1.15'
 			else:
 			    wznormEWString += ' -'
@@ -366,8 +421,8 @@ def main(options,args):
 			else:
 			    scaleString += ' 0.1'
 			    smearString += ' 0.5'
-                    	jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
-                    	jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
+                    	jesString += ' %.3f/%.3f'%(jesErrsDown['%s_%s'%(proc,box)],jesErrsUp['%s_%s'%(proc,box)])
+                    	jerString += ' %.3f/%.3f'%(jerErrsDown['%s_%s'%(proc,box)],jerErrsUp['%s_%s'%(proc,box)])
                     	puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]
                         
                 if proc in ['qcd','tqq']:
@@ -375,7 +430,7 @@ def main(options,args):
                         scaleptString += ' -'
                 else:
                     if i > 1:
-			if 'hqq' in proc and tfile_signal is not None:
+			if 'GenpT' in proc and tfile_signal is not None:
 			    k = int(proc[-1])
                             proc2 = proc[:-7]
 			    if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
@@ -386,7 +441,7 @@ def main(options,args):
                 if proc in ['qcd','tqq','wqq']:
                     bbeffString += ' -'
                 else:
-		    if 'hqq' in proc and tfile_signal is not None:
+		    if 'GenpT' in proc and tfile_signal is not None:
 			k = int(proc[-1])
                         proc2 = proc[:-7]
 			if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
@@ -397,7 +452,7 @@ def main(options,args):
                 if proc in ['qcd','tqq']:
                     veffString += ' -'
                 else:
-		    if 'hqq' in proc and tfile_signal is not None:
+		    if 'GenpT' in proc and tfile_signal is not None:
 			k = int(proc[-1])
                         proc2 = proc[:-7]
 			if rates['%s_%s'%(proc,box)] <= 0.0: continue
@@ -409,7 +464,7 @@ def main(options,args):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
                             if proc1==proc and box1==box:
-				if 'hqq' in proc and tfile_signal is not None:
+				if 'GenpT' in proc and tfile_signal is not None:
 				    k = int(proc1[-1])
                             	    proc2 = proc1[:-7]
 				    if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
@@ -456,7 +511,7 @@ def main(options,args):
         for box in boxes:
             for proc in sigs+bkgs:
                 if options.noMcStatShape and proc!='qcd':
-		    if 'hqq' in proc and tfile_signal is not None:
+		    if 'GenpT' in proc and tfile_signal is not None:
 			k = int(proc[-1])
                         proc2 = proc[:-7]
                         if rates['%s_GenpT%s_%s'%(proc2,str(k),box)] <= 0.0: continue
@@ -476,11 +531,11 @@ def main(options,args):
                         matchString = '_matched'
                     if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box:
                         histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
-		    elif (tfile_loose is not None) and 'hqq' in proc:
+		    elif (tfile_signal is not None) and 'GenpT' in proc:
 			histo = histoDictSignal['%s_%s%s'%(proc,box,matchString)]
                     else:
                         histo = histoDict['%s_%s%s'%(proc,box,matchString)]
-		    if (tfile_loose is not None) and 'hqq' in proc:
+		    if (tfile_signal is not None) and 'GenpT' in proc:
 			k = int(proc[-1])
                         proc2 = proc[:-7]
 			if abs(histo.GetBinContent(j,i,k)) > 0. and histo.GetBinError(j,i,k) > 0.5*histo.GetBinContent(j,i,k):
@@ -536,6 +591,7 @@ if __name__ == '__main__':
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
+    parser.add_option('--nRecoBins', dest='nRecoBins', default=6, type='int', help='number of Reco pT bins')
 
     (options, args) = parser.parse_args()
 

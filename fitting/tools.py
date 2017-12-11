@@ -108,6 +108,119 @@ def proj3D(iLabel,iBin,iGENptBin,iH,iNBins,iXMin,iXMax):
     lH.SetDirectory(0)
     return lH
 
+def proj_PtRange(iLabel,iBin,iYMin,iYMax,iH,iNBins,iXMin,iXMax):
+    lH = r.TH1F(iH.GetName()+"_"+iLabel+iBin,iH.GetName()+"_"+iLabel+iBin,iNBins,iXMin,iXMax)
+    print "iH.GetName(): ", iH.GetName()
+    for iM in range(1,iH.GetNbinsX()+1):
+        if iH.GetXaxis().GetBinCenter(iM) < lH.GetXaxis().GetXmin() or iH.GetXaxis().GetBinCenter(iM) > lH.GetXaxis().GetXmax():
+            continue
+        if iYMin == 450 and iYMax == 600:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))+iH.GetBinContent(iM,int(iBin)+1)+iH.GetBinContent(iM,int(iBin)+2)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2+iH.GetBinError(iM,int(iBin)+1)**2+iH.GetBinError(iM,int(iBin)+2)**2))
+        elif iYMin == 600 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+2)+iH.GetBinContent(iM,int(iBin)+2+1)+iH.GetBinContent(iM,int(iBin)+2+2)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+2)**2+iH.GetBinError(iM,int(iBin)+2+1)**2+iH.GetBinError(iM,int(iBin)+2+2)**2))
+        elif iYMin == 450 and iYMax == 550:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))+iH.GetBinContent(iM,int(iBin)+1)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2+iH.GetBinError(iM,int(iBin)+1)**2))
+        elif iYMin == 550 and iYMax == 800:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+1)+iH.GetBinContent(iM,int(iBin)+1+1)+iH.GetBinContent(iM,int(iBin)+1+2)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+1)**2+iH.GetBinError(iM,int(iBin)+1+1)**2+iH.GetBinError(iM,int(iBin)+1+2)**2))
+#        elif iYMin == 800 and iYMax == 1000:
+#                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+3)))
+#                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+3)**2))
+	elif iYMin == 450 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))+iH.GetBinContent(iM,int(iBin)+1)+iH.GetBinContent(iM,int(iBin)+2)+iH.GetBinContent(iM,int(iBin)+3)+iH.GetBinContent(iM,int(iBin)+4)+iH.GetBinContent(iM,int(iBin)+5)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2+iH.GetBinError(iM,int(iBin)+1)**2+iH.GetBinError(iM,int(iBin)+2)**2+iH.GetBinError(iM,int(iBin)+3)**2+iH.GetBinError(iM,int(iBin)+4)**2+iH.GetBinError(iM,int(iBin)+5)**2))
+        elif iYMin == 450 and iYMax == 500:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2))
+        elif iYMin == 500 and iYMax == 675:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))+iH.GetBinContent(iM,int(iBin)+1)+iH.GetBinContent(iM,int(iBin)+1+1)+iH.GetBinContent(iM,int(iBin)+1+2)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2+iH.GetBinError(iM,int(iBin)+1)**2+iH.GetBinError(iM,int(iBin)+1+1)**2+iH.GetBinError(iM,int(iBin)+1+2)**2))
+        elif iYMin == 675 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+2)+iH.GetBinContent(iM,int(iBin)+3)))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+2)**2+iH.GetBinError(iM,int(iBin)+3)**2))
+        elif iYMin == 500 and iYMax == 550:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2))
+        elif iYMin == 550 and iYMax == 600:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2))
+        elif iYMin == 600 and iYMax == 675:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2))
+        elif iYMin == 675 and iYMax == 800:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2))
+        elif iYMin == 800 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin))**2))
+
+        else:
+                print "iYMin: ", iYMin
+                print "iYMax: ", iYMax
+                print "FAIL!!!!"
+                print "Need to add conditional statements to proj_PtRange function in tools.py"
+    lH.SetDirectory(0)
+    return lH
+
+def proj3D_PtRange(iLabel,iBin,iYMin,iYMax,iGENptBin,iH,iNBins,iXMin,iXMax):
+    lH = r.TH1D(iH.GetName()+"_"+iLabel+iBin+"_"+iGENptBin,iH.GetName()+"_"+iLabel+iBin+"_"+iGENptBin,iNBins,iXMin,iXMax)
+    for iM in range(1,iH.GetNbinsX()+1):
+        if iH.GetXaxis().GetBinCenter(iM) < lH.GetXaxis().GetXmin() or iH.GetXaxis().GetBinCenter(iM) > lH.GetXaxis().GetXmax():
+            continue
+        if iYMin == 450 and iYMax == 600:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+2,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+2,int(iGENptBin))**2))
+        elif iYMin == 600 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+2,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+2+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+2+2,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+2,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+2+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+2+2,int(iGENptBin))**2))
+        elif iYMin == 450 and iYMax == 550:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1,int(iGENptBin))**2))
+        elif iYMin == 550 and iYMax == 800:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1+2,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1+2,int(iGENptBin))**2))
+#        elif iYMin == 800 and iYMax == 1000:
+#                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+3,int(iGENptBin))))
+#                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+3,int(iGENptBin))**2))
+        elif iYMin == 450 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+2,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+3,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+4,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+5,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+2,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+3,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+4,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+5,int(iGENptBin))**2))
+        elif iYMin == 450 and iYMax == 500:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2))
+        elif iYMin == 500 and iYMax == 675:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1+1,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+1+2,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1+1,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+1+2,int(iGENptBin))**2))
+        elif iYMin == 675 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin)+2,int(iGENptBin))+iH.GetBinContent(iM,int(iBin)+3,int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin)+2,int(iGENptBin))**2+iH.GetBinError(iM,int(iBin)+3,int(iGENptBin))**2))
+        elif iYMin == 500 and iYMax == 550:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2))
+        elif iYMin == 550 and iYMax == 600:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2))
+        elif iYMin == 600 and iYMax == 675:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2))
+        elif iYMin == 675 and iYMax == 800:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2))
+        elif iYMin == 800 and iYMax == 1000:
+                lH.SetBinContent(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),(iH.GetBinContent(iM,int(iBin),int(iGENptBin))))
+                lH.SetBinError(lH.FindBin(iH.GetXaxis().GetBinCenter(iM)),math.sqrt(iH.GetBinError(iM,int(iBin),int(iGENptBin))**2))
+
+        else:
+                print "iYMin: ", iYMin
+                print "iYMax: ", iYMax
+                print "FAIL!!!!"
+                print "Need to add conditional statements to proj_PtRange function in tools.py"
+    lH.SetDirectory(0)
+    return lH
+
 def workspace(iOutput,iDatas,iFuncs,iVars,iCat="cat0",iShift=True):
     lW = r.RooWorkspace("w_"+str(iCat))
     for pData in iDatas:
