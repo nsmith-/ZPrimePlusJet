@@ -59,6 +59,8 @@ class RhalphabetBuilder():
         self._mass_blind_hi = blind_hi
         self._rho_lo = rho_lo
         self._rho_hi = rho_hi
+        print "self._rho_lo: ", self._rho_lo
+        print "self._rho_hi: ", self._rho_hi
         # self._mass_nbins = pass_hists[0].GetXaxis().GetNbins()
         # self._mass_lo    = pass_hists[0].GetXaxis().GetBinLowEdge( 1 )
         # self._mass_hi    = pass_hists[0].GetXaxis().GetBinUpEdge( self._mass_nbins )
@@ -142,14 +144,14 @@ class RhalphabetBuilder():
         #    self._signal_names.append("Pbb_" + str(mass))
         # for Hbb
         for mass in [125]:
-            for sig in ["hqq"]:
+            for sig in ["hqq","xhqq"]:
 		if input_file_signal is not None:
 		    for GENpt_bin in range(1, self._nGENptbins + 1):
 		    	self._signal_names.append(sig + str(mass)+"_GenpT"+str(GENpt_bin))
 		else:
 	            self._signal_names.append(sig + str(mass))
-	    for sig in ["xhqq"]:
-		self._signal_names.append(sig + str(mass))
+#	    for sig in ["xhqq"]:
+#		self._signal_names.append(sig + str(mass))
 	print "self._signal_names: ", self._signal_names
 
     def run(self):
@@ -596,21 +598,21 @@ class RhalphabetBuilder():
 	    else:
 		for name, hist in self._pass_hists_signal.iteritems():
 		    print "name: ", name
-		    if name == 'hqq125':
-			for GENpt_bin in range(1, self._nGENptbins + 1):
+#		    if name == 'hqq125':
+		    for GENpt_bin in range(1, self._nGENptbins + 1):
 		    	    pass_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
-		    else:
-                        pass_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
-                                                    self._mass_hi)
+#		    else:
+#                        pass_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
+#                                                    self._mass_hi)
 		for name, hist in self._fail_hists_signal.iteritems():
-                    if name == 'hqq125':
+#                    if name == 'hqq125':
                         for GENpt_bin in range(1, self._nGENptbins + 1):
                             fail_hists_ptbin[name+"_GenpT"+str(GENpt_bin)] = tools.proj3D_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], str(GENpt_bin), hist, self._mass_nbins, self._mass_lo,
                                                     self._mass_hi)
-		    else:
-                        fail_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
-                                                    self._mass_hi)
+#		    else:
+#                        fail_hists_ptbin[name] = tools.proj_PtRange("cat", str(pt_bin), self._ptbins[pt_bin-1], self._ptbins[pt_bin], hist, self._mass_nbins, self._mass_lo,
+#                                                    self._mass_hi)
 			
 
 
@@ -661,7 +663,8 @@ class RhalphabetBuilder():
         self._lEffQCD.setConstant(False)
 
         polynomial_variables = []
-        self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", -40, 40)
+        self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", 0, 5)
+#        self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", -40, 40)
         print "polynomial_variables=",
         print polynomial_variables
 
@@ -680,7 +683,7 @@ class RhalphabetBuilder():
                 roopolyarray = self.buildRooPolyRhoArray(self._lPt.getVal(), self._lRho.getVal(), lUnity, lZero,
                                                          polynomial_variables)
             print "RooPolyArray:"
-            roopolyarray.Print()
+            roopolyarray.Print("V")
             fail_bin_content = 0
             for sample in samples:
                 if sample == "data_obs":
@@ -701,6 +704,7 @@ class RhalphabetBuilder():
             fail_bin_var = r.RooRealVar(rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin),
                                         rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin),
                                         fail_bin_content, 0., max(fail_bin_content + fail_bin_unc, 0.))
+#                                        fail_bin_content, max(fail_bin_content - fail_bin_unc, 0.), max(fail_bin_content + fail_bin_unc, 0.))
 
             print "[david debug] fail_bin_var:"
             fail_bin_var.Print()
@@ -709,7 +713,8 @@ class RhalphabetBuilder():
             lArg = r.RooArgList(fail_bin_var, roopolyarray, self._lEffQCD)
             pass_bin_var = r.RooFormulaVar(rhalph_bkgd_name + "_pass_" + category + "_Bin" + str(mass_bin),
                                            rhalph_bkgd_name + "_pass_" + category + "_Bin" + str(mass_bin),
-                                           "@0*max(@1,0)*@2", lArg)
+                                           "@0*@1*@2", lArg)
+#                                           "@0*max(@1,0)*@2", lArg)
             print "Pass=fail*poly*eff RooFormulaVar:"
             print pass_bin_var.Print()
 
@@ -748,12 +753,16 @@ class RhalphabetBuilder():
         pass_norm.Print()
         fail_norm.Print()
         self._all_shapes.extend([pass_rparh, fail_rparh, pass_norm, fail_norm])
+	print "Michael check #1"
 
         # Now write the wrokspace with the rooparamhist
         pass_workspace = r.RooWorkspace("w_pass_" + str(category))
         fail_workspace = r.RooWorkspace("w_fail_" + str(category))
+        print "Michael check #2"
         getattr(pass_workspace, 'import')(pass_rparh, r.RooFit.RecycleConflictNodes())
+        print "Michael check #3"
         getattr(pass_workspace, 'import')(pass_norm, r.RooFit.RecycleConflictNodes())
+        print "Michael check #4"
         getattr(fail_workspace, 'import')(fail_rparh, r.RooFit.RecycleConflictNodes())
         getattr(fail_workspace, 'import')(fail_norm, r.RooFit.RecycleConflictNodes())
         print "Printing rhalphabet workspace:"
@@ -784,21 +793,42 @@ class RhalphabetBuilder():
                     lTmpArray.add(iVars[lNCount])
                 lNCount = lNCount + 1
             pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) + "_" + str(pRVar)
-            pPol = r.RooPolyVar(pLabel, pLabel, lPt, lTmpArray)
+            pPol = r.RooBernstein(pLabel, pLabel, lPt, lTmpArray)
+#            pPol = r.RooPolyVar(pLabel, pLabel, lPt, lTmpArray)
             lMassArray.add(pPol)
             self._all_vars.append(pPol)
 
         lLabel = "Var_MassPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3))
+#        lMassPol = r.RooBernstein(lLabel, lLabel, lMass, lMassArray)
         lMassPol = r.RooPolyVar(lLabel, lLabel, lMass, lMassArray)
         self._all_vars.extend([lPt, lMass, lMassPol])
         return lMassPol
 
     def buildRooPolyRhoArray(self, iPt, iRho, iQCD, iZero, iVars):
 
-        # print "---- [buildRooPolyArray]"      
+        print "---- [buildRooPolyArray]"      
 
         lPt = r.RooConstVar("Var_Pt_" + str(iPt) + "_" + str(iRho), "Var_Pt_" + str(iPt) + "_" + str(iRho), (iPt))
+        lPt_rescaled = r.RooConstVar("Var_Pt_rescaled_" + str(iPt) + "_" + str(iRho), "Var_Pt_rescaled_" + str(iPt) + "_" + str(iRho), ((iPt-self._pt_lo)/(self._pt_hi-self._pt_lo)))
         lRho = r.RooConstVar("Var_Rho_" + str(iPt) + "_" + str(iRho), "Var_Rho_" + str(iPt) + "_" + str(iRho), (iRho))
+        lRho_rescaled = r.RooConstVar("Var_Rho_rescaled_" + str(round(iPt,2)) + "_" + str(round(iRho,3)), "Var_Rho_rescaled_" + str(round(iPt,2)) + "_" + str(round(iRho,3)), ((iRho-self._rho_lo)/(self._rho_hi-self._rho_lo)))
+
+	if self._poly_degree_pt == 1:
+	    ptPolyString = "@0*(1-@2)+@1*@2"
+	elif self._poly_degree_pt == 2:
+	    ptPolyString = "@0*(1-@3)**2+@1*2*@3*(1-@3)+@2*@3**2"
+	elif self._poly_degree_pt == 3:
+	    ptPolyString = "(@0*(1-@4)**3)+(@1*3*@4*(1-@4)**2)+(@2*3*(@4**2)*(1-@4))+(@3*(@4**3))"
+
+	if self._poly_degree_rho == 1:
+	    rhoPolyString = "@0*(1-@2)+@1*@2"
+	elif self._poly_degree_rho == 2:
+            rhoPolyString = "(@0*(1-@3)**2)+(@1*2*@3*(1-@3))+@2*@3**2"
+	elif self._poly_degree_rho == 3:
+            rhoPolyString = "(@0*(1-@4)**3)+(@1*3*@4*(1-@4)**2)+(@2*3*(@4**2)*(1-@4))+(@3*(@4**3))"
+	elif self._poly_degree_rho == 4:
+            rhoPolyString = "(@0*(1-@5)**4)+(@1*4*@5*(1-@5)**3)+(@2*6*(@5**2)*(1-@5)**2)+(@3*4*(@5**3)*(1-@5))+@4*@5**4"
+
         lRhoArray = r.RooArgList()
         lNCount = 0
         for pRVar in range(0, self._poly_degree_rho + 1):
@@ -809,17 +839,24 @@ class RhalphabetBuilder():
                 else:
                     print "lNCount = " + str(lNCount)
                     lTmpArray.add(iVars[lNCount])
+		    print "iVars[lNCount]: ", iVars[lNCount]
+		    print "iVars[lNCount]"
+		    iVars[lNCount].Print()
                 lNCount = lNCount + 1
             pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_" + str(pRVar)
-            pPol = r.RooPolyVar(pLabel, pLabel, lPt, lTmpArray)
+	    lTmpArray.add(lPt_rescaled)
+	    print "lTmpArray: ", lTmpArray.Print()
+            pPol = r.RooFormulaVar(pLabel,pLabel,ptPolyString,lTmpArray)
             print "pPol:"
-            print pPol.Print()
+            print pPol.Print("V")
             lRhoArray.add(pPol);
             self._all_vars.append(pPol)
 
         lLabel = "Var_RhoPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3))
-        lRhoPol = r.RooPolyVar(lLabel, lLabel, lRho, lRhoArray)
-        self._all_vars.extend([lPt, lRho, lRhoPol])
+        lRhoArray.add(lRho_rescaled)
+	print "lRhoArray: ", lRhoArray.Print()
+        lRhoPol = r.RooFormulaVar(lLabel,lLabel, rhoPolyString ,lRhoArray)
+        self._all_vars.extend([lPt_rescaled, lRho_rescaled, lRhoPol])
         return lRhoPol
 
     def buildPolynomialArray(self, iVars, iNVar0, iNVar1, iLabel0, iLabel1, iXMin0, iXMax0):
@@ -873,8 +910,10 @@ class RhalphabetBuilder():
                     pXMin = iXMin0
                     pXMax = iXMax0
 
-                pRooVar = r.RooRealVar(pVar, pVar, 0.0, pXMin, pXMax)
-                # print("========  here i0 %s i1 %s"%(i0,i1))
+                pRooVar = r.RooRealVar(pVar, pVar, 0.01, pXMin, pXMax)
+#                pRooVar = r.RooRealVar(pVar, pVar, 0.0, pXMin, pXMax)
+                #print("========  here i0 %s i1 %s"%(i0,i1))
+		print "pVar"
                 print pVar
                 # print(" is : %s  +/- %s"%(value[i0*3+i1],error[i0*3+i1]))
                 iVars.append(pRooVar)
@@ -1005,7 +1044,7 @@ class RhalphabetBuilder():
 	    print "cat: ", cat
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat', 'Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or ('hqq' in process and self._inputfile_signal is None) or 'xhqq125' in process):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or ('hqq' in process and self._inputfile_signal is None)):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -1145,7 +1184,7 @@ class RhalphabetBuilder():
                     self._outfile_validation.cd()
                     h.Write()
 
-	    if do_syst and process == 'hqq125' and self._inputfile_signal is not None:
+	    if do_syst and (process == 'hqq125' or process == 'xhqq125') and self._inputfile_signal is not None:
 	        cat = import_object.GetName().split('_')[2]
 		Genptbin = import_object.GetName().split('_')[1]
 		print "Higgs cat: ", cat
@@ -1312,7 +1351,7 @@ class RhalphabetBuilder():
                                                self._mass_hi)
                     tmph_mass_unmatched = tools.proj_PtRange('cat', str(iPt), self._ptbins[int(iPt)-1], self._ptbins[int(iPt)], tmph_unmatched, self._mass_nbins, self._mass_lo,
                                                  self._mass_hi)
-		elif self._inputfile_signal is not None and process == 'hqq125':
+		elif self._inputfile_signal is not None and (process == 'hqq125' or process == 'xhqq125'):
 		    Genptbin = import_object.GetName().split('_')[1]
                     tmph_matched = self._inputfile_signal.Get(process + '_' + cat + '_matched').Clone()
 #                    print import_object.GetName()
@@ -1635,7 +1674,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
 	fail_hists_sig = {}
 	for mass in masses:
 	    for sig in sigs:
-		if sig == 'hqq':
+#		if sig == 'hqq':
 		    passhist = fSignal.Get(sig + str(mass) + "_pass").Clone()
 		    failhist = fSignal.Get(sig + str(mass) + "_fail").Clone()
 		    for hist in [passhist, failhist]:
@@ -1651,21 +1690,21 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
             	    pass_hists_sig[sig + str(mass)] = passhist
             	    fail_hists_sig[sig + str(mass)] = failhist
             	    signal_names.append(sig + str(mass))
-		else:
-            	    passhist = f.Get(sig + str(mass) + "_pass").Clone()
-            	    failhist = f.Get(sig + str(mass) + "_fail").Clone()
-            	    for hist in [passhist, failhist]:
-                	for i in range(0, hist.GetNbinsX() + 2):
-                    	    for j in range(0, hist.GetNbinsY() + 2):
-                        	if hist.GetBinContent(i, j) <= 0:
-                            	    hist.SetBinContent(i, j, 0)
-            	    failhist.Scale(1. / scale)
-            	    passhist.Scale(1. / scale)
-            	    failhist.Scale(GetSF(sig + str(mass), 'fail', f))
-            	    passhist.Scale(GetSF(sig + str(mass), 'pass', f))
-            	    pass_hists_sig[sig + str(mass)] = passhist
-            	    fail_hists_sig[sig + str(mass)] = failhist
-            	    signal_names.append(sig + str(mass))
+#		else:
+#            	    passhist = f.Get(sig + str(mass) + "_pass").Clone()
+#            	    failhist = f.Get(sig + str(mass) + "_fail").Clone()
+#            	    for hist in [passhist, failhist]:
+#                	for i in range(0, hist.GetNbinsX() + 2):
+#                    	    for j in range(0, hist.GetNbinsY() + 2):
+#                        	if hist.GetBinContent(i, j) <= 0:
+#                            	    hist.SetBinContent(i, j, 0)
+#            	    failhist.Scale(1. / scale)
+#            	    passhist.Scale(1. / scale)
+#            	    failhist.Scale(GetSF(sig + str(mass), 'fail', f))
+#            	    passhist.Scale(GetSF(sig + str(mass), 'pass', f))
+#            	    pass_hists_sig[sig + str(mass)] = passhist
+#            	    fail_hists_sig[sig + str(mass)] = failhist
+#            	    signal_names.append(sig + str(mass))
 
 	
 
