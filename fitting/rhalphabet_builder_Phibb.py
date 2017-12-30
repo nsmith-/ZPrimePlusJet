@@ -528,6 +528,71 @@ class RhalphabetBuilder():
         self._all_vars.extend([lPt,lRho,lRhoPol])
         return lRhoPol
 
+    def buildRooPolyRhoArrayBernstein(self, iPt, iRho, iQCD, iZero, iVars):
+
+        print "---- [buildRooPolyArrayBernstein]"
+
+        lPt = r.RooConstVar("Var_Pt_" + str(iPt) + "_" + str(iRho), "Var_Pt_" + str(iPt) + "_" + str(iRho), (iPt))
+        lPt_rescaled = r.RooConstVar("Var_Pt_rescaled_" + str(iPt) + "_" + str(iRho),
+                                     "Var_Pt_rescaled_" + str(iPt) + "_" + str(iRho),
+                                     ((iPt - self._pt_lo) / (self._pt_hi - self._pt_lo)))
+        lRho = r.RooConstVar("Var_Rho_" + str(iPt) + "_" + str(iRho), "Var_Rho_" + str(iPt) + "_" + str(iRho), (iRho))
+        lRho_rescaled = r.RooConstVar("Var_Rho_rescaled_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)),
+                                      "Var_Rho_rescaled_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)),
+                                      ((iRho - self._rho_lo) / (self._rho_hi - self._rho_lo)))
+
+        if self._poly_degree_pt == 1:
+            ptPolyString = "@0*(1-@2)+@1*@2"
+        elif self._poly_degree_pt == 2:
+            ptPolyString = "@0*(1-@3)**2+@1*2*@3*(1-@3)+@2*@3**2"
+        elif self._poly_degree_pt == 3:
+            ptPolyString = "(@0*(1-@4)**3)+(@1*3*@4*(1-@4)**2)+(@2*3*(@4**2)*(1-@4))+(@3*(@4**3))"
+        elif self._poly_degree_pt == 4:
+            ptPolyString = "(@0*(1-@5)**4)+(@1*4*@5*(1-@5)**3)+(@2*6*(@5**2)*(1-@5)**2)+(@3*4*(@5**3)*(1-@5))+@4*@5**4"
+        elif self._poly_degree_pt == 5:
+            ptPolyString = "(@0*(1-@6)**5)+(@1*5*@6*(1-@6)**4)+(@2*10*(@6**2)*(1-@6)**3)+(@3*10*(@6**3)*(1-@6)**2)+(@4*5*(@6**4)*(1-@6))+@5*@6**5"
+
+        if self._poly_degree_rho == 1:
+            rhoPolyString = "@0*(1-@2)+@1*@2"
+        elif self._poly_degree_rho == 2:
+            rhoPolyString = "(@0*(1-@3)**2)+(@1*2*@3*(1-@3))+@2*@3**2"
+        elif self._poly_degree_rho == 3:
+            rhoPolyString = "(@0*(1-@4)**3)+(@1*3*@4*(1-@4)**2)+(@2*3*(@4**2)*(1-@4))+(@3*(@4**3))"
+        elif self._poly_degree_rho == 4:
+            rhoPolyString = "(@0*(1-@5)**4)+(@1*4*@5*(1-@5)**3)+(@2*6*(@5**2)*(1-@5)**2)+(@3*4*(@5**3)*(1-@5))+@4*@5**4"
+        elif self._poly_degree_rho == 5:
+            rhoPolyString = "(@0*(1-@6)**5)+(@1*5*@6*(1-@6)**4)+(@2*10*(@6**2)*(1-@6)**3)+(@3*10*(@6**3)*(1-@6)**2)+(@4*5*(@6**4)*(1-@6))+@5*@6**5"
+
+        lRhoArray = r.RooArgList()
+        lNCount = 0
+        for pRVar in range(0, self._poly_degree_rho + 1):
+            lTmpArray = r.RooArgList()
+            for pVar in range(0, self._poly_degree_pt + 1):
+                if lNCount == 0:
+                    lTmpArray.add(iQCD)  # for the very first constant (e.g. p0r0), just set that to 1
+                else:
+                    print "lNCount = " + str(lNCount)
+                    lTmpArray.add(iVars[lNCount])
+                    print "iVars[lNCount]: ", iVars[lNCount]
+                    print "iVars[lNCount]"
+                    iVars[lNCount].Print()
+                lNCount = lNCount + 1
+            pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_" + str(pRVar)
+            lTmpArray.add(lPt_rescaled)
+            print "lTmpArray: ", lTmpArray.Print()
+            pPol = r.RooFormulaVar(pLabel, pLabel, ptPolyString, lTmpArray)
+            print "pPol:"
+            print pPol.Print("V")
+            lRhoArray.add(pPol)
+            self._all_vars.append(pPol)
+
+        lLabel = "Var_RhoPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3))
+        lRhoArray.add(lRho_rescaled)
+        print "lRhoArray: ", lRhoArray.Print()
+        lRhoPol = r.RooFormulaVar(lLabel, lLabel, rhoPolyString, lRhoArray)
+        self._all_vars.extend([lPt_rescaled, lRho_rescaled, lRhoPol])
+        return lRhoPol
+
 
     def buildPolynomialArray(self, iVars,iNVar0,iNVar1,iLabel0,iLabel1,iXMin0,iXMax0):
 
