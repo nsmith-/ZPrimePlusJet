@@ -17,10 +17,26 @@ import tools as tools
 from RootIterator import RootIterator
 from hist import *
 
-BB_SF = 0.91
-BB_SF_ERR = 0.03
-V_SF = 0.993
-V_SF_ERR = 0.043
+BB_SF, BB_SF_ERR = {}, {}
+BB_SF['AK8'] = 0.91
+BB_SF_ERR['AK8'] = 0.03
+BB_SF['CA15'] = 1.00
+BB_SF_ERR['CA15'] = 0.04
+V_SF, V_SF_ERR = {}, {}
+V_SF['AK8'] = 0.993
+V_SF_ERR['AK8'] = 0.043
+V_SF['CA15'] = 0.968
+V_SF_ERR['CA15'] = 0.058
+MASS_SF, MASS_SF_ERR = {}, {}
+MASS_SF['AK8'] = 1.001
+MASS_SF_ERR['AK8'] = 0.004
+MASS_SF['CA15'] = 1.001
+MASS_SF_ERR['CA15'] = 0.009
+RES_SF, RES_SF_ERR = {} , {}
+RES_SF['AK8'] = 1.084
+RES_SF_ERR['AK8'] = 0.09
+RES_SF['CA15'] = 0.988
+RES_SF_ERR['CA15'] = 0.079
 re_sbb = re.compile("Sbb(?P<mass>\d+)")
 
 ##############################################################################
@@ -36,6 +52,9 @@ class RhalphabetBuilder():
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
         self._freeze = freeze_poly
+        self._jet_type = 'AK8'
+        if 'CA15' in input_file.GetName():
+            self._jet_type = 'CA15'        
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
         self._cuts = cuts.split(',')
@@ -679,9 +698,9 @@ class RhalphabetBuilder():
                                 tmph.Scale(1./self._scale)
                                 tmph_up.Scale(1./self._scale)
                                 tmph_down.Scale(1./self._scale)
-                                tmph.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                                tmph_up.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                                tmph_down.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
+                                tmph.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt, jet_type = self._jet_type))
+                                tmph_up.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt, jet_type = self._jet_type))
+                                tmph_down.Scale(GetSF(process, cut, cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt, jet_type = self._jet_type))
                             else:                            
                                 tmph = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(process + '_' + cat)
                                 tmph_up = self._inputfile.Get(process + '_' + cut + '_' + cat + matchingString).Clone(
@@ -691,9 +710,9 @@ class RhalphabetBuilder():
                                 tmph.Scale(1./self._scale)
                                 tmph_up.Scale(1./self._scale)
                                 tmph_down.Scale(1./self._scale)
-                                tmph.Scale(GetSF(process, cut, cat, self._inputfile))
-                                tmph_up.Scale(GetSF(process, cut, cat, self._inputfile))
-                                tmph_down.Scale(GetSF(process, cut, cat, self._inputfile))
+                                tmph.Scale(GetSF(process, cut, cat, self._inputfile, jet_type = self._jet_type))
+                                tmph_up.Scale(GetSF(process, cut, cat, self._inputfile, jet_type = self._jet_type))
+                                tmph_down.Scale(GetSF(process, cut, cat, self._inputfile, jet_type = self._jet_type))
                             tmph_mass = tools.proj('cat', str(iPt), tmph, self._mass_nbins, self._mass_lo, self._mass_hi)
                             tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
                             tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
@@ -720,8 +739,8 @@ class RhalphabetBuilder():
                             tmph_down = self._inputfile.Get(process + '_' + cut + '_' + cat + '_' + syst + 'Down').Clone()                            
                             tmph_up.Scale(1./self._scale)
                             tmph_down.Scale(1./self._scale)
-                            tmph_up.Scale(GetSF(process, cut, cat, self._inputfile))
-                            tmph_down.Scale(GetSF(process, cut, cat, self._inputfile))
+                            tmph_up.Scale(GetSF(process, cut, cat, self._inputfile, jet_type = self._jet_type))
+                            tmph_down.Scale(GetSF(process, cut, cat, self._inputfile, jet_type = self._jet_type))
                             tmph_mass_up = tools.proj('cat', str(iPt), tmph_up, self._mass_nbins, self._mass_lo, self._mass_hi)
                             tmph_mass_down = tools.proj('cat', str(iPt), tmph_down, self._mass_nbins, self._mass_lo,
                                                   self._mass_hi)
@@ -778,15 +797,15 @@ class RhalphabetBuilder():
                     tmph_unmatched = self._inputfile_loose.Get(process + '_' + self._cuts[0] + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(1./self._scale)
                     tmph_unmatched.Scale(1./self._scale)
-                    tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt))
-                    tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, False)) # doesn't matter if removing unmatched so just remove that option
+                    tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, self._remove_unmatched, iPt, jet_type = self._jet_type))
+                    tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, self._inputfile_loose, False, jet_type = self._jet_type)) # doesn't matter if removing unmatched so just remove that option
                 else:
                     tmph_matched = self._inputfile.Get(process + '_' + self._cuts[0] + '_' + cat + '_matched').Clone()
                     tmph_unmatched = self._inputfile.Get(process + '_' + self._cuts[0] + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(1./self._scale)
                     tmph_unmatched.Scale(1./self._scale)
-                    tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile))
-                    tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile))
+                    tmph_matched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, jet_type = self._jet_type))
+                    tmph_unmatched.Scale(GetSF(process, self._cuts[0], cat, self._inputfile, jet_type = self._jet_type))
                 tmph_mass_matched = tools.proj('cat', str(iPt), tmph_matched, self._mass_nbins, self._mass_lo, self._mass_hi)
                 tmph_mass_unmatched = tools.proj('cat', str(iPt), tmph_unmatched, self._mass_nbins, self._mass_lo,
                                            self._mass_hi)
@@ -797,20 +816,22 @@ class RhalphabetBuilder():
                 # mass_shift_unc = 0.03*2. #(2 sigma shift)
                 # res_shift = 1.094
                 # res_shift_unc = 0.123*2. #(2 sigma shift)
-                m_data = 82.657
-                m_data_err = 0.313
-                m_mc = 82.548
-                m_mc_err = 0.191
-                s_data = 8.701
-                s_data_err = 0.433
-                s_mc = 8.027
-                s_mc_err = 0.607
-                mass_shift = m_data / m_mc
-                mass_shift_unc = math.sqrt((m_data_err / m_data) * (m_data_err / m_data) + (m_mc_err / m_mc) * (
-                m_mc_err / m_mc)) * 10.  # (10 sigma shift)
-                res_shift = s_data / s_mc
-                res_shift_unc = math.sqrt((s_data_err / s_data) * (s_data_err / s_data) + (s_mc_err / s_mc) * (
-                s_mc_err / s_mc)) * 2.  # (2 sigma shift)
+                # m_data = 82.657
+                # m_data_err = 0.313
+                # m_mc = 82.548
+                # m_mc_err = 0.191
+                # s_data = 8.701
+                # s_data_err = 0.433
+                # s_mc = 8.027
+                # s_mc_err = 0.607
+                #mass_shift = m_data / m_mc
+                #mass_shift_unc = math.sqrt((m_data_err / m_data) * (m_data_err / m_data) + (m_mc_err / m_mc) * (
+                mass_shift = MASS_SF[self._jet_type]
+                mass_shift_unc = MASS_SF_ERR[self._jet_type] * 10.  # (10 sigma shift) 
+                #res_shift = s_data / s_mc
+                #res_shift_unc = math.sqrt((s_data_err / s_data) * (s_data_err / s_data) + (s_mc_err / s_mc) * (
+                res_shift = RES_SF[self._jet_type]
+                res_shift_unc = RES_SF_ERR[self._jet_type] * 2.  # (2 sigma shift)
                 # get new central value
                 shift_val = mass - mass * mass_shift
                 tmp_shifted_h = hist_container.shift(tmph_mass_matched, shift_val)
@@ -958,8 +979,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                 hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
                 hpass_tmp.Scale(1. / scale)
                 hfail_tmp.Scale(1. / scale)
-                hpass_tmp.Scale(GetSF(bkg, cut, 'pass', f, fLoose))
-                hfail_tmp.Scale(GetSF(bkg, cut, 'fail', f))
+                hpass_tmp.Scale(GetSF(bkg, cut, 'pass', f, fLoose, jet_type = jet_type))
+                hfail_tmp.Scale(GetSF(bkg, cut, 'fail', f, jet_type = jet_type))
                 pass_hists_bkg[bkg] = hpass_tmp
                 fail_hists_bkg[bkg] = hfail_tmp            
             else: 
@@ -968,8 +989,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                 hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
                 hpass_tmp.Scale(1. / scale)
                 hfail_tmp.Scale(1. / scale)
-                hpass_tmp.Scale(GetSF(bkg, cut, 'pass', f))
-                hfail_tmp.Scale(GetSF(bkg, cut, 'fail', f))
+                hpass_tmp.Scale(GetSF(bkg, cut, 'pass', f, jet_type = jet_type))
+                hfail_tmp.Scale(GetSF(bkg, cut, 'fail', f, jet_type = jet_type))
                 pass_hists_bkg[bkg] = hpass_tmp
                 fail_hists_bkg[bkg] = hfail_tmp
 
@@ -998,8 +1019,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                                 hist.SetBinContent(i, j, 0)
                 failhist.Scale(1. / scale)
                 passhist.Scale(1. / scale)
-                failhist.Scale(GetSF(sig + str(mass), cut, 'fail', f))
-                passhist.Scale(GetSF(sig + str(mass), cut, 'pass', f))
+                failhist.Scale(GetSF(sig + str(mass), cut, 'fail', f, jet_type = jet_type))
+                passhist.Scale(GetSF(sig + str(mass), cut, 'pass', f, jet_type = jet_type))
                 pass_hists_sig[sig + str(mass)] = passhist
                 fail_hists_sig[sig + str(mass)] = failhist
                 signal_names.append(sig + str(mass))
@@ -1045,7 +1066,8 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # print fail_hists;
     return (pass_hists,fail_hists)
 
-def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):    
+def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_type='AK8'):    
+    
     SF = 1
     adjProc = process
         
@@ -1074,20 +1096,23 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
 
     if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'Sbb' in process:
         if 'pass' in cat:
-            SF *= BB_SF
+            if 'Sbb' in process:
+                print process, cat, BB_SF[jet_type], jet_type
+                #sys.exit()
+            SF *= BB_SF[jet_type]            
             if 'zqq' in process:
-                print BB_SF
+                print BB_SF[jet_type]
         else:
             passInt = f.Get(adjProc + '_' + cut + '_pass').Integral()
             failInt = f.Get(adjProc + '_' + cut + '_fail').Integral()
             if failInt > 0:
-                SF *= (1. + (1. - BB_SF) * passInt / failInt)
+                SF *= (1. + (1. - BB_SF[jet_type]) * passInt / failInt)
                 if 'zqq' in process:
-                    print (1. + (1. - BB_SF) * passInt / failInt)
+                    print (1. + (1. - BB_SF[jet_type]) * passInt / failInt)
     if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'Sbb' in process:
-        SF *= V_SF
+        SF *= V_SF[jet_type]
         if 'zqq' in process:
-            print V_SF
+            print V_SF[jet_type]
     matchingString = ''
     if removeUnmatched and ('wqq' in process or 'zqq' in process):
         matchingString = '_matched'

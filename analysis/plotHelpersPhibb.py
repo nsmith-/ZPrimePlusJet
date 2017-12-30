@@ -9,6 +9,7 @@ import array
 
 def getRatio(hist, reference):
 	ratio = hist.Clone("%s_ratio"%hist.GetName())
+	ratio.Sumw2()
 	ratio.SetDirectory(0)
 	ratio.SetLineColor(hist.GetLineColor())
 	for xbin in xrange(1,reference.GetNbinsX()+1):
@@ -1355,6 +1356,7 @@ def makeCanvasRatio2D(h_denom,h_numer,legname,color,style,outname,pdir="plots",l
     for i in range(0, npar):
         if i >= (np+1)*(nr+1): # assuming nr = max(np, nr)
             f2.FixParameter(i,0)
+    #fr = ratio.Fit('f2','RNS')
     fr = ratio.Fit('f2','RNS')
     #f2.Draw("surf")
     ratio.Draw('surf1')

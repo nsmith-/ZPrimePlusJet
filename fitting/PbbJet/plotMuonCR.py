@@ -107,6 +107,10 @@ def main(options, args):
         htot_line = htot.Clone('htot_line%s'%box)
         htot_line.SetFillStyle(0)
         data.GetYaxis().SetTitle('Events')
+        if options.fillCA15:
+            data.GetXaxis().SetRangeUser(47,299) # for CA15
+        else:
+            data.GetXaxis().SetRangeUser(40,201) # for AK8
         data.Draw('pez')
         htot.Draw('E2same')        
         htot_line.Draw('histsame')
@@ -187,6 +191,10 @@ def main(options, args):
         iOneWithErrors.SetLineColor(r.kBlue+1)
         iOneWithErrors.SetMarkerSize(0)
         iOneWithErrors.SetLineWidth(2)
+        if options.fillCA15:
+            iRatio.GetXaxis().SetRangeUser(47,299) # for CA15
+        else:
+            iRatio.GetXaxis().SetRangeUser(40,201) # for AK8
         iRatio.Draw('pez')
         iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s'%box)
         iOneWithErrorsLine.SetFillStyle(0)

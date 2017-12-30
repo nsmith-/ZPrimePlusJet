@@ -59,9 +59,11 @@ def main(options,args,outputExists):
         MIN_M['cat%i'%j] = empty.GetXaxis().GetBinUpEdge(empty.GetXaxis().FindBin(massMin))
         MAX_M['cat%i'%j] = empty.GetXaxis().GetBinLowEdge(empty.GetXaxis().FindBin(massMax))
         print j, MIN_M['cat%i'%j], MAX_M['cat%i'%j]
-    
+
+
     MIN_M['allcats'] = MIN_M['cat1']
     MAX_M['allcats'] = MAX_M['cat6']
+
     
     ifile = options.ifile
     odir = options.odir
@@ -75,9 +77,12 @@ def main(options,args,outputExists):
         
     hb = {}
     hb['QCD'] = {}
-    hb['QCD']['pass'] = ofile.Get('qcd_%s_pass'%options.cuts)
-    hb['QCD']['fail'] = ofile.Get('qcd_%s_fail'%options.cuts)
+    hb['QCD']['pass'] = ofile.Get('DMSbb350_%s_pass'%options.cuts)
+    hb['QCD']['fail'] = ofile.Get('DMSbb350_%s_fail'%options.cuts)
+    hb['QCD']['pass'].Sumw2()
+    hb['QCD']['fail'].Sumw2()
 
+    old = hb['QCD']['fail'].Integral()+hb['QCD']['pass'].Integral()
     for histogram in hb['QCD'].values():
         for i in range(1, histogram.GetNbinsX()+1):
             for j in range(1, histogram.GetNbinsY()+1):
@@ -89,8 +94,12 @@ def main(options,args,outputExists):
                     rhoVal, histogram.GetName(), histogram.GetYaxis().GetBinLowEdge(j), histogram.GetYaxis().GetBinUpEdge(j),
                     histogram.GetXaxis().GetBinLowEdge(i), histogram.GetXaxis().GetBinUpEdge(i))
                     histogram.SetBinContent(i, j, 0.)
+                    histogram.SetBinError(i, j, 0.)
             
-        
+    new = hb['QCD']['fail'].Integral()+hb['QCD']['pass'].Integral()
+    print new/old
+
+    sys.exit()
                 
     hb['QCD']['pass'].Scale(1./hb['QCD']['pass'].Integral())
     hb['QCD']['fail'].Scale(1./hb['QCD']['fail'].Integral())

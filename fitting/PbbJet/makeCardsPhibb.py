@@ -20,6 +20,9 @@ from rhalphabet_builder_Phibb import BB_SF,BB_SF_ERR,V_SF,V_SF_ERR,GetSF
 
 ##-------------------------------------------------------------------------------------
 def main(options,args):
+    jet_type = 'AK8'
+    if 'CA15' in options.ifile:
+        jet_type = 'CA15'
     for model in ["DMSbb"]: # [PS, Zp]
         for mass in massIterable(options.masses):
             tfile = r.TFile.Open(options.ifile)
@@ -110,14 +113,14 @@ def main(options,args):
                         elif i == 6:
                             scaleptErrs['%s_%s'%(proc,box)] =  0.4
                         
-                        vErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
+                        vErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR[jet_type]/V_SF[jet_type]
                         if box=='pass':
-                            bbErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR/BB_SF
+                            bbErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR[jet_type]/BB_SF[jet_type]
                         else:
                             ratePass = histoDict['%s_%s'%(proc,'pass')].Integral()
                             rateFail = histoDict['%s_%s'%(proc,'fail')].Integral()
                             if rateFail>0:
-                                bbErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
+                                bbErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR[jet_type]*(ratePass/rateFail)
                             else:
                                 bbErrs['%s_%s'%(proc,box)] = 1.0
                                 

@@ -261,31 +261,34 @@ def main(options, args):
 
     print "Signals... "
     sigSamples = {}
-    sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-
+    if not options.skipMC:
+        sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    
     print "Backgrounds..."
     bkgSamples = {}
-    bkgSamples['wqq'] = sampleContainerPhibb('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['zqq'] = sampleContainerPhibb('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    if not options.skipQCD:
+    if not options.skipMC:
+        bkgSamples['wqq'] = sampleContainerPhibb('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['zqq'] = sampleContainerPhibb('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    if not options.skipQCD and not options.skipMC:
         bkgSamples['qcd'] = sampleContainerPhibb('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['tqq'] = sampleContainerPhibb('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['stqq'] = sampleContainerPhibb('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['wlnu'] = sampleContainerPhibb('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['zll'] = sampleContainerPhibb('zll', tfiles['zll'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['vvqq'] = sampleContainerPhibb('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['hqq125'] = sampleContainerPhibb('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['tthqq125'] = sampleContainerPhibb('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['vbfhqq125'] = sampleContainerPhibb('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['whqq125'] = sampleContainerPhibb('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-    bkgSamples['zhqq125'] = sampleContainerPhibb('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    if not options.skipMC:
+        bkgSamples['tqq'] = sampleContainerPhibb('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['stqq'] = sampleContainerPhibb('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['wlnu'] = sampleContainerPhibb('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['zll'] = sampleContainerPhibb('zll', tfiles['zll'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['vvqq'] = sampleContainerPhibb('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['hqq125'] = sampleContainerPhibb('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['tthqq125'] = sampleContainerPhibb('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['vbfhqq125'] = sampleContainerPhibb('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['whqq125'] = sampleContainerPhibb('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['zhqq125'] = sampleContainerPhibb('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
 
 
     print "Data..."
@@ -293,7 +296,7 @@ def main(options, args):
         if muonCR:
             dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&4)&&passJson)', False)
         else:
-            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 10, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
+            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
 
     hall = {}
 
@@ -340,6 +343,7 @@ if __name__ == '__main__':
                       metavar='muonCR')
     parser.add_option('-d', '--dbtagmin', dest='dbtagmin', default=-99., type="float",
                       help='left bound to btag selection', metavar='dbtagmin')
+    parser.add_option('--skip-mc', action='store_true', dest='skipMC', default=False, help='skip MC', metavar='skipMC')
     parser.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skipQCD')
     parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
     parser.add_option('-c','--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')

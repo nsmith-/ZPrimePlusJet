@@ -16,7 +16,7 @@ from hist import *
 
 re_sbb = re.compile("Sbb(?P<mass>\d+)")
 
-def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
+def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
     obsRate = {}
     for box in boxes:
         obsRate[box] = histoDict['data_obs_%s'%box].Integral()
@@ -51,14 +51,14 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options):
             else:
                 hqq125ptErrs['%s_%s'%(proc,box)] = 1.0
             if proc=='wqq' or proc=='zqq' or 'hqq' in proc:
-                veffErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR/V_SF
+                veffErrs['%s_%s'%(proc,box)] = 1.0+V_SF_ERR[jet_type]/V_SF[jet_type]
                 if box=='pass':
-                    bbeffErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR/BB_SF
+                    bbeffErrs['%s_%s'%(proc,box)] = 1.0+BB_SF_ERR[jet_type]/BB_SF[jet_type]
                 else:
                     ratePass = histoDict['%s_%s'%(proc,'pass')].Integral()
                     rateFail = histoDict['%s_%s'%(proc,'fail')].Integral()
                     if rateFail>0:
-                        bbeffErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR*(ratePass/rateFail)
+                        bbeffErrs['%s_%s'%(proc,box)] = 1.0-BB_SF_ERR[jet_type]*(ratePass/rateFail)
                     else:
                         bbeffErrs['%s_%s'%(proc,box)] = 1.0
                     
@@ -252,7 +252,8 @@ def main(options, args):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(adjProc[proc],cut,box)).Clone()
-            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,cut,box,tfile))
+            histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,cut,box,tfile, jet_type = jet_type))
+            #if proc=='qcd': histoDict['%s_%s'%(proc,box)].Scale(0.63)
             for i in range(1, histoDict['%s_%s'%(proc,box)].GetNbinsX()+1):
                 massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(i)
                 
@@ -260,10 +261,12 @@ def main(options, args):
                 if proc!='data_obs':
                     print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
                     histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(adjProc[proc],cut,box,syst)).Clone()
-                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
+                    histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile, jet_type = jet_type))
+                    #if proc=='qcd': histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(0.63)
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                     histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(adjProc[proc],cut,box,syst)).Clone()
-                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile))
+                    histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile, jet_type = jet_type))
+                    #if proc=='qcd': histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(0.63)
             if proc!='data_obs':
                 histoDict['%s_%s_%sUp'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sUp'%(proc,box,'mcstat'))
                 histoDict['%s_%s_%sDown'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sDown'%(proc,box,'mcstat'))
@@ -303,7 +306,7 @@ def main(options, args):
     outputFile.Close()
     txtfileName = outFile.replace('.root','.txt')
 
-    writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options)
+    writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type)
     print '\ndatacard:\n'
     os.system('cat %s/%s'%(options.odir,txtfileName))
 
