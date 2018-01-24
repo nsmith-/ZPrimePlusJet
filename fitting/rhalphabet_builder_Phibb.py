@@ -394,7 +394,7 @@ class RhalphabetBuilder():
                 roopolyarray = self.buildRooPolyArray(self._lPt.getVal(),self._lMSD.getVal(),lUnity,lZero,polynomial_variables)
             else :
                 print ("Pt/Rho poly")
-                roopolyarray = self.buildRooPolyRhoArray(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polynomial_variables)
+                roopolyarray = self.buildRooPolyRhoArrayBernstein(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polynomial_variables)
             print "RooPolyArray:"
             roopolyarray.Print()
             fail_bin_content = 0
@@ -896,7 +896,7 @@ class RhalphabetBuilder():
                 #res_shift = s_data / s_mc
                 #res_shift_unc = math.sqrt((s_data_err / s_data) * (s_data_err / s_data) + (s_mc_err / s_mc) * (
                 res_shift = RES_SF[self._jet_type]
-                res_shift_unc = RES_SF_ERR[self._jet_type] * 2.  # (2 sigma shift)
+                res_shift_unc = RES_SF_ERR[self._jet_type] * 5.  # (5 sigma shift)
                 # get new central value
                 shift_val = mass - mass * mass_shift
                 tmp_shifted_h = hist_container.shift(tmph_mass_matched, shift_val)

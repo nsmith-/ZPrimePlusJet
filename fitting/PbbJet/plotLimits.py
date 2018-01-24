@@ -97,7 +97,7 @@ def plotUpperLimits(options,args):
     cut = {}
     if len(options.box.split('_')) > 1:
         for mass in all_masses:
-            if mass < 150:
+            if mass < 160:
                 jet_type[str(mass)] = options.box.split('_')[0]
                 cut[str(mass)] = options.cuts.split('_')[0]
             else:
@@ -106,9 +106,12 @@ def plotUpperLimits(options,args):
     else:
         for mass in all_masses:
             jet_type[str(mass)] = options.box
+            cut[str(mass)] = options.cuts
 
     file_names = {}
     limits = {}
+    print cut
+    print jet_type
     for mass in all_masses:
         file_name = options.idir + "/%s/%s/DMSbb%s/higgsCombineDMSbb_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type[str(mass)],cut[str(mass)],str(mass),str(mass),options.lumi,jet_type[str(mass)])
         print file_name
@@ -117,7 +120,7 @@ def plotUpperLimits(options,args):
             file_names[str(mass)] = file_name
             limits[str(mass)] = getLimits(file_name)
             print len( limits[str(mass)])
-            if len( limits[str(mass)])>5:
+            if len( limits[str(mass)])>=5:
                 masses.append(mass)
             
             
@@ -148,14 +151,16 @@ def plotUpperLimits(options,args):
             median.SetPoint(    i,    mass, math.sqrt(limit[2]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # median
             green.SetPoint(  2*N-1-i, mass, math.sqrt(limit[1]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # - 1 sigma
             yellow.SetPoint( 2*N-1-i, mass, math.sqrt(limit[0]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # - 2 sigma
-            obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # observed
+            if len(limit)>5:
+                obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # observed
         else:
             yellow.SetPoint(    i,    mass, limit[4] * fac ) # + 2 sigma
             green.SetPoint(     i,    mass, limit[3] * fac ) # + 1 sigma
             median.SetPoint(    i,    mass, limit[2] * fac ) # median
             green.SetPoint(  2*N-1-i, mass, limit[1] * fac ) # - 1 sigma
             yellow.SetPoint( 2*N-1-i, mass, limit[0] * fac ) # - 2 sigma
-            obs.SetPoint(       i,    mass, limit[5] * fac) # observed
+            if len(limit)>5:
+                obs.SetPoint(       i,    mass, limit[5] * fac) # observed
         print mass,  limit[2]*fac
             
 
@@ -237,7 +242,7 @@ def plotUpperLimits(options,args):
     
     obs.SetMarkerStyle(20)
     obs.SetLineWidth(2)
-    obs.Draw('PLsame')
+    #obs.Draw('PLsame')
 
     theory_xsec.SetMarkerStyle(20)
     theory_xsec.SetLineColor(rt.kBlue+2)
@@ -267,7 +272,8 @@ def plotUpperLimits(options,args):
     legend.SetBorderSize(0)
     legend.SetTextSize(0.041)
     legend.SetTextFont(42)
-    legend.AddEntry(obs, "Observed",'lp')
+    #if len(limit)>5:
+    #    legend.AddEntry(obs, "Observed",'lp')
     #legend.AddEntry(median, "Asymptotic CL_{s} expected",'L')
     legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
     legend.AddEntry(yellow,"Expected #pm 2 s.d.",'lf')
@@ -277,7 +283,7 @@ def plotUpperLimits(options,args):
 
     if len(options.box.split('_')) > 1:
         
-        line1 = rt.TLine(150,2,150,10)
+        line1 = rt.TLine(160,2,160,10)
         line1.SetLineStyle(2)
         line1.SetLineWidth(2)
         line1.SetLineColor(rt.kGray+1)
@@ -287,12 +293,12 @@ def plotUpperLimits(options,args):
         lab.SetTextFont(42)
         lab.SetTextColor(rt.kGray+1)
         lab.SetTextAlign(33)
-        lab.DrawLatex(150-10,9,"#leftarrow")
+        lab.DrawLatex(160-10,9,"#leftarrow")
         lab.SetTextAlign(13)
-        lab.DrawLatex(150+10,9,"#rightarrow") 
+        lab.DrawLatex(160+10,9,"#rightarrow") 
         lab.SetTextAlign(23)
-        lab.DrawLatex(150-20,8.5,"#splitline{anti-k_{T}}{R=0.8}")
-        lab.DrawLatex(150+20,8.5,"#splitline{CA}{R=1.5}")
+        lab.DrawLatex(160-20,8.5,"#splitline{anti-k_{T}}{R=0.8}")
+        lab.DrawLatex(160+20,8.5,"#splitline{CA}{R=1.5}")
         lab.Draw()
 
     print " "

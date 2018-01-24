@@ -35,7 +35,7 @@ def main(options, args):
         massMin = r.TMath.Sqrt(r.TMath.Exp(options.lrho))*ptVal
         massMax = r.TMath.Sqrt(r.TMath.Exp(options.hrho))*ptVal
         print j, massMin, massMax
-        MIN_M['cat%i'%j] = empty.GetXaxis().GetBinUpEdge(empty.GetXaxis().FindBin(massMin))
+        MIN_M['cat%i'%j] = max(options.massMin,empty.GetXaxis().GetBinUpEdge(empty.GetXaxis().FindBin(massMin)))
         MAX_M['cat%i'%j] = empty.GetXaxis().GetBinLowEdge(empty.GetXaxis().FindBin(massMax))
         print j, MIN_M['cat%i'%j], MAX_M['cat%i'%j]
 
@@ -53,7 +53,14 @@ def main(options, args):
 
     shapes = ['wqq', 'zqq', 'tqq', 'qcd', 'hqq125', 'zhqq125', 'whqq125', 'tthqq125', 'vbfhqq125', options.model+str(mass), 'data']
 
+    skip = {}
     for i in range(len(pt_binBoundaries) - 1):
+        if not fml.Get("shapes_" + options.fit + "/cat%i_fail_cat%i/%s" % (i+1, i+1, 'qcd')): 
+            print 'cat%i qcd shape not found'%(i+1)
+            skip['cat%i'%(i+1)] = True
+            continue   
+        else:
+            skip['cat%i'%(i+1)] = False
         (tmppass, tmpfail) = plotCategory(fml, fd, i + 1, options.fit)
         histograms_pass_all[i] = {}
         histograms_fail_all[i] = {}
@@ -74,6 +81,7 @@ def main(options, args):
                                 array.array('d', pt_binBoundaries))
         for i in range(1, pass_2d[shape].GetNbinsX() + 1):
             for j in range(1, pass_2d[shape].GetNbinsY() + 1):
+                if skip['cat%i'%j]: continue
                 pass_2d[shape].SetBinContent(i, j, histograms_pass_all[j - 1][shape].GetBinContent(i))
                 fail_2d[shape].SetBinContent(i, j, histograms_fail_all[j - 1][shape].GetBinContent(i))
 
@@ -96,9 +104,14 @@ def main(options, args):
                 ratio_2d_data_subtract.SetBinContent(i, j, 0)
 
     for shape in shapes:
-        histograms_pass_summed[shape] = histograms_pass_all[0][shape].Clone(shape + '_pass_sum')
-        histograms_fail_summed[shape] = histograms_fail_all[0][shape].Clone(shape + '_fail_sum')
+        if not skip['cat1']:
+            histograms_pass_summed[shape] = histograms_pass_all[0][shape].Clone(shape + '_pass_sum')
+            histograms_fail_summed[shape] = histograms_fail_all[0][shape].Clone(shape + '_fail_sum')
+        else:
+            histograms_pass_summed[shape] = histograms_pass_all[1][shape].Clone(shape + '_pass_sum')
+            histograms_fail_summed[shape] = histograms_fail_all[1][shape].Clone(shape + '_fail_sum')
         for i in range(1, len(pt_binBoundaries)-1):
+            if skip['cat%i'%(i+1)]: continue
             histograms_pass_summed[shape].Add(histograms_pass_all[i][shape])
             histograms_fail_summed[shape].Add(histograms_fail_all[i][shape])
 
@@ -533,7 +546,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
         tag3 = r.TLatex(0.2, 0.77, "Preliminary")
     else:
         tag3 = r.TLatex(0.2, 0.77, "Simulation Preliminary")
-    ptRange = [450, 1000]
+    ptRange = [options.ptMin, 1000]
     if 'cat1' in tag:
         ptRange = [450, 500]
     elif 'cat2' in tag:
@@ -1144,7 +1157,9 @@ if __name__ == '__main__':
     parser.add_option('--model',dest="model", default="DMSbb",type="string", help="signal model name")
     parser.add_option('--mass',dest="mass", default='125',type="string", help="mass of resonance")
     parser.add_option('-b','--box',dest="box", default="AK8",type="string", help="box name")
-    parser.add_option("--lumi", dest="lumi", type=float, default=35.9, help="luminosity", metavar="lumi")
+    parser.add_option("--lumi", dest="lumi", type='float', default=35.9, help="luminosity", metavar="lumi")
+    parser.add_option("--mass-min", dest="massMin", type='float', default=40, help="min mass", metavar="massMin")
+    parser.add_option("--pt-min", dest="ptMin", type='float', default=450, help="min pt", metavar="ptMin")
     parser.add_option('-i', '--idir', dest='idir', default='cards/', help='directory with data', metavar='idir')
     parser.add_option('-o', '--odir', dest='odir', default='cards/', help='directory for plots', metavar='odir')
     parser.add_option('--fit', dest='fit', default='prefit', help='choice is either prefit, fit_s or fit_b',

@@ -253,7 +253,7 @@ def main(options, args):
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(adjProc[proc],cut,box)).Clone()
             histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,cut,box,tfile, jet_type = jet_type))
-            #if proc=='qcd': histoDict['%s_%s'%(proc,box)].Scale(0.63)
+            if proc=='qcd': histoDict['%s_%s'%(proc,box)].Scale(0.63)
             for i in range(1, histoDict['%s_%s'%(proc,box)].GetNbinsX()+1):
                 massVal = histoDict['%s_%s'%(proc,box)].GetXaxis().GetBinCenter(i)
                 
@@ -262,11 +262,11 @@ def main(options, args):
                     print 'getting histogram for process: %s_%s_%s_%sUp'%(proc,cut,box,syst)
                     histoDict['%s_%s_%sUp'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sUp'%(adjProc[proc],cut,box,syst)).Clone()
                     histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile, jet_type = jet_type))
-                    #if proc=='qcd': histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(0.63)
+                    if proc=='qcd': histoDict['%s_%s_%sUp'%(proc,box,syst)].Scale(0.63)
                     print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                     histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%s_%sDown'%(adjProc[proc],cut,box,syst)).Clone()
                     histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(GetSF(proc,cut,box,tfile, jet_type = jet_type))
-                    #if proc=='qcd': histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(0.63)
+                    if proc=='qcd': histoDict['%s_%s_%sDown'%(proc,box,syst)].Scale(0.63)
             if proc!='data_obs':
                 histoDict['%s_%s_%sUp'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sUp'%(proc,box,'mcstat'))
                 histoDict['%s_%s_%sDown'%(proc,box,'mcstat')] = histoDict['%s_%s'%(proc,box)].Clone('%s_%s_%sDown'%(proc,box,'mcstat'))

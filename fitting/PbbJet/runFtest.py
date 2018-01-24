@@ -140,9 +140,9 @@ if __name__ == "__main__":
         dataString = '--data'
 
     if options.pseudo:
-        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --freezeNuisances tqqeffSF,tqqnormSF'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
+        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --freezeNuisances tqqeffSF,tqqnormSF --mass %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.mass),options.dryRun)
     else:
-        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir_muonCR, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
+        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --mass %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir_muonCR, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.mass),options.dryRun)
      
 
      
