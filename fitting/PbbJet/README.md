@@ -11,7 +11,7 @@ python Hbb_create_Phibb.py --lumi 35.9 -o ./ -c --skip-data 2>&1 | tee log_CA15_
 ```
 
 Interpolating signal shapes and merging with data and MC shapes:
-```
+```bash
 cd ../../analysis/
 # AK8
 python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_pt_scalesmear_AK8_check.root --output_file hist_1DZbb_pt_scalesmear_AK8_interpolations.root --jet_type AK8 --interpolate --output_range 50,505,5
