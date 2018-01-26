@@ -10,15 +10,29 @@ python Hbb_create_Phibb.py --lumi 35.9 -o ./ --skip-data 2>&1 | tee log_AK8_qcd.
 python Hbb_create_Phibb.py --lumi 35.9 -o ./ -c --skip-data 2>&1 | tee log_CA15_qcd.txt 
 ```
 
-Running limits:
+Interpolating signal shapes and merging with data and MC shapes:
+```
+cd ../../analysis/
+# AK8
+python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_pt_scalesmear_AK8_check.root --output_file hist_1DZbb_pt_scalesmear_AK8_interpolations.root --jet_type AK8 --interpolate --output_range 50,505,5
+python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_muonCR_AK8_check.root --output_file hist_1DZbb_muonCR_AK8_interpolations.root --jet_type AK8 --interpolate_muCR --output_range 50,505,5
+# CA15
+python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_pt_scalesmear_CA15_check.root --output_file ../fitting/PbbJet/hist_1DZbb_pt_scalesmear_CA15_interpolations.root --jet_type CA15 --interpolate --output_range 50,505,5
+cd fitting/PbbJet
+python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_muonCR_CA15_check.root --output_file ../fitting/PbbJet/hist_1DZbb_muonCR_CA15_interpolations.root --jet_type CA15 --interpolate_muCR --output_range 50,505,5
+cd ../fitting/PbbJet/
+python mergePhibb.py
+```
+
+Running (expected) limits:
 ```bash
 # AK8
 python runCombine.py -i hist_1DZbb_pt_scalesmear_AK8_interpolations_merge.root  -o cards_AK8_p9_r2p1_interp/ -c p9 --lrho -6.0 --hrho -2.1 --model DMSbb --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500' -b AK8 --nr 2 --np 1 
 # CA15
-python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_interpolations_merge.root  -o cards_CA15_p9_r3p1_interp/ -c p9 --lrho -4.7 --hrho -1.0 --model DMSbb --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500' -b CA15 --nr 3 --np 1 
+python runCombine.py -i hist_1DZbb_pt_scalesmear_CA15_interpolations_merge.root  -o cards_CA15_p9_r3p1_interp/ -c p9 --lrho -4.7 --hrho -1.0 --model DMSbb --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500' -b CA15 --nr 5 --np 1 
 ```
 
-Plotting limits:
+Plotting (expected) limits:
 ```bash
 # AK8
 python plotLimits.py --gq -c p9 -b CA15 -i cards_AK8_p9_r2p1_interp/ --xsecMin 0 --xsecMax 15 -o cards_AK8_p9_r3p1_interp/ --masses '50,55,60,65,70,75,80,85,90,95,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500'
