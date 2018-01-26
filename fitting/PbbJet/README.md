@@ -18,7 +18,6 @@ python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_pt
 python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_muonCR_AK8_check.root --output_file hist_1DZbb_muonCR_AK8_interpolations.root --jet_type AK8 --interpolate_muCR --output_range 50,505,5
 # CA15
 python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_pt_scalesmear_CA15_check.root --output_file ../fitting/PbbJet/hist_1DZbb_pt_scalesmear_CA15_interpolations.root --jet_type CA15 --interpolate --output_range 50,505,5
-cd fitting/PbbJet
 python signalInterpolationsPhibb.py --input_file ../fitting/PbbJet/hist_1DZbb_muonCR_CA15_check.root --output_file ../fitting/PbbJet/hist_1DZbb_muonCR_CA15_interpolations.root --jet_type CA15 --interpolate_muCR --output_range 50,505,5
 cd ../fitting/PbbJet/
 python mergePhibb.py
