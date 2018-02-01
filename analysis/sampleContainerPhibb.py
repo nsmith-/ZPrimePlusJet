@@ -663,7 +663,7 @@ class sampleContainerPhibb:
         minEventsPerJob = nent / self._maxSplit
         leftoverEvents = nent % self._maxSplit
         minEvent = self._iSplit * minEventsPerJob
-        maxEvent = (iSplit+1) * minEventsPerJob
+        maxEvent = (self._iSplit+1) * minEventsPerJob
         if (iSplit + 1 == maxSplit): maxEvent = nent
         print nent, " total events"
         print self._iSplit, " iSplit"
