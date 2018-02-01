@@ -672,12 +672,16 @@ class sampleContainerPhibb:
         print maxEvent, " max event"
         nentPerJob = maxEvent-minEvent
         print nentPerJob, " nentPerJob"
+        
+        self._tt.LoadTree(minEvent)
+        self._tt.SetNotify(self._cutFormula)
+
         for i in xrange(minEvent,maxEvent):
             if i % self._sf != 0: continue
 
             #self._tt.LoadEntry(i)
-            print i
-            #self._tt.LoadTree(i)
+            #print i
+            self._tt.LoadTree(i)
             self._tt.GetEntry(i)
             selected = False
             for j in range(self._cutFormula.GetNdata()):
@@ -688,8 +692,8 @@ class sampleContainerPhibb:
 
             #self._tt.GetEntry(i)
 
-            if (nentPerJob / 100 > 0 and i % (1 * nentPerJob / 100) == 0):
-                sys.stdout.write("\r[" + "=" * int(20 * i / nentPerJob) + " " + str(round(100. * i / nentPerJob, 0)) + "% done")
+            if (nent / 100 > 0 and i % (1 * nent / 100) == 0):
+                sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")
                 sys.stdout.flush()
 
             puweight = self.puWeight[0] #corrected
