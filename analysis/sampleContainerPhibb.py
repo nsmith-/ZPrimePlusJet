@@ -661,7 +661,7 @@ class sampleContainerPhibb:
         self._tt.SetNotify(self._cutFormula)
 
         minEventsPerJob = nent / self._maxSplit
-        leftoverEvents = neventsTotal % self._maxSplit
+        leftoverEvents = nent % self._maxSplit
         minEvent = self._iSplit * minEventsPerJob
         maxEvent = (iSplit+1) * minEventsPerJob
         if (iSplit + 1 == maxSplit): maxEvent = nent
