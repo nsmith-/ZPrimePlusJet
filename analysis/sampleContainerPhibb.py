@@ -34,7 +34,7 @@ def delta_phi_david(phi1, phi2):
 
 #########################################################################################################
 class sampleContainerPhibb:
-    def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1', minBranches=False):
+    def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1', minBranches=False, iSplit = 0, maxSplit = 1):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self._fn = fn
@@ -45,6 +45,8 @@ class sampleContainerPhibb:
         self._sf = sf
         self._lumi = lumi
         self._fillCA15 = fillCA15
+        self._iSplit = iSplit
+        self._maxSplit = maxSplit
         warnings.filterwarnings(action='ignore', category=RuntimeWarning, message='creating converter.*')
         if not self._fillCA15 : 
             self._cutFormula = ROOT.TTreeFormula("cutFormula", "(" + cutFormula + ")&&(AK8Puppijet0_pt>%f||AK8Puppijet0_pt_JESDown>%f||AK8Puppijet0_pt_JESUp>%f||AK8Puppijet0_pt_JERUp>%f||AK8Puppijet0_pt_JERDown>%f)" % (PTCUTMUCR, PTCUTMUCR, PTCUTMUCR, PTCUTMUCR, PTCUTMUCR), self._tt)
@@ -92,9 +94,12 @@ class sampleContainerPhibb:
         self._puw_down = f_pu.Get("puw_m")
 
         # get histogram for transform
-        if not self._fillCA15: f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root", "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)          AK8
-        else: f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/PbbJet/h3_n2ddt_CA15.root", "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)    CA15
-        self._trans_h2ddt = f_h2ddt.Get("h2ddt")
+        if not self._fillCA15: 
+          f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root", "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)          AK8
+          self._trans_h2ddt = f_h2ddt.Get("h2ddt")        
+        else: 
+          f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/PbbJet/DDT_N2_CA15_wp0.26.root","read")
+          self._trans_h2ddt = f_h2ddt.Get("DDT")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
 
@@ -654,7 +659,18 @@ class sampleContainerPhibb:
         cut_muon = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
         self._tt.SetNotify(self._cutFormula)
-        for i in xrange(nent):
+
+        minEventsPerJob = nent / self._maxSplit
+        leftoverEvents = neventsTotal % self._maxSplit
+        minEvent = self._iSplit * minEventsPerJob
+        maxEvent = (iSplit+1) * minEventsPerJob
+        if (iSplit + 1 == maxSplit) maxEvent = nent
+        print nent, " total events"
+        print self._iSplit, " iSplit"
+        print self._maxSplit, " maxSplit"
+        print minEvent, " min event"
+        print maxEvent, " max event"
+        for i in xrange(minEvent,maxEvent):
             if i % self._sf != 0: continue
 
             # self._tt.LoadEntry(i)
