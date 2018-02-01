@@ -40,7 +40,7 @@ echo "$0"
 echo "$1"
 echo "$2"
 
-python ${CMSSW_BASE}/src/ZPrimePlusJet/fitting/PbbJet/Hbb_create_Phibb.py --lumi 35.9 -o ./ -c --skip-mc --i-split 0 --max-split 1000
+python ${CMSSW_BASE}/src/ZPrimePlusJet/fitting/PbbJet/Hbb_create_Phibb.py --lumi 35.9 -o ./ -c --skip-mc --i-split $1 --max-split $2
 
 echo "Inside $MAINDIR:"
 ls
