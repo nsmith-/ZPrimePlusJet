@@ -78,6 +78,22 @@ br.SetPoint(5, 350, 0.143152)
 br.SetPoint(6, 400, 0.0045991)
 br.SetPoint(7, 500, 0.00154471)
 
+theory_xsec_Zp = rt.TGraph(6)
+theory_xsec_Zp.SetPoint(0,  50, 2.2*83.7) #sigma(HT>400) = 2.2 * sigma(HT>500)
+theory_xsec_Zp.SetPoint(1, 100, 2.2*46.3)
+theory_xsec_Zp.SetPoint(2, 150, 2.2*31.32)
+theory_xsec_Zp.SetPoint(3, 200, 2.2*23.17)
+theory_xsec_Zp.SetPoint(4, 250, 2.2*18.5)
+theory_xsec_Zp.SetPoint(5, 300, 2.2*16.03)
+
+br_Zp = rt.TGraph(6)
+br_Zp.SetPoint(0,  50, 0.2)
+br_Zp.SetPoint(1, 100, 0.2)
+br_Zp.SetPoint(2, 150, 0.2)
+br_Zp.SetPoint(3, 200, 0.2)
+br_Zp.SetPoint(4, 250, 0.2)
+br_Zp.SetPoint(5, 300, 0.2)
+
 tenpercentwidth = {'50': 52.3443,
             '100': 51.0427,
             '125': 50.5416,
@@ -130,10 +146,6 @@ def plotUpperLimits(options,args):
     green = rt.TGraph(2*N)     # green band
     median = rt.TGraph(N)      # median line
     obs = rt.TGraph(N)       # observed
-    theory_xsec = rt.TGraph(N)       # theory cross section
-    
-
-    
 
     up2s = [ ]
     i = -1
@@ -141,18 +153,21 @@ def plotUpperLimits(options,args):
         i += 1
         limit = limits[str(mass)]
         up2s.append(limit[4])
-        if options.xsec or options.gq:
+        if options.xsec or options.gq or options.gqZp:
             fac = xsections.Eval(mass,0,'S')
+            theory = theory_xsec.Eval(mass,0,'S') * br.Eval(mass,0,'S')
+            if options.gqZp:
+                theory = theory_xsec_Zp.Eval(mass,0,'S') * br_Zp.Eval(mass,0,'S')
         else:
             fac = 1
-        if options.gq:
-            yellow.SetPoint(    i,    mass, math.sqrt(limit[4]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # + 2 sigma
-            green.SetPoint(     i,    mass, math.sqrt(limit[3]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # + 1 sigma
-            median.SetPoint(    i,    mass, math.sqrt(limit[2]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # median
-            green.SetPoint(  2*N-1-i, mass, math.sqrt(limit[1]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # - 1 sigma
-            yellow.SetPoint( 2*N-1-i, mass, math.sqrt(limit[0]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # - 2 sigma
+        if options.gq or options.gqZp:
+            yellow.SetPoint(    i,    mass, math.sqrt(limit[4]*fac/theory)) # + 2 sigma 
+            green.SetPoint(     i,    mass, math.sqrt(limit[3]*fac/theory)) # + 1 sigma
+            median.SetPoint(    i,    mass, math.sqrt(limit[2]*fac/theory)) # median
+            green.SetPoint(  2*N-1-i, mass, math.sqrt(limit[1]*fac/theory)) # - 1 sigma
+            yellow.SetPoint( 2*N-1-i, mass, math.sqrt(limit[0]*fac/theory)) # - 2 sigma
             if len(limit)>5:
-                obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/(fac*(br.Eval(mass,0,'S')/0.8)))) # observed
+                obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/theory)) # observed
         else:
             yellow.SetPoint(    i,    mass, limit[4] * fac ) # + 2 sigma
             green.SetPoint(     i,    mass, limit[3] * fac ) # + 1 sigma
@@ -216,6 +231,12 @@ def plotUpperLimits(options,args):
     h_limit.GetXaxis().SetTitle('Resonance mass [GeV]')
     if options.gq:
         h_limit.GetYaxis().SetTitle("g_{q#Phi}")
+    elif options.gqZp:
+        h_limit.GetYaxis().SetTitle("g'_{q}")
+        h_limit.GetYaxis().SetMoreLogLabels()
+        h_limit.GetYaxis().SetNoExponent()
+        h_limit.GetXaxis().SetMoreLogLabels()
+        h_limit.GetXaxis().SetNoExponent()
     elif options.xsec:
         h_limit.GetYaxis().SetTitle("#sigma #times B [pb]")
     h_limit.GetYaxis().SetTitleOffset(0.9)
@@ -250,7 +271,7 @@ def plotUpperLimits(options,args):
     theory_xsec.SetLineWidth(2)
     #theory_xsec.SetLineStyle(2)
     if options.xsec:
-        theory_xsec.Draw('Lsame')
+        theory_xsec.Draw('Csame')
 
     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}"%options.lumi
     CMS_lumi.CMS_lumi(c,4,11)
@@ -258,7 +279,7 @@ def plotUpperLimits(options,args):
     #rt.gPad.SetTicks(1,1)
     #frame.Draw('sameaxis')
 
-    if options.gq:
+    if options.gq or options.gqZp:
         x1 = 0.67
     else:
         x1 = 0.6
@@ -279,7 +300,7 @@ def plotUpperLimits(options,args):
     legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
     legend.AddEntry(yellow,"Expected #pm 2 s.d.",'lf')
     if options.xsec:
-        legend.AddEntry(theory_xsec,"gg#Phi, g_{q}=1, H_{T}>400 GeV",'l')
+        legend.AddEntry(theory_xsec,"gg#Phi, g_{q\Phi}=1, H_{T}>400 GeV",'l')
     legend.Draw()
 
     if len(options.box.split('_')) > 1:
@@ -306,6 +327,11 @@ def plotUpperLimits(options,args):
     if options.gq: 
         c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_gq.pdf") 
         c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_gq.C") 
+    elif options.gqZp: 
+        c.SetLogx()
+        c.SetLogy()
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_gqZp.pdf") 
+        c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_gqZp.C") 
     elif options.xsec: 
         c.SetLogy()
         c.SaveAs(options.odir+"/Limit_" + options.box + "_" + options.cuts + "_xsec.pdf") 
@@ -328,7 +354,8 @@ if __name__ == '__main__':
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
     parser.add_option('-x','--xsec', dest='xsec', action='store_true',default=False, help='cross_section',metavar='xsec')
     parser.add_option('--observed', dest='observed', action='store_true',default=False, help='show observed',metavar='observed')
-    parser.add_option('-g','--gq', dest='gq', action='store_true',default=False, help='gq',metavar='xsec')
+    parser.add_option('-g','--gq', dest='gq', action='store_true',default=False, help='gq',metavar='gq')
+    parser.add_option('--gqZp', dest='gqZp', action='store_true',default=False, help='gqZp',metavar='gqZp')
     parser.add_option('-i', '--idir', dest='idir', default='./', help='input directory',metavar='idir')
     parser.add_option('-o', '--odir', dest='odir', default='./', help='input directory',metavar='odir')
     parser.add_option('--massMin',dest="massMin", default=50.,type="float", help="minimum mass")
