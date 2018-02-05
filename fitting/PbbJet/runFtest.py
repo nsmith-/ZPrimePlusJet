@@ -35,6 +35,7 @@ if __name__ == "__main__":
     parser.add_option('--scale',dest='scale', default=1,type='float',help='scale factor to scale MC (assuming only using a fraction of the data)')
     parser.add_option('-l','--lumi'   ,action='store',type='float',dest='lumi'   ,default=36.4, help='lumi')
     parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
+    parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z templates)',metavar='ifile_loose')
     parser.add_option('-t','--toys'   ,action='store',type='int',dest='toys'   ,default=200, help='number of toys')
     parser.add_option('-r','--r',dest='r', default='0' ,type='string',help='default value of r')    
     parser.add_option('-n','--n' ,action='store',type='int',dest='n'   ,default=5*20, help='number of bins')
@@ -93,16 +94,20 @@ if __name__ == "__main__":
             raise
         pass
 
+    if options.ifile_loose is not None:
+        ifile_loose = '--ifile-loose %s'%options.ifile_loose
+    else:
+        ifile_loose = ''
     if not os.path.isfile('%s/base.root'%cardsDir1) and not os.path.isfile('%s/rhalphabase.root'%cardsDir1):
-        exec_me('python buildRhalphabetPhibb.py -i %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f'%(options.ifile, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString, cut, options.lrho, options.hrho),options.dryRun )
+        exec_me('python buildRhalphabetPhibb.py -i %s %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f'%(options.ifile, ifile_loose, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString, cut, options.lrho, options.hrho),options.dryRun )
         
     if not os.path.isfile('%s/base.root'%cardsDir2) and not os.path.isfile('%s/rhalphabase.root'%cardsDir2):
-        exec_me('python buildRhalphabetPhibb.py -i %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f'%(options.ifile, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString, cut, options.lrho, options.hrho),options.dryRun )
-    exec_me('python makeCardsPhibb.py -i %s  -o %s/ --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f'%(options.ifile,
+        exec_me('python buildRhalphabetPhibb.py -i %s %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f'%(options.ifile, ifile_loose, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString, cut, options.lrho, options.hrho),options.dryRun )
+    exec_me('python makeCardsPhibb.py -i %s %s -o %s/ --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f'%(options.ifile,ifile_loose,
                                                                                                                            cardsDir1, cut,
                                                                                                                            options.lrho,
                                                                                                                            options.hrho),options.dryRun)
-    exec_me('python makeCardsPhibb.py -i %s  -o %s/ --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f'%(options.ifile,
+    exec_me('python makeCardsPhibb.py -i %s %s -o %s/ --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f'%(options.ifile,ifile_loose,
                                                                                                                            cardsDir2, cut,
                                                                                                                            options.lrho,
                                                                                                                            options.hrho),options.dryRun)
@@ -116,8 +121,8 @@ if __name__ == "__main__":
     if options.box=='CA15':
         fillString = '--fillCA15'
     if not options.pseudo:
-        exec_me('python writeMuonCRDatacard.py -i ./ -o %s/ -c %s --mass %s %s --no-mcstat-shape'%(sigDir1, cut, options.mass, fillString),options.dryRun)
-        exec_me('python writeMuonCRDatacard.py -i ./ -o %s/ -c %s --mass %s %s --no-mcstat-shape'%(sigDir2, cut, options.mass, fillString),options.dryRun)
+        exec_me('python writeMuonCRDatacard.py -i %s/ -o %s/ -c %s --mass %s %s --no-mcstat-shape'%(os.path.dirname(options.ifile),sigDir1, cut, options.mass, fillString),options.dryRun)
+        exec_me('python writeMuonCRDatacard.py -i %s/ -o %s/ -c %s --mass %s %s --no-mcstat-shape'%(os.path.dirname(options.ifile),sigDir2, cut, options.mass, fillString),options.dryRun)
     
     
     if not options.pseudo:

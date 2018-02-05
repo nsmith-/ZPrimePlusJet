@@ -27,8 +27,10 @@ if __name__ == '__main__':
         tfile_rebin = rt.TFile.Open(arg.replace('.root','_rebin.root'),'RECREATE')
         tfile = rt.TFile.Open(arg,'READ')
         if 'CA15' in arg:
-            #msd_binBoundaries = range(47,299+7,7) # muon CR
-            msd_binBoundaries = range(82,600+7,7) # SR
+            if 'muonCR' in arg: 
+                msd_binBoundaries = range(47,299+7,7) # muon CR
+            else: 
+                msd_binBoundaries = range(82,600+7,7) # SR
             pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
         elif 'AK8' in arg:
             msd_binBoundaries = range(40,201+7,7) # muon CR

@@ -195,11 +195,11 @@ def main(options, args):
 
     if not fillCA15: jet_type = "AK8"
     else: jet_type = "CA15" 
-    fileName = 'hist_1DZbb_pt_scalesmear_' +jet_type + '_check.root'
+    fileName = 'hist_1DZbb_pt_scalesmear_' + jet_type + '_check_' + str(options.iSplit) + '_' + str(options.maxSplit) +'.root'
     if options.bb:
-        fileName = 'hist_1DZbb_sortByBB_' + jet_type + '_check.root'
+        fileName = 'hist_1DZbb_sortByBB_' + jet_type + '_check_' + str(options.iSplit) + '_' + str(options.maxSplit) +'.root'
     elif muonCR:
-        fileName = 'hist_1DZbb_muonCR_' + jet_type + '_check.root'
+        fileName = 'hist_1DZbb_muonCR_' + jet_type + '_check_' + str(options.iSplit) + '_' + str(options.maxSplit) +'.root'
 
     outfile = ROOT.TFile.Open(options.odir + "/" + fileName, "recreate")
 
@@ -296,7 +296,7 @@ def main(options, args):
         if muonCR:
             dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&4)&&passJson)', False)
         else:
-            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False)
+            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
 
     hall = {}
 
@@ -347,6 +347,8 @@ if __name__ == '__main__':
     parser.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skipQCD')
     parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
     parser.add_option('-c','--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
+    parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
+    parser.add_option("--i-split", dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
  
 
     (options, args) = parser.parse_args()
