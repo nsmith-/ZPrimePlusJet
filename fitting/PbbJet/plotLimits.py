@@ -215,7 +215,7 @@ def plotUpperLimits(options,args):
     h_limit.SetMaximum(options.xsecMax)
     h_limit.GetXaxis().SetTitle('Resonance mass [GeV]')
     if options.gq:
-        h_limit.GetYaxis().SetTitle("g_{q}")
+        h_limit.GetYaxis().SetTitle("g_{q#Phi}")
     elif options.xsec:
         h_limit.GetYaxis().SetTitle("#sigma #times B [pb]")
     h_limit.GetYaxis().SetTitleOffset(0.9)
@@ -242,7 +242,8 @@ def plotUpperLimits(options,args):
     
     obs.SetMarkerStyle(20)
     obs.SetLineWidth(2)
-    #obs.Draw('PLsame')
+    if len(limit)>5 and options.observed:
+        obs.Draw('PLsame')
 
     theory_xsec.SetMarkerStyle(20)
     theory_xsec.SetLineColor(rt.kBlue+2)
@@ -272,8 +273,8 @@ def plotUpperLimits(options,args):
     legend.SetBorderSize(0)
     legend.SetTextSize(0.041)
     legend.SetTextFont(42)
-    #if len(limit)>5:
-    #    legend.AddEntry(obs, "Observed",'lp')
+    if len(limit)>5 and options.observed:
+        legend.AddEntry(obs, "Observed",'lp')
     #legend.AddEntry(median, "Asymptotic CL_{s} expected",'L')
     legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
     legend.AddEntry(yellow,"Expected #pm 2 s.d.",'lf')
@@ -326,6 +327,7 @@ if __name__ == '__main__':
     parser.add_option("--lumi", dest="lumi", default=35.9, type="float", help="luminosity", metavar="lumi")
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
     parser.add_option('-x','--xsec', dest='xsec', action='store_true',default=False, help='cross_section',metavar='xsec')
+    parser.add_option('--observed', dest='observed', action='store_true',default=False, help='show observed',metavar='observed')
     parser.add_option('-g','--gq', dest='gq', action='store_true',default=False, help='gq',metavar='xsec')
     parser.add_option('-i', '--idir', dest='idir', default='./', help='input directory',metavar='idir')
     parser.add_option('-o', '--odir', dest='odir', default='./', help='input directory',metavar='odir')

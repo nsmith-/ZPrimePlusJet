@@ -31,7 +31,7 @@ muveto lnN 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1
 eleveto lnN 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 1.005 - 1.005 1.005 1.005 1.005 1.005 1.005 1.005
 scale shape 0.1 0.1 0.1 - - 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 - - 0.1 0.1 0.1 0.1 0.1
 #scalept shape 0.1 0.1 0.1 - - 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 - - 0.1 0.1 0.1 0.1 0.1
-smear shape 0.2 0.2 0.2 - - 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 - - 0.2 0.2 0.2 0.2 0.2
+smear shape 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 - - 0.5 0.5 0.5 0.5 0.5
 tqqpassCATXnorm rateParam pass_CATX tqq (@0*@1) tqqnormSF,tqqeffSF
 tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*TQQEFF)/(1.0-TQQEFF)) tqqnormSF,tqqeffSF
 tqqnormSF extArg 1.0 [0.0,10.0]

@@ -675,14 +675,19 @@ class sampleContainerPhibb:
         
         self._tt.LoadTree(minEvent)
         self._tt.SetNotify(self._cutFormula)
-
+        print self._tt.GetFile()
+        print self._tt.GetEntryNumber(minEvent)
         for i in xrange(minEvent,maxEvent):
             if i % self._sf != 0: continue
 
             #self._tt.LoadEntry(i)
-            #print i
+            print i
             self._tt.LoadTree(i)
+            print self._tt.GetEntryNumber(i)
+            print self._tt.GetFile()
+            print "before get entry"
             self._tt.GetEntry(i)
+            print "after get entry"
             selected = False
             for j in range(self._cutFormula.GetNdata()):
                 if (self._cutFormula.EvalInstance(j)):

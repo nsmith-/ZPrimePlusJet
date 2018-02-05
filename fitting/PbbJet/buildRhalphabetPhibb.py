@@ -43,9 +43,11 @@ def main(options, args):
     # 	- 2D histograms of pass and fail mass,pT distributions
     # 	- for each MC sample and the data
     f = r.TFile.Open(ifile)    
-    fLoose = None
-    if options.ifile_loose is not None:
-        fLoose = r.TFile.Open(options.ifile_loose)
+    #fLoose = None 
+    #if options.ifile_loose is not None:
+    #    fLoose = r.TFile.Open(options.ifile_loose)
+    fLoose = options.ifile_loose
+
     #(hpass, hfail) = loadHistograms(f, options.pseudo, options.blind, options.useQCD, options.scale, options.r)
     (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], fLoose=fLoose, cuts = options.cuts, masses = massIterable(options.masses))
     #f.Close()
