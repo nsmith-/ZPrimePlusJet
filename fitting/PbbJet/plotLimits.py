@@ -13,6 +13,8 @@ CMS_lumi.cmsTextSize = 0.65
 CMS_lumi.outOfFrame = True
 tdrstyle.setTDRStyle()
 
+massSwitch = 160
+
 from runCombine import massIterable
 
 # GET limits from root file
@@ -113,7 +115,7 @@ def plotUpperLimits(options,args):
     cut = {}
     if len(options.box.split('_')) > 1:
         for mass in all_masses:
-            if mass < 160:
+            if mass < massSwitch:
                 jet_type[str(mass)] = options.box.split('_')[0]
                 cut[str(mass)] = options.cuts.split('_')[0]
             else:
@@ -304,8 +306,27 @@ def plotUpperLimits(options,args):
     legend.Draw()
 
     if len(options.box.split('_')) > 1:
-        
-        line1 = rt.TLine(160,2,160,10)
+
+        if options.xsec:
+            dxleg = 30
+            dyleg = 1
+            yleg1 = 0.1
+            yleg2 = 5
+            
+        elif options.gq:
+            dxleg = 30
+            dyleg = 1
+            yleg1 = 2
+            yleg2 = 10
+            
+        elif options.gqZp:
+            dxleg = 40
+            dyleg = 0.05
+            yleg1 = 0.08
+            yleg2 = 0.45
+                        
+
+        line1 = rt.TLine(massSwitch,yleg1,massSwitch,yleg2)
         line1.SetLineStyle(2)
         line1.SetLineWidth(2)
         line1.SetLineColor(rt.kGray+1)
@@ -314,13 +335,9 @@ def plotUpperLimits(options,args):
         lab.SetTextSize(0.035)
         lab.SetTextFont(42)
         lab.SetTextColor(rt.kGray+1)
-        lab.SetTextAlign(33)
-        lab.DrawLatex(160-10,9,"#leftarrow")
-        lab.SetTextAlign(13)
-        lab.DrawLatex(160+10,9,"#rightarrow") 
         lab.SetTextAlign(23)
-        lab.DrawLatex(160-20,8.5,"#splitline{anti-k_{T}}{R=0.8}")
-        lab.DrawLatex(160+20,8.5,"#splitline{CA}{R=1.5}")
+        lab.DrawLatex(massSwitch-dxleg,yleg2-dyleg,"#leftarrow #splitline{anti-k_{T}}{R=0.8}")
+        lab.DrawLatex(massSwitch+dxleg,yleg2-dyleg,"#splitline{CA}{R=1.5} #rightarrow")
         lab.Draw()
 
     print " "
