@@ -157,9 +157,8 @@ def plotUpperLimits(options,args):
         up2s.append(limit[4])
         if options.xsec or options.gq or options.gqZp:
             fac = xsections.Eval(mass,0,'S')
-            theory = theory_xsec.Eval(mass,0,'S') * br.Eval(mass,0,'S')
-            if options.gqZp:
-                theory = theory_xsec_Zp.Eval(mass,0,'S') * br_Zp.Eval(mass,0,'S')
+            if options.gqZp: theory = theory_xsec_Zp.Eval(mass,0,'S') * br_Zp.Eval(mass,0,'S')
+            else: theory = theory_xsec.Eval(mass,0,'S') * br.Eval(mass,0,'S')
         else:
             fac = 1
         if options.gq or options.gqZp:
@@ -312,19 +311,16 @@ def plotUpperLimits(options,args):
             dyleg = 1
             yleg1 = 0.1
             yleg2 = 5
-            
         elif options.gq:
             dxleg = 30
             dyleg = 1
             yleg1 = 2
             yleg2 = 10
-            
-        elif options.gqZp:
+        else:
             dxleg = 40
             dyleg = 0.05
             yleg1 = 0.08
-            yleg2 = 0.45
-                        
+            yleg2 = 0.45  
 
         line1 = rt.TLine(massSwitch,yleg1,massSwitch,yleg2)
         line1.SetLineStyle(2)
