@@ -526,6 +526,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     #hsig.SetLineWidth(1)
     if not splitS:
 	hstackMC.Add(hsig)
+        hstackMC.Add(hphi)
         #hsig.Draw('hist sames')
     else:
         for ih in range(0, len(hsigs)):
@@ -688,7 +689,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     if splitS:
         sigHists = list(hhigs)
     else:
-        sigHists = [hsig]
+        sigHists = [hsig,hphi]
     [sigHists.append(bkg) for bkg in bkgs if 'zqq' in bkg.GetName()]
     [sigHists.append(bkg) for bkg in bkgs if 'wqq' in bkg.GetName()]
     #print sigHists
