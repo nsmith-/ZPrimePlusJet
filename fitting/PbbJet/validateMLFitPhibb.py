@@ -532,7 +532,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
         for ih in range(0, len(hsigs)):
 	    hstackMC.Add(hsigs[ih])	
             #hsigs[ih].Draw('hist sames')
-    hphi.Add(hsig)
+    #hphi.Add(hsig)
     hstackMC.Draw("hist sames")
     g_data.Draw('pezsame')
     l.Draw()
