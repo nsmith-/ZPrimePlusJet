@@ -752,9 +752,9 @@ class RhalphabetBuilder():
                     for cut in self._cuts:
                         if syst == 'mcstat':
                             matchingString = ''
-                            if self._remove_unmatched and ('wqq' in process or 'zqq' in process):
+                            if self._remove_unmatched and ('wqq' in process or 'zqq' in process or 'Sbb' in process):
                                 matchingString = '_matched'
-                            if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat and cut in ['p9','p85']:              
+                            if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process) and 'pass' in cat and cut in ['p9','p85']:              
                                 tmph = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + matchingString).Clone(process + '_' + cat)
                                 tmph_up = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + matchingString).Clone(
                                     process + '_' + cat + '_' + syst + 'Up')
@@ -857,7 +857,7 @@ class RhalphabetBuilder():
                     #print ' Now here, process: ', process, ' , ReMatch: ', re_match, ' , Resbb : ', re_sbb, ' , Mass : ', mass
                 # get the matched and unmatched hist
                 
-                if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat and self._cuts[0] in ['p85','p9']:                     
+                if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process) and 'pass' in cat and self._cuts[0] in ['p85','p9']:                     
                     tmph_matched = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + '_matched').Clone()
                     tmph_unmatched = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(1./self._scale)
@@ -927,7 +927,7 @@ class RhalphabetBuilder():
                 # get res up/down
                 hmatchedsys_smear = hist_container.smear(hmatched_new_central, res_shift_unc)
 
-                if not (self._remove_unmatched and ('wqq' in process or 'zqq' in process)):
+                if not (self._remove_unmatched and ('wqq' in process or 'zqq' in process or 'DMSbb' in process)):
                     # add back the unmatched
                     hmatched_new_central.Add(tmph_mass_unmatched)
                     hmatchedsys_shift[0].Add(tmph_mass_unmatched)
@@ -1039,7 +1039,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                 fail_hists_bkg["qcd"] = qcd_fail
                 print 'qcd pass integral', qcd_pass.Integral()
                 print 'qcd fail integral', qcd_fail.Integral()
-            elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq') and (cut in ['p85', 'p9']):
+            elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq' or 'DMSbb' in bkg) and (cut in ['p85', 'p9']):
                 hpass_tmp = f.Get(bkg + '_' + fLoose + '_pass').Clone()
                 hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
                 hpass_tmp.Scale(1. / scale)
@@ -1138,14 +1138,14 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_
         
     if 'DMSbb' in process:
         tgraph = r.TGraph(8)
-        tgraph.SetPoint(0,  50, 0.8 * 1.574e-02)
-        tgraph.SetPoint(1, 100, 0.8 * 1.526e-02)
-        tgraph.SetPoint(2, 125, 0.8 * 1.486e-02)
-        tgraph.SetPoint(3, 200, 0.8 * 1.359e-02)
-        tgraph.SetPoint(4, 300, 0.8 * 1.251e-02)
-        tgraph.SetPoint(5, 350, 0.8 * 1.275e-02)
-        tgraph.SetPoint(6, 400, 0.8 * 1.144e-02)
-        tgraph.SetPoint(7, 500, 0.8 * 7.274e-03)
+        tgraph.SetPoint(0,  50, 0.8 * 1.574e-02 * 100.)  # overall scaling by 100. to get final mu^UL ~ 1
+        tgraph.SetPoint(1, 100, 0.8 * 1.526e-02 * 100.)
+        tgraph.SetPoint(2, 125, 0.8 * 1.486e-02 * 100.)
+        tgraph.SetPoint(3, 200, 0.8 * 1.359e-02 * 100.)
+        tgraph.SetPoint(4, 300, 0.8 * 1.251e-02 * 100.)
+        tgraph.SetPoint(5, 350, 0.8 * 1.275e-02 * 100.)
+        tgraph.SetPoint(6, 400, 0.8 * 1.144e-02 * 100.)
+        tgraph.SetPoint(7, 500, 0.8 * 7.274e-03 * 100.)
         
         re_match = re_sbb.search(process)
         mass = int(re_match.group("mass"))
@@ -1159,9 +1159,9 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_
         # fix process for signal
         adjProc = 'DMSbb'+str(adjMass)
 
-    if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'Sbb' in process:
+    if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'DMSbb' in process:
         if 'pass' in cat:
-            if 'Sbb' in process:
+            if 'DMSbb' in process:
                 print process, cat, BB_SF[jet_type], jet_type
                 #sys.exit()
             SF *= BB_SF[jet_type]            
@@ -1174,14 +1174,14 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_
                 SF *= (1. + (1. - BB_SF[jet_type]) * passInt / failInt)
                 if 'zqq' in process:
                     print (1. + (1. - BB_SF[jet_type]) * passInt / failInt)
-    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'Sbb' in process:
+    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'DMSbb' in process:
         SF *= V_SF[jet_type]
         if 'zqq' in process:
             print V_SF[jet_type]
     matchingString = ''
-    if removeUnmatched and ('wqq' in process or 'zqq' in process):
+    if removeUnmatched and ('wqq' in process or 'zqq' in process or 'DMSbb' in process):
         matchingString = '_matched'
-    if fLoose is not None and ('wqq' in process or 'zqq' in process) and 'pass' in cat:
+    if fLoose is not None and ('wqq' in process or 'zqq' in process or 'DMSbb' in process) and 'pass' in cat:
         if iPt > -1:
             nbinsX = f.Get(process + '_' + cut + '_pass' + matchingString).GetXaxis().GetNbins()
             passInt = f.Get(process + '_' + cut + '_pass' + matchingString).Integral(1, nbinsX, int(iPt), int(iPt))

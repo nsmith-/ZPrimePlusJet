@@ -51,14 +51,14 @@ def getLimits(file_name):
 
 
 xsections = rt.TGraph(8)
-xsections.SetPoint(0,  50, 0.8 * 1.574e-02)
-xsections.SetPoint(1, 100, 0.8 * 1.526e-02)
-xsections.SetPoint(2, 125, 0.8 * 1.486e-02)
-xsections.SetPoint(3, 200, 0.8 * 1.359e-02)
-xsections.SetPoint(4, 300, 0.8 * 1.251e-02)
-xsections.SetPoint(5, 350, 0.8 * 1.275e-02)
-xsections.SetPoint(6, 400, 0.8 * 1.144e-02)
-xsections.SetPoint(7, 500, 0.8 * 7.274e-03)
+xsections.SetPoint(0,  50, 0.8 * 1.574e-02 * 100.)
+xsections.SetPoint(1, 100, 0.8 * 1.526e-02 * 100.)
+xsections.SetPoint(2, 125, 0.8 * 1.486e-02 * 100.)
+xsections.SetPoint(3, 200, 0.8 * 1.359e-02 * 100.)
+xsections.SetPoint(4, 300, 0.8 * 1.251e-02 * 100.)
+xsections.SetPoint(5, 350, 0.8 * 1.275e-02 * 100.)
+xsections.SetPoint(6, 400, 0.8 * 1.144e-02 * 100.)
+xsections.SetPoint(7, 500, 0.8 * 7.274e-03 * 100.)
 
 theory_xsec = rt.TGraph(8)
 theory_xsec.SetPoint(0,  50, 1.574e-02)

@@ -74,6 +74,8 @@ def plotgaus(iFName,injet,iLabel,options):
                 'r3p1':'(n_{#rho}=3,n_{p_{T}}=1)',
                 'r2p1':'(n_{#rho}=2,n_{p_{T}}=1)',
                 }
+    pdf_key1 = 'r5p1'
+    pdf_key2 = 'r5p1'
     for key, value in pdf_dict.iteritems():
         if key+'_vs' in iLabel:
             pdf_key1 = key
@@ -276,10 +278,10 @@ def goodness(base,ntoys,iLabel,options):
 
 def bias(base,alt,ntoys,mu,iLabel,options):
     if not options.justPlot:
-        exec_me('combine -M GenerateOnly     %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys --freezeNuisances %s -n %s -m %s' % (alt,options.rMax,options.rMin,ntoys,mu,options.freezeNuisances,iLabel, options.mass), options.dryRun)
-        exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.123456.root -n %s -m %s'  % (base,options.rMax,options.rMin,ntoys,iLabel, options.mass, iLabel, options.mass), options.dryRun)
+        exec_me('combine -M GenerateOnly     %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys --freezeNuisances %s -n %s -m %s -s %s' % (alt,options.rMax,options.rMin,ntoys,mu,options.freezeNuisances,iLabel, options.mass, options.seed), options.dryRun)
+        exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.%s.root -n %s -m %s'  % (base,options.rMax,options.rMin,ntoys,iLabel, options.mass, iLabel, options.mass, options.seed), options.dryRun)
         #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH%s.123456.root'%(alt.split('/')[-1].replace('.txt','_%s'%options.mass),options.mass), options.dryRun)
-        exec_me('cp  mlfit%s.root %s/biastoys_%s.root'%(iLabel, options.odir, iLabel), options.dryRun)
+        exec_me('cp  mlfit%s.root %s/biastoys_%s_%s.root'%(iLabel, options.odir, iLabel, options.seed), options.dryRun)
     if options.dryRun: sys.exit()
     plotgaus("%s/biastoys_%s.root"%(options.odir,iLabel),mu,"pull"+iLabel,options)
 
@@ -351,6 +353,7 @@ if __name__ == "__main__":
     parser.add_option('--rMin',dest='rMin', default='-20' ,type='string',help='minimum of r (signal strength) in profile likelihood plot')
     parser.add_option('--rMax',dest='rMax', default='20',type='string',help='maximum of r (signal strength) in profile likelihood plot')  
     parser.add_option('--freezeNuisances'   ,action='store',type='string',dest='freezeNuisances'   ,default='None', help='freeze nuisances')
+    parser.add_option('--seed' ,action='store',type='int',dest='seed'   ,default=-1, help='random seed')
     parser.add_option('--dry-run',dest="dryRun",default=False,action='store_true',
                   help="Just print out commands to run")    
 

@@ -51,13 +51,13 @@ def main(options,args):
                 for box in boxes:
                     print 'getting histogram for process: %s_%s_%s'%(proc,cut,box)
                     histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,cut,box))
-                    if tfile_loose is not None and ('wqq' in proc or 'zqq' in proc) and cut in ['p85','p9']:
+                    if tfile_loose is not None and ('wqq' in proc or 'zqq' in proc or 'DMSbb' in proc) and cut in ['p85','p9']:
                         histoDictLoose['%s_%s'%(proc,box)] = tfile.Get('%s_%s_%s'%(proc,tfile_loose,box))
                         
                     if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'hqq' in proc or 'Pbb' in proc or 'Sbb' in proc):
                         histoDict['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_%s_matched'%(proc,cut,box))
                         histoDict['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_%s_unmatched'%(proc,cut,box))
-                        if tfile_loose is not None and  ('wqq' in proc or 'zqq' in proc) and cut in ['p85','p9']:
+                        if tfile_loose is not None and  ('wqq' in proc or 'zqq' in proc or 'Sbb' in proc) and cut in ['p85','p9']:
                             histoDictLoose['%s_%s_matched'%(proc,box)] = tfile.Get('%s_%s_%s_matched'%(proc,tfile_loose,box))
                             histoDictLoose['%s_%s_unmatched'%(proc,box)] = tfile.Get('%s_%s_%s_unmatched'%(proc,tfile_loose,box))
                         
@@ -128,9 +128,9 @@ def main(options,args):
                         for j in range(1,numberOfMassBins+1):                    
                             if options.noMcStatShape:                 
                                 matchString = ''
-                                if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                                if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'DMSbb' in proc):
                                     matchString = '_matched'
-                                if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box and cut in ['p85','p9']: 
+                                if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq' or 'DMSbb' in proc) and 'pass' in box and cut in ['p85','p9']: 
                                     histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
                                 else:
                                     histo = histoDict['%s_%s%s'%(proc,box,matchString)]
@@ -257,9 +257,9 @@ def main(options,args):
                         for j in range(1,numberOfMassBins+1):                    
                             # if stat. unc. is greater than 50% 
                             matchString = ''
-                            if removeUnmatched and (proc =='wqq' or proc=='zqq'):
+                            if removeUnmatched and (proc =='wqq' or proc=='zqq' or 'DMSbb' in proc):
                                 matchString = '_matched'
-                            if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq') and 'pass' in box and cut in ['p85','p9']:
+                            if (tfile_loose is not None) and (proc =='wqq' or proc=='zqq' or 'DMSbb' in proc) and 'pass' in box and cut in ['p85','p9']:
                                 histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
                             else:
                                 histo = histoDict['%s_%s%s'%(proc,box,matchString)]

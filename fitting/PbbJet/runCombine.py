@@ -36,7 +36,7 @@ def main(options,args):
         ifile_loose = '--ifile-loose %s'%options.ifile_loose
     else:
         ifile_loose = ''
-    exec_me('python makeCardsPhibb.py -i %s %s  -o %s/%s/%s --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f --masses %s %s'%(options.ifile,ifile_loose,
+    exec_me('python makeCardsPhibb.py -i %s %s  -o %s/%s/%s --remove-unmatched  --no-mcstat-shape  -c %s --lrho %f --hrho %f --masses %s %s'%(options.ifile,ifile_loose,
                                                                                                                            options.odir,
                                                                                                                            jet_type,
                                                                                                                            cut, cut,
