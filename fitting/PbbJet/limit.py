@@ -283,7 +283,7 @@ def bias(base,alt,ntoys,mu,iLabel,options):
         #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH%s.123456.root'%(alt.split('/')[-1].replace('.txt','_%s'%options.mass),options.mass), options.dryRun)
         exec_me('cp  mlfit%s.root %s/biastoys_%s_%s.root'%(iLabel, options.odir, iLabel, options.seed), options.dryRun)
     if options.dryRun: sys.exit()
-    plotgaus("%s/biastoys_%s.root"%(options.odir,iLabel),mu,"pull"+iLabel,options)
+    plotgaus("%s/biastoys_%s_%s.root"%(options.odir,iLabel,options.seed),mu,"pull"+iLabel+"_"+str(options.seed),options)
 
 def fit(base,options):
     exec_me('combine -M MaxLikelihoodFit %s -v 2 --freezeNuisances tqqeffSF,tqqnormSF --rMin=-20 --rMax=20 --saveNormalizations --plot --saveShapes --saveWithUncertainties --minimizerTolerance 0.001 --minimizerStrategy 2'%base)
