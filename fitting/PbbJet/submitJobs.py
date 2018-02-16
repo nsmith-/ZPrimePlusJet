@@ -37,7 +37,7 @@ def write_bash(temp = 'runjob.sh', command = ''):
     out += 'eval `scramv1 runtime -sh` # cmsenv\n'
     out += 'git clone -b 74x-root6 https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit HiggsAnalysis/CombinedLimit\n'
     out += 'scramv1 build -j 4\n'
-    out += 'git clone -b phibb-fineddt https://github.com/DAZSLE/ZPrimePlusJet.git\n'
+    out += 'git clone -b phibb https://github.com/DAZSLE/ZPrimePlusJet.git\n'
     out += 'cd ZPrimePlusJet\n'
     out += 'source setup.sh\n'
     out += 'cd ${CWD}\n'
