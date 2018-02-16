@@ -279,7 +279,7 @@ def goodness(base,ntoys,iLabel,options):
 def bias(base,alt,ntoys,mu,iLabel,options):
     if not options.justPlot:
         exec_me('combine -M GenerateOnly     %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys --freezeNuisances %s -n %s -m %s -s %s' % (alt,options.rMax,options.rMin,ntoys,mu,options.freezeNuisances,iLabel, options.mass, options.seed), options.dryRun)
-        exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.%s.root -n %s -m %s -s %s'  % (base,options.rMax,options.rMin,ntoys,options.seed,iLabel, options.mass, iLabel, options.mass, options.seed), options.dryRun)
+        exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.%s.root -n %s -m %s -s %s'  % (base,options.rMax,options.rMin,ntoys, iLabel,  options.mass, options.seed, iLabel, options.mass, options.seed), options.dryRun)
         #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH%s.123456.root'%(alt.split('/')[-1].replace('.txt','_%s'%options.mass),options.mass), options.dryRun)
         exec_me('cp  mlfit%s.root %s/biastoys_%s_%s.root'%(iLabel, options.odir, iLabel, options.seed), options.dryRun)
     if options.dryRun: sys.exit()
