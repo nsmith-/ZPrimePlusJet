@@ -69,7 +69,7 @@ class sampleContainer:
         self.corrRECO_for.SetParameter(4, 1.45375e-13)
         self.corrRECO_for.SetParameter(5, -1.50389e-17)
 
-        # f_puppi= ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/puppiCorr.root","read")
+        # f_puppi= ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ZqqJet/puppiCorr.root","read")
         # self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
@@ -89,15 +89,15 @@ class sampleContainer:
         # get trigger efficiency object
 
         f_trig = ROOT.TFile.Open(
-            "$ZPRIMEPLUSJET_BASE/analysis/ggH/RUNTriggerEfficiencies_SingleMuon_Run2016_V2p1_v03.root", "read")
-        self._trig_denom = f_trig.Get("DijetTriggerEfficiencySeveralTriggers/jet1SoftDropMassjet1PtDenom_cutJet")
-        self._trig_numer = f_trig.Get("DijetTriggerEfficiencySeveralTriggers/jet1SoftDropMassjet1PtPassing_cutJet")
+            "$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017.root", "read")
+        self._trig_denom = f_trig.Get("data_obs_muCR4_denominator")
+        self._trig_numer = f_trig.Get("data_obs_muCR4_numerator")
         self._trig_denom.SetDirectory(0)
         self._trig_numer.SetDirectory(0)
-        self._trig_denom.RebinX(2)
-        self._trig_numer.RebinX(2)
-        self._trig_denom.RebinY(5)
-        self._trig_numer.RebinY(5)
+#        self._trig_denom.RebinX(2)
+#        self._trig_numer.RebinX(2)
+#        self._trig_denom.RebinY(5)
+#        self._trig_numer.RebinY(5)
         self._trig_eff = ROOT.TEfficiency()
         if (ROOT.TEfficiency.CheckConsistency(self._trig_numer, self._trig_denom)):
             self._trig_eff = ROOT.TEfficiency(self._trig_numer, self._trig_denom)
@@ -827,6 +827,8 @@ class sampleContainer:
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             if trigweight <= 0 or trigweightDown <= 0 or trigweightUp <= 0:
                 print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
+#	        print "ptForTrig: ", ptForTrig
+#        	print "massForTrig: ", massForTrig
                 trigweight = 1
                 trigweightDown = 1
                 trigweightUp = 1
@@ -1462,36 +1464,36 @@ class sampleContainer:
                 self.h_msd_ca15_t21ddtCut.Fill(jmsd_15, weight)
                 #####
         print "\n"
-        
-        if not self._minBranches:
-            self.h_Cuts.SetBinContent(4, float(cut[0] / cut[3] * 100.))
-            self.h_Cuts.SetBinContent(5, float(cut[1] / cut[3] * 100.))
-            # self.h_Cuts.SetBinContent(6,float(cut[2]/nent*100.))
-            self.h_Cuts.SetBinContent(1, float(cut[3] / cut[3] * 100.))
-            self.h_Cuts.SetBinContent(2, float(cut[4] / cut[3] * 100.))
-            self.h_Cuts.SetBinContent(3, float(cut[5] / cut[3] * 100.))
-            self.h_Cuts.SetBinContent(6, float(cut[6] / cut[3] * 100.))
-  #          self.h_Cuts.SetBinContent(7, float(cut[7] / cut[3] * 100.))
-            # self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
-            self.h_Cuts.SetBinContent(8,float(cut[7]/ cut[3]  *100.))
-            self.h_Cuts.SetBinContent(7, float(cut[8]) / cut[3] * 100.)
-            print(cut[0] / nent * 100., cut[7], cut[8], cut[9])
-            a_Cuts = self.h_Cuts.GetXaxis()
-            a_Cuts.SetBinLabel(4, "lep veto")
-            a_Cuts.SetBinLabel(5, "#tau veto")
-            # a_Cuts.SetBinLabel(6, "#gamma veto")
-            a_Cuts.SetBinLabel(1, "p_{T}>450 GeV")
-            a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV")
-            a_Cuts.SetBinLabel(3, "tight ID")
-            a_Cuts.SetBinLabel(6, "MET<140")
-#            a_Cuts.SetBinLabel(7, "njet<5")
-            a_Cuts.SetBinLabel(7, "N2^{DDT}<0")
-	    a_Cuts.SetBinLabel(8, "-6<#rho<-2.1")
+	if cut[3] > 0:        
+            if not self._minBranches:
+            	self.h_Cuts.SetBinContent(4, float(cut[0] / cut[3] * 100.))
+            	self.h_Cuts.SetBinContent(5, float(cut[1] / cut[3] * 100.))
+            	# self.h_Cuts.SetBinContent(6,float(cut[2]/nent*100.))
+            	self.h_Cuts.SetBinContent(1, float(cut[3] / cut[3] * 100.))
+            	self.h_Cuts.SetBinContent(2, float(cut[4] / cut[3] * 100.))
+            	self.h_Cuts.SetBinContent(3, float(cut[5] / cut[3] * 100.))
+            	self.h_Cuts.SetBinContent(6, float(cut[6] / cut[3] * 100.))
+  #        	 self.h_Cuts.SetBinContent(7, float(cut[7] / cut[3] * 100.))
+            	# self.h_Cuts.SetBinContent(9,float(cut[8]/nent*100.))
+            	self.h_Cuts.SetBinContent(8,float(cut[7]/ cut[3]  *100.))
+            	self.h_Cuts.SetBinContent(7, float(cut[8]) / cut[3] * 100.)
+            	print(cut[0] / nent * 100., cut[7], cut[8], cut[9])
+            	a_Cuts = self.h_Cuts.GetXaxis()
+            	a_Cuts.SetBinLabel(4, "lep veto")
+            	a_Cuts.SetBinLabel(5, "#tau veto")
+            	# a_Cuts.SetBinLabel(6, "#gamma veto")
+            	a_Cuts.SetBinLabel(1, "p_{T}>450 GeV")
+            	a_Cuts.SetBinLabel(2, "m_{SD}>40 GeV")
+            	a_Cuts.SetBinLabel(3, "tight ID")
+            	a_Cuts.SetBinLabel(6, "MET<140")
+#           	 a_Cuts.SetBinLabel(7, "njet<5")
+            	a_Cuts.SetBinLabel(7, "N2^{DDT}<0")
+	    	a_Cuts.SetBinLabel(8, "-6<#rho<-2.1")
 
-            self.h_rhop_v_t21_ak8_Px = self.h_rhop_v_t21_ak8.ProfileX()
-            self.h_rhop_v_t21_ca15_Px = self.h_rhop_v_t21_ca15.ProfileX()
-            self.h_rhop_v_t21_ak8_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
-            self.h_rhop_v_t21_ca15_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
+            	self.h_rhop_v_t21_ak8_Px = self.h_rhop_v_t21_ak8.ProfileX()
+            	self.h_rhop_v_t21_ca15_Px = self.h_rhop_v_t21_ca15.ProfileX()
+            	self.h_rhop_v_t21_ak8_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
+            	self.h_rhop_v_t21_ca15_Px.SetTitle("; rho^{DDT}; <#tau_{21}>")
 
     def PUPPIweight(self, puppipt=30., puppieta=0.):
 
