@@ -78,6 +78,8 @@ def plotgaus(iFName,injet,iLabel,options):
 
     pdf_dict = {'r5p5':'(n_{#rho}=5,n_{p_{T}}=5)',
                 'r5p1':'(n_{#rho}=5,n_{p_{T}}=1)',
+                'r5p2':'(n_{#rho}=5,n_{p_{T}}=2)',
+                'r6p1':'(n_{#rho}=6,n_{p_{T}}=1)',
                 'r4p1':'(n_{#rho}=4,n_{p_{T}}=1)',
                 'r3p1':'(n_{#rho}=3,n_{p_{T}}=1)',
                 'r2p1':'(n_{#rho}=2,n_{p_{T}}=1)',
@@ -238,20 +240,20 @@ def goodnessVals(iFName1):
 
 def ftest(base,alt,ntoys,iLabel,options):
     if not options.justPlot:
-        exec_me('combine -M GoodnessOfFit %s  --rMax %s --rMin %s --fixedSignalStrength %s --algorithm saturated -n %s --freezeNuisances %s -m %s'% (base,options.rMax,options.rMin,options.r,base.split('/')[-1].replace('.txt',''), options.freezeNuisances, options.mass),options.dryRun)
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.root %s/base1.root'%(base.split('/')[-1].replace('.txt',''),options.mass,options.odir),options.dryRun)
-        exec_me('combine -M GoodnessOfFit %s --rMax %s --rMin %s --fixedSignalStrength %s --algorithm saturated  -n %s --freezeNuisances %s -m %s' % (alt,options.rMax,options.rMin,options.r,alt.split('/')[-1].replace('.txt',''), options.freezeNuisances, options.mass),options.dryRun)
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.root %s/base2.root'%(alt.split('/')[-1].replace('.txt',''),options.mass,options.odir),options.dryRun)
-        exec_me('combine -M GenerateOnly %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys -n %s --freezeNuisances %s -m %s' % (base,options.rMax,options.rMin,ntoys,options.r,base.split('/')[-1].replace('.txt',''),options.freezeNuisances, options.mass),options.dryRun) 
-        exec_me('cp higgsCombine%s.GenerateOnly.mH%s.123456.root %s/'%(base.split('/')[-1].replace('.txt',''),options.mass,options.odir))
-        exec_me('combine -M GoodnessOfFit %s --rMax %s --rMin %s --fixedSignalStrength %s -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH%s.123456.root --algorithm saturated -n %s --freezeNuisances %s -m %s' % (base,options.rMax,options.rMin,options.r,ntoys,options.odir,base.split('/')[-1].replace('.txt',''),options.mass,base.split('/')[-1].replace('.txt',''), options.freezeNuisances, options.mass),options.dryRun)
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.123456.root %s/toys1.root'%(base.split('/')[-1].replace('.txt',''),options.mass,options.odir),options.dryRun)
-        exec_me('combine -M GoodnessOfFit %s --rMax %s --rMin %s --fixedSignalStrength %s -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH120.123456.root --algorithm saturated -n %s --freezeNuisances %s -m %s' % (alt,options.rMax,options.rMin,options.r,ntoys,options.odir,base.split('/')[-1].replace('.txt',''),alt.split('/')[-1].replace('.txt',''), options.freezeNuisances, options.mass),options.dryRun)
-        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.123456.root %s/toys2.root'%(alt.split('/')[-1].replace('.txt',''),options.mass,options.odir))    
+        exec_me('combine -M GoodnessOfFit %s  --rMax %s --rMin %s --fixedSignalStrength %s --algorithm saturated -n %s --freezeNuisances %s -m %s'% (base,options.rMax,options.rMin,options.r,base.split('/')[-1].replace(options.datacardExt,''), options.freezeNuisances, options.mass),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.root %s/base1.root'%(base.split('/')[-1].replace(options.datacardExt,''),options.mass,options.odir),options.dryRun)
+        exec_me('combine -M GoodnessOfFit %s --rMax %s --rMin %s --fixedSignalStrength %s --algorithm saturated  -n %s --freezeNuisances %s -m %s' % (alt,options.rMax,options.rMin,options.r,alt.split('/')[-1].replace(options.datacardExt,''), options.freezeNuisances, options.mass),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.root %s/base2.root'%(alt.split('/')[-1].replace(options.datacardExt,''),options.mass,options.odir),options.dryRun)
+        exec_me('combine -M GenerateOnly %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys -n %s --freezeNuisances %s -m %s -s %s' % (base,options.rMax,options.rMin,ntoys,options.r,base.split('/')[-1].replace(options.datacardExt,''),options.freezeNuisances, options.mass, options.seed),options.dryRun) 
+        exec_me('cp higgsCombine%s.GenerateOnly.mH%s.%s.root %s/'%(base.split('/')[-1].replace(options.datacardExt,''),options.mass,options.seed,options.odir))
+        exec_me('combine -M GoodnessOfFit %s --rMax %s --rMin %s --fixedSignalStrength %s -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH%s.%s.root --algorithm saturated -n %s --freezeNuisances %s -m %s -s %s' % (base,options.rMax,options.rMin,options.r,ntoys,options.odir,base.split('/')[-1].replace(options.datacardExt,''),options.mass,options.seed,base.split('/')[-1].replace(options.datacardExt,''), options.freezeNuisances, options.mass,options.seed),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.%s.root %s/toys1_%s.root'%(base.split('/')[-1].replace(options.datacardExt,''),options.mass,options.seed,options.odir,options.seed),options.dryRun)
+        exec_me('combine -M GoodnessOfFit %s --rMax %s --rMin %s --fixedSignalStrength %s -t %i --toysFile %s/higgsCombine%s.GenerateOnly.mH%s.%s.root --algorithm saturated -n %s --freezeNuisances %s -m %s -s %s' % (alt,options.rMax,options.rMin,options.r,ntoys,options.odir,base.split('/')[-1].replace(options.datacardExt,''),options.mass,options.seed,alt.split('/')[-1].replace(options.datacardExt,''), options.freezeNuisances, options.mass, options.seed),options.dryRun)
+        exec_me('cp higgsCombine%s.GoodnessOfFit.mH%s.%s.root %s/toys2_%s.root'%(alt.split('/')[-1].replace(options.datacardExt,''),options.mass,options.seed,options.odir,options.seed))    
     if options.dryRun: sys.exit()
     nllBase=fStat("%s/base1.root"%options.odir,"%s/base2.root"%options.odir,options.p1,options.p2,options.n)
     if len(nllBase)==0: nllBase = [0.0]
-    nllToys=fStat("%s/toys1.root"%options.odir,"%s/toys2.root"%options.odir,options.p1,options.p2,options.n)
+    nllToys=fStat("%s/toys1_%s.root"%(options.odir,options.seed),"%s/toys2_%s.root"%(options.odir,options.seed),options.p1,options.p2,options.n)
     lPass=0
     for val in nllToys:
         #print val,nllBase[0]
@@ -288,7 +290,7 @@ def bias(base,alt,ntoys,mu,iLabel,options):
     if not options.justPlot:
         exec_me('combine -M GenerateOnly     %s --rMax %s --rMin %s --toysFrequentist -t %i --expectSignal %s --saveToys --freezeNuisances %s -n %s -m %s -s %s' % (alt,options.rMax,options.rMin,ntoys,mu,options.freezeNuisances,iLabel, options.mass, options.seed), options.dryRun)
         exec_me('combine -M MaxLikelihoodFit %s --rMax %s --rMin %s -t %i --saveNLL --toysFile higgsCombine%s.GenerateOnly.mH%s.%s.root -n %s -m %s -s %s'  % (base,options.rMax,options.rMin,ntoys, iLabel,  options.mass, options.seed, iLabel, options.mass, options.seed), options.dryRun)
-        #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH%s.123456.root'%(alt.split('/')[-1].replace('.txt','_%s'%options.mass),options.mass), options.dryRun)
+        #exec_me('rm  higgsCombine%s.MaxLikelihoodFit.mH%s.123456.root'%(alt.split('/')[-1].replace(options.datacardExt,'_%s'%options.mass),options.mass), options.dryRun)
         exec_me('cp  mlfit%s.root %s/biastoys_%s_%s.root'%(iLabel, options.odir, iLabel, options.seed), options.dryRun)
     if options.dryRun: sys.exit()
     plotgaus("%s/biastoys_%s_%s.root"%(options.odir,iLabel,options.seed),mu,"pull"+iLabel+"_"+str(options.seed),options)
@@ -368,6 +370,8 @@ if __name__ == "__main__":
 
     (options,args) = parser.parse_args()
 
+    options.datacardExt = '.' + options.datacard.split('.')[-1]
+
     import tdrstyle
     tdrstyle.setTDRStyle()
     
@@ -402,16 +406,16 @@ if __name__ == "__main__":
     ## plotftest(nllToys,nllBase[0],float(lPass)/float(len(nllToys)),'ftest_r2p2_v_r3p2')
 
     if options.method=='GoodnessOfFit':
-        iLabel= 'goodness_%s'%(options.datacard.split('/')[-1].replace('.txt',''))
+        iLabel= 'goodness_%s'%(options.datacard.split('/')[-1].replace(options.datacardExt,''))
         goodness(options.datacard, options.toys, iLabel, options)
 
     elif options.method=='MaxLikelihoodFit':
         fit(options.datacard,options)
 
     elif options.method=='FTest':
-        iLabel= 'ftest_%s_vs_%s'%(options.datacard.split('/')[-1].replace('.txt',''),options.datacardAlt.split('/')[-1].replace('.txt',''))
+        iLabel= 'ftest_%s_vs_%s'%(options.datacard.split('/')[-1].replace(options.datacardExt,''),options.datacardAlt.split('/')[-1].replace(options.datacardExt,''))
         ftest(options.datacard, options.datacardAlt, options.toys, iLabel, options)
     
     elif options.method=='Bias':
-        iLabel= 'bias_%s_vs_%s_m%s_r%s'%(options.datacard.split('/')[-1].replace('.txt',''),options.datacardAlt.split('/')[-1].replace('.txt',''),options.mass,options.r)
+        iLabel= 'bias_%s_vs_%s_m%s_r%s'%(options.datacard.split('/')[-1].replace(options.datacardExt,''),options.datacardAlt.split('/')[-1].replace(options.datacardExt,''),options.mass,options.r)
         bias(options.datacard, options.datacardAlt, options.toys, options.r, iLabel, options)

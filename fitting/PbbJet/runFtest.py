@@ -49,6 +49,7 @@ if __name__ == "__main__":
     parser.add_option('-b','--box',dest="box", default="AK8",type="string", help="box name")
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
+    parser.add_option('--seed' ,action='store',type='int',dest='seed'   ,default=-1, help='random seed')
 
 
     (options,args) = parser.parse_args()
@@ -98,11 +99,13 @@ if __name__ == "__main__":
         ifile_loose = '--ifile-loose %s'%options.ifile_loose
     else:
         ifile_loose = ''
-    if not os.path.isfile('%s/base.root'%cardsDir1) and not os.path.isfile('%s/rhalphabase.root'%cardsDir1):
-        exec_me('python buildRhalphabetPhibb.py -i %s %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f'%(options.ifile, ifile_loose, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString, cut, options.lrho, options.hrho),options.dryRun )
+    #if not os.path.isfile('%s/base.root'%cardsDir1) and not os.path.isfile('%s/rhalphabase.root'%cardsDir1):
+    if True:
+        exec_me('python buildRhalphabetPhibb.py -i %s %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f --masses %s'%(options.ifile, ifile_loose, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString, cut, options.lrho, options.hrho, options.mass),options.dryRun )
         
-    if not os.path.isfile('%s/base.root'%cardsDir2) and not os.path.isfile('%s/rhalphabase.root'%cardsDir2):
-        exec_me('python buildRhalphabetPhibb.py -i %s %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f'%(options.ifile, ifile_loose, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString, cut, options.lrho, options.hrho),options.dryRun )
+    #if not os.path.isfile('%s/base.root'%cardsDir2) and not os.path.isfile('%s/rhalphabase.root'%cardsDir2):
+    if True:
+        exec_me('python buildRhalphabetPhibb.py -i %s %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd -c %s --lrho %f --hrho %f --masses %s'%(options.ifile, ifile_loose, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString, cut, options.lrho, options.hrho, options.mass),options.dryRun )
     exec_me('python makeCardsPhibb.py -i %s %s -o %s/ --remove-unmatched --no-mcstat-shape  -c %s --lrho %f --hrho %f'%(options.ifile,ifile_loose,
                                                                                                                            cardsDir1, cut,
                                                                                                                            options.lrho,
@@ -126,13 +129,22 @@ if __name__ == "__main__":
     
     
     if not options.pseudo:
-        exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt muonCR=%s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt'%(sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,options.NR1, options.NP1, options.box, cut),options.dryRun)
-        exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt muonCR=%s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt'%(sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,options.NR2, options.NP2, options.box, cut),options.dryRun)
+        if options.box=='CA15':
+            exec_me('combineCards.py cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt muonCR=%s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt'%(sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,options.NR1, options.NP1, options.box, cut),options.dryRun)
+
+            exec_me('combineCards.py cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt muonCR=%s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt'%(sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,options.NR2, options.NP2, options.box, cut),options.dryRun)
+        else:
+            exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt muonCR=%s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt'%(sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,options.NR1, options.NP1, options.box, cut),options.dryRun)
+            exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt muonCR=%s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt'%(sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,options.NR2, options.NP2, options.box, cut),options.dryRun)
         #exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root"%(sigDir1, options.NR1, options.NP1, sigDir1, options.NR1, options.NP1))
         #exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_muonCR_r%ip%i.txt -o %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root"%(sigDir2, options.NR2, options.NP2, sigDir2, options.NR2, options.NP2))
     else:
-        exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i_%s_%s.txt'%(sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,options.NR1, options.NP1, options.box, cut),options.dryRun)
-        exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i_%s_%s.txt'%(sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,options.NR2, options.NP2, options.box, cut),options.dryRun)
+        if options.box=='CA15':
+            exec_me('combineCards.py cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i_%s_%s.txt'%(sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,options.NR1, options.NP1, options.box, cut),options.dryRun)
+            exec_me('combineCards.py cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i_%s_%s.txt'%(sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,options.NR2, options.NP2, options.box, cut),options.dryRun)
+        else:
+            exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i_%s_%s.txt'%(sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,sigDir1,options.NR1, options.NP1, options.box, cut),options.dryRun)
+            exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt > %s/card_rhalphabet_r%ip%i_%s_%s.txt'%(sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,sigDir2,options.NR2, options.NP2, options.box, cut),options.dryRun)
         #exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_r%ip%i.txt -o %s/card_rhalphabet_r%ip%i.txt"%(sigDir1, options.NR1, options.NP1, sigDir1, options.NR1, options.NP1))
         #exec_me("text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' %s/card_rhalphabet_r%ip%i.txt -o %s/card_rhalphabet_r%ip%i.txt"%(sigDir2, options.NR2, options.NP2, sigDir2, options.NR2, options.NP2))
 
@@ -145,9 +157,9 @@ if __name__ == "__main__":
         dataString = '--data'
 
     if options.pseudo:
-        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --freezeNuisances tqqeffSF,tqqnormSF --mass %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.mass),options.dryRun)
+        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --freezeNuisances tqqeffSF,tqqnormSF --mass %s --seed %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.mass,options.seed),options.dryRun)
     else:
-        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --mass %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir_muonCR, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.mass),options.dryRun)
+        exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt --datacard-alt %s/card_rhalphabet_muonCR_r%ip%i_%s_%s.txt -o %s -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %s --mass %s --seed %s'%(sigDir1, options.NR1, options.NP1, options.box, cut, sigDir2, options.NR2, options.NP2, options.box, cut, ftestDir_muonCR, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.mass,options.seed),options.dryRun)
      
 
      
