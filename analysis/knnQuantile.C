@@ -63,25 +63,32 @@ bool nearest(const dataObj& iObj1, const dataObj& iObj2){
 }
 bool n2sort(const dataObj& iObj1,const dataObj& iObj2) { return iObj1.n2 < iObj2.n2; }
 
-void knnQuantile(double iRho=-4.) {
+void knnQuantile(double iRho=4.,float iN2=0.05, std::string iFile="root://eoscms//eos/cms/store/user/pharris/prod/QCD_HT_v2.root",std::string iTree="otree",std::string iJet="AK8") {
   setupCorr();
   iRho = -iRho;
-  TFile *lFile =  TFile::Open("root://eoscms//eos/cms/store/user/pharris/prod/QCD_HT_v2.root");
-  TTree *lTree = (TTree*) lFile->FindObjectAny("otree");
-  double lPt   = 0; lTree->SetBranchAddress("AK8Puppijet0_pt"    ,&lPt);
-  double lEta  = 0; lTree->SetBranchAddress("AK8Puppijet0_eta"   ,&lEta);
-  double lMass = 0; lTree->SetBranchAddress("AK8Puppijet0_msd"   ,&lMass);
-  float  lW0   = 0; lTree->SetBranchAddress("puWeight"           ,&lW0);
-  float  lW1   = 0; lTree->SetBranchAddress("scale1fb"           ,&lW1);
-  double lN2   = 0; lTree->SetBranchAddress("AK8Puppijet0_N2sdb1",&lN2);
+  TFile *lFile =  TFile::Open(iFile.c_str());
+  TTree *lTree = (TTree*) lFile->FindObjectAny(iTree.c_str());
+  std::stringstream pSSPt;   pSSPt   << iJet << "Puppijet0_pt";
+  std::stringstream pSSEta;  pSSEta  << iJet << "Puppijet0_eta"; 
+  std::stringstream pSSMass; pSSMass << iJet << "Puppijet0_msd"; 
+  std::stringstream pSSN2;   pSSN2   << iJet << "Puppijet0_N2sdb1";
+  double lPt   = 0; lTree->SetBranchAddress(pSSPt.str().c_str()    ,&lPt);
+  double lEta  = 0; lTree->SetBranchAddress(pSSEta.str().c_str()   ,&lEta);
+  double lMass = 0; lTree->SetBranchAddress(pSSMass.str().c_str()  ,&lMass);
+  double lN2   = 0; lTree->SetBranchAddress(pSSN2.str().c_str()    ,&lN2);
+  float  lW0   = 0; lTree->SetBranchAddress("puWeight"             ,&lW0);
+  float  lW1   = 0; lTree->SetBranchAddress("scale1fb"             ,&lW1);
+
   std::vector<dataObj> lObjs;
   for(int i0 = 0; i0 < lTree->GetEntriesFast(); i0++) { 
     lTree->GetEntry(i0);
     if(i0 % 100000 == 0) std::cout << "==> " << float(i0)/float(lTree->GetEntriesFast()) << std::endl;
+    if(lN2   > 100 || lN2 < 0 || TMath::IsNaN(lN2) == 1) continue;
     if(lPt  < 180) continue;
     lMass = correct(lEta,lPt,lMass);
     if(lMass < 30) continue;
     double pRho = 2.*log(lMass/lPt);
+    //std::cout << "prho " << pRho << " iRho " << iRho << " fRhorange/fnbins " << fRhoRange/fNBins << std::endl;
     if(fabs(pRho-iRho) > fRhoRange/fNBins) continue;
     dataObj lObj(pRho,lPt,lN2,double(lW1*lW0));
     lObjs.push_back(lObj);
@@ -112,16 +119,18 @@ void knnQuantile(double iRho=-4.) {
     for(unsigned int i1 = 0; i1 < lNLoop; i1++) {
       pWeight += pObjs[i1].weight;
       //std::cout << i1 << "==> " << fPt << " == " << fRho << " == " << pObjs[i1].n2 << " -- " << pWeight/pTotWeight << std::endl;
-      if(pWeight/pTotWeight < 0.05) continue;
+      if(pWeight/pTotWeight < iN2) continue;
       pN2 = pObjs[i1].n2;
       pId = i1;
       break;
     }
-    double pDelta = (pWeight-0.05*pTotWeight)/pObjs[pId].weight;
-    lX[i0] = fPt;
-    lY[i0] = (pObjs[pId].n2*pDelta + pObjs[TMath::Max(pId-1,0)].n2*(1.-pDelta));
+    if(lNLoop > 0){
+      double pDelta = (pWeight-iN2*pTotWeight)/pObjs[pId].weight;
+      lX[i0] = fPt;
+      lY[i0] = (pObjs[pId].n2*pDelta + pObjs[TMath::Max(pId-1,0)].n2*(1.-pDelta));
+    }
   }
-  std::stringstream pSS; pSS << "N2DDT_" << std::setw(3) << fabs(iRho);
+  std::stringstream pSS; pSS << "N2DDT_" << fabs(iRho);
   TFile *lOFile = new TFile((pSS.str()+".root").c_str(),"RECREATE");
   TGraph *lGraph = new TGraph(fN,lX,lY);
   lGraph->SetTitle(pSS.str().c_str());
