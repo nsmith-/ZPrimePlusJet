@@ -10,6 +10,7 @@ import pdb
 import sys
 import time
 import warnings
+import json
 
 PTCUT = 450.
 PTCUTMUCR = 400.
@@ -110,58 +111,35 @@ class sampleContainer:
         lumi_BCDEF = 19.721
         lumi_total = lumi_GH + lumi_BCDEF
 
-        f_mutrig_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_Period4.root", "read")
-        self._mutrig_eff_GH = f_mutrig_GH.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
-        self._mutrig_eff_GH.Sumw2()
-        self._mutrig_eff_GH.SetDirectory(0)
-        f_mutrig_GH.Close()
+#        f_mutrig_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_Period4.root", "read")
+#        self._mutrig_eff_GH = f_mutrig_GH.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
+#        self._mutrig_eff_GH.Sumw2()
+#        self._mutrig_eff_GH.SetDirectory(0)
+#        f_mutrig_GH.Close()
 
-        f_mutrig_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF.root", "read")
-        self._mutrig_eff_BCDEF = f_mutrig_BCDEF.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
-        self._mutrig_eff_BCDEF.Sumw2()
-        self._mutrig_eff_BCDEF.SetDirectory(0)
-        f_mutrig_BCDEF.Close()
+        f_mutrig_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root", "read")
+        self._mutrig_eff = f_mutrig_BCDEF.Get("Mu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
+        self._mutrig_eff.Sumw2()
+        self._mutrig_eff.SetDirectory(0)
+        f_mutrig.Close()
 
-        self._mutrig_eff = self._mutrig_eff_GH.Clone('pt_abseta_DATA_mutrig_ave')
-        self._mutrig_eff.Scale(lumi_GH / lumi_total)
-        self._mutrig_eff.Add(self._mutrig_eff_BCDEF, lumi_BCDEF / lumi_total)
+#        self._mutrig_eff = self._mutrig_eff_GH.Clone('pt_abseta_DATA_mutrig_ave')
+#        self._mutrig_eff.Scale(lumi_GH / lumi_total)
+#        self._mutrig_eff.Add(self._mutrig_eff_BCDEF, lumi_BCDEF / lumi_total)
 
         # get muon ID efficiency object
 
-        f_muid_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_GH.root", "read")
-        self._muid_eff_GH = f_muid_GH.Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA")
-        self._muid_eff_GH.Sumw2()
-        self._muid_eff_GH.SetDirectory(0)
-        f_muid_GH.Close()
+        with open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ID.json") as ID_input_file:
+                self._muid_eff = json.load(ID_input_file)
 
-        f_muid_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_BCDEF.root", "read")
-        self._muid_eff_BCDEF = f_muid_BCDEF.Get(
-            "MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA")
-        self._muid_eff_BCDEF.Sumw2()
-        self._muid_eff_BCDEF.SetDirectory(0)
-        f_muid_BCDEF.Close()
-
-        self._muid_eff = self._muid_eff_GH.Clone('pt_abseta_DATA_muid_ave')
-        self._muid_eff.Scale(lumi_GH / lumi_total)
-        self._muid_eff.Add(self._muid_eff_BCDEF, lumi_BCDEF / lumi_total)
 
         # get muon ISO efficiency object
 
-        f_muiso_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_ISO_GH.root", "read")
-        self._muiso_eff_GH = f_muiso_GH.Get("LooseISO_LooseID_pt_eta/efficienciesDATA/pt_abseta_DATA")
-        self._muiso_eff_GH.Sumw2()
-        self._muiso_eff_GH.SetDirectory(0)
-        f_muiso_GH.Close()
-
-        f_muiso_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_ISO_BCDEF.root", "read")
-        self._muiso_eff_BCDEF = f_muiso_BCDEF.Get("LooseISO_LooseID_pt_eta/efficienciesDATA/pt_abseta_DATA")
-        self._muiso_eff_BCDEF.Sumw2()
-        self._muiso_eff_BCDEF.SetDirectory(0)
-        f_muiso_BCDEF.Close()
-
-        self._muiso_eff = self._muiso_eff_GH.Clone('pt_abseta_DATA_muiso_ave')
-        self._muiso_eff.Scale(lumi_GH / lumi_total)
-        self._muiso_eff.Add(self._muiso_eff_BCDEF, lumi_BCDEF / lumi_total)
+	with open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ISO.json") as ISO_input_file:
+		self._muiso_eff = json.load(ISO_input_file)
+#        self._muiso_eff = self._muiso_eff_GH.Clone('pt_abseta_DATA_muiso_ave')
+#        self._muiso_eff.Scale(lumi_GH / lumi_total)
+#        self._muiso_eff.Add(self._muiso_eff_BCDEF, lumi_BCDEF / lumi_total)
 
         self._minBranches = minBranches
         # set branch statuses and addresses
@@ -843,8 +821,10 @@ class sampleContainer:
             mutrigweightDown = 1
             mutrigweightUp = 1
             if self.nmuLoose[0] > 0:
-                muPtForTrig = max(52., min(self.vmuoLoose0_pt[0], 700.))
-                muEtaForTrig = min(abs(self.vmuoLoose0_eta[0]), 2.3)
+                muPtForTrig = self.vmuoLoose0_pt[0]
+                muEtaForTrig = abs(self.vmuoLoose0_eta[0])
+#                muPtForTrig = max(52., min(self.vmuoLoose0_pt[0], 700.))
+#                muEtaForTrig = min(abs(self.vmuoLoose0_eta[0]), 2.3)
                 mutrigweight = self._mutrig_eff.GetBinContent(self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 mutrigweightUp = mutrigweight + self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
@@ -861,11 +841,15 @@ class sampleContainer:
             muidweightDown = 1
             muidweightUp = 1
             if self.nmuLoose[0] > 0:
-                muPtForId = max(20., min(self.vmuoLoose0_pt[0], 100.))
-                muEtaForId = min(abs(self.vmuoLoose0_eta[0]), 2.3)
-                muidweight = self._muid_eff.GetBinContent(self._muid_eff.FindBin(muPtForId, muEtaForId))
-                muidweightUp = muidweight + self._muid_eff.GetBinError(self._muid_eff.FindBin(muPtForId, muEtaForId))
-                muidweightDown = muidweight - self._muid_eff.GetBinError(self._muid_eff.FindBin(muPtForId, muEtaForId))
+                muPtForId = self.vmuoLoose0_pt[0]
+                muEtaForId = abs(self.vmuoLoose0_eta[0])
+		for etaKey, values in sorted(self._muid_eff["NUM_SoftID_DEN_genTracks"]["abseta_pt"].iteritems()) :
+                    if float(etaKey[8:12]) < muEtaForId and float(etaKey[13:17]) > muEtaForId:
+                        for ptKey, result in sorted(values.iteritems()) :
+                            if float(ptKey[4:9]) < muPtForId and float(ptKey[10:15]) > muPtForId:
+	                	muidweight = result["value"]
+                		muidweightUp = result["value"] + result["error"]
+		                muidweightDown = result["value"] - result["error"]
                 if muidweight <= 0 or muidweightDown <= 0 or muidweightUp <= 0:
                     print 'muidweights are %f, %f, %f, setting all to 1' % (muidweight, muidweightUp, muidweightDown)
                     muidweight = 1
@@ -876,13 +860,16 @@ class sampleContainer:
             muisoweightDown = 1
             muisoweightUp = 1
             if self.nmuLoose[0] > 0:
-                muPtForIso = max(20., min(self.vmuoLoose0_pt[0], 100.))
-                muEtaForIso = min(abs(self.vmuoLoose0_eta[0]), 2.3)
-                muisoweight = self._muiso_eff.GetBinContent(self._muiso_eff.FindBin(muPtForIso, muEtaForIso))
-                muisoweightUp = muisoweight + self._muiso_eff.GetBinError(
-                    self._muiso_eff.FindBin(muPtForIso, muEtaForIso))
-                muisoweightDown = muisoweight - self._muiso_eff.GetBinError(
-                    self._muiso_eff.FindBin(muPtForIso, muEtaForIso))
+                muPtForIso = self.vmuoLoose0_pt[0]
+                muEtaForIso = abs(self.vmuoLoose0_eta[0])
+		for etaKey, values in sorted(self._muiso_eff["NUM_LooseRelIso_DEN_LooseID"]["abseta_pt"].iteritems()) :
+                    if float(etaKey[8:12]) < muEtaForId and float(etaKey[13:17]) > muEtaForId:
+                        for ptKey, result in sorted(values.iteritems()) :
+                            if float(ptKey[4:9]) < muPtForId and float(ptKey[10:15]) > muPtForId:
+                                muisoweight = result["value"]
+                                muisoweightUp = result["value"] + result["error"]
+                                muisoweightDown = result["value"] - result["error"]
+
                 if muisoweight <= 0 or muisoweightDown <= 0 or muisoweightUp <= 0:
                     print 'muisoweights are %f, %f, %f, setting all to 1' % (
                     muisoweight, muisoweightUp, muisoweightDown)
