@@ -49,63 +49,131 @@ def getLimits(file_name):
 
     return limits
 
+sample_xsec = {} # cross section used to normalize sample (in combine)
+theory_xsec = {} # real theory cross section to compare (no BR)
+br = {} # branching ratio to bb
+legend_entry = {}
+legend_entry['DMSbb'] = 'gg#Phi, g_{q\Phi}=1, H_{T}>400 GeV'
+legend_entry['DMPSbb'] = 'ggA, g_{qA}=1, H_{T}>400 GeV'
+legend_entry['Zpqq'] = "Z', g_{q}=1, H_{T}>500 GeV"
 
-xsections = rt.TGraph(8)
-xsections.SetPoint(0,  50, 0.8 * 1.574e-02 * 100.)
-xsections.SetPoint(1, 100, 0.8 * 1.526e-02 * 100.)
-xsections.SetPoint(2, 125, 0.8 * 1.486e-02 * 100.)
-xsections.SetPoint(3, 200, 0.8 * 1.359e-02 * 100.)
-xsections.SetPoint(4, 300, 0.8 * 1.251e-02 * 100.)
-xsections.SetPoint(5, 350, 0.8 * 1.275e-02 * 100.)
-xsections.SetPoint(6, 400, 0.8 * 1.144e-02 * 100.)
-xsections.SetPoint(7, 500, 0.8 * 7.274e-03 * 100.)
+sample_xsec['DMSbb'] = rt.TGraph(8)
+sample_xsec['DMSbb'].SetPoint(0,  50, 0.8 * 1.574e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(1, 100, 0.8 * 1.526e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(2, 125, 0.8 * 1.486e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(3, 200, 0.8 * 1.359e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(4, 300, 0.8 * 1.251e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(5, 350, 0.8 * 1.275e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(6, 400, 0.8 * 1.144e-02 * 100.)
+sample_xsec['DMSbb'].SetPoint(7, 500, 0.8 * 7.274e-03 * 100.)
 
-theory_xsec = rt.TGraph(8)
-theory_xsec.SetPoint(0,  50, 1.574e-02)
-theory_xsec.SetPoint(1, 100, 1.526e-02)
-theory_xsec.SetPoint(2, 125, 1.486e-02)
-theory_xsec.SetPoint(3, 200, 1.359e-02)
-theory_xsec.SetPoint(4, 300, 1.251e-02)
-theory_xsec.SetPoint(5, 350, 1.275e-02)
-theory_xsec.SetPoint(6, 400, 1.144e-02)
-theory_xsec.SetPoint(7, 500, 7.274e-03)
+theory_xsec['DMSbb'] = rt.TGraph(8)
+theory_xsec['DMSbb'].SetPoint(0,  50, 1.574e-02)
+theory_xsec['DMSbb'].SetPoint(1, 100, 1.526e-02)
+theory_xsec['DMSbb'].SetPoint(2, 125, 1.486e-02)
+theory_xsec['DMSbb'].SetPoint(3, 200, 1.359e-02)
+theory_xsec['DMSbb'].SetPoint(4, 300, 1.251e-02)
+theory_xsec['DMSbb'].SetPoint(5, 350, 1.275e-02)
+theory_xsec['DMSbb'].SetPoint(6, 400, 1.144e-02)
+theory_xsec['DMSbb'].SetPoint(7, 500, 7.274e-03)
 
-br = rt.TGraph(8)
-br.SetPoint(0,  50, 0.904965)
-br.SetPoint(1, 100, 0.888511)
-br.SetPoint(2, 125, 0.874462)
-br.SetPoint(3, 200, 0.810039)
-br.SetPoint(4, 300, 0.657186)
-br.SetPoint(5, 350, 0.143152)
-br.SetPoint(6, 400, 0.0045991)
-br.SetPoint(7, 500, 0.00154471)
+br_list = [[50, 0.85644], [55, 0.856044], [60, 0.855345], [65, 0.854398], [70, 
+  0.853242], [75, 0.851899], [80, 0.850389], [85, 0.848721], [90, 
+  0.846903], [95, 0.844943], [100, 0.842843], [105, 0.840606], [110, 
+  0.838234], [115, 0.835729], [120, 0.833091], [125, 0.830321], [130, 
+  0.827417], [135, 0.82438], [140, 0.821209], [145, 0.817903], [150, 
+  0.81446], [155, 0.81088], [160, 0.80716], [165, 0.8033], [170, 
+  0.799296], [175, 0.795148], [180, 0.790852], [185, 0.786407], [190, 
+  0.781809], [195, 0.777055], [200, 0.772143], [205, 0.767069], [210, 
+  0.761829], [215, 0.75642], [220, 0.750836], [225, 0.745074], [230, 
+  0.739128], [235, 0.732993], [240, 0.726662], [245, 0.72013], [250, 
+  0.713388], [255, 0.706428], [260, 0.699242], [265, 0.69182], [270, 
+  0.684149], [275, 0.676218], [280, 0.668011], [285, 0.659512], [290, 
+  0.650702], [295, 0.641556], [300, 0.632049], [305, 0.622146], [310, 
+  0.611807], [315, 0.60098], [320, 0.589596], [325, 0.577565], [330, 
+  0.564752], [335, 0.550952], [340, 0.53579], [345, 0.518319], [350, 
+  0.141923], [355, 0.049768], [360, 0.0271303], [365, 
+  0.0178448], [370, 0.0130041], [375, 0.0101058], [380, 
+  0.0082066], [385, 0.0068805], [390, 0.00590992], [395, 
+  0.00517327], [400, 0.00459782], [405, 0.0041376], [410, 
+  0.00376232], [415, 0.00345123], [420, 0.00318974], [425, 
+  0.00296725], [430, 0.00277595], [435, 0.00260994], [440, 
+  0.00246468], [445, 0.00233664], [450, 0.00222305], [455, 
+  0.00212167], [460, 0.00203071], [465, 0.00194868], [470, 
+  0.00187439], [475, 0.00180682], [480, 0.00174514], [485, 
+  0.00168863], [490, 0.0016367], [495, 0.00158882], [500, 0.00154457]]
 
-theory_xsec_Zp = rt.TGraph(6)
-theory_xsec_Zp.SetPoint(0,  50, 2.2*83.7) #sigma(HT>400) = 2.2 * sigma(HT>500)
-theory_xsec_Zp.SetPoint(1, 100, 2.2*46.3)
-theory_xsec_Zp.SetPoint(2, 150, 2.2*31.32)
-theory_xsec_Zp.SetPoint(3, 200, 2.2*23.17)
-theory_xsec_Zp.SetPoint(4, 250, 2.2*18.5)
-theory_xsec_Zp.SetPoint(5, 300, 2.2*16.03)
+br['DMSbb'] = rt.TGraph(len(br_list))
+for i, br_m_val in enumerate(br_list):
+    br['DMSbb'].SetPoint(i,  br_m_val[0], br_m_val[1])
 
-br_Zp = rt.TGraph(6)
-br_Zp.SetPoint(0,  50, 0.2)
-br_Zp.SetPoint(1, 100, 0.2)
-br_Zp.SetPoint(2, 150, 0.2)
-br_Zp.SetPoint(3, 200, 0.2)
-br_Zp.SetPoint(4, 250, 0.2)
-br_Zp.SetPoint(5, 300, 0.2)
+sample_xsec['DMPSbb'] = rt.TGraph(8)
+sample_xsec['DMPSbb'].SetPoint(0,  50, 0.8 * 3.587e-02 * 100.)
+sample_xsec['DMPSbb'].SetPoint(1, 100, 0.8 * 3.379e-02 * 100.)
+sample_xsec['DMPSbb'].SetPoint(2, 125, 0.8 * 3.374e-02 * 100.)
+sample_xsec['DMPSbb'].SetPoint(3, 200, 0.8 * 3.306e-02  * 100.)
+sample_xsec['DMPSbb'].SetPoint(4, 300, 0.8 * 3.770e-02 * 100.)
+sample_xsec['DMPSbb'].SetPoint(5, 350, 0.8 * 4.262e-02  * 100.)
+sample_xsec['DMPSbb'].SetPoint(6, 400, 0.8 * 2.499e-02 * 100.)
+sample_xsec['DMPSbb'].SetPoint(7, 500, 0.8 * 1.264e-02 * 100.)
 
-tenpercentwidth = {'50': 52.3443,
-            '100': 51.0427,
-            '125': 50.5416,
-            '200': 48.5446,
-            '300': 43.6933,
-            '350': 20.3893,
-            '400': 3.65424,
-            '500': 2.11755
-            }
-    
+theory_xsec['DMPSbb'] = rt.TGraph(8)
+theory_xsec['DMPSbb'].SetPoint(0,  50, 3.587e-02)
+theory_xsec['DMPSbb'].SetPoint(1, 100, 3.379e-02)
+theory_xsec['DMPSbb'].SetPoint(2, 125, 3.374e-02)
+theory_xsec['DMPSbb'].SetPoint(3, 200, 3.306e-02)
+theory_xsec['DMPSbb'].SetPoint(4, 300, 3.770e-02)
+theory_xsec['DMPSbb'].SetPoint(5, 350, 4.262e-02)
+theory_xsec['DMPSbb'].SetPoint(6, 400, 2.499e-02)
+theory_xsec['DMPSbb'].SetPoint(7, 500, 1.264e-02)
+
+br_list = [[50, 0.852511], [55, 0.850153], [60, 0.847484], [65, 0.844523], [70, 
+  0.841283], [75, 0.837772], [80, 0.833996], [85, 0.82996], [90, 
+  0.825665], [95, 0.821115], [100, 0.816311], [105, 0.811255], [110, 
+  0.805947], [115, 0.80039], [120, 0.794582], [125, 0.788526], [130, 
+  0.782221], [135, 0.775668], [140, 0.768867], [145, 0.761818], [150, 
+  0.754521], [155, 0.746976], [160, 0.739184], [165, 0.731143], [170, 
+  0.722854], [175, 0.714316], [180, 0.705528], [185, 0.69649], [190, 
+  0.687201], [195, 0.677659], [200, 0.667863], [205, 0.657812], [210, 
+  0.647503], [215, 0.636934], [220, 0.626103], [225, 0.615006], [230, 
+  0.603639], [235, 0.591998], [240, 0.580078], [245, 0.567872], [250, 
+  0.555373], [255, 0.542574], [260, 0.529463], [265, 0.516029], [270, 
+  0.502256], [275, 0.488129], [280, 0.473626], [285, 0.458721], [290, 
+  0.443382], [295, 0.42757], [300, 0.411232], [305, 0.394302], [310, 
+  0.376692], [315, 0.358277], [320, 0.338882], [325, 0.318235], [330, 
+  0.295893], [335, 0.271021], [340, 0.241659], [345, 0.199353], [350, 
+  0.00397345], [355, 0.00261999], [360, 0.00211189], [365, 
+  0.00182771], [370, 0.00164097], [375, 0.00150681], [380, 
+  0.00140477], [385, 0.00132401], [390, 0.0012582], [395, 
+  0.00120335], [400, 0.00115681], [405, 0.00111675], [410, 
+  0.00108185], [415, 0.00105113], [420, 0.00102385], [425, 
+  0.000999458], [430, 0.000977495], [435, 0.000957607], [440, 
+  0.000939506], [445, 0.000922955], [450, 0.00090776], [455, 
+  0.000893757], [460, 0.000880809], [465, 0.0008688], [470, 
+  0.000857629], [475, 0.000847211], [480, 0.000837473], [485, 
+  0.000828348], [490, 0.000819782], [495, 0.000811723], [500, 
+  0.000804129]]
+
+br['DMPSbb'] = rt.TGraph(len(br_list))
+for i, br_m_val in enumerate(br_list):
+    br['DMPSbb'].SetPoint(i,  br_m_val[0], br_m_val[1])
+
+theory_xsec['Zpqq'] = rt.TGraph(6)
+theory_xsec['Zpqq'].SetPoint(0,  50, 2.2*83.7) #sigma(HT>400) = 2.2 * sigma(HT>500)
+theory_xsec['Zpqq'].SetPoint(1, 100, 2.2*46.3)
+theory_xsec['Zpqq'].SetPoint(2, 150, 2.2*31.32)
+theory_xsec['Zpqq'].SetPoint(3, 200, 2.2*23.17)
+theory_xsec['Zpqq'].SetPoint(4, 250, 2.2*18.5)
+theory_xsec['Zpqq'].SetPoint(5, 300, 2.2*16.03)
+
+br['Zpqq'] = rt.TGraph(6)
+br['Zpqq'].SetPoint(0,  50, 0.2)
+br['Zpqq'].SetPoint(1, 100, 0.2)
+br['Zpqq'].SetPoint(2, 150, 0.2)
+br['Zpqq'].SetPoint(3, 200, 0.2)
+br['Zpqq'].SetPoint(4, 250, 0.2)
+br['Zpqq'].SetPoint(5, 300, 0.2)
+
 # PLOT upper limits
 def plotUpperLimits(options,args):
     # see CMS plot guidelines: https://ghm.web.cern.ch/ghm/plots/
@@ -131,7 +199,7 @@ def plotUpperLimits(options,args):
     print cut
     print jet_type
     for mass in all_masses:
-        file_name = options.idir + "/%s/%s/DMSbb%s/higgsCombineDMSbb_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type[str(mass)],cut[str(mass)],str(mass),str(mass),options.lumi,jet_type[str(mass)])
+        file_name = options.idir + "/%s/%s/%s%s/higgsCombine%s_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type[str(mass)],cut[str(mass)],options.model,str(mass),options.model,str(mass),options.lumi,jet_type[str(mass)])
         print file_name
         if glob.glob(file_name):
             print "Opened File ", file_name
@@ -156,9 +224,11 @@ def plotUpperLimits(options,args):
         limit = limits[str(mass)]
         up2s.append(limit[4])
         if options.xsec or options.gq or options.gqZp:
-            fac = xsections.Eval(mass,0,'S')
-            if options.gqZp: theory = theory_xsec_Zp.Eval(mass,0,'S') * br_Zp.Eval(mass,0,'S')
-            else: theory = theory_xsec.Eval(mass,0,'S') * br.Eval(mass,0,'S')
+            fac = sample_xsec[options.model].Eval(mass,0,'S')
+            if options.gqZp: 
+                theory = theory_xsec['Zpqq'].Eval(mass,0,'S') * br['Zpqq'].Eval(mass,0,'S')
+            else: 
+                theory = theory_xsec[options.model].Eval(mass,0,'S') * br[options.model].Eval(mass,0,'S')
         else:
             fac = 1
         if options.gq or options.gqZp:
@@ -267,12 +337,12 @@ def plotUpperLimits(options,args):
     if len(limit)>5 and options.observed:
         obs.Draw('PLsame')
 
-    theory_xsec.SetMarkerStyle(20)
-    theory_xsec.SetLineColor(rt.kBlue+2)
-    theory_xsec.SetLineWidth(2)
-    #theory_xsec.SetLineStyle(2)
+    theory_xsec[options.model].SetMarkerStyle(20)
+    theory_xsec[options.model].SetLineColor(rt.kBlue+2)
+    theory_xsec[options.model].SetLineWidth(2)
+    #theory_xsec[options.model].SetLineStyle(2)
     if options.xsec:
-        theory_xsec.Draw('Csame')
+        theory_xsec[options.model].Draw('Csame')
 
     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}"%options.lumi
     CMS_lumi.CMS_lumi(c,4,11)
@@ -301,7 +371,7 @@ def plotUpperLimits(options,args):
     legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
     legend.AddEntry(yellow,"Expected #pm 2 s.d.",'lf')
     if options.xsec:
-        legend.AddEntry(theory_xsec,"gg#Phi, g_{q\Phi}=1, H_{T}>400 GeV",'l')
+        legend.AddEntry(theory_xsec[options.model],legend_entry[options.model],'l')
     legend.Draw()
 
     if len(options.box.split('_')) > 1:
