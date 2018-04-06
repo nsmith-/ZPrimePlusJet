@@ -328,14 +328,15 @@ def plotUpperLimits(options,args):
     green.Draw('Fsame')
 
     median.SetLineColor(1)
-    median.SetLineWidth(2)
+    median.SetLineWidth(3)
     median.SetLineStyle(2)
-    median.Draw('Lsame')
+    median.Draw('Csame')
     
     obs.SetMarkerStyle(20)
-    obs.SetLineWidth(2)
+    obs.SetLineWidth(3)
     if len(limit)>5 and options.observed:
-        obs.Draw('PLsame')
+        #obs.Draw('PLsame')
+        obs.Draw('Csame')
 
     theory_xsec[options.model].SetMarkerStyle(20)
     theory_xsec[options.model].SetLineColor(rt.kBlue+2)
@@ -385,7 +386,7 @@ def plotUpperLimits(options,args):
             dxleg = 30
             dyleg = 1
             yleg1 = 2
-            yleg2 = 10
+            yleg2 = 12
         else:
             dxleg = 40
             dyleg = 0.05
