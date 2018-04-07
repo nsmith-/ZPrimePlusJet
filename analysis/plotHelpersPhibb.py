@@ -115,7 +115,9 @@ def makeCanvasDataMC(hd,hmcs,legname,name,pdir="plots",nodata=False):
     fullmc = hstack.GetStack().Last();
 
     # normalize MC to data
-    scalefactor = hd.Integral()/fullmc.Integral();
+    scalefactor = 1
+    if fullmc.Integral()>0:
+	    scalefactor = hd.Integral()/fullmc.Integral();
     print "data/mc scale factor = ", scalefactor
     for i in range(len(hmcs)): hmcs[i].Scale( scalefactor );
 
@@ -253,7 +255,9 @@ def makeCanvasDataMC_wpred(hd,gpred,hmcs,legname,name,pdir="plots",blind=True):
 	fullmc = hstack.GetStack().Last();
 
 	# normalize MC to data
-	scalefactor = hd.Integral()/fullmc.Integral();
+	scalefactor = 1
+	if fullmc.Integral()>0:
+		scalefactor = hd.Integral()/fullmc.Integral();
 	for i in range(len(hmcs)): hmcs[i].Scale( scalefactor );
 
 	xtitle = hmcs[0].GetXaxis().GetTitle();
@@ -896,7 +900,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     fullmc = hstack.GetStack().Last();
 
     # normalize MC to data
-    scalefactor = hd.Integral()/fullmc.Integral();
+    scalefactor = 1
+    if fullmc.Integral()>0:
+	    scalefactor = hd.Integral()/fullmc.Integral();
     print "data/mc scale factor = ", scalefactor
     if normalize:
     	for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()): h.Scale( scalefactor );
