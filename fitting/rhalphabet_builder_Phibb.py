@@ -20,8 +20,8 @@ from hist import *
 BB_SF, BB_SF_ERR = {}, {}
 BB_SF['AK8'] = 0.91
 BB_SF_ERR['AK8'] = 0.03
-BB_SF['CA15'] = 1.00
-BB_SF_ERR['CA15'] = 0.04
+BB_SF['CA15'] = 0.86
+BB_SF_ERR['CA15'] = 0.07
 V_SF, V_SF_ERR = {}, {}
 V_SF['AK8'] = 0.993
 V_SF_ERR['AK8'] = 0.043
@@ -38,6 +38,7 @@ RES_SF_ERR['AK8'] = 0.09
 RES_SF['CA15'] = 0.988
 RES_SF_ERR['CA15'] = 0.079
 re_sbb = re.compile("Sbb(?P<mass>\d+)")
+re_zqq = re.compile("Zpqq(?P<mass>\d+)")
 
 ##############################################################################
 ##############################################################################
@@ -46,7 +47,7 @@ re_sbb = re.compile("Sbb(?P<mass>\d+)")
 ##############################################################################
 
 class RhalphabetBuilder(): 
-    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9', scale = 1, masses = [50,100,125,200,300,350,400,500]):
+    def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=80, mass_lo=40, mass_hi=600, blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi= -2.1, blind=False, mass_fit=False, freeze_poly=False, remove_unmatched=False, input_file_loose=None, cuts = 'p9', scale = 1, masses = [50,100,125,200,300,350,400,500], model='DMSbb'):
 
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
@@ -128,8 +129,9 @@ class RhalphabetBuilder():
         #    self._signal_names.append("Pbb_" + str(mass))
         # for Hbb
         self._masses = masses
+        self._model = model
         for mass in self._masses:
-            self._signal_names.append("DMSbb" + str(mass))
+            self._signal_names.append(self._model + str(mass))
 
     def run(self):
         self.LoopOverPtBins()
@@ -189,7 +191,7 @@ class RhalphabetBuilder():
                 getattr(w,'import')(datahist['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(histpdf['%s_%s'%(proc,cat)],r.RooFit.RecycleConflictNodes())
                 #if 'hqq125' in proc or 'Sbb' in proc:
-                if 'Sbb' in proc:
+                if self._model in proc:
                     # signal
                     signorm['%s_%s'%(proc,cat)] = r.RooRealVar('signorm_%s_%s'%(proc,cat),
                                                                 'signorm_%s_%s'%(proc,cat),
@@ -748,7 +750,7 @@ class RhalphabetBuilder():
             cat = import_object.GetName().split('_')[1]
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat','Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process or 'Zpqq' in process):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -756,9 +758,9 @@ class RhalphabetBuilder():
                     for cut in self._cuts:
                         if syst == 'mcstat':
                             matchingString = ''
-                            if self._remove_unmatched and ('wqq' in process or 'zqq' in process or 'Sbb' in process):
+                            if self._remove_unmatched and ('wqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process):
                                 matchingString = '_matched'
-                            if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process) and 'pass' in cat and cut in ['p9','p85']:              
+                            if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process) and 'pass' in cat and cut in ['p9','p85']:              
                                 tmph = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + matchingString).Clone(process + '_' + cat)
                                 tmph_up = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + matchingString).Clone(
                                     process + '_' + cat + '_' + syst + 'Up')
@@ -846,7 +848,7 @@ class RhalphabetBuilder():
                     self._outfile_validation.cd()
                     h.Write()
 
-            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process):
+            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process or 'Zpqq' in process):
                 if process == 'wqq':
                     mass = 80.
                 elif process == 'zqq':
@@ -859,9 +861,12 @@ class RhalphabetBuilder():
                     re_match = re_sbb.search(process)
                     mass = int(re_match.group("mass"))
                     #print ' Now here, process: ', process, ' , ReMatch: ', re_match, ' , Resbb : ', re_sbb, ' , Mass : ', mass
+                elif 'Zpqq' in process: 
+                    re_match = re_zqq.search(process)
+                    mass = int(re_match.group("mass"))
                 # get the matched and unmatched hist
                 
-                if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process) and 'pass' in cat and self._cuts[0] in ['p85','p9']:                     
+                if self._inputfile_loose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process) and 'pass' in cat and self._cuts[0] in ['p85','p9']:                     
                     tmph_matched = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + '_matched').Clone()
                     tmph_unmatched = self._inputfile.Get(process + '_' + self._inputfile_loose + '_' + cat + '_unmatched').Clone()
                     tmph_matched.Scale(1./self._scale)
@@ -931,7 +936,7 @@ class RhalphabetBuilder():
                 # get res up/down
                 hmatchedsys_smear = hist_container.smear(hmatched_new_central, res_shift_unc)
 
-                if not (self._remove_unmatched and ('wqq' in process or 'zqq' in process or 'DMSbb' in process)):
+                if not (self._remove_unmatched and ('wqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process)):
                     # add back the unmatched
                     hmatched_new_central.Add(tmph_mass_unmatched)
                     hmatchedsys_shift[0].Add(tmph_mass_unmatched)
@@ -990,7 +995,7 @@ class RhalphabetBuilder():
 
 ##-------------------------------------------------------------------------------------
 
-def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, cuts='p9', masses=[50,100,125,200,300,350,400,500]):
+def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_range, rho_range, fLoose=None, cuts='p9', masses=[50,100,125,200,300,350,400,500], model='DMSbb'):
 
     pass_hists = {}
     fail_hists = {}
@@ -1043,7 +1048,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
                 fail_hists_bkg["qcd"] = qcd_fail
                 print 'qcd pass integral', qcd_pass.Integral()
                 print 'qcd fail integral', qcd_fail.Integral()
-            elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq' or 'DMSbb' in bkg) and (cut in ['p85', 'p9']):
+            elif (fLoose is not None) and (bkg=='wqq' or bkg=='zqq' or 'Sbb' in bkg or 'Zpqq' in bkg) and (cut in ['p85', 'p9']):
                 hpass_tmp = f.Get(bkg + '_' + fLoose + '_pass').Clone()
                 hfail_tmp = f.Get(bkg + '_' + cut + '_fail').Clone()
                 hpass_tmp.Scale(1. / scale)
@@ -1073,7 +1078,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # for Hbb
     #masses = [50,100,125,200,300,350,400,500]
     #sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
-    sigs = ["DMSbb"]
+    sigs = [model]
     signal_names = []
     for mass in masses:
         for sig in sigs:
@@ -1155,17 +1160,32 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_
         mass = int(re_match.group("mass"))
         SF *= tgraph.Eval(mass,0,'S')
         
-        keys = [key.GetName() for key in f.GetListOfKeys() if 'Sbb' in key.GetName()]
-        re_matches = [re_sbb.search(key) for key in keys]
-        masses_present = sorted(list(set([int(re_match.group("mass")) for re_match in re_matches])))
-        deltaM = [abs(m - mass) for m in masses_present]
-        adjMass = masses_present[deltaM.index(min(deltaM))]
-        # fix process for signal
-        adjProc = 'DMSbb'+str(adjMass)
+        #keys = [key.GetName() for key in f.GetListOfKeys() if 'DMSbb' in key.GetName()]
+        #re_matches = [re_sbb.search(key) for key in keys]
+        #masses_present = sorted(list(set([int(re_match.group("mass")) for re_match in re_matches])))
+        #deltaM = [abs(m - mass) for m in masses_present]
+        #adjMass = masses_present[deltaM.index(min(deltaM))]
+        ## fix process for signal
+        #adjProc = 'DMSbb'+str(adjMass)
 
-    if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'DMSbb' in process:
+    if 'DMPSbb' in process:
+        tgraph = r.TGraph(8)
+        tgraph.SetPoint(0,  50, 0.8 * 3.587e-02 * 100.)  # overall scaling by 100. to get final mu^UL ~ 1
+        tgraph.SetPoint(1, 100, 0.8 * 3.379e-02 * 100.)
+        tgraph.SetPoint(2, 125, 0.8 * 3.374e-02 * 100.)
+        tgraph.SetPoint(3, 200, 0.8 * 3.306e-02 * 100.)
+        tgraph.SetPoint(4, 300, 0.8 * 3.770e-02 * 100.)
+        tgraph.SetPoint(5, 350, 0.8 * 4.262e-02 * 100.)
+        tgraph.SetPoint(6, 400, 0.8 * 2.499e-02 * 100.)
+        tgraph.SetPoint(7, 500, 0.8 * 1.264e-02 * 100.)
+        
+        re_match = re_sbb.search(process)
+        mass = int(re_match.group("mass"))
+        SF *= tgraph.Eval(mass,0,'S')
+
+    if 'hqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process:
         if 'pass' in cat:
-            if 'DMSbb' in process:
+            if 'Sbb' in process:
                 print process, cat, BB_SF[jet_type], jet_type
                 #sys.exit()
             SF *= BB_SF[jet_type]            
@@ -1178,14 +1198,14 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_
                 SF *= (1. + (1. - BB_SF[jet_type]) * passInt / failInt)
                 if 'zqq' in process:
                     print (1. + (1. - BB_SF[jet_type]) * passInt / failInt)
-    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'DMSbb' in process:
+    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Sbb' in process or 'Zpqq' in process:
         SF *= V_SF[jet_type]
         if 'zqq' in process:
             print V_SF[jet_type]
     matchingString = ''
-    if removeUnmatched and ('wqq' in process or 'zqq' in process or 'DMSbb' in process):
+    if removeUnmatched and ('wqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process):
         matchingString = '_matched'
-    if fLoose is not None and ('wqq' in process or 'zqq' in process or 'DMSbb' in process) and 'pass' in cat:
+    if fLoose is not None and ('wqq' in process or 'zqq' in process or 'Sbb' in process or 'Zpqq' in process) and 'pass' in cat:
         if iPt > -1:
             nbinsX = f.Get(process + '_' + cut + '_pass' + matchingString).GetXaxis().GetNbins()
             passInt = f.Get(process + '_' + cut + '_pass' + matchingString).Integral(1, nbinsX, int(iPt), int(iPt))
@@ -1196,22 +1216,7 @@ def GetSF(process, cut, cat, f, fLoose=None, removeUnmatched=False, iPt=-1, jet_
         SF *= passInt/passIntLoose
         if 'zqq' in process:
             print passInt/passIntLoose
-            
-    # remove cross section from MH=125 signal templates (template normalized to luminosity*efficiency*acceptance)
-    ## if process=='hqq125':
-    ##     SF *= 1./48.85*5.824E-01
-    ## elif process=='zhqq':
-    ##     SF *= 1./(8.839E-01*(1.-3.*0.0335962-0.201030)*5.824E-01+8.839E-01*5.824E-01*0.201030+1.227E-01*5.824E-01*0.201030+1.227E-01*5.824E-01*0.201030)
-    ## elif process=='whqq':
-    ##     SF *= 1./(5.328E-01*(1.-3.*0.108535)*5.824E-01+8.400E-01*(1.-3.*0.108535)*5.824E-01)
-    ## elif process=='vbfhqq':
-    ##     SF *= 1./(3.782*5.824E-01)
-    ## elif process=='tthqq':
-    ##     SF *= 1./(5.071E-01*5.824E-01)
-    
-    #if 'zqq' in process:
-    #    print SF
-    #    sys.exit()
+
     return SF
 
 def reset(w,fr,exclude=None):

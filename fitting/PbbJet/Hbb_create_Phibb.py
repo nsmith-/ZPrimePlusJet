@@ -13,6 +13,7 @@ def getFiles(muonCR=False):
     idir = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/norm2/cvernier/"
     idir_muon = "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/"
     idir_data = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
+    idir_Zqq = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/norm/'
     tfiles = {
         'hqq125': [idir_data+'/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root'],
         'vbfhqq125': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
@@ -32,6 +33,23 @@ def getFiles(muonCR=False):
         'DMSbb350': [idir_data + '/Spin0_ggPhibb1j_g1_350_Scalar_1000pb_weighted.root'],
         'DMSbb400': [idir_data + '/Spin0_ggPhibb1j_g1_400_Scalar_1000pb_weighted.root'],
         'DMSbb500': [idir_data + '/Spin0_ggPhibb1j_g1_500_Scalar_1000pb_weighted.root'],
+        'DMPSbb50': [idir_data + '/Spin0_ggPhibb1j_g1_50_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb100': [idir_data + '/Spin0_ggPhibb1j_g1_100_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb125': [idir_data + '/Spin0_ggPhibb1j_g1_125_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb200': [idir_data + '/Spin0_ggPhibb1j_g1_200_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb300': [idir_data + '/Spin0_ggPhibb1j_g1_300_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb350': [idir_data + '/Spin0_ggPhibb1j_g1_350_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb400': [idir_data + '/Spin0_ggPhibb1j_g1_400_PseudoScalar_1000pb_weighted.root'],
+        'DMPSbb500': [idir_data + '/Spin0_ggPhibb1j_g1_500_PseudoScalar_1000pb_weighted.root'],
+        'Zpqq75': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi75Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq125': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi125Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq150': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi150Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq175': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi175Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq225': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi225Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq250': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi250Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq300': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi300Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq400': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi400Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
+        'Zpqq500': [idir_Zqq + '/VectorDiJet1Jet_madgraph_Mphi500Mchi3000_13TeV_noPF_8_1000pb_weighted.root'],
 
 ############### Backgrounds
         'qcd': [
@@ -261,15 +279,33 @@ def main(options, args):
 
     print "Signals... "
     sigSamples = {}
-    if not options.skipMC:
-        sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    #if not options.skipMC:
+    if True:
+        #sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb50'] = sampleContainerPhibb('DMPSbb50',tfiles['DMPSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb100'] = sampleContainerPhibb('DMPSbb100',tfiles['DMPSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb125'] = sampleContainerPhibb('DMPSbb125',tfiles['DMPSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb200'] = sampleContainerPhibb('DMPSbb200',tfiles['DMPSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb300'] = sampleContainerPhibb('DMPSbb300',tfiles['DMPSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb350'] = sampleContainerPhibb('DMPSbb350',tfiles['DMPSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb400'] = sampleContainerPhibb('DMPSbb400',tfiles['DMPSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        #sigSamples['DMPSbb500'] = sampleContainerPhibb('DMPSbb500',tfiles['DMPSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq75'] = sampleContainerPhibb('Zpqq75',tfiles['Zpqq75'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq125'] = sampleContainerPhibb('Zpqq125',tfiles['Zpqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq150'] = sampleContainerPhibb('Zpqq150',tfiles['Zpqq150'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq175'] = sampleContainerPhibb('Zpqq175',tfiles['Zpqq175'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq225'] = sampleContainerPhibb('Zpqq225',tfiles['Zpqq225'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq250'] = sampleContainerPhibb('Zpqq250',tfiles['Zpqq250'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq300'] = sampleContainerPhibb('Zpqq300',tfiles['Zpqq300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq400'] = sampleContainerPhibb('Zpqq400',tfiles['Zpqq400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        sigSamples['Zpqq500'] = sampleContainerPhibb('Zpqq500',tfiles['Zpqq500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
     
     print "Backgrounds..."
     bkgSamples = {}

@@ -36,20 +36,20 @@ def main(options,args):
         ifile_loose = '--ifile-loose %s'%options.ifile_loose
     else:
         ifile_loose = ''
-    exec_me('python makeCardsPhibb.py -i %s %s  -o %s/%s/%s --remove-unmatched  --no-mcstat-shape  -c %s --lrho %f --hrho %f --masses %s %s'%(options.ifile,ifile_loose,
+    exec_me('python makeCardsPhibb.py -i %s %s  -o %s/%s/%s --remove-unmatched  --no-mcstat-shape  -c %s --lrho %f --hrho %f --masses %s %s --model %s'%(options.ifile,ifile_loose,
                                                                                                                            options.odir,
                                                                                                                            jet_type,
                                                                                                                            cut, cut,
                                                                                                                            options.lrho,
-                                                                                                                           options.hrho,repr(options.masses),blindString),options.dryRun)
-    exec_me('python buildRhalphabetPhibb.py -i %s %s -o %s/%s/%s/ --remove-unmatched  --prefit --use-qcd -c %s --lrho %f --hrho %f --nr %i --np %i --masses %s %s %s'%(options.ifile,ifile_loose,
+                                                                                                                           options.hrho,repr(options.masses),blindString,options.model),options.dryRun)
+    exec_me('python buildRhalphabetPhibb.py -i %s %s -o %s/%s/%s/ --remove-unmatched  --prefit --use-qcd -c %s --lrho %f --hrho %f --nr %i --np %i --masses %s %s %s --model %s'%(options.ifile,ifile_loose,
                                                                                                                                             options.odir,
                                                                                                                                             jet_type,
                                                                                                                                             cut, cut,
                                                                                                                                             options.lrho,
                                                                                                                                             options.hrho,
                                                                                                                                             options.NR,
-                                                                                                                                            options.NP,repr(options.masses),blindString,pseudoString),options.dryRun)
+                                                                                                                                            options.NP,repr(options.masses),blindString,pseudoString,options.model),options.dryRun)
 
                                                                                                                                             
     pwd = os.environ['PWD']
@@ -61,7 +61,7 @@ def main(options,args):
     for massPoint in massIterable(options.masses):
         exec_me('cp %s/%s/%s/base.root %s/%s/%s/%s/'%(options.odir,jet_type,cut,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
         exec_me('cp %s/%s/%s/rhalphabase.root %s/%s/%s/%s/'%(options.odir,jet_type,cut,options.odir,jet_type,cut,options.model+str(massPoint)),options.dryRun)
-        exec_me('python writeMuonCRDatacard.py -i %s/ -o %s/%s/%s/%s/ %s -c %s --mass %s --no-mcstat-shape'%(os.path.dirname(options.ifile),options.odir,jet_type,cut,options.model+str(massPoint),fillString,cut,massPoint),options.dryRun)
+        exec_me('python writeMuonCRDatacard.py -i %s/ -o %s/%s/%s/%s/ %s -c %s --mass %s --model %s --no-mcstat-shape'%(os.path.dirname(options.ifile),options.odir,jet_type,cut,options.model+str(massPoint),fillString,cut,massPoint,options.model),options.dryRun)
         os.chdir('%s/%s/%s/%s/'%(options.odir,jet_type,cut,options.model+str(massPoint)))
         if options.box=='CA15':
             exec_me('combineCards.py cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt',options.dryRun)

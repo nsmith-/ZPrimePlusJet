@@ -216,7 +216,7 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     #for Hbb extraction:
-    sigs = ['DMSbb'+str(options.mass)]
+    sigs = [options.model+str(options.mass)]
     bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll','tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
     #for Wqq/Zbb extraction:
     #sigs = ['zqq','wqq']
@@ -236,14 +236,15 @@ def main(options, args):
     datahistDict = {}
     adjProc = {}
     
-    keys = [key.GetName() for key in tfile.GetListOfKeys() if 'Sbb' in key.GetName()]
-    re_matches = [re_sbb.search(key) for key in keys]
-    masses_present = sorted(list(set([int(re_match.group("mass")) for re_match in re_matches])))
-    mass = int(options.mass)
-    deltaM = [abs(m - mass) for m in masses_present]
-    adjMass = masses_present[deltaM.index(min(deltaM))]
-    # fix process for signal
-    adjProc['DMSbb'+str(options.mass)] = 'DMSbb'+str(adjMass)
+    #keys = [key.GetName() for key in tfile.GetListOfKeys() if 'Sbb' in key.GetName()]
+    #re_matches = [re_sbb.search(key) for key in keys]
+    #masses_present = sorted(list(set([int(re_match.group("mass")) for re_match in re_matches])))
+    #mass = int(options.mass)
+    #deltaM = [abs(m - mass) for m in masses_present]
+    #adjMass = masses_present[deltaM.index(min(deltaM))]
+    ## fix process for signal
+    #adjProc[options.model+str(options.mass)] = options.model+str(adjMass)
+    adjProc[options.model+str(options.mass)] = options.model+str(options.mass)
     # keep process for everything else
     for proc in (bkgs+['data_obs']):
         adjProc[proc] = proc
@@ -321,7 +322,8 @@ if __name__ == '__main__':
     parser.add_option('--lrho', dest='lrho', default=-6.0, type= 'float', help='low value rho cut')
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
-    parser.add_option('-m', '--mass', dest='mass', default='50', type='string', help='mass value')
+    parser.add_option('--mass', dest='mass', default='50', type='string', help='mass value')
+    parser.add_option('-m', '--model', dest='model', default='DMSbb', type='string', help='mass value')
     parser.add_option('--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
 

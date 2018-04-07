@@ -181,6 +181,7 @@ if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description='Perform signal interpolations on pT vs. mSD histograms.')
 	parser.add_argument("--input_file", type=str, help="Input file with e.g. DMSbb125_pass histograms")
+	parser.add_argument("--model", default="DMSbb", type=str, help="Model name")
 	parser.add_argument("--output_file", type=str, help="Output filename")
 	parser.add_argument('--jet_type', type=str, help="AK8 or CA15")
 	parser.add_argument('--interpolate', action='store_true', help="Perform signal interpolations")
@@ -213,7 +214,7 @@ if __name__ == "__main__":
 
 	# Example histogram name: DMSbb100_p9_fail_JERDown;1	
 
-	models = ["DMSbb"]
+	models = [args.model]
 
 	if args.interpolate:
 		# Input and output files (uses David's configuration. Replace if you are not David.)

@@ -49,13 +49,13 @@ def main(options, args):
     fLoose = options.ifile_loose
 
     #(hpass, hfail) = loadHistograms(f, options.pseudo, options.blind, options.useQCD, options.scale, options.r)
-    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], fLoose=fLoose, cuts = options.cuts, masses = massIterable(options.masses))
+    (pass_hists,fail_hists) = LoadHistograms(f, options.pseudo, options.blind, options.useQCD, scale=options.scale, r_signal=options.r, mass_range=[MASS_LO, MASS_HI], blind_range=[BLIND_LO, BLIND_HI], rho_range=[options.lrho, options.hrho], fLoose=fLoose, cuts = options.cuts, masses = massIterable(options.masses), model=options.model)
     #f.Close()
 
     # Build the workspacees
     #dazsleRhalphabetBuilder(hpass, hfail, f, odir, options.NR, options.NP)
 
-    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=options.lrho, rho_hi=options.hrho, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose, cuts=options.cuts, scale=options.scale, masses=massIterable(options.masses))
+    rhalphabuilder = RhalphabetBuilder(pass_hists, fail_hists, f, options.odir, nr=options.NR, np=options.NP, mass_nbins=MASS_BINS, mass_lo=MASS_LO, mass_hi=MASS_HI, blind_lo=BLIND_LO, blind_hi=BLIND_HI, rho_lo=options.lrho, rho_hi=options.hrho, blind=options.blind, mass_fit=options.massfit, freeze_poly=options.freeze, remove_unmatched=options.removeUnmatched, input_file_loose=fLoose, cuts=options.cuts, scale=options.scale, masses=massIterable(options.masses), model=options.model)
 
     rhalphabuilder.run()
     if options.prefit:
@@ -94,6 +94,7 @@ if __name__ == '__main__':
     parser.add_option('--hrho', dest='hrho', default=-2.1, type='float', help=' high value rho cut')
     parser.add_option('-c', '--cuts', dest='cuts', default='p9', type='string', help='double b-tag cut value')
     parser.add_option('--masses',dest='masses', default='50,100,125,200,300,350,400,500',type='string',help='masses of resonance')
+    parser.add_option('-m','--model',dest='model', default='DMSbb',type='string',help='model')
 
     (options, args) = parser.parse_args()
 
