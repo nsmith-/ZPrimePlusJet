@@ -336,41 +336,64 @@ def main(options,args,outputExists):
 #                    sys.exit()
         print "Signals... "
         sigSamples = {}
-        sigSamples['Phibb50'] = sampleContainerPhibb('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi, False, fillCA15) 
-        sigSamples['Phibb100'] = sampleContainerPhibb('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi, False, fillCA15)      
-        sigSamples['Phibb125'] = sampleContainerPhibb('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi, False, fillCA15)      
-        sigSamples['Phibb200'] = sampleContainerPhibb('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi, False, fillCA15)      
-        sigSamples['Phibb300'] = sampleContainerPhibb('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi, False, fillCA15)      
-        sigSamples['Phibb350'] = sampleContainerPhibb('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi, False, fillCA15)      
-        sigSamples['Phibb400'] = sampleContainerPhibb('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi, False, fillCA15)   
-        sigSamples['Phibb500'] = sampleContainerPhibb('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi, False, fillCA15)   
+        sigSamples['Phibb50'] = sampleContainerPhibb('Phibb50',tfiles['Phibb50'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                     iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb100'] = sampleContainerPhibb('Phibb100',tfiles['Phibb100'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb125'] = sampleContainerPhibb('Phibb125',tfiles['Phibb125'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb200'] = sampleContainerPhibb('Phibb200',tfiles['Phibb200'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb300'] = sampleContainerPhibb('Phibb300',tfiles['Phibb300'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb350'] = sampleContainerPhibb('Phibb350',tfiles['Phibb350'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb400'] = sampleContainerPhibb('Phibb400',tfiles['Phibb400'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Phibb500'] = sampleContainerPhibb('Phibb500',tfiles['Phibb500'], 1, DBTMIN, lumi, False, fillCA15, '1', False,
+                                                      iSplit = options.iSplit, maxSplit = options.maxSplit)
         print "Backgrounds..."
         bkgSamples = {}
-        bkgSamples['W']  = sampleContainerPhibb('W',tfiles['W'], 1, DBTMIN,lumi, False, fillCA15)
-        bkgSamples['DY']  = sampleContainerPhibb('DY',tfiles['DY'], 1, DBTMIN,lumi, False, fillCA15)
-        bkgSamples['QCD'] = sampleContainerPhibb('QCD',tfiles['QCD'], 1, DBTMIN,lumi, False, fillCA15)
-        bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb']  , 1, DBTMIN,lumi, False, fillCA15) 
+        bkgSamples['W']  = sampleContainerPhibb('W',tfiles['W'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['DY']  = sampleContainerPhibb('DY',tfiles['DY'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                 iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['QCD'] = sampleContainerPhibb('QCD',tfiles['QCD'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                 iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb']  , 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                  iSplit = options.iSplit, maxSplit = options.maxSplit)
         if isData and muonCR:
-            bkgSamples['Wlnu']  = sampleContainerPhibb('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi, False, fillCA15)
-            bkgSamples['DYll']  = sampleContainerPhibb('DYll',tfiles['DYll'], 1, DBTMIN,lumi, False, fillCA15)
-            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==0')
-            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==2')
+            bkgSamples['Wlnu']  = sampleContainerPhibb('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                       iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['DYll']  = sampleContainerPhibb('DYll',tfiles['DYll'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                       iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW==1&&genEleFromW+genTauFromW==0', '1', False,
+                                                           iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genEleFromW==1&&genMuFromW+genTauFromW==0', '1', False,
+                                                            iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genTauFromW==1&&genEleFromW+genMuFromW==0', '1', False,
+                                                            iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==0', '1', False,
+                                                            iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==2', '1', False,
+                                                            iSplit = options.iSplit, maxSplit = options.maxSplit)
         else:        
-           bkgSamples['TTbar']  = sampleContainerPhibb('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15)
-        bkgSamples['SingleTop'] = sampleContainerPhibb('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi, False, fillCA15)
-        bkgSamples['Diboson'] = sampleContainerPhibb('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi, False, fillCA15)
+           bkgSamples['TTbar']  = sampleContainerPhibb('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, '1', False)
+        bkgSamples['SingleTop'] = sampleContainerPhibb('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                       iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['Diboson'] = sampleContainerPhibb('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                     iSplit = options.iSplit, maxSplit = options.maxSplit)
 
         if isData:
             print "Data..."
         if isData and muonCR:
-            dataSample = sampleContainerPhibb('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, fillCA15, '((triggerBits&4)&&passJson)')
+            dataSample = sampleContainerPhibb('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, fillCA15, '((triggerBits&4)&&passJson)', False,
+                                              iSplit = options.iSplit, maxSplit = options.maxSplit)
         elif isData:
-            dataSample = sampleContainerPhibb('data',tfiles['data'], 1, DBTMIN,lumi, isData, fillCA15, '((triggerBits&2)&&passJson)')
+            dataSample = sampleContainerPhibb('data',tfiles['data'], 1, DBTMIN,lumi, isData, fillCA15, '((triggerBits&2)&&passJson)', False, 
+                                              iSplit = options.iSplit, maxSplit = options.maxSplit)
         
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root'%options.iSplit,'recreate')
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
@@ -455,6 +478,8 @@ if __name__ == '__main__':
     parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
     parser.add_option('-c','--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
+    parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
+    parser.add_option("--i-split", dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
 
     (options, args) = parser.parse_args()
 
