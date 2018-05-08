@@ -328,7 +328,8 @@ def main(options,args,outputExists):
                 pass
             
     if not outputExists: 
-        samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500','QCD','SingleTop','Diboson','W','DY','TTbar','Hbb']
+        samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500',
+                   'QCD','SingleTop','Diboson','W','DY','TTbar','Hbb']
 #        for s in samples:
 #            for tfile in tfiles[s]:
 #                if not os.path.isfile(tfile):
@@ -367,18 +368,24 @@ def main(options,args,outputExists):
                                                        iSplit = options.iSplit, maxSplit = options.maxSplit)
             bkgSamples['DYll']  = sampleContainerPhibb('DYll',tfiles['DYll'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
                                                        iSplit = options.iSplit, maxSplit = options.maxSplit)
-            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW==1&&genEleFromW+genTauFromW==0', '1', False,
+            bkgSamples['TTbar1Mu']  = sampleContainerPhibb('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN, lumi, False, fillCA15, 
+                                                           'genMuFromW==1&&genEleFromW+genTauFromW==0', False,
                                                            iSplit = options.iSplit, maxSplit = options.maxSplit)
-            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genEleFromW==1&&genMuFromW+genTauFromW==0', '1', False,
+            bkgSamples['TTbar1Ele']  = sampleContainerPhibb('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 
+                                                            'genEleFromW==1&&genMuFromW+genTauFromW==0', False,
                                                             iSplit = options.iSplit, maxSplit = options.maxSplit)
-            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genTauFromW==1&&genEleFromW+genMuFromW==0', '1', False,
+            bkgSamples['TTbar1Tau']  = sampleContainerPhibb('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 
+                                                            'genTauFromW==1&&genEleFromW+genMuFromW==0', False,
                                                             iSplit = options.iSplit, maxSplit = options.maxSplit)
-            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==0', '1', False,
+            bkgSamples['TTbar0Lep']  = sampleContainerPhibb('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 
+                                                            'genMuFromW+genEleFromW+genTauFromW==0', False,
                                                             iSplit = options.iSplit, maxSplit = options.maxSplit)
-            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 'genMuFromW+genEleFromW+genTauFromW==2', '1', False,
+            bkgSamples['TTbar2Lep']  = sampleContainerPhibb('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, 
+                                                            'genMuFromW+genEleFromW+genTauFromW==2',  False,
                                                             iSplit = options.iSplit, maxSplit = options.maxSplit)
         else:        
-           bkgSamples['TTbar']  = sampleContainerPhibb('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, '1', False)
+            bkgSamples['TTbar']  = sampleContainerPhibb('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi, False, fillCA15, '1', False, 
+                                                       iSplit = options.iSplit, maxSplit = options.maxSplit)
         bkgSamples['SingleTop'] = sampleContainerPhibb('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
                                                        iSplit = options.iSplit, maxSplit = options.maxSplit)
         bkgSamples['Diboson'] = sampleContainerPhibb('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
@@ -441,6 +448,7 @@ def main(options,args,outputExists):
     else:        
         sigSamples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','DY','Hbb']                      
+
         if isData and muonCR:
             bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
         else:        
