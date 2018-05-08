@@ -673,8 +673,12 @@ class sampleContainerPhibb:
         print maxEvent, " max event"
         nentPerJob = maxEvent-minEvent
         print nentPerJob, " nentPerJob"
-        
-        self._tt.LoadTree(minEvent)
+        print 'load tree 0'
+        self._tt.LoadTree(0)
+        print 'get entry 0'
+        self._tt.GetEntry(0)
+        #print 'load tree minEvent'
+        #self._tt.LoadTree(minEvent)
         self._tt.SetNotify(self._cutFormula)
         print self._tt.GetFile()
         print self._tt.GetEntryNumber(minEvent)
