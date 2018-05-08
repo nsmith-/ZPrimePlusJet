@@ -316,7 +316,9 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv','h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts','h_Cuts_p','h_n2b1sd','h_n2b1sd_norhocut','h_n2b1sdddt_norhocut']
+        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv', 'h_pv_nopu',
+                 'h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts','h_Cuts_p',
+                 'h_n2b1sd','h_n2b1sd_norhocut','h_n2b1sdddt_norhocut']
     else:
         plots = []
         testSample = sampleContainerPhibb('test',[], 1, DBTMIN,lumi)
@@ -361,7 +363,7 @@ def main(options,args,outputExists):
                                                  iSplit = options.iSplit, maxSplit = options.maxSplit)
         bkgSamples['QCD'] = sampleContainerPhibb('QCD',tfiles['QCD'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
                                                  iSplit = options.iSplit, maxSplit = options.maxSplit)
-        bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb']  , 1, DBTMIN,lumi, False, fillCA15, '1', False,
+        bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
                                                   iSplit = options.iSplit, maxSplit = options.maxSplit)
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainerPhibb('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
