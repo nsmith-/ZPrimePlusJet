@@ -304,6 +304,7 @@ class sampleContainerPhibb:
         # define histograms
         histos1d = {            
             'h_npv': ["h_" + self._name + "_npv", ";number of PV;", 100, 0, 100],
+            'h_npv_nopu': ["h_" + self._name + "_npv_nopu", ";number of PV;", 100, 0, 100],
             'h_pt_mu_muCR4_N2': ["h_" + self._name + "_pt_mu_muCR4_N2", "; leading muon p_{T} (GeV);", 50, 30, 500],
             'h_eta_mu_muCR4_N2': ["h_" + self._name + "_eta_mu_muCR4_N2", "; leading muon #eta;", 50, -2.5, 2.5],
             'h_pt_muCR4_N2': ["h_" + self._name + "_pt_muCR4_N2", "; " + self._jet_type + " leading p_{T} (GeV);", 50, 300, 2100],
@@ -507,7 +508,7 @@ class sampleContainerPhibb:
         msd_binBoundaries = []
         for i in range(0, 81):
             msd_binBoundaries.append(40. + i * 7)
-        print(msd_binBoundaries)
+        #print(msd_binBoundaries)
         pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
 
         histos2d_fix = {
@@ -681,13 +682,13 @@ class sampleContainerPhibb:
             if i % self._sf != 0: continue
 
             #self._tt.LoadEntry(i)
-            print i
+            #print i
             self._tt.LoadTree(i)
-            print self._tt.GetEntryNumber(i)
-            print self._tt.GetFile()
-            print "before get entry"
+            #print self._tt.GetEntryNumber(i)
+            #print self._tt.GetFile()
+            #print "before get entry"
             self._tt.GetEntry(i)
-            print "after get entry"
+            #print "after get entry"
             selected = False
             for j in range(self._cutFormula.GetNdata()):
                 if (self._cutFormula.EvalInstance(j)):
@@ -742,6 +743,7 @@ class sampleContainerPhibb:
                 trigweightUp = 1
 
             weight = puweight * fbweight * self._sf * vjetsKF * trigweight
+            weight_nopu = fbweight * self._sf * vjetsKF * trigweight
             weight_triggerUp = puweight * fbweight * self._sf * vjetsKF * trigweightUp
             weight_triggerDown = puweight * fbweight * self._sf * vjetsKF * trigweightDown
             weight_pu_up = puweight_up * fbweight * self._sf * vjetsKF * trigweight
@@ -954,6 +956,7 @@ class sampleContainerPhibb:
             vmuoLoose0_phi = self.vmuoLoose0_phi[0]
 
             self.h_npv.Fill(self.npv[0], weight)
+            self.h_npv_nopu.Fill(self.npv[0], weight_nopu)
 
             # gen-matching for scale/smear systematic
             dphi = 9999.
