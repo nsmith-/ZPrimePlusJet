@@ -530,6 +530,13 @@ class RhalphabetBuilder():
         self._all_vars.extend([lPt,lRho,lRhoPol])
         return lRhoPol
 
+	def generate_bernstein_string(self, n):
+		# x = @(n+1)
+		monomials = []
+		for v in xrange(0, n+1):
+			monomials.append("@{} * (@{}**{}) * ((1.-@{})**{})".format(v, n+1, v, n+1, n-v))
+		return " + ".join(monomials)
+
     def buildRooPolyRhoArrayBernstein(self, iPt, iRho, iQCD, iZero, iVars):
 
         print "---- [buildRooPolyArrayBernstein]"
@@ -543,31 +550,8 @@ class RhalphabetBuilder():
                                       "Var_Rho_rescaled_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)),
                                       ((iRho - self._rho_lo) / (self._rho_hi - self._rho_lo)))
 
-        if self._poly_degree_pt == 1:
-            ptPolyString = "@0*(1-@2)+@1*@2"
-        elif self._poly_degree_pt == 2:
-            ptPolyString = "@0*(1-@3)**2+@1*2*@3*(1-@3)+@2*@3**2"
-        elif self._poly_degree_pt == 3:
-            ptPolyString = "(@0*(1-@4)**3)+(@1*3*@4*(1-@4)**2)+(@2*3*(@4**2)*(1-@4))+(@3*(@4**3))"
-        elif self._poly_degree_pt == 4:
-            ptPolyString = "(@0*(1-@5)**4)+(@1*4*@5*(1-@5)**3)+(@2*6*(@5**2)*(1-@5)**2)+(@3*4*(@5**3)*(1-@5))+@4*@5**4"
-        elif self._poly_degree_pt == 5:
-            ptPolyString = "(@0*(1-@6)**5)+(@1*5*@6*(1-@6)**4)+(@2*10*(@6**2)*(1-@6)**3)+(@3*10*(@6**3)*(1-@6)**2)+(@4*5*(@6**4)*(1-@6))+@5*@6**5"
-        elif self._poly_degree_pt == 6:
-            ptPolyString = "(@0*(1-@7)**6)+(@1*6*@7*(1-@7)**5)+(@2*15*(@7**2)*(1-@7)**4)+(@3*20*(@7**3)*(1-@7)**3)+(@4*15*(@7**4)*(1-@7)**2)+@5*6*(@7**5)*(1-@7)+@6*@7**6"
-
-        if self._poly_degree_rho == 1:
-            rhoPolyString = "@0*(1-@2)+@1*@2"
-        elif self._poly_degree_rho == 2:
-            rhoPolyString = "(@0*(1-@3)**2)+(@1*2*@3*(1-@3))+@2*@3**2"
-        elif self._poly_degree_rho == 3:
-            rhoPolyString = "(@0*(1-@4)**3)+(@1*3*@4*(1-@4)**2)+(@2*3*(@4**2)*(1-@4))+(@3*(@4**3))"
-        elif self._poly_degree_rho == 4:
-            rhoPolyString = "(@0*(1-@5)**4)+(@1*4*@5*(1-@5)**3)+(@2*6*(@5**2)*(1-@5)**2)+(@3*4*(@5**3)*(1-@5))+@4*@5**4"
-        elif self._poly_degree_rho == 5:
-            rhoPolyString = "(@0*(1-@6)**5)+(@1*5*@6*(1-@6)**4)+(@2*10*(@6**2)*(1-@6)**3)+(@3*10*(@6**3)*(1-@6)**2)+(@4*5*(@6**4)*(1-@6))+@5*@6**5"
-        elif self._poly_degree_rho == 6:
-            rhoPolyString = "(@0*(1-@7)**6)+(@1*6*@7*(1-@7)**5)+(@2*15*(@7**2)*(1-@7)**4)+(@3*20*(@7**3)*(1-@7)**3)+(@4*15*(@7**4)*(1-@7)**2)+@5*6*(@7**5)*(1-@7)+@6*@7**6"
+		ptPolyString = self.generate_bernstein_string(self._poly_degree_pt)
+		rhoPolyString = self.generate_bernstein_string(self._poly_degree_rho)
 
         lRhoArray = r.RooArgList()
         lNCount = 0
