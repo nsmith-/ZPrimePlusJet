@@ -534,7 +534,8 @@ class RhalphabetBuilder():
 		# x = @(n+1)
 		monomials = []
 		for v in xrange(0, n+1):
-			monomials.append("@{} * (@{}**{}) * ((1.-@{})**{})".format(v, n+1, v, n+1, n-v))
+			normalization = math.factorial(n) / (math.factorial(v) * math.factorial(n - v))
+			monomials.append("({} * @{} * (@{}**{}) * ((1.-@{})**{}))".format(normalization, v, n+1, v, n+1, n-v))
 		return " + ".join(monomials)
 
     def buildRooPolyRhoArrayBernstein(self, iPt, iRho, iQCD, iZero, iVars):
