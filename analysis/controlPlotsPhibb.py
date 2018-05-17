@@ -328,9 +328,9 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
-        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv', 'h_npv_nopu',
-                 'h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts','h_Cuts_p',
-                 'h_n2b1sd','h_n2b1sd_norhocut','h_n2b1sdddt_norhocut']
+        #plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv', 'h_npv_nopu',
+        #         'h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts','h_Cuts_p',
+        #         'h_n2b1sd','h_n2b1sd_norhocut','h_n2b1sdddt_norhocut']
             
     if not outputExists: 
         if options.skipQCD:
