@@ -633,7 +633,8 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
     for process, s in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()): 
          i+=1
          if i==1:
-		s.SetMaximum(1.5*maxval)
+		#s.SetMaximum(1.5*maxval)
+		s.SetMaximum(10.*1.5*maxval)
          	s.SetMinimum(0.01)
 	 	if unitnorm : 
 			s.SetMaximum(100.)
@@ -951,8 +952,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 
     count=1
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        if count <7: 
-                leg.AddEntry(h,legname[name],"f")
+        #if count <7: 
+        leg.AddEntry(h,legname[name],"f")
         #print " count : ",count, "Name : ", h.GetName(); 
         count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):

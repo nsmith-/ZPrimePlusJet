@@ -328,10 +328,17 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
+        plots = ['h_pt','h_msd','h_dbtag','h_n_ak4','h_n_ak4_dR0p8','h_t21','h_t32','h_n2b1sdddt','h_t21ddt','h_met','h_npv', 'h_npv_nopu',
+                 'h_eta','h_ht','h_dbtag_aftercut','h_n2b1sdddt_aftercut','h_rho', 'h_rho_nocut', 'h_msd_nocut','h_Cuts','h_Cuts_p',
+                 'h_n2b1sd','h_n2b1sd_norhocut','h_n2b1sdddt_norhocut']
             
     if not outputExists: 
-        samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500',
-                   'QCD','SingleTop','Diboson','W','DY','TTbar','Hbb']
+        if options.skipQCD:
+            samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500',
+                       'SingleTop','Diboson','W','DY','TTbar','Hbb']
+        else:
+            samples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500',
+                       'QCD','SingleTop','Diboson','W','DY','TTbar','Hbb']
 #        for s in samples:
 #            for tfile in tfiles[s]:
 #                if not os.path.isfile(tfile):
@@ -361,8 +368,9 @@ def main(options,args,outputExists):
                                                 iSplit = options.iSplit, maxSplit = options.maxSplit)
         bkgSamples['DY']  = sampleContainerPhibb('DY',tfiles['DY'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
                                                  iSplit = options.iSplit, maxSplit = options.maxSplit)
-        bkgSamples['QCD'] = sampleContainerPhibb('QCD',tfiles['QCD'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
-                                                 iSplit = options.iSplit, maxSplit = options.maxSplit)
+        if not options.skipQCD: 
+            bkgSamples['QCD'] = sampleContainerPhibb('QCD',tfiles['QCD'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
+                                                     iSplit = options.iSplit, maxSplit = options.maxSplit)
         bkgSamples['Hbb']  = sampleContainerPhibb('Hbb',tfiles['Hbb'], 1, DBTMIN,lumi, False, fillCA15, '1', False,
                                                   iSplit = options.iSplit, maxSplit = options.maxSplit)
         if isData and muonCR:
@@ -449,7 +457,10 @@ def main(options,args,outputExists):
         ofile.Close()
     else:        
         sigSamples = ['Phibb50','Phibb100','Phibb125','Phibb200','Phibb300','Phibb350','Phibb400','Phibb500']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','DY','Hbb']                      
+        if options.skipQCD:
+            bkgSamples = ['SingleTop','Diboson','W','DY','Hbb']                      
+        else:
+            bkgSamples = ['QCD','SingleTop','Diboson','W','DY','Hbb']                      
 
         if isData and muonCR:
             bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
@@ -490,6 +501,7 @@ if __name__ == '__main__':
     parser.add_option('-c','--fillCA15', action='store_true', dest='fillCA15', default =False,help='for CA15', metavar='fillCA15')
     parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
     parser.add_option("--i-split", dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
+    parser.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skipQCD')
 
     (options, args) = parser.parse_args()
 
