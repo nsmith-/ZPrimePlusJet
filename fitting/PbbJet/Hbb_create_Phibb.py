@@ -280,57 +280,57 @@ def main(options, args):
     print "Signals... "
     sigSamples = {}
     #if not options.skipMC:
-    if True:
-        #sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb50'] = sampleContainerPhibb('DMPSbb50',tfiles['DMPSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb100'] = sampleContainerPhibb('DMPSbb100',tfiles['DMPSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb125'] = sampleContainerPhibb('DMPSbb125',tfiles['DMPSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb200'] = sampleContainerPhibb('DMPSbb200',tfiles['DMPSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb300'] = sampleContainerPhibb('DMPSbb300',tfiles['DMPSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb350'] = sampleContainerPhibb('DMPSbb350',tfiles['DMPSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb400'] = sampleContainerPhibb('DMPSbb400',tfiles['DMPSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        #sigSamples['DMPSbb500'] = sampleContainerPhibb('DMPSbb500',tfiles['DMPSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq75'] = sampleContainerPhibb('Zpqq75',tfiles['Zpqq75'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq125'] = sampleContainerPhibb('Zpqq125',tfiles['Zpqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq150'] = sampleContainerPhibb('Zpqq150',tfiles['Zpqq150'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq175'] = sampleContainerPhibb('Zpqq175',tfiles['Zpqq175'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq225'] = sampleContainerPhibb('Zpqq225',tfiles['Zpqq225'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq250'] = sampleContainerPhibb('Zpqq250',tfiles['Zpqq250'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq300'] = sampleContainerPhibb('Zpqq300',tfiles['Zpqq300'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq400'] = sampleContainerPhibb('Zpqq400',tfiles['Zpqq400'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        sigSamples['Zpqq500'] = sampleContainerPhibb('Zpqq500',tfiles['Zpqq500'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    if False:
+        sigSamples['DMSbb50'] = sampleContainerPhibb('DMSbb50',tfiles['DMSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb100'] = sampleContainerPhibb('DMSbb100',tfiles['DMSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb125'] = sampleContainerPhibb('DMSbb125',tfiles['DMSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb200'] = sampleContainerPhibb('DMSbb200',tfiles['DMSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb300'] = sampleContainerPhibb('DMSbb300',tfiles['DMSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb350'] = sampleContainerPhibb('DMSbb350',tfiles['DMSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb400'] = sampleContainerPhibb('DMSbb400',tfiles['DMSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMSbb500'] = sampleContainerPhibb('DMSbb500',tfiles['DMSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb50'] = sampleContainerPhibb('DMPSbb50',tfiles['DMPSbb50'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb100'] = sampleContainerPhibb('DMPSbb100',tfiles['DMPSbb100'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb125'] = sampleContainerPhibb('DMPSbb125',tfiles['DMPSbb125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb200'] = sampleContainerPhibb('DMPSbb200',tfiles['DMPSbb200'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb300'] = sampleContainerPhibb('DMPSbb300',tfiles['DMPSbb300'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb350'] = sampleContainerPhibb('DMPSbb350',tfiles['DMPSbb350'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb400'] = sampleContainerPhibb('DMPSbb400',tfiles['DMPSbb400'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['DMPSbb500'] = sampleContainerPhibb('DMPSbb500',tfiles['DMPSbb500'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq75'] = sampleContainerPhibb('Zpqq75',tfiles['Zpqq75'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq125'] = sampleContainerPhibb('Zpqq125',tfiles['Zpqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq150'] = sampleContainerPhibb('Zpqq150',tfiles['Zpqq150'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq175'] = sampleContainerPhibb('Zpqq175',tfiles['Zpqq175'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq225'] = sampleContainerPhibb('Zpqq225',tfiles['Zpqq225'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq250'] = sampleContainerPhibb('Zpqq250',tfiles['Zpqq250'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq300'] = sampleContainerPhibb('Zpqq300',tfiles['Zpqq300'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq400'] = sampleContainerPhibb('Zpqq400',tfiles['Zpqq400'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        sigSamples['Zpqq500'] = sampleContainerPhibb('Zpqq500',tfiles['Zpqq500'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
     
     print "Backgrounds..."
     bkgSamples = {}
-    if not options.skipMC:
-        bkgSamples['wqq'] = sampleContainerPhibb('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['zqq'] = sampleContainerPhibb('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+    #if not options.skipMC:
+    #    bkgSamples['wqq'] = sampleContainerPhibb('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+    #    bkgSamples['zqq'] = sampleContainerPhibb('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
     if not options.skipQCD and not options.skipMC:
-        bkgSamples['qcd'] = sampleContainerPhibb('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['qcd'] = sampleContainerPhibb('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
     if not options.skipMC:
-        bkgSamples['tqq'] = sampleContainerPhibb('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['stqq'] = sampleContainerPhibb('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['wlnu'] = sampleContainerPhibb('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['zll'] = sampleContainerPhibb('zll', tfiles['zll'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['vvqq'] = sampleContainerPhibb('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['hqq125'] = sampleContainerPhibb('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['tthqq125'] = sampleContainerPhibb('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['vbfhqq125'] = sampleContainerPhibb('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['whqq125'] = sampleContainerPhibb('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
-        bkgSamples['zhqq125'] = sampleContainerPhibb('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False)
+        bkgSamples['tqq'] = sampleContainerPhibb('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['stqq'] = sampleContainerPhibb('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['wlnu'] = sampleContainerPhibb('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['zll'] = sampleContainerPhibb('zll', tfiles['zll'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['vvqq'] = sampleContainerPhibb('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['hqq125'] = sampleContainerPhibb('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['tthqq125'] = sampleContainerPhibb('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['vbfhqq125'] = sampleContainerPhibb('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['whqq125'] = sampleContainerPhibb('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        #bkgSamples['zhqq125'] = sampleContainerPhibb('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, fillCA15, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
 
 
     print "Data..."
     if not options.skipData:
         if muonCR:
-            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&4)&&passJson)', False)
+            dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&4)&&passJson)', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         else:
             dataSample = sampleContainerPhibb('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, fillCA15, '((triggerBits&2)&&passJson)', False, iSplit = options.iSplit, maxSplit = options.maxSplit)
 

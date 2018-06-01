@@ -714,8 +714,8 @@ class sampleContainerPhibb:
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             # print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
-            # if self._name=='tqq' or 'TTbar' in self._name:
-            #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
+            if self._name=='tqq' or 'TTbar' in self._name:
+                fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
             vjetsKF = 1.
 	    wscale=[1.0,1.0,1.0,1.20,1.25,1.25,1.0]
 	    ptscale=[0, 500, 600, 700, 800, 900, 1000,3000]
