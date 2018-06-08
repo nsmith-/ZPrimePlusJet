@@ -278,12 +278,12 @@ def main(options, args):
 
     [histograms_pass_summed_list] = makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[10],
                                                     histograms_pass_summed_list[4:9], histograms_pass_summed_list[9], shapes,
-                                                    "pass_allcats_" + options.fit, options.odir, rBestFit,
-                                                    options.sOverSb, options.splitS, options.ratio)
+                                                    "pass_allcats_" + options.fit, options.odir, rBestFit=rBestFit,
+                                                    sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=options.fit)
     [histograms_fail_summed_list] = makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[10],
                                                     histograms_fail_summed_list[4:9], histograms_pass_summed_list[9], shapes,
-                                                    "fail_allcats_" + options.fit, options.odir, rBestFit,
-                                                    options.sOverSb, options.splitS, options.ratio)
+                                                    "fail_allcats_" + options.fit, options.odir, rBestFit=rBestFit,
+                                                    sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=options.fit)
 
 
 def plotCategory(fml, fd, index, fittype):
@@ -343,11 +343,11 @@ def plotCategory(fml, fd, index, fittype):
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
     [histograms_fail] = makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-2], histograms_fail[-2],  shapes,
-                                        "fail_cat" + str(index) + "_" + fittype, options.odir, rBestFit,
-                                        options.sOverSb, options.splitS, options.ratio)
+                                        "fail_cat" + str(index) + "_" + fittype, options.odir, rBestFit=rBestFit,
+                                        sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=fittype)
     [histograms_pass] = makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-2], histograms_pass[-2], shapes,
                                         "pass_cat" + str(index) + "_" + fittype, options.odir, rBestFit,
-                                        options.sOverSb, options.splitS, options.ratio)
+                                        sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=fittype)
 
     return (histograms_pass, histograms_fail)
 
@@ -372,7 +372,7 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
     return [bkgs, data, hsigs, weight]
 
 
-def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1, sOverSb=False, splitS=True, ratio=False):
+def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1, sOverSb=False, splitS=True, ratio=False, fittype='fit_s'):
     weight = 1
     #print " Back : ",  bkgs, " Data : ", data, " Sig : ", hhigs 
     if sOverSb:
@@ -456,7 +456,8 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     else:
         l.AddEntry(hsig, "H(b#bar{b})", "lf")
     l.AddEntry(htot, "Total background", "lf")
-    l.AddEntry(hphi, "%s %s"%(options.model, options.mass),"lf")
+    if fittype != 'fit_b':
+        l.AddEntry(hphi, "%s %s"%(options.model, options.mass),"lf")
     # l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
 
     l.AddEntry(data, "Data", "pe")
@@ -544,7 +545,8 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     tag2.SetNDC()
     tag2.SetTextFont(62)
     if options.isData:
-        tag3 = r.TLatex(0.2, 0.77, "Preliminary")
+        #tag3 = r.TLatex(0.2, 0.77, "Preliminary")
+        tag3 = r.TLatex(0.2, 0.77, "")
     else:
         tag3 = r.TLatex(0.2, 0.77, "Simulation Preliminary")
     ptRange = [options.ptMin, 1000]
@@ -563,11 +565,14 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     elif 'cat6' in tag:
         ptRange = [800, 1000]
         
-    passTag = 'double-b tagger'
+    #passTag = 'double-b tagger'
     passTag2 = 'passing region'
+    passTag = 'passing region'
     if 'fail' in tag:
-        passTag = 'double-b tagger'
+        #passTag = 'double-b tagger'
         passTag2 = 'failing region'
+        passTag = 'failing region'
+
 
     #tag4 = r.TLatex(0.37, 0.77, "#splitline{%i < p_{T} < %i GeV}{%s}"%(ptRange[0],ptRange[1],passTag))
     tag4 = r.TLatex(0.34, 0.81, "%i < p_{T} < %i GeV"%(ptRange[0],ptRange[1]))
@@ -591,6 +596,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     tag3.Draw()
     tag4.Draw()
     tag4b.Draw()
+    #tag4c.Draw()
     data.SetMaximum(data.GetMaximum() * 1.2)
 
     c.cd()
@@ -895,7 +901,8 @@ def makeTF(pars, ratio):
     tag2.SetNDC()
     tag2.SetTextFont(62)
     if options.isData:
-        tag3 = r.TLatex(0.25, 0.92, "Preliminary")
+        #tag3 = r.TLatex(0.25, 0.92, "Preliminary")
+        tag3 = r.TLatex(0.25, 0.92, "")
     else:
         tag3 = r.TLatex(0.25, 0.92, "Simulation Preliminary")
     tag3.SetNDC()
@@ -1024,7 +1031,8 @@ def makeTF(pars, ratio):
     tag2 = r.TLatex(0.15,0.92,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    #tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3 = r.TLatex(0.25,0.92,"")
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
@@ -1055,7 +1063,8 @@ def makeTF(pars, ratio):
     tag2 = r.TLatex(0.15,0.92,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    #tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3 = r.TLatex(0.25,0.92,"")
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
@@ -1112,7 +1121,8 @@ def makeTF(pars, ratio):
     tag2 = r.TLatex(0.15,0.92,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    #tag3 = r.TLatex(0.25,0.92,"Preliminary")
+    tag3 = r.TLatex(0.25,0.92,"")
     tag3.SetNDC()
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.055)
