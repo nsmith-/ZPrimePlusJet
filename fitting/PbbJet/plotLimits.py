@@ -9,7 +9,8 @@ from runCombine import massIterable
 
 # CMS style
 CMS_lumi.cmsText = "CMS"
-CMS_lumi.extraText = "Preliminary"
+#CMS_lumi.extraText = "Preliminary"
+CMS_lumi.extraText = ""
 CMS_lumi.cmsTextSize = 0.65
 CMS_lumi.outOfFrame = True
 tdrstyle.setTDRStyle()
@@ -18,10 +19,11 @@ massSwitch = 175
 def setDict():
     sample_xsec = {} # cross section used to normalize sample (in combine)
     theory_xsec = {} # real theory cross section to compare (no BR)
+    theory_inclusive_xsec = {} # inclusive theory cross section to compare (no BR)
     br = {} # branching ratio to bb
     legend_entry = {}
-    legend_entry['DMSbb'] = 'gg#Phi, g_{q\Phi}=1, H_{T}>400 GeV'
-    legend_entry['DMPSbb'] = 'ggA, g_{qA}=1, H_{T}>400 GeV'
+    legend_entry['DMSbb'] = 'gg#rightarrow#Phi, g_{q#Phi}=1'
+    legend_entry['DMPSbb'] = 'gg#rightarrowA, g_{qA}=1'
     legend_entry['Zpqq'] = "Z', g_{q}=1, H_{T}>500 GeV"
     
     sample_xsec['DMSbb'] = rt.TGraph(8)
@@ -43,6 +45,27 @@ def setDict():
     theory_xsec['DMSbb'].SetPoint(5, 350, 1.275e-02)
     theory_xsec['DMSbb'].SetPoint(6, 400, 1.144e-02)
     theory_xsec['DMSbb'].SetPoint(7, 500, 7.274e-03)
+
+    theory_inclusive_xsec['DMSbb'] = rt.TGraph(19)
+    theory_inclusive_xsec['DMSbb'].SetPoint(0, 50, 54.07)
+    theory_inclusive_xsec['DMSbb'].SetPoint(1, 75, 27.36)
+    theory_inclusive_xsec['DMSbb'].SetPoint(2, 100, 17.54)
+    theory_inclusive_xsec['DMSbb'].SetPoint(3, 125, 12.4)
+    theory_inclusive_xsec['DMSbb'].SetPoint(4, 150, 9.254)
+    theory_inclusive_xsec['DMSbb'].SetPoint(5, 175, 7.217)
+    theory_inclusive_xsec['DMSbb'].SetPoint(6, 200, 5.843)
+    theory_inclusive_xsec['DMSbb'].SetPoint(7, 225, 4.871)
+    theory_inclusive_xsec['DMSbb'].SetPoint(8, 250, 4.177)
+    theory_inclusive_xsec['DMSbb'].SetPoint(9, 275, 3.676)
+    theory_inclusive_xsec['DMSbb'].SetPoint(10, 300, 3.385)
+    theory_inclusive_xsec['DMSbb'].SetPoint(11, 325, 3.239)
+    theory_inclusive_xsec['DMSbb'].SetPoint(12, 350, 3.398)
+    theory_inclusive_xsec['DMSbb'].SetPoint(13, 375, 3.162)
+    theory_inclusive_xsec['DMSbb'].SetPoint(14, 400, 2.651)
+    theory_inclusive_xsec['DMSbb'].SetPoint(15, 425, 2.097)
+    theory_inclusive_xsec['DMSbb'].SetPoint(16, 450, 1.651)
+    theory_inclusive_xsec['DMSbb'].SetPoint(17, 475, 1.291)
+    theory_inclusive_xsec['DMSbb'].SetPoint(18, 500, 1.018)
     
     br_list = [[50, 0.85644], [55, 0.856044], [60, 0.855345], [65, 0.854398], [70, 
   0.853242], [75, 0.851899], [80, 0.850389], [85, 0.848721], [90, 
@@ -94,6 +117,27 @@ def setDict():
     theory_xsec['DMPSbb'].SetPoint(6, 400, 2.499e-02)
     theory_xsec['DMPSbb'].SetPoint(7, 500, 1.264e-02)
 
+    theory_inclusive_xsec['DMPSbb'] = rt.TGraph(19)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(0, 50, 111.8)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(1, 75, 62.3)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(2, 100, 41.26)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(3, 125, 29.56)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(4, 150, 22.42)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(5, 175, 17.71)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(6, 200, 14.62)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(7, 225, 12.57)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(8, 250, 11.18)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(9, 275, 10.47)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(10, 300, 10.47)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(11, 325, 11.92)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(12, 350, 12.16)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(13, 375, 7.725)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(14, 400, 5.296)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(15, 425, 3.745)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(16, 450, 2.733)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(17, 475, 2.005)
+    theory_inclusive_xsec['DMPSbb'].SetPoint(18, 500, 1.528)
+
     br_list = [[50, 0.852511], [55, 0.850153], [60, 0.847484], [65, 0.844523], [70, 
   0.841283], [75, 0.837772], [80, 0.833996], [85, 0.82996], [90, 
   0.825665], [95, 0.821115], [100, 0.816311], [105, 0.811255], [110, 
@@ -133,37 +177,38 @@ def setDict():
     #theory_xsec['Zpqq'].SetPoint(4, 250, 2.2*18.5)
     #theory_xsec['Zpqq'].SetPoint(5, 300, 2.2*16.03)
 
-    theory_xsec['Zpqq'] = rt.TGraph(15)
-    theory_xsec['Zpqq'].SetPoint(0,  50, 2.*1.604E+01)
-    theory_xsec['Zpqq'].SetPoint(1,  75, 2.*1.614E+01)
-    theory_xsec['Zpqq'].SetPoint(2, 100, 2.*1.541E+01)
-    theory_xsec['Zpqq'].SetPoint(3, 115, 2.*1.436E+01)
-    theory_xsec['Zpqq'].SetPoint(4, 125, 2.*1.476E+01)
-    theory_xsec['Zpqq'].SetPoint(5, 150, 2.*1.493E+01)
-    theory_xsec['Zpqq'].SetPoint(6, 175, 2.*1.492E+01)
-    theory_xsec['Zpqq'].SetPoint(7, 200, 2.*1.423E+01)
-    theory_xsec['Zpqq'].SetPoint(8, 225, 2.*1.446E+01)
-    theory_xsec['Zpqq'].SetPoint(9, 250, 2.*1.418E+01)
-    theory_xsec['Zpqq'].SetPoint(10,300, 2.*1.486E+01)
-    theory_xsec['Zpqq'].SetPoint(11,350, 2.*1.610E+01)
-    theory_xsec['Zpqq'].SetPoint(12,400, 2.*1.877E+01)
-    theory_xsec['Zpqq'].SetPoint(13,450, 2.*2.556E+01)
-    theory_xsec['Zpqq'].SetPoint(14,500, 2.*4.826E+01)
+    theory_xsec['Zpqq'] = rt.TGraph(15) # HT > 500
+    theory_xsec['Zpqq'].SetPoint(0,  50, 2.065*1.604E+01)
+    theory_xsec['Zpqq'].SetPoint(1,  75, 2.065*1.614E+01)
+    theory_xsec['Zpqq'].SetPoint(2, 100, 2.065*1.541E+01)
+    theory_xsec['Zpqq'].SetPoint(3, 115, 2.065*1.436E+01)
+    theory_xsec['Zpqq'].SetPoint(4, 125, 2.065*1.476E+01)
+    theory_xsec['Zpqq'].SetPoint(5, 150, 2.065*1.493E+01)
+    theory_xsec['Zpqq'].SetPoint(6, 175, 2.065*1.492E+01)
+    theory_xsec['Zpqq'].SetPoint(7, 200, 2.065*1.423E+01)
+    theory_xsec['Zpqq'].SetPoint(8, 225, 2.065*1.446E+01)
+    theory_xsec['Zpqq'].SetPoint(9, 250, 2.065*1.418E+01)
+    theory_xsec['Zpqq'].SetPoint(10,300, 2.065*1.486E+01)
+    theory_xsec['Zpqq'].SetPoint(11,350, 2.065*1.610E+01)
+    theory_xsec['Zpqq'].SetPoint(12,400, 2.065*1.877E+01)
+    theory_xsec['Zpqq'].SetPoint(13,450, 2.065*2.556E+01)
+    theory_xsec['Zpqq'].SetPoint(14,500, 2.065*4.826E+01)
 
     sample_xsec['Zpqq'] = theory_xsec['Zpqq']
 
-    br['Zpqq'] = rt.TGraph(9)
+    br['Zpqq'] = rt.TGraph(10)
     br['Zpqq'].SetPoint(0,  50, 0.2)
     br['Zpqq'].SetPoint(1, 100, 0.2)
     br['Zpqq'].SetPoint(2, 150, 0.2)
     br['Zpqq'].SetPoint(3, 200, 0.2)
     br['Zpqq'].SetPoint(4, 250, 0.2)
     br['Zpqq'].SetPoint(5, 300, 0.2)
-    br['Zpqq'].SetPoint(6, 350, 1./6)
-    br['Zpqq'].SetPoint(7, 400, 1./6)
-    br['Zpqq'].SetPoint(8, 500, 1./6)
+    br['Zpqq'].SetPoint(6, 325, 0.2)
+    br['Zpqq'].SetPoint(7, 350, 1./6)
+    br['Zpqq'].SetPoint(8, 400, 1./6)
+    br['Zpqq'].SetPoint(9, 500, 1./6)
 
-    return theory_xsec, sample_xsec, br, legend_entry
+    return theory_xsec, theory_inclusive_xsec, sample_xsec, br, legend_entry
 
 
 # GET limits from root file
@@ -200,7 +245,7 @@ def getLimits(file_name):
 
 # PLOT upper limits
 def plotUpperLimits(options,args):
-    theory_xsec, sample_xsec, br, legend_entry = setDict()
+    theory_xsec, theory_inclusive_xsec, sample_xsec, br, legend_entry = setDict()
     # see CMS plot guidelines: https://ghm.web.cern.ch/ghm/plots/
     all_masses = massIterable(options.masses)
     masses = []
@@ -251,8 +296,13 @@ def plotUpperLimits(options,args):
         if options.xsec or options.gq or options.gqZp:
             fac = sample_xsec[options.model].Eval(mass,0,'S')
             if options.gqZp: 
-                theory = theory_xsec['Zpqq'].Eval(mass,0,'S') * br['Zpqq'].Eval(mass,0,'S')
-            else: 
+                theory = theory_xsec['Zpqq'].Eval(mass,0,'S') * br['Zpqq'].Eval(mass,0,'S') * 2.2 * 4. * 4. #sigma(HT>400) = 2.2 * sigma(HT>500) and multiply by 4^2 (g_q = 0.25)
+            elif options.model=='Zpqq':
+                print 'Zpqq'
+                theory = theory_xsec[options.model].Eval(mass,0,'S')
+                if options.gq:
+                    theory = theory * 4. * 4.
+            else:
                 theory = theory_xsec[options.model].Eval(mass,0,'S') * br[options.model].Eval(mass,0,'S')
         else:
             fac = 1
@@ -264,15 +314,18 @@ def plotUpperLimits(options,args):
             yellow.SetPoint( 2*N-1-i, mass, math.sqrt(limit[0]*fac/theory)) # - 2 sigma
             if len(limit)>5:
                 obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/theory)) # observed
-        else:
-            yellow.SetPoint(    i,    mass, limit[4] * fac ) # + 2 sigma
-            green.SetPoint(     i,    mass, limit[3] * fac ) # + 1 sigma
-            median.SetPoint(    i,    mass, limit[2] * fac ) # median
-            green.SetPoint(  2*N-1-i, mass, limit[1] * fac ) # - 1 sigma
-            yellow.SetPoint( 2*N-1-i, mass, limit[0] * fac ) # - 2 sigma
+                print "observed limit", mass, math.sqrt(limit[5]*fac/theory)
+        elif options.xsec:
+            # scale up by inclusive xsec / xsec ratio
+            theoryRatio = theory_inclusive_xsec[options.model].Eval(mass,0,'S') / theory_xsec[options.model].Eval(mass,0,'S')
+            yellow.SetPoint(    i,    mass, limit[4] * fac * theoryRatio ) # + 2 sigma
+            green.SetPoint(     i,    mass, limit[3] * fac * theoryRatio ) # + 1 sigma
+            median.SetPoint(    i,    mass, limit[2] * fac * theoryRatio ) # median
+            green.SetPoint(  2*N-1-i, mass, limit[1] * fac * theoryRatio ) # - 1 sigma
+            yellow.SetPoint( 2*N-1-i, mass, limit[0] * fac * theoryRatio ) # - 2 sigma
             if len(limit)>5:
-                obs.SetPoint(       i,    mass, limit[5] * fac) # observed
-        print mass,  limit[2]*fac
+                obs.SetPoint(       i,    mass, limit[5] * fac * theoryRatio) # observed
+                print "observed limit", mass, limit[5] * fac * theoryRatio
             
 
     W = 800
@@ -365,12 +418,13 @@ def plotUpperLimits(options,args):
         #obs.Draw('PLsame')
         obs.Draw('Csame')
 
-    theory_xsec[options.model].SetMarkerStyle(20)
-    theory_xsec[options.model].SetLineColor(rt.kBlue+2)
-    theory_xsec[options.model].SetLineWidth(2)
-    #theory_xsec[options.model].SetLineStyle(2)
+        
     if options.xsec:
-        theory_xsec[options.model].Draw('Csame')
+        theory_inclusive_xsec[options.model].SetMarkerStyle(20)
+        theory_inclusive_xsec[options.model].SetLineColor(rt.kBlue+2)
+        theory_inclusive_xsec[options.model].SetLineWidth(2)
+        theory_inclusive_xsec[options.model].SetLineStyle(6)
+        theory_inclusive_xsec[options.model].Draw('Csame')
 
     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}"%options.lumi
     CMS_lumi.CMS_lumi(c,4,11)
@@ -394,12 +448,12 @@ def plotUpperLimits(options,args):
     legend.SetTextSize(0.038)
     legend.SetTextFont(42)
     if len(limit)>5 and options.observed:
-        legend.AddEntry(obs, "Observed",'lp')
+        legend.AddEntry(obs, "Observed",'l')
     #legend.AddEntry(median, "Asymptotic CL_{s} expected",'L')
     legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
     legend.AddEntry(yellow,"Expected #pm 2 s.d.",'lf')
     if options.xsec: 
-        legend.AddEntry(theory_xsec[options.model], legend_entry[options.model],'l')
+        legend.AddEntry(theory_inclusive_xsec[options.model], legend_entry[options.model],'l')
     legend.Draw()
 
     if len(options.box.split('_')) > 1:
@@ -407,8 +461,8 @@ def plotUpperLimits(options,args):
         if options.xsec:
             dxleg = 30
             dyleg = 1
-            yleg1 = 0.1
-            yleg2 = 5
+            yleg1 = 0.1*1000
+            yleg2 = 5*1000
         elif options.gq and options.model=='DMSbb':
             dxleg = 30
             dyleg = 1
@@ -419,21 +473,26 @@ def plotUpperLimits(options,args):
             dyleg = 1
             yleg1 = 2*2./3
             yleg2 = 12*2./3
+        elif options.gq and options.model=='Zpqq':
+            dxleg = 30
+            dyleg = 0.05
+            yleg1 = 0.15
+            yleg2 = 0.6
         else:
             dxleg = 40
             dyleg = 0.05
-            yleg1 = 0.08
-            yleg2 = 0.45  
+            yleg1 = 0.15
+            yleg2 = 0.5  
 
         line1 = rt.TLine(massSwitch,yleg1,massSwitch,yleg2)
         line1.SetLineStyle(2)
         line1.SetLineWidth(2)
-        line1.SetLineColor(rt.kGray+1)
+        line1.SetLineColor(rt.kGray+3)
         line1.Draw()
         lab = rt.TLatex()
         lab.SetTextSize(0.035)
         lab.SetTextFont(42)
-        lab.SetTextColor(rt.kGray+1)
+        lab.SetTextColor(rt.kGray+3)
         lab.SetTextAlign(23)
         lab.DrawLatex(massSwitch-dxleg,yleg2-dyleg,"#leftarrow #splitline{anti-k_{T}}{R=0.8}")
         lab.DrawLatex(massSwitch+dxleg,yleg2-dyleg,"#splitline{CA}{R=1.5} #rightarrow")
@@ -442,14 +501,14 @@ def plotUpperLimits(options,args):
     legend.Draw("same")
     print " "
     if options.gq: 
-        if options.model=='Zpqq':
-            c.SetLogx()
-            c.SetLogy()
+        #if options.model=='Zpqq':
+        #    c.SetLogx()
+        #   c.SetLogy()
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gq.pdf") 
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gq.C") 
     elif options.gqZp: 
-        c.SetLogx()
-        c.SetLogy()
+        #c.SetLogx()
+        #c.SetLogy()
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gqZp.pdf") 
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gqZp.C") 
     elif options.xsec: 
