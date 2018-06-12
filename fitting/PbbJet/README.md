@@ -1,4 +1,4 @@
-Instructions to run create cards and run limit
+Instructions to run create cards and run limits, etc.
 ```
 # create all templates, with passing region double b-tag > 0.9
 export SKLIMDIR=/eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier
@@ -26,7 +26,7 @@ combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat
 
 # convert to binary file
 text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' card_rhalphabet_muonCR.txt -o card_rhalphabet_muonCR_floatZ.root
+```
 
 Follow other combine instructions:
 https://github.com/DAZSLE/ZPrimePlusJet/blob/Hbb_Diff-pT/fitting/PbbJet/README.md
-
