@@ -27,7 +27,7 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
     rates = {}
     lumiErrs = {}
     hqq125ptErrs = {}
-    mcStatErrs = {}
+    mcstatErrs = {}
     veffErrs = {}
     bbeffErrs = {}
     znormEWErrs = {}
@@ -39,6 +39,8 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
     jesErrs = {}
     jerErrs = {}
     puErrs = {}
+                                
+    lnNFile = r.TFile.Open('$ZPRIMEPLUSJET_BASE/fitting/PbbJet/lnN_%s_%s_muonCR.root'%(jet_type,options.model),'read')
     for proc in sigs+bkgs:
         for box in boxes:
             print proc, box
@@ -82,9 +84,14 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
                 znormEWErrs['%s_%s'%(proc,box)] = 1.
                 
             if rate>0:
-                mcStatErrs['%s_%s'%(proc,box)] = 1.0+(error[0]/rate)
+                mcstatErrs['%s_%s'%(proc,box)] = 1.0+(error[0]/rate)
+                if proc==options.model+str(options.mass):
+                    mcstatGraph = lnNFile.Get('mcstat_%s_%s_%s_cat1'%(jet_type,options.model,box))
+                    mcstatErrs['%s_%s'%(proc,box)] = min(max(mcstatGraph.Eval(float(options.mass), 0, 'S'), 1.0), 2.0)
+                    print "%s, mcstat = %.3f, mcstat(interp) = %.3f"%(options.model+str(options.mass), 1.0+(error[0]/rate), mcstatGraph.Eval(float(options.mass), 0, 'S'))
+
             else:
-                mcStatErrs['%s_%s'%(proc,box)] = 1.0
+                mcstatErrs['%s_%s'%(proc,box)] = 1.0
                 
             if rate>0:
                 rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral()
@@ -96,6 +103,16 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
                 jesErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
                 jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate)
                 puErrs['%s_%s'%(proc,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
+                if proc==options.model+str(options.mass):
+                    jesGraph = lnNFile.Get('jes_%s_%s_%s_cat1'%(jet_type,options.model,box))
+                    jerGraph = lnNFile.Get('jer_%s_%s_%s_cat1'%(jet_type,options.model,box))
+                    puGraph = lnNFile.Get('pu_%s_%s_%s_cat1'%(jet_type,options.model,box))                                
+                    jesErrs['%s_%s'%(proc,box)] =  min(max(jesGraph.Eval(float(options.mass), 0, 'S'), 1.0), 2.0)
+                    jerErrs['%s_%s'%(proc,box)] =  min(max(jerGraph.Eval(float(options.mass), 0, 'S'), 1.0), 2.0)
+                    puErrs['%s_%s'%(proc,box)] =  min(max(puGraph.Eval(float(options.mass), 0, 'S'), 1.0), 2.0)
+                    print "%s, jes = %.3f, jes(interp) = %.3f"%(options.model+str(options.mass), 1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate), jesGraph.Eval(float(options.mass), 0, 'S'))
+                    print "%s, jer = %.3f, jer(interp) = %.3f"%(options.model+str(options.mass), 1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate), jerGraph.Eval(float(options.mass), 0, 'S'))
+                    print "%s, pu = %.3f, pu(interp) = %.3f"%(options.model+str(options.mass), 1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate), puGraph.Eval(float(options.mass), 0, 'S'))
             else:
                 jesErrs['%s_%s'%(proc,box)] =  1.0
                 jerErrs['%s_%s'%(proc,box)] =  1.0
@@ -131,15 +148,15 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
     jesString = 'JES\tlnN'
     jerString = 'JER\tlnN'
     puString = 'Pu\tlnN'
-    mcStatErrString = {}
+    mcstatErrString = {}
     if options.noMcStatShape:
         for proc in sigs+bkgs:
             for box in boxes:
-                mcStatErrString['%s_%s'%(proc,box)] = '%s%smuonCRmcstat\tlnN'%(proc,box)
+                mcstatErrString['%s_%s'%(proc,box)] = '%s%smuonCRmcstat\tlnN'%(proc,box)
     else:
         for key, histo in histoDict.iteritems():
             if 'mcstat' in key and 'Up' in key: 
-                mcStatErrString[key] = key.split('_')[-1].replace('Up','') + '\tshape'
+                mcstatErrString[key] = key.split('_')[-1].replace('Up','') + '\tshape'
             
     for box in boxes:
         i = -1
@@ -166,25 +183,25 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
             for box1 in boxes:
                 for proc1 in sigs+bkgs:
                     if proc1==proc and box1==box:
-                        if options.noMcStatShape: mcStatErrString['%s_%s'%(proc1,box1)] += '\t%.3f'% mcStatErrs['%s_%s'%(proc,box)]
+                        if options.noMcStatShape: mcstatErrString['%s_%s'%(proc1,box1)] += '\t%.3f'% mcstatErrs['%s_%s'%(proc,box)]
                     else:                        
-                        if options.noMcStatShape: mcStatErrString['%s_%s'%(proc1,box1)] += '\t-'
+                        if options.noMcStatShape: mcstatErrString['%s_%s'%(proc1,box1)] += '\t-'
             
-    for key, value in mcStatErrString.iteritems():
+    for key, value in mcstatErrString.iteritems():
         for box in boxes:
             for proc in sigs+bkgs:
                 if rates['%s_%s'%(proc,box)] <= 0.0: continue
                 if re.match('%s_%s'%(proc,box),key):
-                    if not options.noMcStatShape: mcStatErrString[key] += '\t1.000'
+                    if not options.noMcStatShape: mcstatErrString[key] += '\t1.000'
                 else:
-                    if not options.noMcStatShape: mcStatErrString[key] += '\t-'                    
+                    if not options.noMcStatShape: mcstatErrString[key] += '\t-'                    
                 
             
     binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n'; hqq125ptString+='\n';
     veffString+='\n'; bbeffString+='\n'; znormEWString+='\n'; znormQString+='\n'; wznormEWString+='\n'; mutriggerString+='\n'; muidString+='\n'; muisoString+='\n'; 
     jesString+='\n'; jerString+='\n'; puString+='\n';     
-    for key, value in mcStatErrString.iteritems():   
-        mcStatErrString[key] += '\n'
+    for key, value in mcstatErrString.iteritems():   
+        mcstatErrString[key] += '\n'
             
     datacard+=binString+processString+processNumberString+rateString+divider
 
@@ -194,9 +211,9 @@ def writeDataCard(boxes,txtfileName,sigs,bkgs,histoDict,options,jet_type):
     for proc in (sigs+bkgs):
         for box in boxes:
             if rates['%s_%s'%(proc,box)] <= 0.0: continue            
-            for key, value in mcStatErrString.iteritems():
+            for key, value in mcstatErrString.iteritems():
                 if re.match('%s_%s'%(proc,box),key):
-                    datacard += mcStatErrString[key]
+                    datacard += mcstatErrString[key]
 
     # now top rate params
     tqqeff = histoDict['tqq_pass'].Integral()/(histoDict['tqq_pass'].Integral()+histoDict['tqq_fail'].Integral())
