@@ -20,6 +20,7 @@ for i in range(0, 81): msd_binBoundaries.append(40 + i * 7)
 pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
 MIN_M = {} #
 MAX_M = {} #299 # AK8
+BINS = {}
 
 from buildRhalphabetPhibb import BLIND_LO, BLIND_HI
 
@@ -32,11 +33,14 @@ def main(options, args):
                 array.array('d', pt_binBoundaries))
     for j in range(1, empty.GetNbinsY() + 1):
         ptVal = empty.GetYaxis().GetBinLowEdge(j) + empty.GetYaxis().GetBinWidth(j) * 0.3        
-        massMin = r.TMath.Sqrt(r.TMath.Exp(options.lrho))*ptVal
-        massMax = r.TMath.Sqrt(r.TMath.Exp(options.hrho))*ptVal
-        print j, massMin, massMax
-        MIN_M['cat%i'%j] = max(options.massMin,empty.GetXaxis().GetBinUpEdge(empty.GetXaxis().FindBin(massMin)))
-        MAX_M['cat%i'%j] = empty.GetXaxis().GetBinLowEdge(empty.GetXaxis().FindBin(massMax))
+        BINS['cat%i'%j] = []
+        for i in range(1, empty.GetNbinsX()+1):
+            massVal = empty.GetXaxis().GetBinCenter(i)
+            rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
+            if rhoVal < options.hrho and rhoVal > options.lrho:
+                BINS['cat%i'%j].append(i)
+        MIN_M['cat%i'%j] = max(options.massMin,empty.GetXaxis().GetBinLowEdge(min(BINS['cat%i'%j])))
+        MAX_M['cat%i'%j] = empty.GetXaxis().GetBinUpEdge(max(BINS['cat%i'%j]))
         print j, MIN_M['cat%i'%j], MAX_M['cat%i'%j]
 
     MIN_M['allcats'] = MIN_M['cat1']
@@ -147,14 +151,21 @@ def main(options, args):
             while len(lParams) < 9:
                 lParams.append("zero")  # zero
         elif options.NR == 3 and options.NP == 1:
-            # for r3p1 polynomial            
-            lParams.append("r2p0")  # -> r1p0
-            lParams.append("r1p1")  # -> r2p0
-            lParams.append("r2p1")  # -> r3p0
-            lParams.append("r1p0")  # -> r0p1
-            lParams.append("r3p0")  # -> r1p1
-            lParams.append("r1p1")  # -> r2p1
-            lParams.append("r3p1")  # -> r3p1
+            # for r3p1 polynomial                                                                                                
+            lParams.append("r2p0")  # -> r1p0                                                                                       
+            lParams.append("r0p1")  # -> r2p0
+            lParams.append("r2p1")  # -> r3p0                                                                                       
+            lParams.append("r1p0")  # -> r0p1                                                                                  
+            lParams.append("r3p0")  # -> r1p1                                                                                     
+            lParams.append("r1p1")  # -> r2p1                                                                                     
+            lParams.append("r3p1")  # -> r3p1  
+            #lParams.append("r2p0")  # -> r1p0
+            #lParams.append("r1p1")  # -> r2p0
+            #lParams.append("r2p1")  # -> r3p0
+            #lParams.append("r1p0")  # -> r0p1
+            #lParams.append("r3p0")  # -> r1p1
+            #lParams.append("r1p1")  # -> r2p1
+            #lParams.append("r3p1")  # -> r3p1
             while len(lParams) < 16:
                 lParams.append("zero")  # zero
         elif options.NR == 3 and options.NP == 2:
@@ -267,6 +278,7 @@ def main(options, args):
                 pars.append(0)
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
+            #rBestFit = rfr.floatParsFinal().find('r_phi').getVal()
         else:
             rBestFit = 0
 
@@ -296,6 +308,7 @@ def plotCategory(fml, fd, index, fittype):
         rfr = r.RooFitResult(fml.Get(options.fit))
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
+            #rBestFit = rfr.floatParsFinal().find('r_phi').getVal()
         else:
             rBestFit = 0
 
@@ -446,7 +459,8 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     l.SetBorderSize(0)
     l.SetTextFont(42)
     l.SetTextSize(0.04)
-    legnames = {'wqq': 'W', 'zqq': 'Z', 'qcd': 'Multijet', 'tqq': 't#bar{t}'}
+    legnames = {'wqq': 'W', 'zqq': 'Z', 'qcd': 'Multijet', 'tqq': 't#bar{t}',
+                'DMSbb': '#Phi(b#bar{b})', 'DMPSbb': 'A(b#bar{b})'}
     for i in range(len(bkgs)):
         l.AddEntry(bkgs[i], legnames[leg[i]], "l")
     if splitS:
@@ -457,7 +471,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
         l.AddEntry(hsig, "H(b#bar{b})", "lf")
     l.AddEntry(htot, "Total background", "lf")
     if fittype != 'fit_b':
-        l.AddEntry(hphi, "%s %s"%(options.model, options.mass),"lf")
+        l.AddEntry(hphi, "%s %s GeV"%(legnames[options.model],options.mass),"lf")
     # l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
 
     l.AddEntry(data, "Data", "pe")
@@ -695,9 +709,11 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     if splitS:
         sigHists = list(hhigs)
     else:
-        sigHists = [hsig,hphi]
+        #sigHists = [hsig,hphi]
+        sigHists = [hphi, hsig]
     [sigHists.append(bkg) for bkg in bkgs if 'zqq' in bkg.GetName()]
     [sigHists.append(bkg) for bkg in bkgs if 'wqq' in bkg.GetName()]
+    sigHists.reverse()
     #print sigHists
     #sys.exit()
     for sigHist in sigHists:
@@ -715,7 +731,8 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
             sigHistResidual.SetBinContent(bin+1,sig_residual)
         sigHistResiduals.append(sigHistResidual)
     hstack = r.THStack("hstack","hstack")
-    for sigHistResidual in sorted(sigHistResiduals,key=lambda (v): v.Integral()):
+    #for sigHistResidual in sorted(sigHistResiduals,key=lambda (v): v.Integral()):
+    for sigHistResidual in sigHistResiduals:
 	hstack.Add(sigHistResidual) 	
     #    sigHistResidual.Draw("hist sames")
     hstack.Draw("hist sames")	
@@ -738,15 +755,32 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 
 def fun2(x, par):
     rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (   1.0 + par[1] * rho + par[2] * rho * rho)
-    poly1 = par[0] * (par[3] + par[4] * rho + par[5] * rho * rho) * x[1]
-    poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
+    poly0 = par[0] * (1.0 * (1 - x[1]) + par[3] * x[1]) * (1 - rho)**2
+    poly1 = par[0] * (par[1] * (1 - x[1]) + par[4] * x[1]) * rho * (1 - rho)
+    poly2 = par[0] * (par[2] * (1 - x[1]) + par[5] * x[1]) * rho**2
     return poly0 + poly1 + poly2
+
+
+def fun2rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (1.0 * (1 - x[1]) + par[3] * x[1]) * (1 - rho)**2
+    poly1 = par[0] * (par[1] * (1 - x[1]) + par[4] * x[1]) * 2 * rho * (1 - rho)
+    poly2 = par[0] * (par[2] * (1 - x[1]) + par[5] * x[1]) * rho**2
+    return poly0+poly1+poly2
 
 def fun3(x, par):
     rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho)
-    poly1 = par[0] * ( par[4] +  par[5] * rho +  par[6] * rho * rho +  par[7] * rho * rho * rho) * x[1]
+    print "par: ", par
+    poly0 = par[0] * (    1.0 * (1 - rho) * (1 - rho) * (1 - rho) +  par[1] * (3 * rho * (1 - rho) * (1 - rho)) +  par[2] * (3 * rho * rho * (1 - rho)) +  par[3] * rho * rho * rho)*(1 - x[1])
+    poly1 = par[0] * ( par[4] * (1 - rho) * (1 - rho) * (1 - rho) +  par[5] * (3 * rho * (1 - rho) * (1 - rho))  +  par[6] * (3 * rho * rho * (1 - rho)) +  par[7] * rho * rho * rho) * x[1]
+    poly2 = par[0] * ( par[8] +  par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3
+
+def fun3rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 * (1 - rho)*(1 - rho)*(1 - rho) +  par[1] * (3 * rho * (1 - rho)*(1 - rho)) +  par[2] * (3 * rho * rho * (1 - rho)) +  par[3] * rho * rho * rho)*(1 - x[1])
+    poly1 = par[0] * ( par[4] * (1 - rho) * (1 - rho) * (1 - rho) +  par[5] * (3 * rho * (1 - rho) * (1 - rho))  +  par[6] * (3 * rho * rho * (1 - rho)) +  par[7] * rho * rho * rho) * x[1]
     poly2 = par[0] * ( par[8] +  par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
     poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3
@@ -760,10 +794,31 @@ def fun4(x, par):
     poly4 = par[0] * (par[20] + par[21] * rho + par[22] * rho * rho + par[23] * rho * rho * rho + par[24] * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3 + poly4
 
+def fun4rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho)
+    poly1 = par[0] * ( par[5] +  par[6] * rho +  par[7] * rho * rho +  par[8] * rho * rho * rho +  par[9] * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[10] + par[11] * rho + par[12] * rho * rho + par[13] * rho * rho * rho + par[14] * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[15] + par[16] * rho + par[17] * rho * rho + par[18] * rho * rho * rho + par[19] * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[20] + par[21] * rho + par[22] * rho * rho + par[23] * rho * rho * rho + par[24] * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4
+
 def fun5(x, par):
     rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
-    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * x[1]
+    poly0 = par[0] * (    1.0 * (1 - rho) * (1 - rho) * (1 - rho) * (1 - rho) * (1 - rho) +  par[1] * (5 * rho * (1 - rho) * (1 - rho) * (1 - rho) * (1 - rho)) +  par[2] * ( 10 * rho * rho * (1 - rho) * (1 - rho) * (1 - rho)) +  par[3] * ( 10 * rho * rho * rho * (1 - rho) * (1 - rho)) +  par[4] * ( 5 * rho * rho * rho * rho * (1 - rho)) +  par[5] * rho * rho * rho * rho * rho) * (1 - x[1])
+    poly1 = par[0] * ( par[6] * (1 - rho) * (1 - rho) * (1 - rho) * (1 - rho) * (1 - rho) +  par[7] * (5 * rho * (1 - rho) * (1 - rho) * (1 - rho) * (1 - rho)) +  par[8] * ( 10 * rho * rho * (1 - rho) * (1 - rho) * (1 - rho)) +  par[9] * ( 10 * rho * rho * rho * (1 - rho) * (1 - rho)) + par[10] * ( 5 * rho * rho * rho * rho * (1 - rho)) + par[11] * rho * rho * rho * rho * rho) * x[1]
+    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
+    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
+    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
+    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
+    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
+
+def fun5rho(x, par):
+    rho = x[0]
+    poly0 = par[0] * (    1.0 * (1 - rho)**5 +  par[1] * (5 * rho * (1 - rho)**4) +  par[2] * ( 10 * rho**2 * (1 - rho)**3 ) +  par[3] * ( 10 * rho**3 * (1 - rho)**2) +  par[4] * ( 5 * rho**4 * (1 - rho)) +  par[5] * rho**5) * (1 - x[1])
+    poly1 = par[0] * ( par[6] * (1 - rho)**5 +  par[7] * (5 * rho * (1 - rho)**4) +  par[8] * ( 10 * rho**2 * (1 - rho)**3 ) +  par[9] * ( 10 * rho**3 * (1 - rho)**2) + par[10] * ( 5 * rho**4 * (1 - rho)) + par[11] * rho**5) * x[1]
+
+
     poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
     poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
     poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
@@ -780,40 +835,6 @@ def fun6(x, par):
     poly5 = par[0] * (par[35] + par[36] * rho + par[37] * rho * rho + par[38] * rho * rho * rho + par[39] * rho * rho * rho * rho + par[40] * rho * rho * rho * rho * rho + par[41] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
     poly6 = par[0] * (par[42] + par[43] * rho + par[44] * rho * rho + par[45] * rho * rho * rho + par[46] * rho * rho * rho * rho + par[47] * rho * rho * rho * rho * rho + par[48] * rho * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1] * x[1]
     return poly0 + poly1 + poly2 + poly3 + poly4 + poly5 + poly6
-
-def fun2rho(x, par):
-    rho = x[0]
-    poly0 = par[0] * (   1.0 + par[1] * rho + par[2] * rho * rho)
-    poly1 = par[0] * (par[3] + par[4] * rho + par[5] * rho * rho) * x[1]
-    poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
-    return poly0 + poly1 + poly2
-
-def fun3rho(x, par):
-    rho = x[0]
-    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho)
-    poly1 = par[0] * ( par[4] +  par[5] * rho +  par[6] * rho * rho +  par[7] * rho * rho * rho) * x[1]
-    poly2 = par[0] * ( par[8] +  par[9] * rho + par[10] * rho * rho + par[11] * rho * rho * rho) * x[1] * x[1]
-    poly3 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho) * x[1] * x[1] * x[1]
-    return poly0 + poly1 + poly2 + poly3
-
-def fun4rho(x, par):
-    rho = x[0]
-    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho)
-    poly1 = par[0] * ( par[5] +  par[6] * rho +  par[7] * rho * rho +  par[8] * rho * rho * rho +  par[9] * rho * rho * rho * rho) * x[1]
-    poly2 = par[0] * (par[10] + par[11] * rho + par[12] * rho * rho + par[13] * rho * rho * rho + par[14] * rho * rho * rho * rho) * x[1] * x[1]
-    poly3 = par[0] * (par[15] + par[16] * rho + par[17] * rho * rho + par[18] * rho * rho * rho + par[19] * rho * rho * rho * rho) * x[1] * x[1] * x[1]
-    poly4 = par[0] * (par[20] + par[21] * rho + par[22] * rho * rho + par[23] * rho * rho * rho + par[24] * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
-    return poly0 + poly1 + poly2 + poly3 + poly4
-
-def fun5rho(x, par):
-    rho = x[0]
-    poly0 = par[0] * (    1.0 +  par[1] * rho +  par[2] * rho * rho +  par[3] * rho * rho * rho +  par[4] * rho * rho * rho * rho +  par[5] * rho * rho * rho * rho * rho)
-    poly1 = par[0] * ( par[6] +  par[7] * rho +  par[8] * rho * rho +  par[9] * rho * rho * rho + par[10] * rho * rho * rho * rho + par[11] * rho * rho * rho * rho * rho) * x[1]
-    poly2 = par[0] * (par[12] + par[13] * rho + par[14] * rho * rho + par[15] * rho * rho * rho + par[16] * rho * rho * rho * rho + par[17] * rho * rho * rho * rho * rho) * x[1] * x[1]
-    poly3 = par[0] * (par[18] + par[19] * rho + par[20] * rho * rho + par[21] * rho * rho * rho + par[22] * rho * rho * rho * rho + par[23] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1]
-    poly4 = par[0] * (par[24] + par[25] * rho + par[26] * rho * rho + par[27] * rho * rho * rho + par[28] * rho * rho * rho * rho + par[29] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1]
-    poly5 = par[0] * (par[30] + par[31] * rho + par[32] * rho * rho + par[33] * rho * rho * rho + par[34] * rho * rho * rho * rho + par[35] * rho * rho * rho * rho * rho) * x[1] * x[1] * x[1] * x[1] * x[1]
-    return poly0 + poly1 + poly2 + poly3 + poly4 + poly5
 
 def fun6rho(x, par):
     rho = x[0]
@@ -868,6 +889,11 @@ def makeTF(pars, ratio):
     f2 = r.TF2("f2", fun, MIN_M['allcats'] + 3.5, MAX_M['allcats'] - 3.5,
                ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
     f2.SetParameters(f2params)
+
+    #f2rho = r.TF2("f2",funrho,options.lrho,options.hrho,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+    f2rho = r.TF2("f2",funrho,0,1,0,1,npar)
+    f2rho.SetParameters(f2params)
+    f2rhograph = r.TGraph2D()
 
     c = r.TCanvas("cTF", "cTF", 1000, 800)
     SetOwnership(c, False)
@@ -935,7 +961,10 @@ def makeTF(pars, ratio):
             #x = ratio.GetXaxis().GetXmin() + i*(ratio.GetXaxis().GetXmax()-ratio.GetXaxis().GetXmin())/Npoints
             x = MIN_M['allcats'] + i*(MAX_M['allcats']-MIN_M['allcats'])/Npoints
             y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
-            z = f2.Eval(x,y)
+            y_scaled = (y-450.)/(1000.-450.)
+            rho = r.TMath.Log(x*x/y/y)
+            rho_scaled = (rho-options.lrho)/(options.hrho-options.lrho)                                                                          
+            z = f2rho.Eval(rho_scaled,y_scaled)
             print x, y, z
             #if math.log(x*x/(y*y)) < -6 or math.log(x*x/(y*y)) > -2.1:
             #    z = 0
@@ -998,16 +1027,16 @@ def makeTF(pars, ratio):
             #print N, x, y, z
             ratiorhograph.SetPoint(N,x,y,z)
             
-    f2rho = r.TF2("f2",funrho,options.lrho,options.hrho,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
-    f2rho.SetParameters(f2params)
-    f2rhograph = r.TGraph2D()
+
     N = -1
     for i in range(Npoints+1):
         for j in range(Npoints+1):
             N+=1
             x = options.lrho + i*(options.hrho-options.lrho)/Npoints
+            x_scaled = float(i)/float(Npoints)
             y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
-            z = f2rho.Eval(x,y)
+            y_scaled = (y-450.)/(1000.-450.)
+            z = f2rho.Eval(x_scaled,y_scaled)
             m = math.sqrt(math.exp(x))*y
             #if m < 40 or m > 201:
             #    z = 0
@@ -1050,6 +1079,14 @@ def makeTF(pars, ratio):
     # to plot TGraph:
     f2graph.Draw("colz")
     f2graph.GetXaxis().SetRangeUser(MIN_M['allcats'],MAX_M['allcats'])
+    f2graph.GetYaxis().SetRangeUser(options.ptMin,1000.)
+    if options.box=='AK8':
+        f2graph.GetHistogram().SetMaximum(0.017)
+        f2graph.GetHistogram().SetMinimum(0.004)
+    else:
+        f2graph.GetHistogram().SetMaximum(0.035)
+        f2graph.GetHistogram().SetMinimum(0.005)
+    
     rhocurv1.Draw('same')
     rhocurv2.Draw('same')
     
@@ -1100,7 +1137,6 @@ def makeTF(pars, ratio):
     pave_param2.Draw()
     
 
-    
     c.SaveAs(options.odir + "/mlfit/tf_msdcolz.pdf")
     c.SaveAs(options.odir + "/mlfit/tf_msdcolz.C")
 
@@ -1109,12 +1145,19 @@ def makeTF(pars, ratio):
     # to plot TGraph:
     #f2rhograph.SetContours(999)
     f2rhograph.Draw("colz")
+    f2rhograph.GetYaxis().SetRangeUser(options.ptMin,1000.)
     mcurv1.Draw('same')
     mcurv2.Draw('same')
     f2rhograph.GetHistogram().GetXaxis().SetTitle('#rho')
     f2rhograph.GetHistogram().GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())
     f2rhograph.GetHistogram().GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
     f2rhograph.GetHistogram().GetZaxis().SetTitleOffset(1.3)
+    if options.box=='AK8':
+        f2rhograph.GetHistogram().SetMaximum(0.017)
+        f2rhograph.GetHistogram().SetMinimum(0.004)
+    else:
+        f2rhograph.GetHistogram().SetMaximum(0.035)
+        f2rhograph.GetHistogram().SetMinimum(0.005)
     Tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
@@ -1145,7 +1188,7 @@ def makeTF(pars, ratio):
     text.SetTextSize(0.045)
     pave_param.Draw()
     
-    pave_param2 = r.TPaveText(0.57,0.65,0.67,0.75,"NDC")
+    pave_param2 = r.TPaveText(0.65,0.68,0.75,0.78,"NDC")
     pave_param2.SetTextFont(42)
     pave_param2.SetFillColor(0)
     pave_param2.SetBorderSize(0)
