@@ -31,8 +31,8 @@ def plotgaus(iFName,injet,iLabel,options):
     lH_2 = r.TH1D('h_bias_2','h_bias',50,-4,4)
     #tree_fit_sb->Draw("mu-muLoErr","(mu-muLoErr)>-50+1")
     #lTree.Project('h_bias','(mu-%s)/muErr'% injet,'(muHiErr+mu)<%i-1&&(mu-muLoErr)>%i'%(int(options.rMax)-1,int(options.rMin)+1))
-    lTree.Project('h_bias_1','(mu-%s)/muLoErr'% injet,'mu>%s&&(muHiErr+mu)<%i&&(mu-muLoErr)>%i'%(int(options.r),int(options.rMax)-1,int(options.rMin)+1))
-    lTree.Project('h_bias_2','(mu-%s)/muHiErr'% injet,'mu<%s&&(muHiErr+mu)<%i&&(mu-muLoErr)>%i'%(int(options.r),int(options.rMax)-1,int(options.rMin)+1))
+    lTree.Project('h_bias_1','(mu-%s)/muLoErr'% injet,'mu>%s&&(muHiErr+mu)<%i&&(mu-muLoErr)>%i'%(float(options.r),float(options.rMax)-1,float(options.rMin)+1))
+    lTree.Project('h_bias_2','(mu-%s)/muHiErr'% injet,'mu<%s&&(muHiErr+mu)<%i&&(mu-muLoErr)>%i'%(float(options.r),float(options.rMax)-1,float(options.rMin)+1))
     lH = lH_1
     lH.Add(lH_2)
     gaus_func = r.TF1("gaus_func","gaus(0)",-4,4)
@@ -84,8 +84,9 @@ def plotgaus(iFName,injet,iLabel,options):
                 'r3p1':'(n_{#rho}=3,n_{p_{T}}=1)',
                 'r2p1':'(n_{#rho}=2,n_{p_{T}}=1)',
                 }
-    pdf_key1 = 'r5p1'
-    pdf_key2 = 'r5p1'
+
+    pdf_key1 = 'r2p1'
+    pdf_key2 = 'r2p1'
     for key, value in pdf_dict.iteritems():
         if key+'_vs' in iLabel:
             pdf_key1 = key
