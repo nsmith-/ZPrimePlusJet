@@ -24,6 +24,7 @@ def main(options,args):
     if 'CA15' in options.ifile:
         jet_type = 'CA15'
     for model in [options.model]: # ["DMSbb","DMPSbb","Zpqq"]
+        lnNFile = r.TFile.Open('$ZPRIMEPLUSJET_BASE/fitting/PbbJet/lnN_%s_%s.root'%(jet_type,model),'read')
         for mass in massIterable(options.masses):
             tfile = r.TFile.Open(options.ifile)
             tfile_loose = options.ifile_loose
@@ -36,12 +37,13 @@ def main(options,args):
             sigs = ["{}{}".format(model, mass)]
             bkgs = ['zqq','wqq','qcd','tqq','hqq125','tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125']
             systs = ['JER','JES','Pu']
+
             #print " Anter : ", " Low : ", options.lrho, " High : ", options.hrho
             removeUnmatched = options.removeUnmatched
 
             nBkgd = len(bkgs)
             nSig = len(sigs)
-            numberOfMassBins = 23    
+            numberOfMassBins = 80
             numberOfPtBins = 6
 
             histoDict = {}
@@ -72,7 +74,7 @@ def main(options,args):
 
             linel = [];
             for line in dctpl: 
-                print line.strip().split()
+                #print line.strip().split()
                 line = line.replace("SIGNALNAME", model).replace("SIGNALMASS", str(mass))
                 linel.append(line.strip())
 
@@ -98,6 +100,16 @@ def main(options,args):
                             jesErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate)   
                             jerErrs['%s_%s'%(proc,box)] =  1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate) 
                             puErrs['%s_%s'%(proc,box)] =  1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate)
+                            if proc==model+str(mass):
+                                jesGraph = lnNFile.Get('jes_%s_%s_%s_cat%i'%(jet_type,model,box,i))
+                                jerGraph = lnNFile.Get('jer_%s_%s_%s_cat%i'%(jet_type,model,box,i))
+                                puGraph = lnNFile.Get('pu_%s_%s_%s_cat%i'%(jet_type,model,box,i))                                
+                                jesErrs['%s_%s'%(proc,box)] = min(max(jesGraph.Eval(float(mass), 0, 'S'), 1.0), 2.0)
+                                jerErrs['%s_%s'%(proc,box)] = min(max(jerGraph.Eval(float(mass), 0, 'S'), 1.0), 2.0)
+                                puErrs['%s_%s'%(proc,box)] = min(max(puGraph.Eval(float(mass), 0, 'S'), 1.0), 2.0)
+                                print "%s, jes = %.3f, jes(interp) = %.3f"%(model+str(mass), 1.0+(abs(rateJESUp-rate)+abs(rateJESDown-rate))/(2.*rate), jesGraph.Eval(float(mass), 0, 'S'))
+                                print "%s, jer = %.3f, jer(interp) = %.3f"%(model+str(mass), 1.0+(abs(rateJERUp-rate)+abs(rateJERDown-rate))/(2.*rate), jerGraph.Eval(float(mass), 0, 'S'))
+                                print "%s, pu = %.3f, pu(interp) = %.3f"%(model+str(mass), 1.0+(abs(ratePuUp-rate)+abs(ratePuDown-rate))/(2.*rate), puGraph.Eval(float(mass), 0, 'S'))
                         else:
                             jesErrs['%s_%s'%(proc,box)] =  1.0
                             jerErrs['%s_%s'%(proc,box)] =  1.0
@@ -138,13 +150,18 @@ def main(options,args):
                                 error = array.array('d',[0.0])
                                 rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
                                 #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
-                                print proc, box, rate, error[0]
+                                #print proc, box, rate, error[0]
                                 if rate>0:
                                     mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                                    if proc==model+str(mass):
+                                        mcstatGraph = lnNFile.Get('mcstat_%s_%s_%s_cat%i'%(jet_type,model,box,i))
+                                        mcstatErrs['%s_%s'%(proc,box),i,j] = min(max(mcstatGraph.Eval(float(mass), 0, 'S'), 1.0), 2.0)
+                                        print "%s, mcstat = %.3f, mcstat(interp) = %.3f"%(model+str(mass), 1.0+(error[0]/rate), mcstatGraph.Eval(float(mass), 0, 'S'))
                                 else:
                                     mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                             else:
                                 mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
+
                             
 
                 jesString = 'JES lnN'
