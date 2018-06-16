@@ -243,43 +243,10 @@ def getLimits(file_name):
 
     return limits
 
-# PLOT upper limits
-def plotUpperLimits(options,args):
+def getGraphs(limits, masses, options):
+        
     theory_xsec, theory_inclusive_xsec, sample_xsec, br, legend_entry = setDict()
-    # see CMS plot guidelines: https://ghm.web.cern.ch/ghm/plots/
-    all_masses = massIterable(options.masses)
-    masses = []
-    jet_type = {}
-    cut = {}
-    if len(options.box.split('_')) > 1:
-        for mass in all_masses:
-            if mass < massSwitch:
-                jet_type[str(mass)] = options.box.split('_')[0]
-                cut[str(mass)] = options.cuts.split('_')[0]
-            else:
-                jet_type[str(mass)] = options.box.split('_')[1]
-                cut[str(mass)] = options.cuts.split('_')[1]
-    else:
-        for mass in all_masses:
-            jet_type[str(mass)] = options.box
-            cut[str(mass)] = options.cuts
 
-    file_names = {}
-    limits = {}
-    print cut
-    print jet_type
-    for mass in all_masses:
-        file_name = options.idir + "/%s/%s/%s%s/higgsCombine%s_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type[str(mass)],cut[str(mass)],options.model,str(mass),options.model,str(mass),options.lumi,jet_type[str(mass)])
-        print file_name
-        if glob.glob(file_name):
-            print "Opened File ", file_name
-            file_names[str(mass)] = file_name
-            limits[str(mass)] = getLimits(file_name)
-            print len( limits[str(mass)])
-            if len( limits[str(mass)])>=5:
-                masses.append(mass)
-            
-            
     N = len(masses)
     print " No of mass points : ", N
     yellow = rt.TGraph(2*N)    # yellow band
@@ -290,8 +257,8 @@ def plotUpperLimits(options,args):
     up2s = [ ]
     i = -1
     for mass in masses:
-        i += 1
         limit = limits[str(mass)]
+        i += 1
         up2s.append(limit[4])
         if options.xsec or options.gq or options.gqZp:
             fac = sample_xsec[options.model].Eval(mass,0,'S')
@@ -314,7 +281,7 @@ def plotUpperLimits(options,args):
             yellow.SetPoint( 2*N-1-i, mass, math.sqrt(limit[0]*fac/theory)) # - 2 sigma
             if len(limit)>5:
                 obs.SetPoint(       i,    mass, math.sqrt(limit[5]*fac/theory)) # observed
-                print "observed limit", mass, math.sqrt(limit[5]*fac/theory)
+                print "observed (expected) @ %s: %s (%s)"%( mass, math.sqrt(limit[5]*fac/theory), math.sqrt(limit[2]*fac/theory))
         elif options.xsec:
             # scale up by inclusive xsec / xsec ratio
             theoryRatio = theory_inclusive_xsec[options.model].Eval(mass,0,'S') / theory_xsec[options.model].Eval(mass,0,'S')
@@ -325,8 +292,51 @@ def plotUpperLimits(options,args):
             yellow.SetPoint( 2*N-1-i, mass, limit[0] * fac * theoryRatio ) # - 2 sigma
             if len(limit)>5:
                 obs.SetPoint(       i,    mass, limit[5] * fac * theoryRatio) # observed
-                print "observed limit", mass, limit[5] * fac * theoryRatio
-            
+                print "observed (expected) @ %s: %s (%s)"%( mass, limit[5] * fac * theoryRatio, limit[2] * fac * theoryRatio)
+
+    return yellow, green, median, obs
+
+# PLOT upper limits
+def plotUpperLimits(options,args):
+    theory_xsec, theory_inclusive_xsec, sample_xsec, br, legend_entry = setDict()
+    # see CMS plot guidelines: https://ghm.web.cern.ch/ghm/plots/
+    all_masses = massIterable(options.masses)
+    masses = {}
+    limits = {}
+    for jet_type in options.box.split('_'):
+        masses[jet_type] = []
+        limits[jet_type] = {}
+
+    for mass in all_masses:
+        if mass <= massSwitch or len(options.box.split('_')) == 1:
+            jet_type = options.box.split('_')[0]
+            cut = options.cuts.split('_')[0]
+            file_name = options.idir + "/%s/%s/%s%s/higgsCombine%s_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type,cut,options.model,str(mass),options.model,str(mass),options.lumi,jet_type)
+        if glob.glob(file_name):
+            print "Opened File ", file_name
+            limits[jet_type][str(mass)] = getLimits(file_name)
+            if len( limits[jet_type][str(mass)] )>=5:
+                masses[jet_type].append(mass)
+
+        if mass >= massSwitch and len(options.box.split('_')) > 1:
+            jet_type = options.box.split('_')[1]
+            cut = options.cuts.split('_')[1]
+            file_name = options.idir + "/%s/%s/%s%s/higgsCombine%s_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type,cut,options.model,str(mass),options.model,str(mass),options.lumi,jet_type)
+        if glob.glob(file_name):
+            print "Opened File ", file_name
+            limits[jet_type][str(mass)] = getLimits(file_name)
+            if len( limits[jet_type][str(mass)] )>=5:
+                masses[jet_type].append(mass)
+    print limits
+    print masses
+
+    yellowList, greenList, medianList, obsList = [], [], [], []
+    for jet_type in options.box.split('_'):
+        yellow, green, median, obs = getGraphs(limits[jet_type], masses[jet_type], options)
+        yellowList.append(yellow)
+        greenList.append(green)
+        medianList.append(median)
+        obsList.append(obs)
 
     W = 800
     H  = 600
@@ -359,17 +369,17 @@ def plotUpperLimits(options,args):
     #frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
     #frame.GetYaxis().SetTitle("95% upper limit on #sigma #times BR / (#sigma #times BR)_{SM}")
     #frame.GetXaxis().SetTitle("background systematic uncertainty [%]")
-    if options.xsec: 
-        frame.SetMinimum(0.001)
-        frame.SetMaximum(100)
-    else:
-        frame.SetMinimum(0)
-        frame.SetMaximum(max(up2s)*1.05)
+    #if options.xsec: 
+    #    frame.SetMinimum(0.001)
+    #    frame.SetMaximum(100)
+    #else:
+    #    frame.SetMinimum(0)
+    #    frame.SetMaximum(max(up2s)*1.05)
     
     h_limit = rt.TMultiGraph()
-    h_limit.Add(yellow)
-    h_limit.Add(green)
-    h_limit.Add(median)
+    for yellow in yellowList: h_limit.Add(yellow)
+    for green in greenList: h_limit.Add(green)
+    for median in medianList:  h_limit.Add(median)
     #h_limit.Add(obs)
     #h_limit.Add(theory_xsec)
 
@@ -392,31 +402,35 @@ def plotUpperLimits(options,args):
         h_limit.GetYaxis().SetTitle("#sigma #times B [pb]")
     h_limit.GetYaxis().SetTitleOffset(0.9)
     #h_limit.Draw('F')
-    
-    yellow.SetFillColor(rt.kOrange)
-    yellow.SetLineColor(rt.kBlack)
-    yellow.SetFillStyle(1001)
-    yellow.SetLineWidth(2)
-    yellow.SetLineStyle(2)
-    yellow.Draw('Fsame')
-    
-    green.SetFillColor(rt.kGreen+1)
-    green.SetLineColor(rt.kBlack)
-    green.SetLineWidth(2)
-    green.SetLineStyle(2)
-    green.SetFillStyle(1001)
-    green.Draw('Fsame')
 
-    median.SetLineColor(1)
-    median.SetLineWidth(3)
-    median.SetLineStyle(2)
-    median.Draw('Csame')
+    for yellow in yellowList:
+        yellow.SetFillColor(rt.kOrange)
+        yellow.SetLineColor(rt.kBlack)
+        yellow.SetFillStyle(1001)
+        yellow.SetLineWidth(2)
+        yellow.SetLineStyle(2)
+        yellow.Draw('Fsame')
+
+    for green in greenList:    
+        green.SetFillColor(rt.kGreen+1)
+        green.SetLineColor(rt.kBlack)
+        green.SetLineWidth(2)
+        green.SetLineStyle(2)
+        green.SetFillStyle(1001)
+        green.Draw('Fsame')
+
+    for median in medianList:
+        median.SetLineColor(1)
+        median.SetLineWidth(3)
+        median.SetLineStyle(2)
+        median.Draw('Csame')
     
-    obs.SetMarkerStyle(20)
-    obs.SetLineWidth(3)
-    if len(limit)>5 and options.observed:
-        #obs.Draw('PLsame')
-        obs.Draw('Csame')
+    for obs in obsList:
+        obs.SetMarkerStyle(20)
+        obs.SetLineWidth(3)
+        if options.observed:
+            #obs.Draw('PLsame')
+            obs.Draw('Csame')
 
         
     if options.xsec:
@@ -447,7 +461,7 @@ def plotUpperLimits(options,args):
     legend.SetBorderSize(0)
     legend.SetTextSize(0.038)
     legend.SetTextFont(42)
-    if len(limit)>5 and options.observed:
+    if options.observed:
         legend.AddEntry(obs, "Observed",'l')
     #legend.AddEntry(median, "Asymptotic CL_{s} expected",'L')
     legend.AddEntry(green, "Expected #pm 1 s.d.",'lf')
@@ -461,7 +475,7 @@ def plotUpperLimits(options,args):
         if options.xsec:
             dxleg = 30
             dyleg = 1
-            yleg1 = 0.1*1000
+            yleg1 = 0.05*1000
             yleg2 = 5*1000
         elif options.gq and options.model=='DMSbb':
             dxleg = 30
