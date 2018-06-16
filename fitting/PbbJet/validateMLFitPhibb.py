@@ -952,16 +952,17 @@ def makeTF(pars, ratio):
 
     
     c.SetLogz(0)
-    Npoints = 10
+    Npoints = 100
     f2graph = r.TGraph2D()
     N = -1
-    for i in range(Npoints+1):
-        for j in range(Npoints+1):            
+    for i in xrange(Npoints+1):
+        for j in xrange(Npoints+1):            
             N+=1
             #x = ratio.GetXaxis().GetXmin() + i*(ratio.GetXaxis().GetXmax()-ratio.GetXaxis().GetXmin())/Npoints
             x = MIN_M['allcats'] + i*(MAX_M['allcats']-MIN_M['allcats'])/Npoints
             y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
-            y_scaled = (y-450.)/(1000.-450.)
+            #y_scaled = (y-450.)/(1000.-450.)
+            y_scaled = float(j)/float(Npoints)
             rho = r.TMath.Log(x*x/y/y)
             rho_scaled = (rho-options.lrho)/(options.hrho-options.lrho)                                                                          
             z = f2rho.Eval(rho_scaled,y_scaled)
@@ -1035,7 +1036,8 @@ def makeTF(pars, ratio):
             x = options.lrho + i*(options.hrho-options.lrho)/Npoints
             x_scaled = float(i)/float(Npoints)
             y = ratio.GetYaxis().GetXmin() + j*(ratio.GetYaxis().GetXmax()-ratio.GetYaxis().GetXmin())/Npoints
-            y_scaled = (y-450.)/(1000.-450.)
+            #y_scaled = (y-450.)/(1000.-450.)
+            y_scaled = float(j)/float(Npoints)
             z = f2rho.Eval(x_scaled,y_scaled)
             m = math.sqrt(math.exp(x))*y
             #if m < 40 or m > 201:
@@ -1077,15 +1079,17 @@ def makeTF(pars, ratio):
     #f2.Draw("colz")
     c.SetRightMargin(0.20)
     # to plot TGraph:
+    f2graph.SetNpx(Npoints+1)
+    f2graph.SetNpy(Npoints+1)
     f2graph.Draw("colz")
-    f2graph.GetXaxis().SetRangeUser(MIN_M['allcats'],MAX_M['allcats'])
-    f2graph.GetYaxis().SetRangeUser(options.ptMin,1000.)
+    f2graph.GetHistogram().GetXaxis().SetRangeUser(MIN_M['allcats'],MAX_M['allcats'])
+    f2graph.GetHistogram().GetYaxis().SetRangeUser(options.ptMin,1000.)
     if options.box=='AK8':
         f2graph.GetHistogram().SetMaximum(0.017)
         f2graph.GetHistogram().SetMinimum(0.004)
     else:
         f2graph.GetHistogram().SetMaximum(0.035)
-        f2graph.GetHistogram().SetMinimum(0.005)
+        f2graph.GetHistogram().SetMinimum(0.004)
     
     rhocurv1.Draw('same')
     rhocurv2.Draw('same')
@@ -1144,8 +1148,10 @@ def makeTF(pars, ratio):
     #f2rho.Draw("colz")
     # to plot TGraph:
     #f2rhograph.SetContours(999)
+    f2rhograph.SetNpx(Npoints+1)
+    f2rhograph.SetNpy(Npoints+1)
     f2rhograph.Draw("colz")
-    f2rhograph.GetYaxis().SetRangeUser(options.ptMin,1000.)
+    f2rhograph.GetHistogram().GetYaxis().SetRangeUser(options.ptMin,1000.)
     mcurv1.Draw('same')
     mcurv2.Draw('same')
     f2rhograph.GetHistogram().GetXaxis().SetTitle('#rho')
@@ -1157,7 +1163,7 @@ def makeTF(pars, ratio):
         f2rhograph.GetHistogram().SetMinimum(0.004)
     else:
         f2rhograph.GetHistogram().SetMaximum(0.035)
-        f2rhograph.GetHistogram().SetMinimum(0.005)
+        f2rhograph.GetHistogram().SetMinimum(0.004)
     Tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
