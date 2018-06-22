@@ -11,9 +11,10 @@ import sys
 import time
 import warnings
 import json
+import os
 
-PTCUT = 450.
-PTCUTMUCR = 400.
+PTCUT = 350.
+PTCUTMUCR = 300.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
@@ -121,7 +122,7 @@ class sampleContainer:
         self._mutrig_eff = f_mutrig_BCDEF.Get("Mu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff.Sumw2()
         self._mutrig_eff.SetDirectory(0)
-        f_mutrig.Close()
+        f_mutrig_BCDEF.Close()
 
 #        self._mutrig_eff = self._mutrig_eff_GH.Clone('pt_abseta_DATA_mutrig_ave')
 #        self._mutrig_eff.Scale(lumi_GH / lumi_total)
@@ -129,13 +130,13 @@ class sampleContainer:
 
         # get muon ID efficiency object
 
-        with open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ID.json") as ID_input_file:
+        with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ID.json")) as ID_input_file:
                 self._muid_eff = json.load(ID_input_file)
 
 
         # get muon ISO efficiency object
 
-	with open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ISO.json") as ISO_input_file:
+	with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ISO.json")) as ISO_input_file:
 		self._muiso_eff = json.load(ISO_input_file)
 #        self._muiso_eff = self._muiso_eff_GH.Clone('pt_abseta_DATA_muiso_ave')
 #        self._muiso_eff.Scale(lumi_GH / lumi_total)
@@ -804,7 +805,7 @@ class sampleContainer:
             trigweightDown = trigweight - self._trig_eff.GetEfficiencyErrorLow(
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             if trigweight <= 0 or trigweightDown <= 0 or trigweightUp <= 0:
-                print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
+                #print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
 #	        print "ptForTrig: ", ptForTrig
 #        	print "massForTrig: ", massForTrig
                 trigweight = 1
@@ -831,7 +832,7 @@ class sampleContainer:
                 mutrigweightDown = mutrigweight - self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
-                    print 'mutrigweights are %f, %f, %f, setting all to 1' % (
+                    #print 'mutrigweights are %f, %f, %f, setting all to 1' % (
                     mutrigweight, mutrigweightUp, mutrigweightDown)
                     mutrigweight = 1
                     mutrigweightDown = 1
