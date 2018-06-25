@@ -26,7 +26,7 @@ NJETCUT = 100
 #########################################################################################################
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
-                 minBranches=False):
+                 minBranches=False, iSplit = 0, maxSplit = 1):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self._fn = fn
@@ -46,6 +46,8 @@ class sampleContainer:
         if isData:
             self._lumi = 1
         self._fillCA15 = fillCA15
+        self._iSplit = iSplit
+        self._maxSplit = maxSplit
         # based on https://github.com/thaarres/PuppiSoftdropMassCorr Summer16
         self.corrGEN = ROOT.TF1("corrGEN", "[0]+[1]*pow(x*[2],-[3])", 200, 3500)
         self.corrGEN.SetParameter(0, 1.00626)
@@ -750,12 +752,38 @@ class sampleContainer:
 
     def loop(self):
         # looping
+
+        print "\n", "***********************************************************************************************************************************"
+        print self._name
+        print "***********************************************************************************************************************************", "\n"
         nent = self._tt.GetEntries()
         print nent
         cut = []
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
         self._tt.SetNotify(self._cutFormula)
+
+        minEventsPerJob = nent / self._maxSplit
+        leftoverEvents = nent % self._maxSplit
+        minEvent = self._iSplit * minEventsPerJob
+        maxEvent = (self._iSplit+1) * minEventsPerJob
+        if (self._iSplit + 1 == self._maxSplit): maxEvent = nent
+        print nent, " total events"
+        print self._iSplit, " iSplit"
+        print self._maxSplit, " maxSplit"
+        print minEvent, " min event"
+        print maxEvent, " max event"
+        nentPerJob = maxEvent-minEvent
+        print nentPerJob, " nentPerJob"
+        print 'load tree 0'
+        self._tt.LoadTree(0)
+        print 'get entry 0'
+        self._tt.GetEntry(0)
+        #print 'load tree minEvent'
+        #self._tt.LoadTree(minEvent)
+        self._tt.SetNotify(self._cutFormula)
+        print self._tt.GetFile()
+        print self._tt.GetEntryNumber(minEvent)
         for i in xrange(nent):
             if i % self._sf != 0: continue
 
@@ -776,7 +804,7 @@ class sampleContainer:
 
             puweight = self.puWeight[0] #corrected
             nPuForWeight = min(self.npu[0], 49.5)
-	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
+    	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
             #puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
             puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
@@ -833,7 +861,7 @@ class sampleContainer:
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
                     #print 'mutrigweights are %f, %f, %f, setting all to 1' % (
-                    mutrigweight, mutrigweightUp, mutrigweightDown)
+                    #mutrigweight, mutrigweightUp, mutrigweightDown)
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
