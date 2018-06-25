@@ -210,13 +210,13 @@ def main(options,args,outputExists):
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8']
     else:
         plots = []
-        #testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
-        #for attr in dir(testSample):
-        #    try:
-        #        if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
-        #            plots.append(attr)
-        #    except:
-        #        pass
+        testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
+        for attr in dir(testSample):
+            try:
+                if 'h_' in attr and getattr(testSample,attr).InheritsFrom('TH1') and not getattr(testSample,attr).InheritsFrom('TH2'):
+                    plots.append(attr)
+            except:
+                pass
             
     if not outputExists: 
         #samples = ['ggHbb','VBFHbb','VHbb','ttHbb','QCD','SingleTop','Diboson','W','DY','TTbar']                      
@@ -263,7 +263,7 @@ def main(options,args,outputExists):
         elif isData:
             dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
@@ -316,7 +316,7 @@ def main(options,args,outputExists):
         else:        
             bkgSamples.extend(['TTbar'])
             
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','read')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root'%options.iSplit,'read')
         for plot in plots:
             hb = {}
             hs = {}
