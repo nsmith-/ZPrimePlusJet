@@ -13,7 +13,7 @@ import warnings
 import json
 import os
 
-PTCUT = 350.
+PTCUT = 450.
 PTCUTMUCR = 300.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
