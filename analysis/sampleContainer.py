@@ -14,7 +14,7 @@ import json
 import os
 
 PTCUT = 450.
-PTCUTMUCR = 300.
+PTCUTMUCR = 400.
 DBTAGCUT = 0.9
 T21DDTCUT = 0.55
 MUONPTCUT = 55
