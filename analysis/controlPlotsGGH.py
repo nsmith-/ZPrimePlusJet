@@ -223,7 +223,7 @@ def main(options,args,outputExists):
         samples = ['ggHbb','QCD','SingleTop','Diboson','TTbar']                      
         for s in samples:
             for tfile in tfiles[s]:
-                if not os.path.isfile(tfile):
+                if not "root://" in tfile and not os.path.isfile(tfile):
                     print 'error: %s does not exist'%tfile                 
                     sys.exit()
         print "Signals... "
