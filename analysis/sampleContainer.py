@@ -78,13 +78,13 @@ class sampleContainer:
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 
-        f_pu = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/puWeights_All.root", "read")
+        f_pu = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root"), "read")
         self._puw = f_pu.Get("puw")
         self._puw_up = f_pu.Get("puw_p")
         self._puw_down = f_pu.Get("puw_m")
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/Output_smooth_2017MC.root",
+        f_h2ddt = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/Output_smooth_2017MC.root"),
                                   "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)
         self._trans_h2ddt = f_h2ddt.Get("Rho2D")
         self._trans_h2ddt.SetDirectory(0)
@@ -92,8 +92,7 @@ class sampleContainer:
 
         # get trigger efficiency object
 
-        f_trig = ROOT.TFile.Open(
-            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
+        f_trig = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root"), "read")
 #            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
         self._trig_denom = f_trig.Get("data_obs_muCR4_denominator")
         self._trig_numer = f_trig.Get("data_obs_muCR4_numerator")
@@ -115,7 +114,7 @@ class sampleContainer:
         lumi_BCDEF = 19.721
         lumi_total = lumi_GH + lumi_BCDEF
 
-        f_mutrig_BCDEF = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root", "read")
+        f_mutrig_BCDEF = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root"), "read")
         self._mutrig_eff = f_mutrig_BCDEF.Get("Mu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff.Sumw2()
         self._mutrig_eff.SetDirectory(0)
