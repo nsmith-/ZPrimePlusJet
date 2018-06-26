@@ -239,17 +239,17 @@ def main(options,args,outputExists):
         print "Signals... "
         sigSamples = {}
         sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
-        #sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
-        #sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
-        #sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)    
+        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
+        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
+        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)    
         #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
         #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
         #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
         #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        #bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi)
-        #bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi)
+        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         if isData and muonCR:
             bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
@@ -270,7 +270,7 @@ def main(options,args,outputExists):
             print "Data..."
         if isData and muonCR:
             dataSample = sampleContainer('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
-        elif isData
+        elif isData:
             #:
             #HLT_AK8PFJet330_PFAK8BTagCSV_p17_v =32768
             #HLT_PFHT1050_v                     =134217728
@@ -281,7 +281,7 @@ def main(options,args,outputExists):
             #HLT_AK8PFJet380_TrimMass30_v       =16777216
             #HLT_AK8PFJet500_v                  =2097152
             selectTriggerBitsAndJson = "((triggerBits&32768 || triggerBits&134217728 || triggerBits&4096 || triggerBits&8192 || triggerBits&16384 || triggerBits&16 || triggerBits&16777216 || triggerBits&2097152)&&passJson)"
-            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, selectTriggerBitsAndJson, ,False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, selectTriggerBitsAndJson, False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
