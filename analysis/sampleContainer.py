@@ -784,7 +784,7 @@ class sampleContainer:
         self._tt.SetNotify(self._cutFormula)
         print self._tt.GetFile()
         print self._tt.GetEntryNumber(minEvent)
-        for i in xrange(nent):
+        for i in xrange(minEvent,maxEvent):
             if i % self._sf != 0: continue
 
             # self._tt.LoadEntry(i)
@@ -825,7 +825,8 @@ class sampleContainer:
                 # print self._name
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
             # trigger weight
-            massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
+            #massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
+            massForTrig = min(max(self.AK8Puppijet0_msd[0],0), 300.)
             ptForTrig = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
             trigweight = self._trig_eff.GetEfficiency(self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             trigweightUp = trigweight + self._trig_eff.GetEfficiencyErrorUp(
@@ -833,9 +834,7 @@ class sampleContainer:
             trigweightDown = trigweight - self._trig_eff.GetEfficiencyErrorLow(
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             if trigweight <= 0 or trigweightDown <= 0 or trigweightUp <= 0:
-                #print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
-#	        print "ptForTrig: ", ptForTrig
-#        	print "massForTrig: ", massForTrig
+                print 'trigweights are %f, %f, %f, setting all to 1 for massForTrig=%f, ptForTrig=%f' % (trigweight, trigweightUp, trigweightDown,ptForTrig,massForTrig)
                 trigweight = 1
                 trigweightDown = 1
                 trigweightUp = 1
@@ -860,8 +859,7 @@ class sampleContainer:
                 mutrigweightDown = mutrigweight - self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
-                    #print 'mutrigweights are %f, %f, %f, setting all to 1' % (
-                    #mutrigweight, mutrigweightUp, mutrigweightDown)
+                    print 'mutrigweights are %f, %f, %f, setting all to 1' % ( mutrigweight, mutrigweightUp, mutrigweightDown)
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
