@@ -75,22 +75,23 @@ class sampleContainer:
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 
-        f_pu = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root", "read")
+        f_pu = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/puWeights_All.root", "read")
         self._puw = f_pu.Get("puw")
         self._puw_up = f_pu.Get("puw_p")
         self._puw_down = f_pu.Get("puw_m")
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ZqqJet/h3_n2ddt_26eff_36binrho11pt_Spring16.root",
+        f_h2ddt = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/Output_smooth_2017MC.root",
                                   "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)
-        self._trans_h2ddt = f_h2ddt.Get("h2ddt")
+        self._trans_h2ddt = f_h2ddt.Get("Rho2D")
         self._trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
 
         # get trigger efficiency object
 
         f_trig = ROOT.TFile.Open(
-            "$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017.root", "read")
+            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
+#            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
         self._trig_denom = f_trig.Get("data_obs_muCR4_denominator")
         self._trig_numer = f_trig.Get("data_obs_muCR4_numerator")
         self._trig_denom.SetDirectory(0)
@@ -111,35 +112,21 @@ class sampleContainer:
         lumi_BCDEF = 19.721
         lumi_total = lumi_GH + lumi_BCDEF
 
-#        f_mutrig_GH = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_Period4.root", "read")
-#        self._mutrig_eff_GH = f_mutrig_GH.Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
-#        self._mutrig_eff_GH.Sumw2()
-#        self._mutrig_eff_GH.SetDirectory(0)
-#        f_mutrig_GH.Close()
-
-        f_mutrig_BCDEF = ROOT.TFile.Open("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root", "read")
+        f_mutrig_BCDEF = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root", "read")
         self._mutrig_eff = f_mutrig_BCDEF.Get("Mu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff.Sumw2()
         self._mutrig_eff.SetDirectory(0)
-        f_mutrig.Close()
-
-#        self._mutrig_eff = self._mutrig_eff_GH.Clone('pt_abseta_DATA_mutrig_ave')
-#        self._mutrig_eff.Scale(lumi_GH / lumi_total)
-#        self._mutrig_eff.Add(self._mutrig_eff_BCDEF, lumi_BCDEF / lumi_total)
+        f_mutrig_BCDEF.Close()
 
         # get muon ID efficiency object
 
-        with open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ID.json") as ID_input_file:
+        with open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/RunBCDEF_data_ID.json") as ID_input_file:
                 self._muid_eff = json.load(ID_input_file)
-
 
         # get muon ISO efficiency object
 
-	with open("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ISO.json") as ISO_input_file:
-		self._muiso_eff = json.load(ISO_input_file)
-#        self._muiso_eff = self._muiso_eff_GH.Clone('pt_abseta_DATA_muiso_ave')
-#        self._muiso_eff.Scale(lumi_GH / lumi_total)
-#        self._muiso_eff.Add(self._muiso_eff_BCDEF, lumi_BCDEF / lumi_total)
+        with open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/RunBCDEF_data_ISO.json") as ISO_input_file:
+                self._muiso_eff = json.load(ISO_input_file)
 
         self._minBranches = minBranches
         # set branch statuses and addresses
@@ -149,6 +136,7 @@ class sampleContainer:
                           ('AK8Puppijet0_eta', 'd', -999), ('AK8Puppijet0_phi', 'd', -999),
                           ('AK8Puppijet0_tau21', 'd', -999), ('AK8Puppijet0_tau32', 'd', -999),
                           ('AK8Puppijet0_N2sdb1', 'd', -999), ('puWeight', 'f', 0), ('scale1fb', 'f', 0),
+			  ('puWeight_down', 'f', 0), ('puWeight_up', 'f', 0),
                           ('AK8Puppijet0_doublecsv', 'd', -999),
                           ('kfactor', 'f', 0), ('kfactorNLO', 'f', 0), ('nAK4PuppijetsPt30', 'i', -999),
                           ('nAK4PuppijetsPt30dR08_0', 'i', -999),
@@ -251,7 +239,7 @@ class sampleContainer:
             'h_eta_ak8_muCR4_N2': ["h_" + self._name + "_eta_ak8_muCR4_N2", "; AK8 leading #eta;", 50, -3, 3],
             'h_dbtag_ak8_muCR4_N2': ["h_" + self._name + "_dbtag_ak8_muCR4_N2", "; p_{T}-leading double b-tag;", 40, -1,
                                      1],
-            'h_t21ddt_ak8_muCR4_N2': ["h_" + self._name + "_t21ddt_ak8_muCR4_N2", "; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
+#            'h_t21ddt_ak8_muCR4_N2': ["h_" + self._name + "_t21ddt_ak8_muCR4_N2", "; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
             'h_msd_ak8_muCR4_N2': ["h_" + self._name + "_msd_ak8_muCR4_N2", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_muCR4_N2_pass': ["h_" + self._name + "_msd_ak8_muCR4_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                         40, 201],
@@ -408,56 +396,56 @@ class sampleContainer:
                 'h_msd_ak8_muCR4': ["h_" + self._name + "_msd_ak8_muCR4", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_muCR4_pass': ["h_" + self._name + "_msd_ak8_muCR4_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                          40, 201],
-                'h_msd_ak8_muCR4_pass_JESUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_JESUp",
-                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_JESDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_JESDown",
-                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_JERUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_JERUp",
-                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_JERDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_JERDown",
-                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_mutriggerUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_mutriggerUp",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_mutriggerDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_mutriggerDown",
-                                                       "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_muidUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_muidUp",
-                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_muidDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_muidDown",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_muisoUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_muisoUp",
-                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_muisoDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_muisoDown",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_PuUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_PuUp",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_pass_PuDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_PuDown",
-                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_JESUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_JESUp",
+#                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_JESDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_JESDown",
+#                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_JERUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_JERUp",
+#                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_JERDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_JERDown",
+#                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_mutriggerUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_mutriggerUp",
+#                                                     "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_mutriggerDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_mutriggerDown",
+#                                                       "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_muidUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_muidUp",
+#                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_muidDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_muidDown",
+#                                                  "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_muisoUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_muisoUp",
+#                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_muisoDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_muisoDown",
+#                                                   "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_PuUp': ["h_" + self._name + "_msd_ak8_muCR4_pass_PuUp",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_pass_PuDown': ["h_" + self._name + "_msd_ak8_muCR4_pass_PuDown",
+#                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_muCR4_fail': ["h_" + self._name + "_msd_ak8_muCR4_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                          40, 201],
-                'h_msd_ak8_muCR4_fail_JESUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_JESUp",
-                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_JESDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_JESDown",
-                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_JERUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_JERUp",
-                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_JERDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_JERDown",
-                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_mutriggerUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_mutriggerUp",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_mutriggerDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_mutriggerDown",
-                                                       "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_muidUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_muidUp",
-                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_muidDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_muidDown",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_muisoUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_muisoUp",
-                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_muisoDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_muisoDown",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_PuUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_PuUp",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_muCR4_fail_PuDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_PuDown",
-                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_JESUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_JESUp",
+#                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_JESDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_JESDown",
+#                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_JERUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_JERUp",
+#                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_JERDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_JERDown",
+#                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_mutriggerUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_mutriggerUp",
+#                                                     "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_mutriggerDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_mutriggerDown",
+#                                                       "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_muidUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_muidUp",
+#                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_muidDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_muidDown",
+#                                                  "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_muisoUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_muisoUp",
+#                                                 "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_muisoDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_muisoDown",
+#                                                   "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_PuUp': ["h_" + self._name + "_msd_ak8_muCR4_fail_PuUp",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_muCR4_fail_PuDown': ["h_" + self._name + "_msd_ak8_muCR4_fail_PuDown",
+#                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_muCR5': ["h_" + self._name + "_msd_ak8_muCR5", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_muCR6': ["h_" + self._name + "_msd_ak8_muCR6", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_bbleading_muCR4_pass': ["h_" + self._name + "_msd_ak8_bbleading_muCR4_pass",
@@ -518,32 +506,32 @@ class sampleContainer:
                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_topR6_0p4_fail': ["h_" + self._name + "_msd_ak8_topR6_0p4_fail",
                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p91_pass': ["h_" + self._name + "_msd_ak8_topR6_0p91_pass",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p91_fail': ["h_" + self._name + "_msd_ak8_topR6_0p91_fail",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p92_pass': ["h_" + self._name + "_msd_ak8_topR6_0p92_pass",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p92_fail': ["h_" + self._name + "_msd_ak8_topR6_0p92_fail",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p93_pass': ["h_" + self._name + "_msd_ak8_topR6_0p93_pass",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p93_fail': ["h_" + self._name + "_msd_ak8_topR6_0p93_fail",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p94_pass': ["h_" + self._name + "_msd_ak8_topR6_0p94_pass",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p94_fail': ["h_" + self._name + "_msd_ak8_topR6_0p94_fail",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p95_pass': ["h_" + self._name + "_msd_ak8_topR6_0p95_pass",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_msd_ak8_topR6_0p95_fail': ["h_" + self._name + "_msd_ak8_topR6_0p95_fail",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_pt_ca15': ["h_" + self._name + "_pt_ca15", "; CA15 p{T} (GeV);", 100, 300, 3000],
-                'h_msd_ca15': ["h_" + self._name + "_msd_ca15", "; CA15 m_{SD}^{PUPPI} (GeV);", 35, 50, 400],
-                'h_msd_ca15_t21ddtCut': ["h_" + self._name + "_msd_ca15_t21ddtCut", "; CA15 m_{SD}^{PUPPI} (GeV);", 35,
-                                         50, 400],
-                'h_t21_ca15': ["h_" + self._name + "_t21_ca15", "; CA15 #tau_{21};", 25, 0, 1.5],
-                'h_t21ddt_ca15': ["h_" + self._name + "_t21ddt_ca15", "; CA15 #tau_{21};", 25, 0, 1.5]
+#                'h_msd_ak8_topR6_0p91_pass': ["h_" + self._name + "_msd_ak8_topR6_0p91_pass",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p91_fail': ["h_" + self._name + "_msd_ak8_topR6_0p91_fail",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p92_pass': ["h_" + self._name + "_msd_ak8_topR6_0p92_pass",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p92_fail': ["h_" + self._name + "_msd_ak8_topR6_0p92_fail",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p93_pass': ["h_" + self._name + "_msd_ak8_topR6_0p93_pass",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p93_fail': ["h_" + self._name + "_msd_ak8_topR6_0p93_fail",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p94_pass': ["h_" + self._name + "_msd_ak8_topR6_0p94_pass",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p94_fail': ["h_" + self._name + "_msd_ak8_topR6_0p94_fail",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p95_pass': ["h_" + self._name + "_msd_ak8_topR6_0p95_pass",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_msd_ak8_topR6_0p95_fail': ["h_" + self._name + "_msd_ak8_topR6_0p95_fail",
+#                                              "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+#                'h_pt_ca15': ["h_" + self._name + "_pt_ca15", "; CA15 p{T} (GeV);", 100, 300, 3000],
+#                'h_msd_ca15': ["h_" + self._name + "_msd_ca15", "; CA15 m_{SD}^{PUPPI} (GeV);", 35, 50, 400],
+#                'h_msd_ca15_t21ddtCut': ["h_" + self._name + "_msd_ca15_t21ddtCut", "; CA15 m_{SD}^{PUPPI} (GeV);", 35,
+#                                         50, 400],
+#                'h_t21_ca15': ["h_" + self._name + "_t21_ca15", "; CA15 #tau_{21};", 25, 0, 1.5],
+#                'h_t21ddt_ca15': ["h_" + self._name + "_t21ddt_ca15", "; CA15 #tau_{21};", 25, 0, 1.5]
             }
             histos1d = dict(histos1d.items() + histos1d_ext.items())
 
@@ -551,6 +539,8 @@ class sampleContainer:
         for i in range(0, 24):
             msd_binBoundaries.append(40. + i * 7)
         print(msd_binBoundaries)
+#        pt_binBoundaries = [450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 1000]
+#        pt_binBoundaries = [450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 1000, 1100, 1200, 1300, 1400, 1500]
         pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
 
         histos2d_fix = {
@@ -774,6 +764,8 @@ class sampleContainer:
                 sys.stdout.flush()
 
             puweight = self.puWeight[0] #corrected
+#	    puweight_up = self.puWeight_up[0]
+#            puweight_down= self.puWeight_down[0]
             nPuForWeight = min(self.npu[0], 49.5)
 	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
             #puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
@@ -803,8 +795,9 @@ class sampleContainer:
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             trigweightDown = trigweight - self._trig_eff.GetEfficiencyErrorLow(
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
+#	    print "trigweight: ", trigweight
             if trigweight <= 0 or trigweightDown <= 0 or trigweightUp <= 0:
-                print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
+#                print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
 #	        print "ptForTrig: ", ptForTrig
 #        	print "massForTrig: ", massForTrig
                 trigweight = 1
@@ -823,16 +816,14 @@ class sampleContainer:
             if self.nmuLoose[0] > 0:
                 muPtForTrig = self.vmuoLoose0_pt[0]
                 muEtaForTrig = abs(self.vmuoLoose0_eta[0])
-#                muPtForTrig = max(52., min(self.vmuoLoose0_pt[0], 700.))
-#                muEtaForTrig = min(abs(self.vmuoLoose0_eta[0]), 2.3)
                 mutrigweight = self._mutrig_eff.GetBinContent(self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 mutrigweightUp = mutrigweight + self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 mutrigweightDown = mutrigweight - self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
-                    print 'mutrigweights are %f, %f, %f, setting all to 1' % (
-                    mutrigweight, mutrigweightUp, mutrigweightDown)
+#                    print 'mutrigweights are %f, %f, %f, setting all to 1' % (
+#                    mutrigweight, mutrigweightUp, mutrigweightDown)
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
@@ -843,13 +834,13 @@ class sampleContainer:
             if self.nmuLoose[0] > 0:
                 muPtForId = self.vmuoLoose0_pt[0]
                 muEtaForId = abs(self.vmuoLoose0_eta[0])
-		for etaKey, values in sorted(self._muid_eff["NUM_SoftID_DEN_genTracks"]["abseta_pt"].iteritems()) :
+                for etaKey, values in sorted(self._muid_eff["NUM_SoftID_DEN_genTracks"]["abseta_pt"].iteritems()) :
                     if float(etaKey[8:12]) < muEtaForId and float(etaKey[13:17]) > muEtaForId:
                         for ptKey, result in sorted(values.iteritems()) :
                             if float(ptKey[4:9]) < muPtForId and float(ptKey[10:15]) > muPtForId:
-	                	muidweight = result["value"]
-                		muidweightUp = result["value"] + result["error"]
-		                muidweightDown = result["value"] - result["error"]
+                                muidweight = result["value"]
+                                muidweightUp = result["value"] + result["error"]
+                                muidweightDown = result["value"] - result["error"]
                 if muidweight <= 0 or muidweightDown <= 0 or muidweightUp <= 0:
                     print 'muidweights are %f, %f, %f, setting all to 1' % (muidweight, muidweightUp, muidweightDown)
                     muidweight = 1
@@ -862,14 +853,13 @@ class sampleContainer:
             if self.nmuLoose[0] > 0:
                 muPtForIso = self.vmuoLoose0_pt[0]
                 muEtaForIso = abs(self.vmuoLoose0_eta[0])
-		for etaKey, values in sorted(self._muiso_eff["NUM_LooseRelIso_DEN_LooseID"]["abseta_pt"].iteritems()) :
+                for etaKey, values in sorted(self._muiso_eff["NUM_LooseRelIso_DEN_LooseID"]["abseta_pt"].iteritems()) :
                     if float(etaKey[8:12]) < muEtaForId and float(etaKey[13:17]) > muEtaForId:
                         for ptKey, result in sorted(values.iteritems()) :
                             if float(ptKey[4:9]) < muPtForId and float(ptKey[10:15]) > muPtForId:
                                 muisoweight = result["value"]
                                 muisoweightUp = result["value"] + result["error"]
                                 muisoweightDown = result["value"] - result["error"]
-
                 if muisoweight <= 0 or muisoweightDown <= 0 or muisoweightUp <= 0:
                     print 'muisoweights are %f, %f, %f, setting all to 1' % (
                     muisoweight, muisoweightUp, muisoweightDown)
@@ -1149,8 +1139,10 @@ class sampleContainer:
                     cut[4] = cut[4] + 1
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet:
                     cut[5] = cut[5] + 1
-                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0:
+                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose == 0:
                     cut[0] = cut[0] + 1
+                if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0:
+                    cut[10] = cut[10] + 1
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0 and ntau == 0:
                     cut[1] = cut[1] + 1
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and isTightVJet and neleLoose == 0 and nmuLoose == 0 and ntau == 0 and nphoLoose == 0:
@@ -1453,6 +1445,11 @@ class sampleContainer:
         print "\n"
 	if cut[3] > 0:        
             if not self._minBranches:
+		print "mSD > 40: ", float(cut[4] / cut[3] * 100.)
+		print "tight jet ID: ", float(cut[5] / cut[3] * 100.)
+		print "electron veto: ", float(cut[0] / cut[3] * 100.)
+		print "muon veto: ", float(cut[10] / cut[3] * 100.)
+		print "tau veto:", float(cut[1] / cut[3] * 100.)
             	self.h_Cuts.SetBinContent(4, float(cut[0] / cut[3] * 100.))
             	self.h_Cuts.SetBinContent(5, float(cut[1] / cut[3] * 100.))
             	# self.h_Cuts.SetBinContent(6,float(cut[2]/nent*100.))
