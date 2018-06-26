@@ -765,6 +765,7 @@ class sampleContainer:
         print maxEvent, " max event"
         nentPerJob = maxEvent-minEvent
         print nentPerJob, " nentPerJob"
+        # Somehow loading the 0 entry is needed before start looping in the middle of the tree, otherwise will get segFault toward the end of loop
         print 'load tree 0'
         self._tt.LoadTree(0)
         print 'get entry 0'
