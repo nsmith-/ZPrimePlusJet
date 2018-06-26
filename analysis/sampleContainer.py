@@ -859,7 +859,7 @@ class sampleContainer:
                 mutrigweightDown = mutrigweight - self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
-                    print 'mutrigweights are %f, %f, %f, setting all to 1' % ( mutrigweight, mutrigweightUp, mutrigweightDown)
+                    print 'mutrigweights are %f, %f, %f, setting all to 1 for muPtForTrig=%f,muEtaForTrig=%f' % ( mutrigweight, mutrigweightUp, mutrigweightDown,muPtForTrig,muEtaForTrig)
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
