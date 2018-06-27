@@ -27,6 +27,8 @@ def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
     #odir = "plots_2016_10_31/"
 #    idir = options.idir
+
+    #TODO: update to new samples
     idir_temp = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/'
     idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/norm/'
     idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/'
@@ -271,7 +273,7 @@ def main(options,args,outputExists):
         if isData and muonCR:
             dataSample = sampleContainer('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         elif isData:
-            #:
+            # For production  zprimebits-v12.07
             #HLT_AK8PFJet330_PFAK8BTagCSV_p17_v =32768
             #HLT_PFHT1050_v                     =134217728
             #HLT_AK8PFJet400_TrimMass30_v       =4096
