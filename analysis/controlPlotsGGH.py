@@ -339,7 +339,7 @@ def main(options,args,outputExists):
         else:        
             bkgSamples.extend(['TTbar'])
             
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root'%options.iSplit,'read')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root','read')
         for plot in plots:
             hb = {}
             hs = {}
@@ -356,7 +356,7 @@ def main(options,args,outputExists):
             elif isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
             print plot
-            #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+            makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
 
 
