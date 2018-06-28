@@ -327,7 +327,7 @@ def main(options,args,outputExists):
                 hall[process] = getattr(s,plot)
             if isData:
                 hd = getattr(dataSample,plot)
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+            #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
     
         ofile.Close()
     else:        
@@ -356,7 +356,7 @@ def main(options,args,outputExists):
             elif isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
             print plot
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+            #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
 
 
