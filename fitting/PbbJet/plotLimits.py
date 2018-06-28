@@ -1,5 +1,6 @@
 from optparse import OptionParser
 import ROOT as rt
+import numpy as np
 import CMS_lumi, tdrstyle
 import subprocess # to execute shell command
 rt.gROOT.SetBatch(True)
@@ -14,6 +15,129 @@ CMS_lumi.extraText = ""
 CMS_lumi.cmsTextSize = 0.65
 CMS_lumi.outOfFrame = True
 tdrstyle.setTDRStyle()
+
+mu = 2.3*0.001
+md = 4.8*0.001
+mc = 1.275
+ms = 95*0.001
+mt = 173.2
+mb = 4.18
+me = 0.000511
+mmu = 0.1066
+mtau = 1.777
+Nc=3.
+alphas=0.1177
+v=246.
+
+def gamma_scalar_bb(mphi, mchi, gq, gl, gchi):
+
+    aux0=(mb**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((mb**2)*(mphi**-2.))))))**1.5)))
+    output=((1./484128.)*((gq**2)*aux0))/math.pi
+    
+    return output
+
+def gamma_scalar(mphi, mchi, gq, gl, gchi):
+
+    # quarks
+    aux0=(mu**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((mu**2)*(mphi**-2.))))))**1.5)))
+    aux1=(md**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((md**2)*(mphi**-2.))))))**1.5)))
+    aux2=(mc**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((mc**2)*(mphi**-2.))))))**1.5)))
+    aux3=(ms**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((ms**2)*(mphi**-2.))))))**1.5)))
+    aux4=(mt**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((mt**2)*(mphi**-2.))))))**1.5)))
+    aux5=(mb**2)*(mphi*(Nc*((np.maximum(0.,(1.+(-4.*((mb**2)*(mphi**-2.))))))**1.5)))
+
+    output0=((1./484128.)*((gq**2)*aux0))/math.pi
+    output1=((1./484128.)*((gq**2)*aux1))/math.pi
+    output2=((1./484128.)*((gq**2)*aux2))/math.pi
+    output3=((1./484128.)*((gq**2)*aux3))/math.pi
+    output4=((1./484128.)*((gq**2)*aux4))/math.pi
+    output5=((1./484128.)*((gq**2)*aux5))/math.pi
+
+    # leptons
+    aux6=(me**2)*(mphi*((np.maximum(0.,(1.+(-4.*((me**2)*(mphi**-2.))))))**1.5))
+    aux7=(mmu**2)*(mphi*((np.maximum(0.,(1.+(-4.*((mmu**2)*(mphi**-2.))))))**1.5))
+    aux8=(mtau**2)*(mphi*((np.maximum(0.,(1.+(-4.*((mtau**2)*(mphi**-2.))))))**1.5))
+    output6=((1./484128.)*((gl**2)*aux6))/math.pi
+    output7=((1./484128.)*((gl**2)*aux7))/math.pi
+    output8=((1./484128.)*((gl**2)*aux8))/math.pi
+
+    # dark matter
+    aux9=(gchi**2)*(mphi*((np.maximum(0.,(1.+(-4.*((mchi**2)*(mphi**-2.))))))**1.5))
+    output9=(0.125*aux9)/math.pi
+    
+    # gluons (loop)
+    aux10=(1.+(-4.*((mphi**-2.)*(mt**2))))*(((np.arctan((1./np.sqrt(-1.+(4.*((mphi**-2.)*(mt**2)))+0j))))**2))
+    aux11=(math.pi**-3.)*((v**-2.)*(((np.absolute(((mphi**-2.)*((mt**2)*(1.+aux10)))))**2)));
+    output10=0.0000165246*((alphas**2)*((gq**2)*((mphi**3.)*((mt**2)*aux11))));
+    
+    return output0+output1+output2+output3+output4+output5+output6+output7+output8+output9+output10
+
+def br_scalar_bb_mphi(x, par):
+    mphi = x[0]
+    mchi = par[0]
+    gq = par[1]
+    gl = par[2]
+    gchi = par[3]
+
+    return gamma_scalar_bb(mphi, mchi, gq, gl, gchi)/gamma_scalar(mphi, mchi, gq, gl, gchi)
+
+def gamma_pseudoscalar_bb(mphi, mchi, gq, gl, gchi):
+
+    aux0=(mb**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((mb**2)*(mphi**-2.))))))))))
+    output=((1./484128.)*((gq**2)*aux0))/math.pi
+    
+    return output
+
+def gamma_pseudoscalar(mphi, mchi, gq, gl, gchi):
+
+    # quarks
+    aux0=(mu**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((mu**2)*(mphi**-2.))))))))))
+    aux1=(md**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((md**2)*(mphi**-2.))))))))))
+    aux2=(mc**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((mc**2)*(mphi**-2.))))))))))
+    aux3=(ms**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((ms**2)*(mphi**-2.))))))))))
+    aux4=(mt**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((mt**2)*(mphi**-2.))))))))))
+    aux5=(mb**2)*(mphi*(Nc*(np.sqrt((np.maximum(0.,(1.+(-4.*((mb**2)*(mphi**-2.))))))))))
+
+    output0=((1./484128.)*((gq**2)*aux0))/math.pi
+    output1=((1./484128.)*((gq**2)*aux1))/math.pi
+    output2=((1./484128.)*((gq**2)*aux2))/math.pi
+    output3=((1./484128.)*((gq**2)*aux3))/math.pi
+    output4=((1./484128.)*((gq**2)*aux4))/math.pi
+    output5=((1./484128.)*((gq**2)*aux5))/math.pi
+
+    # leptons
+    aux6=(me**2)*(mphi*(np.sqrt((np.maximum(0.,(1.+(-4.*((me**2)*(mphi**-2.)))))))))
+    aux7=(mmu**2)*(mphi*(np.sqrt((np.maximum(0.,(1.+(-4.*((mmu**2)*(mphi**-2.)))))))))
+    aux8=(mtau**2)*(mphi*(np.sqrt((np.maximum(0.,(1.+(-4.*((mtau**2)*(mphi**-2.)))))))))
+    
+    output6=((1./484128.)*((gl**2)*aux6))/math.pi
+    output7=((1./484128.)*((gl**2)*aux7))/math.pi
+    output8=((1./484128.)*((gl**2)*aux8))/math.pi
+
+    # dark matter    
+    aux9=(gchi**2)*(mphi*(np.sqrt((np.maximum(0.,(1.+(-4.*((mchi**2)*(mphi**-2.)))))))))
+    output9=(0.125*aux9)/math.pi
+    
+    # gluons (loop)
+    if mphi == 2*mt:
+        aux10=math.pi**2/4.
+    else:
+        aux10=(mphi**-2.)*((mt**2)*(((np.arctan((1./np.sqrt(-1.+(4.*((mphi**-2.)*(mt**2)))+0j))))**2)))
+        
+    aux11=(gq**2)*((mphi**3.)*((mt**2)*((math.pi**-3.)*((v**-2.)*(((np.absolute(aux10))**2))))))
+    output10=0.0000165246*((alphas**2)*aux11)
+    
+    return output0+output1+output2+output3+output4+output5+output6+output7+output8+output9+output10
+
+def br_pseudoscalar_bb_mphi(x, par):
+    mphi = x[0]
+    mchi = par[0]
+    gq = par[1]
+    gl = par[2]
+    gchi = par[3]
+
+    return gamma_pseudoscalar_bb(mphi, mchi, gq, gl, gchi)/gamma_pseudoscalar(mphi, mchi, gq, gl, gchi)
+
 
 massSwitch = 175
 def setDict():
@@ -66,37 +190,13 @@ def setDict():
     theory_inclusive_xsec['DMSbb'].SetPoint(16, 450, 1.651)
     theory_inclusive_xsec['DMSbb'].SetPoint(17, 475, 1.291)
     theory_inclusive_xsec['DMSbb'].SetPoint(18, 500, 1.018)
+                    
+    br['DMSbb'] = rt.TF1('br_DMSbb',br_scalar_bb_mphi, 0, 600, 4)
+    br['DMSbb'].SetParameter(0, 1500.)
+    br['DMSbb'].SetParameter(1, 1.)
+    br['DMSbb'].SetParameter(2, 1.)
+    br['DMSbb'].SetParameter(3, 1.)
     
-    br_list = [[50, 0.85644], [55, 0.856044], [60, 0.855345], [65, 0.854398], [70, 
-  0.853242], [75, 0.851899], [80, 0.850389], [85, 0.848721], [90, 
-  0.846903], [95, 0.844943], [100, 0.842843], [105, 0.840606], [110, 
-  0.838234], [115, 0.835729], [120, 0.833091], [125, 0.830321], [130, 
-  0.827417], [135, 0.82438], [140, 0.821209], [145, 0.817903], [150, 
-  0.81446], [155, 0.81088], [160, 0.80716], [165, 0.8033], [170, 
-  0.799296], [175, 0.795148], [180, 0.790852], [185, 0.786407], [190, 
-  0.781809], [195, 0.777055], [200, 0.772143], [205, 0.767069], [210, 
-  0.761829], [215, 0.75642], [220, 0.750836], [225, 0.745074], [230, 
-  0.739128], [235, 0.732993], [240, 0.726662], [245, 0.72013], [250, 
-  0.713388], [255, 0.706428], [260, 0.699242], [265, 0.69182], [270, 
-  0.684149], [275, 0.676218], [280, 0.668011], [285, 0.659512], [290, 
-  0.650702], [295, 0.641556], [300, 0.632049], [305, 0.622146], [310, 
-  0.611807], [315, 0.60098], [320, 0.589596], [325, 0.577565], [330, 
-  0.564752], [335, 0.550952], [340, 0.53579], [345, 0.518319], [350, 
-  0.141923], [355, 0.049768], [360, 0.0271303], [365, 
-  0.0178448], [370, 0.0130041], [375, 0.0101058], [380, 
-  0.0082066], [385, 0.0068805], [390, 0.00590992], [395, 
-  0.00517327], [400, 0.00459782], [405, 0.0041376], [410, 
-  0.00376232], [415, 0.00345123], [420, 0.00318974], [425, 
-  0.00296725], [430, 0.00277595], [435, 0.00260994], [440, 
-  0.00246468], [445, 0.00233664], [450, 0.00222305], [455, 
-  0.00212167], [460, 0.00203071], [465, 0.00194868], [470, 
-  0.00187439], [475, 0.00180682], [480, 0.00174514], [485, 
-  0.00168863], [490, 0.0016367], [495, 0.00158882], [500, 0.00154457]]
-
-    br['DMSbb'] = rt.TGraph(len(br_list))
-    for i, br_m_val in enumerate(br_list):
-        br['DMSbb'].SetPoint(i,  br_m_val[0], br_m_val[1])
-        
     sample_xsec['DMPSbb'] = rt.TGraph(8)
     sample_xsec['DMPSbb'].SetPoint(0,  50, 0.8 * 3.587e-02 * 100.)
     sample_xsec['DMPSbb'].SetPoint(1, 100, 0.8 * 3.379e-02 * 100.)
@@ -138,36 +238,11 @@ def setDict():
     theory_inclusive_xsec['DMPSbb'].SetPoint(17, 475, 2.005)
     theory_inclusive_xsec['DMPSbb'].SetPoint(18, 500, 1.528)
 
-    br_list = [[50, 0.852511], [55, 0.850153], [60, 0.847484], [65, 0.844523], [70, 
-  0.841283], [75, 0.837772], [80, 0.833996], [85, 0.82996], [90, 
-  0.825665], [95, 0.821115], [100, 0.816311], [105, 0.811255], [110, 
-  0.805947], [115, 0.80039], [120, 0.794582], [125, 0.788526], [130, 
-  0.782221], [135, 0.775668], [140, 0.768867], [145, 0.761818], [150, 
-  0.754521], [155, 0.746976], [160, 0.739184], [165, 0.731143], [170, 
-  0.722854], [175, 0.714316], [180, 0.705528], [185, 0.69649], [190, 
-  0.687201], [195, 0.677659], [200, 0.667863], [205, 0.657812], [210, 
-  0.647503], [215, 0.636934], [220, 0.626103], [225, 0.615006], [230, 
-  0.603639], [235, 0.591998], [240, 0.580078], [245, 0.567872], [250, 
-  0.555373], [255, 0.542574], [260, 0.529463], [265, 0.516029], [270, 
-  0.502256], [275, 0.488129], [280, 0.473626], [285, 0.458721], [290, 
-  0.443382], [295, 0.42757], [300, 0.411232], [305, 0.394302], [310, 
-  0.376692], [315, 0.358277], [320, 0.338882], [325, 0.318235], [330, 
-  0.295893], [335, 0.271021], [340, 0.241659], [345, 0.199353], [350, 
-  0.00397345], [355, 0.00261999], [360, 0.00211189], [365, 
-  0.00182771], [370, 0.00164097], [375, 0.00150681], [380, 
-  0.00140477], [385, 0.00132401], [390, 0.0012582], [395, 
-  0.00120335], [400, 0.00115681], [405, 0.00111675], [410, 
-  0.00108185], [415, 0.00105113], [420, 0.00102385], [425, 
-  0.000999458], [430, 0.000977495], [435, 0.000957607], [440, 
-  0.000939506], [445, 0.000922955], [450, 0.00090776], [455, 
-  0.000893757], [460, 0.000880809], [465, 0.0008688], [470, 
-  0.000857629], [475, 0.000847211], [480, 0.000837473], [485, 
-  0.000828348], [490, 0.000819782], [495, 0.000811723], [500, 
-  0.000804129]]
-
-    br['DMPSbb'] = rt.TGraph(len(br_list))
-    for i, br_m_val in enumerate(br_list):
-        br['DMPSbb'].SetPoint(i,  br_m_val[0], br_m_val[1])
+    br['DMPSbb'] = rt.TF1('br_DMPSbb',br_pseudoscalar_bb_mphi, 0, 600, 4)
+    br['DMPSbb'].SetParameter(0, 1500.)
+    br['DMPSbb'].SetParameter(1, 1.)
+    br['DMPSbb'].SetParameter(2, 1.)
+    br['DMPSbb'].SetParameter(3, 1.)
 
     #theory_xsec['Zpqq'] = rt.TGraph(6)
     #theory_xsec['Zpqq'].SetPoint(0,  50, 2.2*83.7) #sigma(HT>400) = 2.2 * sigma(HT>500)
@@ -270,7 +345,7 @@ def getGraphs(limits, masses, options):
                 if options.gq:
                     theory = theory * 4. * 4.
             else:
-                theory = theory_xsec[options.model].Eval(mass,0,'S') * br[options.model].Eval(mass,0,'S')
+                theory = theory_xsec[options.model].Eval(mass,0,'S') * br[options.model].Eval(mass)
         else:
             fac = 1
         if options.gq or options.gqZp:
@@ -312,21 +387,21 @@ def plotUpperLimits(options,args):
             jet_type = options.box.split('_')[0]
             cut = options.cuts.split('_')[0]
             file_name = options.idir + "/%s/%s/%s%s/higgsCombine%s_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type,cut,options.model,str(mass),options.model,str(mass),options.lumi,jet_type)
-        if glob.glob(file_name):
-            print "Opened File ", file_name
-            limits[jet_type][str(mass)] = getLimits(file_name)
-            if len( limits[jet_type][str(mass)] )>=5:
-                masses[jet_type].append(mass)
+            if glob.glob(file_name):
+                print "Opened File ", file_name
+                limits[jet_type][str(mass)] = getLimits(file_name)
+                if len( limits[jet_type][str(mass)] )>=5:
+                    masses[jet_type].append(mass)
 
         if mass >= massSwitch and len(options.box.split('_')) > 1:
             jet_type = options.box.split('_')[1]
             cut = options.cuts.split('_')[1]
             file_name = options.idir + "/%s/%s/%s%s/higgsCombine%s_%s_lumi-%.1f_%s.Asymptotic.mH120.root"%(jet_type,cut,options.model,str(mass),options.model,str(mass),options.lumi,jet_type)
-        if glob.glob(file_name):
-            print "Opened File ", file_name
-            limits[jet_type][str(mass)] = getLimits(file_name)
-            if len( limits[jet_type][str(mass)] )>=5:
-                masses[jet_type].append(mass)
+            if glob.glob(file_name):
+                print "Opened File ", file_name
+                limits[jet_type][str(mass)] = getLimits(file_name)
+                if len( limits[jet_type][str(mass)] )>=5:
+                    masses[jet_type].append(mass)
     print limits
     print masses
 
