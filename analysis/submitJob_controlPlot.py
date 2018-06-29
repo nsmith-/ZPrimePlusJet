@@ -35,9 +35,9 @@ def write_bash(temp = 'runjob.sh', command = '' ,gitClone=""):
     out += 'export CWD=${PWD}\n'
     out += 'export PATH=${PATH}:/cvmfs/cms.cern.ch/common\n'
     out += 'export CMS_PATH=/cvmfs/cms.cern.ch\n'
-    out += 'export SCRAM_ARCH=slc6_amd64_gcc491\n'
-    out += 'scramv1 project CMSSW CMSSW_7_4_7\n'
-    out += 'cd CMSSW_7_4_7/src\n'
+    out += 'export SCRAM_ARCH=slc6_amd64_gcc530\n'
+    out += 'scramv1 project CMSSW CMSSW_8_1_0\n'
+    out += 'cd CMSSW_8_1_0/src\n'
     out += 'eval `scramv1 runtime -sh` # cmsenv\n'
     out += gitClone + '\n'
     out += 'cd ZPrimePlusJet\n'
@@ -47,7 +47,7 @@ def write_bash(temp = 'runjob.sh', command = '' ,gitClone=""):
     out += 'echo "Inside $MAINDIR:"\n'
     out += 'ls\n'
     out += 'echo "DELETING..."\n'
-    out += 'rm -rf CMSSW_7_4_7\n'
+    out += 'rm -rf CMSSW_8_1_0\n'
     out += 'rm -rf *.pdf *.C\n'
     out += 'ls\n'
     out += 'date\n'
@@ -56,11 +56,11 @@ def write_bash(temp = 'runjob.sh', command = '' ,gitClone=""):
 
 if __name__ == '__main__':
     maxJobs = 1000
-    dryRun = False
+    dryRun = True
 
     outpath= 'controlPlotsGGH_jobs'
-    #gitClone = "git clone -b Hbb git://github.com/kakwok/ZPrimePlusJet.git"
-    gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
+    gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
+    #gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
     if not os.path.exists(outpath):
         exec_me("mkdir -p %s"%(outpath), False)
