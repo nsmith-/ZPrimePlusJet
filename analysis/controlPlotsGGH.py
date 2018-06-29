@@ -27,6 +27,8 @@ def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
     #odir = "plots_2016_10_31/"
 #    idir = options.idir
+
+    #TODO: update to new samples
     idir_temp = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/'
     idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/norm/'
     idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/'
@@ -40,7 +42,7 @@ def main(options,args,outputExists):
                'Hbb': 'H(b#bar{b})',
                'VBFHbb':'VBF H(b#bar{b})',
                'VHbb': 'VH(b#bar{b})',
-	       'ttHbb': 't#bar{t}H(b#bar{b})',
+	           'ttHbb': 't#bar{t}H(b#bar{b})',
                'Diboson': 'VV(4q)',
                'SingleTop': 'single-t',
                'DY': 'Z(qq)+jets',
@@ -54,7 +56,7 @@ def main(options,args,outputExists):
                'TTbar0Lep': 't#bar{t}+jets, 0l',        
                'TTbar2Lep': 't#bar{t}+jets, 2l',        
                'QCD': 'QCD',
-	       'data': 'JetHT data',
+	           'data': 'JetHT data',
                'muon': 'SingleMuon data',
                'Phibb50': '#Phi(b#bar{b}), 50 GeV',
                'Phibb75': '#Phi(b#bar{b}), 75 GeV',
@@ -147,6 +149,12 @@ def main(options,args,outputExists):
 
 
             }
+    #tfiles['data'].extend( [idirData +'JetHTRun2016H_03Feb2017_ver2_v1_v3_%s.root'%str(i)  for i in range(0,26)])
+    #tfiles['data'].extend( [idirData +'JetHTRun2016G_03Feb2017_v1_v3_%s.root'     %str(i)  for i in range(0,26)])
+    #tfiles['data'].extend( [idirData +'JetHTRun2016F_03Feb2017_v1_v3_%s.root'     %str(i)  for i in range(0,11)])
+    #tfiles['data'].extend( [idirData +'JetHTRun2016E_03Feb2017_v1_v3_%s.root'     %str(i)  for i in range(0,15)])
+    #tfiles['data'].extend( [idirData +'JetHTRun2016D_03Feb2017_v1_v3_%s.root'     %str(i)  for i in range(0,15)])
+    #tfiles['data'].extend( [idirData +'JetHTRun2016C_03Feb2017_v1_v3_%s.root'     %str(i)  for i in range(0,10)])
 
 
     color = {'ggHbb': ROOT.kAzure+1,
@@ -225,49 +233,59 @@ def main(options,args,outputExists):
                 pass
     if not outputExists: 
         samples = ['ggHbb','VBFHbb','VHbb','ttHbb','QCD','SingleTop','Diboson','W','DY','TTbar']                      
-        #for s in samples:
-        #    for tfile in tfiles[s]:
-        #        if not os.path.isfile(tfile):
-        #            print 'error: %s does not exist'%tfile                 
-        #            sys.exit()
+        for s in samples:
+            for tfile in tfiles[s]:
+                if not "root://" in tfile and not os.path.isfile(tfile):
+                    print 'error: %s does not exist'%tfile                 
+                    sys.exit()
         print "Signals... "
         sigSamples = {}
-        sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi) 
-        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ) 
-        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ) 	
-        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi )    
-        #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi) 
-        #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ) 
-        #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ) 	
-        #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ) 	
+        sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
+        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
+        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
+        sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)    
+        #sigSamples['Phibb50']  = sampleContainer('Phibb50',tfiles['Phibb50']  , 1, 0.2480*lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
+        #sigSamples['Phibb75'] = sampleContainer('Phibb75',tfiles['Phibb75'], 1, 0.2080*lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 
+        #sigSamples['Phibb150'] = sampleContainer('Phibb150',tfiles['Phibb150'], 1, 0.2764*lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
+        #sigSamples['Phibb250'] = sampleContainer('Phibb250',tfiles['Phibb250'], 1, 0.6699*lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit) 	
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi)
-        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi)
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, DBTMIN,lumi)
+        bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         if isData and muonCR:
-            bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi)
-            bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi)
-#            bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
-#            bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
-#            bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
-#            bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
-#            bkgSamples['TTbar2Lep']  = sampleContainer('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2')
-            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi)
+            bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            #bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            #bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            #bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            #bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            #bkgSamples['TTbar2Lep']  = sampleContainer('TTbar2Lep',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==2',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         else:        
-            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi)
-        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi)
-        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi)
+            bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         #bkgSamples['Hbb'] = sampleContainer('Hbb',tfiles['Hbb'], 1, lumi ) 	
 
         if isData:
             print "Data..."
         if isData and muonCR:
-            dataSample = sampleContainer('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)')
+            dataSample = sampleContainer('muon',tfiles['muon'], 1, DBTMIN,lumi, isData, False, '((triggerBits&4)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         elif isData:
-            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&32768 || triggerBits&134217728 || triggerBits&4096 || triggerBits&8192 || triggerBits&16384 || triggerBits&16 || triggerBits&16777216 || triggerBits&2097152)&&passJson)')
+            # For production  zprimebits-v12.07
+            #HLT_AK8PFJet330_PFAK8BTagCSV_p17_v =32768
+            #HLT_PFHT1050_v                     =134217728
+            #HLT_AK8PFJet400_TrimMass30_v       =4096
+            #HLT_AK8PFHT800_TrimMass50_v        =8192
+            #HLT_PFJet500_v                     =16384
+            #HLT_AK8PFJet360_TrimMass30_v       =16
+            #HLT_AK8PFJet380_TrimMass30_v       =16777216
+            #HLT_AK8PFJet500_v                  =2097152
+            selectTriggerBitsAndJson = "((triggerBits&32768 || triggerBits&134217728 || triggerBits&4096 || triggerBits&8192 || triggerBits&16384 || triggerBits&16 || triggerBits&16777216 || triggerBits&2097152)&&passJson)"
+            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, selectTriggerBitsAndJson, False, iSplit = options.iSplit, maxSplit = options.maxSplit)
         
-        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted.root ','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
@@ -309,7 +327,7 @@ def main(options,args,outputExists):
                 hall[process] = getattr(s,plot)
             if isData:
                 hd = getattr(dataSample,plot)
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+            #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
     
         ofile.Close()
     else:        
@@ -352,6 +370,8 @@ if __name__ == '__main__':
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
     parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
+    parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
+    parser.add_option("--i-split"  , dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
 
     (options, args) = parser.parse_args()
 

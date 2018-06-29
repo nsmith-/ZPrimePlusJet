@@ -11,6 +11,7 @@ import sys
 import time
 import warnings
 import json
+import os
 
 PTCUT = 450.
 PTCUTMUCR = 400.
@@ -25,7 +26,7 @@ NJETCUT = 100
 #########################################################################################################
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
-                 minBranches=False):
+                 minBranches=False, iSplit = 0, maxSplit = 1):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self._fn = fn
@@ -45,6 +46,8 @@ class sampleContainer:
         if isData:
             self._lumi = 1
         self._fillCA15 = fillCA15
+        self._iSplit = iSplit
+        self._maxSplit = maxSplit
         # based on https://github.com/thaarres/PuppiSoftdropMassCorr Summer16
         self.corrGEN = ROOT.TF1("corrGEN", "[0]+[1]*pow(x*[2],-[3])", 200, 3500)
         self.corrGEN.SetParameter(0, 1.00626)
@@ -75,13 +78,13 @@ class sampleContainer:
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 
-        f_pu = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/puWeights_All.root", "read")
+        f_pu = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root"), "read")
         self._puw = f_pu.Get("puw")
         self._puw_up = f_pu.Get("puw_p")
         self._puw_down = f_pu.Get("puw_m")
 
         # get histogram for transform
-        f_h2ddt = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/Output_smooth_2017MC.root",
+        f_h2ddt = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/Output_smooth_2017MC.root"),
                                   "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)
         self._trans_h2ddt = f_h2ddt.Get("Rho2D")
         self._trans_h2ddt.SetDirectory(0)
@@ -89,8 +92,7 @@ class sampleContainer:
 
         # get trigger efficiency object
 
-        f_trig = ROOT.TFile.Open(
-            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
+        f_trig = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root"), "read")
 #            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
         self._trig_denom = f_trig.Get("data_obs_muCR4_denominator")
         self._trig_numer = f_trig.Get("data_obs_muCR4_numerator")
@@ -112,7 +114,7 @@ class sampleContainer:
         lumi_BCDEF = 19.721
         lumi_total = lumi_GH + lumi_BCDEF
 
-        f_mutrig_BCDEF = ROOT.TFile.Open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root", "read")
+        f_mutrig_BCDEF = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root"), "read")
         self._mutrig_eff = f_mutrig_BCDEF.Get("Mu50_PtEtaBins/efficienciesDATA/pt_abseta_DATA")
         self._mutrig_eff.Sumw2()
         self._mutrig_eff.SetDirectory(0)
@@ -120,13 +122,13 @@ class sampleContainer:
 
         # get muon ID efficiency object
 
-        with open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/RunBCDEF_data_ID.json") as ID_input_file:
+        with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ID.json")) as ID_input_file:
                 self._muid_eff = json.load(ID_input_file)
 
         # get muon ISO efficiency object
 
-        with open("/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/RunBCDEF_data_ISO.json") as ISO_input_file:
-                self._muiso_eff = json.load(ISO_input_file)
+      	with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ISO.json")) as ISO_input_file:
+	    	self._muiso_eff = json.load(ISO_input_file)
 
         self._minBranches = minBranches
         # set branch statuses and addresses
@@ -739,13 +741,40 @@ class sampleContainer:
 
     def loop(self):
         # looping
+
+        print "\n", "***********************************************************************************************************************************"
+        print self._name
+        print "***********************************************************************************************************************************", "\n"
         nent = self._tt.GetEntries()
         print nent
         cut = []
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
         self._tt.SetNotify(self._cutFormula)
-        for i in xrange(nent):
+
+        minEventsPerJob = nent / self._maxSplit
+        leftoverEvents = nent % self._maxSplit
+        minEvent = self._iSplit * minEventsPerJob
+        maxEvent = (self._iSplit+1) * minEventsPerJob
+        if (self._iSplit + 1 == self._maxSplit): maxEvent = nent
+        print nent, " total events"
+        print self._iSplit, " iSplit"
+        print self._maxSplit, " maxSplit"
+        print minEvent, " min event"
+        print maxEvent, " max event"
+        nentPerJob = maxEvent-minEvent
+        print nentPerJob, " nentPerJob"
+        # Somehow loading the 0 entry is needed before start looping in the middle of the tree, otherwise will get segFault toward the end of loop
+        print 'load tree 0'
+        self._tt.LoadTree(0)
+        print 'get entry 0'
+        self._tt.GetEntry(0)
+        #print 'load tree minEvent'
+        #self._tt.LoadTree(minEvent)
+        self._tt.SetNotify(self._cutFormula)
+        print self._tt.GetFile()
+        print self._tt.GetEntryNumber(minEvent)
+        for i in xrange(minEvent,maxEvent):
             if i % self._sf != 0: continue
 
             # self._tt.LoadEntry(i)
@@ -767,7 +796,7 @@ class sampleContainer:
 #	    puweight_up = self.puWeight_up[0]
 #            puweight_down= self.puWeight_down[0]
             nPuForWeight = min(self.npu[0], 49.5)
-	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
+    	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
             #puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
             puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
             puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
@@ -788,7 +817,8 @@ class sampleContainer:
                 # print self._name
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
             # trigger weight
-            massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
+            #massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
+            massForTrig = min(max(self.AK8Puppijet0_msd[0],0), 300.)
             ptForTrig = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
             trigweight = self._trig_eff.GetEfficiency(self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             trigweightUp = trigweight + self._trig_eff.GetEfficiencyErrorUp(
@@ -797,9 +827,7 @@ class sampleContainer:
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
 #	    print "trigweight: ", trigweight
             if trigweight <= 0 or trigweightDown <= 0 or trigweightUp <= 0:
-#                print 'trigweights are %f, %f, %f, setting all to 1' % (trigweight, trigweightUp, trigweightDown)
-#	        print "ptForTrig: ", ptForTrig
-#        	print "massForTrig: ", massForTrig
+                print 'trigweights are %f, %f, %f, setting all to 1 for massForTrig=%f, ptForTrig=%f' % (trigweight, trigweightUp, trigweightDown,ptForTrig,massForTrig)
                 trigweight = 1
                 trigweightDown = 1
                 trigweightUp = 1
@@ -822,8 +850,7 @@ class sampleContainer:
                 mutrigweightDown = mutrigweight - self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
-#                    print 'mutrigweights are %f, %f, %f, setting all to 1' % (
-#                    mutrigweight, mutrigweightUp, mutrigweightDown)
+                    print 'mutrigweights are %f, %f, %f, setting all to 1 for muPtForTrig=%f,muEtaForTrig=%f' % ( mutrigweight, mutrigweightUp, mutrigweightDown,muPtForTrig,muEtaForTrig)
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
