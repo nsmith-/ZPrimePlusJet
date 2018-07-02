@@ -55,6 +55,12 @@ def write_bash(temp = 'runjob.sh', command = '' ,gitClone=""):
         f.write(out)
 
 if __name__ == '__main__':
+    parser = OptionParser()
+    parser.add_option('--hadd', dest='hadd', action='store_true',default = False, help='hadd roots from subjobs', metavar='hadd')
+
+    (options, args) = parser.parse_args()
+    hadd  = options.hadd
+
     maxJobs = 1000
     dryRun = True
 
@@ -62,19 +68,34 @@ if __name__ == '__main__':
     gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
     #gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
-    if not os.path.exists(outpath):
-        exec_me("mkdir -p %s"%(outpath), False)
-    os.chdir(outpath)
-    print "submitting jobs from : ",os.getcwd()
-
     #Small files used by the exe
     files = ['']
-    
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2'
-    for iJob in range(0,maxJobs):
-        #if not iJob==0: continue
-        arguments = [ str(iJob), str(maxJobs)]
-        exe       = "runjob_%s.sh"%iJob
-        write_bash(exe, command,gitClone)
-        write_condor(exe, arguments, files,dryRun)
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData'
+
+    plot_command = command.replace("-o ${MAINDIR}/ --i-split $1 --max-split $2","-o %s/"%outpath)
+
+    if not options.hadd:
+        if not os.path.exists(outpath):
+            exec_me("mkdir -p %s"%(outpath), False)
+        os.chdir(outpath)
+        print "submitting jobs from : ",os.getcwd()
+    
+        for iJob in range(0,maxJobs):
+            #if not iJob==0: continue
+            arguments = [ str(iJob), str(maxJobs)]
+            exe       = "runjob_%s.sh"%iJob
+            write_bash(exe, command,gitClone)
+            write_condor(exe, arguments, files,dryRun)
+    else:
+        print "Trying to hadd subjob files from %s"%outpath
+        nOutput = len(glob.glob("%s/Plots_1000pb_weighted*.root"%outpath))
+        if nOutput==maxJobs:
+            print "Found %s subjob output files"%nOutput
+            exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted*.root"%(outpath,outpath),dryRun)
+            print "DONE hadd. Removing subjob files"
+            exec_me("rm %s/Plots_1000pb_weighted*.root"%(outpath),dryRun)
+            print "Plotting...."
+            exec_me(plot_command,dryRun)
+        else:
+            print "%s/%s jobs done, not hadd-ing"%(nOutput,maxJobs)
