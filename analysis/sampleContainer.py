@@ -41,7 +41,7 @@ class sampleContainer:
         with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerBitMap.json")) as triggerMapFile:
             self._triggerBitMaps = json.load(triggerMapFile)
 
-        self._triggerCut = selectTriggers(triggerNames,triggerBitMaps)
+        self._triggerCut = self.selectTriggers(self._triggerNames,self._triggerBitMaps)
 
         warnings.filterwarnings(action='ignore', category=RuntimeWarning, message='creating converter.*')
         self._cutFormula = ROOT.TTreeFormula("cutFormula",
@@ -1529,7 +1529,7 @@ class sampleContainer:
         return totalWeight
 
     #build a string of "OR" for list of triggers
-    def selectTriggers(imap,triggerMap):
+    def selectTriggers(self,imap,triggerMap):
         if not imap =={}:
             version     = imap['version']
             hltNames    = imap['names']
