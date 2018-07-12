@@ -42,6 +42,9 @@ class sampleContainer:
             self._triggerBitMaps = json.load(triggerMapFile)
 
         self._triggerCut = self.selectTriggers(self._triggerNames,self._triggerBitMaps)
+        if not self._triggerNames=={}:
+            print "List of OR Triggers : ",self._triggerNames['names']
+            print "Using trigger cuts  : ",self._triggerCut
 
         warnings.filterwarnings(action='ignore', category=RuntimeWarning, message='creating converter.*')
         self._cutFormula = ROOT.TTreeFormula("cutFormula",
@@ -1543,7 +1546,7 @@ class sampleContainer:
             for hltName in hltNames:
                 print hltName
                 if hltName in NameToBitMap:
-                    bitValue = 2**float(NameToBitMap[hltName])
+                    bitValue = int(2**float(NameToBitMap[hltName]))
                     tCuts.append("%s & %s"%(branchName,bitValue))
                 else:
                     print "ERROR! Cannot find the TriggerBit for %s"%hltName 
