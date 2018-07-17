@@ -221,7 +221,7 @@ def main(options,args,outputExists):
             except:
                 pass
     elif isData:
-        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8']
+        plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8','h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8','h_Cuts']
     else:
         plots = []
         testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
@@ -343,7 +343,8 @@ def main(options,args,outputExists):
         ofile.Close()
     else:        
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
+        #bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
+        bkgSamples = ['QCD']                      
         if isData and muonCR:
 #            bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
             bkgSamples.extend(['Wlnu','DYll','TTbar'])
