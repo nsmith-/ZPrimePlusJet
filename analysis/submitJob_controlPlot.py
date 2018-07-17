@@ -62,7 +62,7 @@ if __name__ == '__main__':
     hadd  = options.hadd
 
     maxJobs = 1000
-    dryRun = True
+    dryRun = False
 
     outpath= 'controlPlotsGGH_jobs'
     gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
@@ -82,19 +82,21 @@ if __name__ == '__main__':
         print "submitting jobs from : ",os.getcwd()
     
         for iJob in range(0,maxJobs):
-            #if not iJob==0: continue
-            arguments = [ str(iJob), str(maxJobs)]
-            exe       = "runjob_%s.sh"%iJob
-            write_bash(exe, command,gitClone)
-            write_condor(exe, arguments, files,dryRun)
+            if os.path.isfile("Plots_1000pb_weighted_%s.root"%(iJob)):
+                print "Plots_1000pb_weighted_%s.root exists"%(iJob)
+            else:
+                arguments = [ str(iJob), str(maxJobs)]
+                exe       = "runjob_%s.sh"%iJob
+                write_bash(exe, command,gitClone)
+                write_condor(exe, arguments, files,dryRun)
     else:
         print "Trying to hadd subjob files from %s"%outpath
-        nOutput = len(glob.glob("%s/Plots_1000pb_weighted*.root"%outpath))
+        nOutput = len(glob.glob("%s/Plots_1000pb_weighted_*.root"%outpath))
         if nOutput==maxJobs:
             print "Found %s subjob output files"%nOutput
-            exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted*.root"%(outpath,outpath),dryRun)
+            exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted_*.root"%(outpath,outpath),dryRun)
             print "DONE hadd. Removing subjob files"
-            exec_me("rm %s/Plots_1000pb_weighted*.root"%(outpath),dryRun)
+            exec_me("rm %s/Plots_1000pb_weighted_*.root"%(outpath),dryRun)
             print "Plotting...."
             exec_me(plot_command,dryRun)
         else:
