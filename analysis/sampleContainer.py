@@ -26,7 +26,7 @@ NJETCUT = 100
 #########################################################################################################
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
-                 minBranches=False, iSplit = 0, maxSplit = 1):
+                 minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self._fn = fn
@@ -36,9 +36,19 @@ class sampleContainer:
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
         self._lumi = lumi
+        self._triggerNames = triggerNames 
+
+        with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerBitMap.json")) as triggerMapFile:
+            self._triggerBitMaps = json.load(triggerMapFile)
+
+        self._triggerCut = self.selectTriggers(self._triggerNames,self._triggerBitMaps)
+        if not self._triggerNames=={}:
+            print "List of OR Triggers : ",self._triggerNames['names']
+            print "Using trigger cuts  : ",self._triggerCut
+
         warnings.filterwarnings(action='ignore', category=RuntimeWarning, message='creating converter.*')
         self._cutFormula = ROOT.TTreeFormula("cutFormula",
-                                             "(" + cutFormula + ")&&(AK8Puppijet0_pt>%f||AK8Puppijet0_pt_JESDown>%f||AK8Puppijet0_pt_JESUp>%f||AK8Puppijet0_pt_JERUp>%f||AK8Puppijet0_pt_JERDown>%f)" % (
+                                             "(" + cutFormula + ")&&("+self._triggerCut+")&&(AK8Puppijet0_pt>%f||AK8Puppijet0_pt_JESDown>%f||AK8Puppijet0_pt_JESUp>%f||AK8Puppijet0_pt_JERUp>%f||AK8Puppijet0_pt_JERDown>%f)" % (
                                                  PTCUTMUCR, PTCUTMUCR, PTCUTMUCR, PTCUTMUCR, PTCUTMUCR), self._tt)
         self._isData = isData
         # print lumi
@@ -129,6 +139,7 @@ class sampleContainer:
 
       	with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/RunBCDEF_data_ISO.json")) as ISO_input_file:
 	    	self._muiso_eff = json.load(ISO_input_file)
+
 
         self._minBranches = minBranches
         # set branch statuses and addresses
@@ -1519,5 +1530,30 @@ class sampleContainer:
             recoCorr = self.corrRECO_for.Eval(puppipt)
         totalWeight = genCorr * recoCorr
         return totalWeight
+
+    #build a string of "OR" for list of triggers
+    def selectTriggers(self,imap,triggerMap):
+        if not imap =={}:
+            version     = imap['version']
+            hltNames    = imap['names']
+            branchName  = imap['branchName'] #triggerBits or moreTriggerBits
+            #validate input
+            if version in triggerMap:
+                NameToBitMap = triggerMap[version]
+            else:
+                print "ERROR! Cannot find triggerbit map of the requested bit version =%s. Possible versions are: %s"%(version, ",".join(triggerMap.keys()))
+            tCuts = []
+            for hltName in hltNames:
+                print hltName
+                if hltName in NameToBitMap:
+                    bitValue = int(2**float(NameToBitMap[hltName]))
+                    tCuts.append("%s & %s"%(branchName,bitValue))
+                else:
+                    print "ERROR! Cannot find the TriggerBit for %s"%hltName 
+            print "Using trigger bits = ","||".join(tCuts) 
+            return "||".join(tCuts) 
+        else:
+            return "1"
+
 
 ##########################################################################################

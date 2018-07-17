@@ -282,8 +282,19 @@ def main(options,args,outputExists):
             #HLT_AK8PFJet360_TrimMass30_v       =16
             #HLT_AK8PFJet380_TrimMass30_v       =16777216
             #HLT_AK8PFJet500_v                  =2097152
-            selectTriggerBitsAndJson = "((triggerBits&32768 || triggerBits&134217728 || triggerBits&4096 || triggerBits&8192 || triggerBits&16384 || triggerBits&16 || triggerBits&16777216 || triggerBits&2097152)&&passJson)"
-            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, selectTriggerBitsAndJson, False, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
+                          "names":[
+                               "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
+                               "HLT_PFHT1050_v*",
+                               "HLT_AK8PFJet400_TrimMass30_v*",
+                               "HLT_AK8PFHT800_TrimMass50_v*",
+                               "HLT_PFJet500_v*",
+                               "HLT_AK8PFJet360_TrimMass30_v*",
+                               "HLT_AK8PFJet380_TrimMass30_v*",
+                               "HLT_AK8PFJet500_v*"]
+                      }
+            #selectTriggerBitsAndJson = "((triggerBits&32768 || triggerBits&134217728 || triggerBits&4096 || triggerBits&8192 || triggerBits&16384 || triggerBits&16 || triggerBits&16777216 || triggerBits&2097152)&&passJson)"
+            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
