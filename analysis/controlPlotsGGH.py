@@ -114,14 +114,6 @@ def main(options,args,outputExists):
                       idir+'/QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root',
                       idir+'/QCD_HT1500to2000_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root',
                       idir+'/QCD_HT2000toInf_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root'],
-              #'QCD': [idir_temp+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT1000to1500_13TeV_all_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
-              #        idir_temp+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],
               'Phibb50': [idir+'/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb75': [idir+'/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb150': [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
@@ -352,8 +344,7 @@ def main(options,args,outputExists):
         ofile.Close()
     else:        
         sigSamples = ['ggHbb','VBFHbb','VHbb','ttHbb']        
-        #bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
-        bkgSamples = ['QCD']                      
+        bkgSamples = ['QCD','SingleTop','Diboson','W','DY']                      
         if isData and muonCR:
 #            bkgSamples.extend(['Wlnu','DYll','TTbar1Mu','TTbar1Ele','TTbar1Tau','TTbar0Lep','TTbar2Lep'])
             bkgSamples.extend(['Wlnu','DYll','TTbar'])
