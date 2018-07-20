@@ -62,7 +62,7 @@ if __name__ == '__main__':
     hadd  = options.hadd
 
     maxJobs = 1000
-    dryRun = True
+    dryRun = True 
 
     outpath= 'controlPlotsGGH_jobs'
     gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
@@ -92,9 +92,9 @@ if __name__ == '__main__':
         nOutput = len(glob.glob("%s/Plots_1000pb_weighted*.root"%outpath))
         if nOutput==maxJobs:
             print "Found %s subjob output files"%nOutput
-            exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted*.root"%(outpath,outpath),dryRun)
+            exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted_*.root"%(outpath,outpath),dryRun)
             print "DONE hadd. Removing subjob files"
-            exec_me("rm %s/Plots_1000pb_weighted*.root"%(outpath),dryRun)
+            exec_me("rm %s/Plots_1000pb_weighted_*.root"%(outpath),dryRun)
             print "Plotting...."
             exec_me(plot_command,dryRun)
         else:
