@@ -474,7 +474,7 @@ def plotUpperLimits(options,args):
         h_limit.GetXaxis().SetMoreLogLabels()
         h_limit.GetXaxis().SetNoExponent()
     elif options.xsec:
-        h_limit.GetYaxis().SetTitle("#sigma #times B [pb]")
+        h_limit.GetYaxis().SetTitle("#sigma #bf{#it{#Beta}}(#bar{b}b) [pb]")
     h_limit.GetYaxis().SetTitleOffset(0.9)
     #h_limit.Draw('F')
 
@@ -521,16 +521,18 @@ def plotUpperLimits(options,args):
     #rt.gPad.SetTicks(1,1)
     #frame.Draw('sameaxis')
 
-    if options.gq or options.gqZp:
-        x1 = 0.67
-    else:
-        x1 = 0.6
+#    if options.gq or options.gqZp:
+    x1 = 0.67
     x2 = x1 + 0.24
+#    else:
+#        x1 = 0.6
+#        x2 = x1 + 0.24
     if options.xsec: 
-        y1 = 0.72
+        y2 = 0.9
+        y1 = y2 - 0.24
     else: 
-        y1 = 0.62
-    y2 = y1 + 0.18
+        y2 = 0.9
+        y1 = y2 - 0.18
     legend = rt.TLegend(x1,y1,x2,y2)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
@@ -588,6 +590,8 @@ def plotUpperLimits(options,args):
         lab.Draw()
 
     legend.Draw("same")
+
+    c.RedrawAxis() # request from CWR
     print " "
     if options.gq: 
         #if options.model=='Zpqq':
