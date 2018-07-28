@@ -462,7 +462,7 @@ def plotUpperLimits(options,args):
     h_limit.GetXaxis().SetLimits(options.massMin,options.massMax)
     h_limit.SetMinimum(options.xsecMin)
     h_limit.SetMaximum(options.xsecMax)
-    h_limit.GetXaxis().SetTitle('Resonance mass [GeV]')
+    h_limit.GetXaxis().SetTitle('Resonance mass (GeV)')
     if options.gq and options.model=='DMSbb':
         h_limit.GetYaxis().SetTitle("g_{q#Phi}")
     elif options.gq and options.model=='DMPSbb':
@@ -474,7 +474,7 @@ def plotUpperLimits(options,args):
         h_limit.GetXaxis().SetMoreLogLabels()
         h_limit.GetXaxis().SetNoExponent()
     elif options.xsec:
-        h_limit.GetYaxis().SetTitle("#sigma #bf{#it{#Beta}}(#bar{b}b) [pb]")
+        h_limit.GetYaxis().SetTitle("#sigma #bf{#it{#Beta}}(#bar{b}b) (pb)")
     h_limit.GetYaxis().SetTitleOffset(0.9)
     #h_limit.Draw('F')
 
@@ -552,8 +552,8 @@ def plotUpperLimits(options,args):
         if options.xsec:
             dxleg = 30
             dyleg = 1
-            yleg1 = 0.05*1000
-            yleg2 = 5*1000
+            yleg1 = 0.5*100
+            yleg2 = 12*100
         elif options.gq and options.model=='DMSbb':
             dxleg = 30
             dyleg = 1
@@ -561,9 +561,9 @@ def plotUpperLimits(options,args):
             yleg2 = 12
         elif options.gq and options.model=='DMPSbb':
             dxleg = 30
-            dyleg = 1
-            yleg1 = 2*2./3
-            yleg2 = 12*2./3
+            dyleg = 1*14./20
+            yleg1 = 2*14./20
+            yleg2 = 12*14./20
         elif options.gq and options.model=='Zpqq':
             dxleg = 30
             dyleg = 0.05
