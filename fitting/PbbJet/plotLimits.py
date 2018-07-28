@@ -551,19 +551,19 @@ def plotUpperLimits(options,args):
 
         if options.xsec:
             dxleg = 30
-            dyleg = 1
+            dyleg = 300
             yleg1 = 0.5*100
-            yleg2 = 12*100
+            yleg2 = 10*100
         elif options.gq and options.model=='DMSbb':
             dxleg = 30
             dyleg = 1
             yleg1 = 2
-            yleg2 = 12
+            yleg2 = 11
         elif options.gq and options.model=='DMPSbb':
             dxleg = 30
             dyleg = 1*14./20
             yleg1 = 2*14./20
-            yleg2 = 12*14./20
+            yleg2 = 11*14./20
         elif options.gq and options.model=='Zpqq':
             dxleg = 30
             dyleg = 0.05
@@ -585,8 +585,8 @@ def plotUpperLimits(options,args):
         lab.SetTextFont(42)
         lab.SetTextColor(rt.kGray+3)
         lab.SetTextAlign(23)
-        lab.DrawLatex(massSwitch-dxleg,yleg2-dyleg,"#leftarrow #splitline{anti-k_{T}}{R=0.8}")
-        lab.DrawLatex(massSwitch+dxleg,yleg2-dyleg,"#splitline{CA}{R=1.5} #rightarrow")
+        lab.DrawLatex(massSwitch-dxleg,yleg2-dyleg,"#leftarrow AK8")
+        lab.DrawLatex(massSwitch+dxleg,yleg2-dyleg,"CA15 #rightarrow")
         lab.Draw()
 
     legend.Draw("same")
