@@ -20,8 +20,8 @@ Make workspaces and datacards:
 # make workspaces (with MC only)
 python buildRhalphabetHbb.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -o output-miniaod-pfmet140-hqq125ptShape/ --remove-unmatched --prefit --addHptShape --pseudo
 
-# make workspaces (if only using data % 10: scale MC down by factor of 10)
-python buildRhalphabetHbb.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -o output-miniaod-pfmet140-hqq125ptShape/ --remove-unmatched --prefit --addHptShape --scale 10
+# make workspaces (with blinded data % 10: scale MC down by factor of 10)
+python buildRhalphabetHbb.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -o output-miniaod-pfmet140-hqq125ptShape/ --remove-unmatched --prefit --addHptShape --scale 10 --blind
 
 # make workspaces (with full data)
 python buildRhalphabetHbb.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -o output-miniaod-pfmet140-hqq125ptShape/ --remove-unmatched --prefit --addHptShape
@@ -56,8 +56,8 @@ Run F-tests:
 # run f-test for (2, 1) vs (2, 2) with MC:
 python runFtest.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -t 10 --nr1 2 --np1 1 --nr2 2 --np2 2 -n 153 --lumi 35.9 -r 0 -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/ftest/ --pseudo
 
-# run f-test for (2, 1) vs (2, 2) with data:
-python runFtest.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -t 10 --nr1 2 --np1 1 --nr2 2 --np2 2 -n 153 --lumi 35.9 -r 0 -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/ftest/ 
+# run f-test for (2, 1) vs (2, 2) with blinded data % 10:
+python runFtest.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear.root --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root -t 10 --nr1 2 --np1 1 --nr2 2 --np2 2 -n 153 --lumi 35.9 -r 0 -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/ftest/ --scale 10 --blind
 ```
 
 Follow other combine instructions:
