@@ -26,13 +26,13 @@ NJETCUT = 100
 #########################################################################################################
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
-                 minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}):
+                 minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree'):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self._fn = fn
         if len(fn) > 0:
             self._tf = ROOT.TFile.Open(self._fn[0])
-        self._tt = ROOT.TChain('otree')
+        self._tt = ROOT.TChain(treeName)
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
         self._lumi = lumi
@@ -151,6 +151,8 @@ class sampleContainer:
                           ('AK8Puppijet0_N2sdb1', 'd', -999), ('puWeight', 'f', 0), ('scale1fb', 'f', 0),
 			  ('puWeight_down', 'f', 0), ('puWeight_up', 'f', 0),
                           ('AK8Puppijet0_doublecsv', 'd', -999),
+                          ('AK8Puppijet0_deepdoubleb', 'd', -999),
+                          ('AK8Puppijet0_deepdoubleb_nomasssculptpen', 'd', -999),
                           ('kfactor', 'f', 0), ('kfactorNLO', 'f', 0), ('nAK4PuppijetsPt30', 'i', -999),
                           ('nAK4PuppijetsPt30dR08_0', 'i', -999),
                           ('nAK4PuppijetsPt30dR08jesUp_0', 'i', -999), ('nAK4PuppijetsPt30dR08jesDown_0', 'i', -999),
@@ -963,7 +965,9 @@ class sampleContainer:
             if jpt_8 < self._trans_h2ddt.GetYaxis().GetBinLowEdge(1): cur_pt_index = 1
             jtN2b1sdddt_8 = jtN2b1sd_8 - self._trans_h2ddt.GetBinContent(cur_rho_index, cur_pt_index)
 
-            jdb_8 = self.AK8Puppijet0_doublecsv[0]
+            #jdb_8 = self.AK8Puppijet0_doublecsv[0]
+            #jdb_8 = self.AK8Puppijet0_deepdoubleb[0]
+            jdb_8 = self.AK8Puppijet0_deepdoubleb_nomasssculptpen[0]
             if not self._minBranches:
                 if self.AK8Puppijet1_doublecsv[0] > 1:
                     jdb_8_sub1 = -99
