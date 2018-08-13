@@ -26,9 +26,11 @@ NJETCUT = 100
 #########################################################################################################
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
-                 minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree'):
+                 minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', 
+                 doublebName='AK8Puppijet0_doublecsv'):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
+        self.doublebName = doublebName
         self._fn = fn
         if len(fn) > 0:
             self._tf = ROOT.TFile.Open(self._fn[0])
@@ -967,7 +969,8 @@ class sampleContainer:
 
             #jdb_8 = self.AK8Puppijet0_doublecsv[0]
             #jdb_8 = self.AK8Puppijet0_deepdoubleb[0]
-            jdb_8 = self.AK8Puppijet0_deepdoubleb_nomasssculptpen[0]
+            #jdb_8 = self.AK8Puppijet0_deepdoubleb_nomasssculptpen[0]
+            jdb_8 = getattr(self,self.doublebName)[0]
             if not self._minBranches:
                 if self.AK8Puppijet1_doublecsv[0] > 1:
                     jdb_8_sub1 = -99

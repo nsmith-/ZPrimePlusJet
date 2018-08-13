@@ -61,8 +61,8 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     hadd  = options.hadd
 
-    maxJobs = 1000
-    dryRun = True
+    maxJobs = 100
+    dryRun = False
 
     outpath= 'ratioPlotsGGH_jobs'
     gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"

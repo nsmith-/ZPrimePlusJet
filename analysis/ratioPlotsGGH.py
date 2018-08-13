@@ -162,11 +162,13 @@ def main(options,args,outputExists):
         bkgSamples['QCD_HT'] = sampleContainer('QCD_HT',tfiles['QCD_HT'], sf=1, 
                                                DBTAGCUTMIN=DBTMIN, lumi=lumi, isData=False,
                                                fillCA15=False, cutFormula = '1', minBranches =False, 
-                                               iSplit = options.iSplit, maxSplit = options.maxSplit)
+                                               iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'otree', 
+                                               doublebName = 'AK8Puppijet0_doublecsv')
         bkgSamples['QCD_HT700to1000'] = sampleContainer('QCD_HT700to1000',tfiles['QCD_HT700to1000'], sf=1, 
                                                         DBTAGCUTMIN=DBTMIN, lumi=lumi*1000.*6831./1.55837e+07, isData=False,
                                                         fillCA15=False, cutFormula = '1', minBranches=False, 
-                                                        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'Events')
+                                                        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'Events',
+                                                        doublebName = 'AK8Puppijet0_doublecsv')
         #bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
         #bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
         #bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
