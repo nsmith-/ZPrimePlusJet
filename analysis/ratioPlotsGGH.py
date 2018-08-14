@@ -164,12 +164,12 @@ def main(options,args,outputExists):
                                                DBTAGCUTMIN=DBTMIN, lumi=lumi, isData=False,
                                                fillCA15=False, cutFormula = '1', minBranches =False, 
                                                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'otree', 
-                                               doublebName = 'AK8Puppijet0_deepdoubleb_nomasssculptpen')
+                                               doublebName = options.doublebName, doublebCut = options.doublebCut)
         bkgSamples['QCD_HT700to1000'] = sampleContainer('QCD_HT700to1000',tfiles['QCD_HT700to1000'], sf=1, 
                                                         DBTAGCUTMIN=DBTMIN, lumi=lumi*1000.*6831./1.55837e+07, isData=False,
                                                         fillCA15=False, cutFormula = '1', minBranches=False, 
                                                         iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'Events',
-                                                        doublebName = 'AK8Puppijet0_deepdoubleb_nomasssculptpen')
+                                                        doublebName = options.doublebName, doublebCut = options.doublebCut)
         #bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
         #bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
         #bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
@@ -257,6 +257,8 @@ if __name__ == '__main__':
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
     parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
     parser.add_option("--i-split"  , dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
+    parser.add_option("--double-b-name"  , dest="doublebName", default="AK8Puppijet0_deepdoublecsv", help="double-b name", metavar="doublebName")
+    parser.add_option("--double-b-cut"  , dest="doublebCut", default=0.9, type="float", help="double-b cut", metavar="doublebCut")
 
     (options, args) = parser.parse_args()
 

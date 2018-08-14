@@ -70,7 +70,7 @@ if __name__ == '__main__':
     #Small files used by the exe
     files = ['']
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/ratioPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2'
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/ratioPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --douhble-b-name AK8Puppijet0_deepdoubleb_nomasssculptpen --double-b-cut 0.94'
 
     plot_command = command.replace("-o ${MAINDIR}/ --i-split $1 --max-split $2","-o %s/"%outpath)
 
