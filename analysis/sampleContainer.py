@@ -93,6 +93,11 @@ class sampleContainer:
         self._puw_up = f_pu.Get("puw_p")
         self._puw_down = f_pu.Get("puw_m")
 
+        self._puw.SetDirectory(0)
+        self._puw_up.SetDirectory(0)
+        self._puw_down.SetDirectory(0)
+        f_pu.Close()
+
         # get histogram for transform
         f_h2ddt = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/Output_smooth_2017MC.root"),
                                   "read")  # GridOutput_v13_WP026.root # smooth version of the ddt ; exp is 4.45 vs 4.32 (3% worse)
@@ -861,7 +866,7 @@ class sampleContainer:
                 mutrigweightDown = mutrigweight - self._mutrig_eff.GetBinError(
                     self._mutrig_eff.FindBin(muPtForTrig, muEtaForTrig))
                 if mutrigweight <= 0 or mutrigweightDown <= 0 or mutrigweightUp <= 0:
-                    print 'mutrigweights are %f, %f, %f, setting all to 1 for muPtForTrig=%f,muEtaForTrig=%f' % ( mutrigweight, mutrigweightUp, mutrigweightDown,muPtForTrig,muEtaForTrig)
+                    #print 'mutrigweights are %f, %f, %f, setting all to 1 for muPtForTrig=%f,muEtaForTrig=%f' % ( mutrigweight, mutrigweightUp, mutrigweightDown,muPtForTrig,muEtaForTrig)
                     mutrigweight = 1
                     mutrigweightDown = 1
                     mutrigweightUp = 1
