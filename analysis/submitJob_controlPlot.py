@@ -64,14 +64,14 @@ if __name__ == '__main__':
     maxJobs = 1000
     dryRun = True 
 
-    outpath= 'controlPlotsGGH_jobs'
-    gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
-    #gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
+    outpath= 'controlPlotsGGH_muonCR'
+    #gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
+    gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
     #Small files used by the exe
     files = ['']
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData'
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData --muonCR '
 
     plot_command = command.replace("-o ${MAINDIR}/ --i-split $1 --max-split $2","-o %s/"%outpath)
 
@@ -82,14 +82,16 @@ if __name__ == '__main__':
         print "submitting jobs from : ",os.getcwd()
     
         for iJob in range(0,maxJobs):
-            #if not iJob==0: continue
-            arguments = [ str(iJob), str(maxJobs)]
-            exe       = "runjob_%s.sh"%iJob
-            write_bash(exe, command,gitClone)
-            write_condor(exe, arguments, files,dryRun)
+            if os.path.isfile("Plots_1000pb_weighted_%s.root"%(iJob)):
+                print "Plots_1000pb_weighted_%s.root exists"%(iJob)
+            else:
+                arguments = [ str(iJob), str(maxJobs)]
+                exe       = "runjob_%s.sh"%iJob
+                write_bash(exe, command,gitClone)
+                write_condor(exe, arguments, files,dryRun)
     else:
         print "Trying to hadd subjob files from %s"%outpath
-        nOutput = len(glob.glob("%s/Plots_1000pb_weighted*.root"%outpath))
+        nOutput = len(glob.glob("%s/Plots_1000pb_weighted_*.root"%outpath))
         if nOutput==maxJobs:
             print "Found %s subjob output files"%nOutput
             exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted_*.root"%(outpath,outpath),dryRun)
