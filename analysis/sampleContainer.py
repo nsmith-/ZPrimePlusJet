@@ -16,6 +16,8 @@ import os
 PTCUT = 450.
 PTCUTMUCR = 400.
 DBTAGCUT = 0.9
+#DBTAGCUT = 0.86
+DBTAGCUT = 0.92
 T21DDTCUT = 0.55
 MUONPTCUT = 55
 METCUT = 140
@@ -349,7 +351,7 @@ class sampleContainer:
                 'h_msd_ak8_t21ddtCut_inc': ["h_" + self._name + "_msd_ak8_t21ddtCut_inc", "; AK8 m_{SD}^{PUPPI} (GeV);",
                                             100, 0, 500],
                 'h_msd_ak8_N2Cut': ["h_" + self._name + "_msd_ak8_N2Cut", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
-                'h_dbtag_ak8': ["h_" + self._name + "_dbtag_ak8", "; p_{T}-leading double b-tag;", 40, -1, 1],
+                'h_dbtag_ak8': ["h_" + self._name + "_dbtag_ak8", "; p_{T}-leading double b-tag;", 200, -1, 1],
                 'h_dbtag_ak8_sub1': ["h_" + self._name + "_dbtag_ak8_sub1", "; 2nd p_{T}-leading double b-tag;", 40, -1,
                                      1],
                 'h_dbtag_ak8_sub2': ["h_" + self._name + "_dbtag_ak8_sub2", "; 3rd p_{T}-leading double b-tag;", 40, -1,
