@@ -207,7 +207,7 @@ def get2017files(isMuonCR):
                  idir_new + '/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root',
                  idir_new + '/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root'],
         'zqq': [idir + '/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
-        'zll': [idir + '/DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8_noPF_8_1000pb_weighted.root'],
+        'zll': [idir + '/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
         # ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
         'stqq': [idir_new + 'ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root',
                  idir_new + '/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
@@ -237,16 +237,15 @@ def get2017files(isMuonCR):
         'Phibb75': [idir + '/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb150': [idir + '/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb250': [idir + '/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'data_obs': [#idirData + '/JetHTRun2017B_PromptReco_v1_noPF.root',
-                     idirData + '/JetHTRun2017C_PromptReco_v1_noPF.root',
-                     idirData + '/JetHTRun2017D_PromptReco_v1_noPF.root',
-                     idirData + '/JetHTRun2017E_PromptReco_v1_noPF.root',
-                     idirData + '/JetHTRun2017F_PromptReco_v1_noPF.root']
+        'data_obs': [idirData + '/JetHTRun2017C_17Nov2017_v1_noPF.root',
+                     idirData + '/JetHTRun2017D_17Nov2017_v1_noPF.root',
+                     idirData + '/JetHTRun2017E_17Nov2017_v1_noPF.root',
+                     idirData + '/JetHTRun2017F_17Nov2017_v1_noPF.root'],
     }
 
     if isMuonCR:
         tfiles['data_obs'] = [
-                       idirData+'/SingleMuonRun2017B_17Nov2017_v1_noPF.root',
+                       #idirData+'/SingleMuonRun2017B_17Nov2017_v1_noPF.root',
                        idirData+'/SingleMuonRun2017C_17Nov2017_v1_noPF.root',
                        idirData+'/SingleMuonRun2017D_17Nov2017_v1_noPF.root',
                        idirData+'/SingleMuonRun2017E_17Nov2017_v1_noPF.root',
