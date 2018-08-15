@@ -237,7 +237,7 @@ def get2017files(isMuonCR):
         'Phibb75': [idir + '/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb150': [idir + '/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb250': [idir + '/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'data_obs': [idirData + '/JetHTRun2017B_PromptReco_v1_noPF.root',
+        'data_obs': [#idirData + '/JetHTRun2017B_PromptReco_v1_noPF.root',
                      idirData + '/JetHTRun2017C_PromptReco_v1_noPF.root',
                      idirData + '/JetHTRun2017D_PromptReco_v1_noPF.root',
                      idirData + '/JetHTRun2017E_PromptReco_v1_noPF.root',
