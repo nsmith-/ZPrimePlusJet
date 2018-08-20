@@ -263,6 +263,8 @@ def main(options, args):
     lumi = options.lumi
     muonCR = options.muonCR
     dbtagmin = options.dbtagmin
+    is2017   = options.is2017
+    sfData   = options.sfData
 
     fileName = 'hist_1DZbb_pt_scalesmear_%s.root'%options.iSplit
     if options.skipQCD:
@@ -274,8 +276,10 @@ def main(options, args):
 
     outfile = ROOT.TFile(options.odir + "/" + fileName, "recreate")
     
-    #tfiles = get2016files(muonCR)
-    tfiles = get2017files(muonCR)
+    if is2017:
+        tfiles = get2017files(muonCR)
+    else:
+        tfiles = get2016files(muonCR)
 
 
     print "Signals... "
@@ -314,9 +318,12 @@ def main(options, args):
                                "HLT_AK8PFJet380_TrimMass30_v*",
                                "HLT_AK8PFJet500_v*"]
                       }
-            dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
+            if is2017:
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
                                        'passJson', True, iSplit = options.iSplit, maxSplit = options.maxSplit,triggerNames=triggerNames)
-                                       #'((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
+            else:
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
+                                       '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
 
     hall = {}
 
@@ -394,7 +401,8 @@ if __name__ == '__main__':
     parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
     parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
     parser.add_option("--i-split"  , dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
-    
+    parser.add_option("--is2017"  , dest="is2017", action='store_true', default=False, help="use 2017 files", metavar="is2017")
+    parser.add_option("--sfData" , dest="sfData", default=1, type="int", help="process 1/sf of data", metavar="sfData")
 
     (options, args) = parser.parse_args()
 
