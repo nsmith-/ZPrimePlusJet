@@ -184,16 +184,14 @@ def get2016files(isMuonCR):
 
 
 def get2017files(isMuonCR):
-    idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/'
-    idir_new = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/'
-    idirSig = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.05/'
-    idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.06/sklim/'
+    idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier'
+    idir_new = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm'
+    idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim'
 
     tfiles = {
         'hqq125': #[idir + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted_corrected.root'],
                   #[idir + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
                   [idir_new + '/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-                  #[idirSig + '/GluGluHToBB_M125_13TeV_powheg_pythia8_CKKW_1000pb_weighted.root'],
                   #[idirData + '/GluGluHToBB_M125_13TeV_powheg_pythia8_YR4_1000pb_weighted.root'],
         # 'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
         'vbfhqq125': [idir_new + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root'],
@@ -209,12 +207,13 @@ def get2017files(isMuonCR):
                  idir_new + '/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root',
                  idir_new + '/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root'],
         'zqq': [idir + '/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
+        'zll': [idir + '/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
         # ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
-        'stqq': [idir_new + 'ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root',
-            idir_new + '/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
-            idir_new + '/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
-            idir_new + '/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root',
-            idir_new + '/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root'],
+        'stqq': [idir_new + '/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root',
+                 idir_new + '/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
+                 idir_new + '/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
+                 idir_new + '/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root',
+                 idir_new + '/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root'],
         # 'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
         'wqq': [idir + '/WJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
         'wlnu': [idir + '/WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
@@ -223,10 +222,9 @@ def get2017files(isMuonCR):
                  idir + '/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
                  idir + '/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
                  idir + '/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root'],
-        'zll': [idir_new + '/DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8_noPF_8_1000pb_weighted.root'],
         # 'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default
         'tqq': [idir_new + '/TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root',
-		idir_new + '/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root'],  # Powheg is the new default
+		        idir_new + '/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root'],  # Powheg is the new default
         'qcd': [#idir_new + '/QCD_HT100to200_13TeV_1000pb_weighted.root',
                 #idir_new + '/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
                 idir_new + '/QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
@@ -239,23 +237,22 @@ def get2017files(isMuonCR):
         'Phibb75': [idir + '/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb150': [idir + '/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb250': [idir + '/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'data_obs': [idirData + 'JetHTRun2017B_PromptReco_v1_noPF.root',
-                     idirData + 'JetHTRun2017C_PromptReco_v1_noPF.root',
-                     idirData + 'JetHTRun2017D_PromptReco_v1_noPF.root',
-                     idirData + 'JetHTRun2017E_PromptReco_v1_noPF.root',
-                     idirData + 'JetHTRun2017F_PromptReco_v1_noPF.root']
+        'data_obs': [idirData + '/JetHTRun2017C_17Nov2017_v1_noPF.root',
+                     idirData + '/JetHTRun2017D_17Nov2017_v1_noPF.root',
+                     idirData + '/JetHTRun2017E_17Nov2017_v1_noPF.root',
+                     idirData + '/JetHTRun2017F_17Nov2017_v1_noPF.root'],
     }
 
     if isMuonCR:
-        tfiles['data_obs'] = [idir + '/SingleMuonRun2016B_03Feb2017_ver1_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016B_03Feb2017_ver2_v2_fixtrig.root',
-                              idir + '/SingleMuonRun2016C_03Feb2017_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016D_03Feb2017_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016E_03Feb2017_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016F_03Feb2017_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016G_03Feb2017_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016H_03Feb2017_ver2_v1_fixtrig.root',
-                              idir + '/SingleMuonRun2016H_03Feb2017_ver3_v1_fixtrig.root']
+        tfiles['data_obs'] = [
+                       #idirData+'/SingleMuonRun2017B_17Nov2017_v1_noPF.root',
+                       idirData+'/SingleMuonRun2017C_17Nov2017_v1_noPF.root',
+                       idirData+'/SingleMuonRun2017D_17Nov2017_v1_noPF.root',
+                       idirData+'/SingleMuonRun2017E_17Nov2017_v1_noPF.root',
+                       idirData+'/SingleMuonRun2017F_17Nov2017_v1_noPF.root'
+                              ]
+    return tfiles
+
 
     
 
@@ -266,6 +263,8 @@ def main(options, args):
     lumi = options.lumi
     muonCR = options.muonCR
     dbtagmin = options.dbtagmin
+    is2017   = options.is2017
+    sfData   = options.sfData
 
     fileName = 'hist_1DZbb_pt_scalesmear_%s.root'%options.iSplit
     if options.skipQCD:
@@ -277,8 +276,10 @@ def main(options, args):
 
     outfile = ROOT.TFile(options.odir + "/" + fileName, "recreate")
     
-    tfiles = get2016files(muonCR)
-    #tfiles = get2017files(muonCR)
+    if is2017:
+        tfiles = get2017files(muonCR)
+    else:
+        tfiles = get2016files(muonCR)
 
 
     print "Signals... "
@@ -302,24 +303,27 @@ def main(options, args):
     print "Data..."
     if not options.skipData:
         if muonCR:
-            dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
+            dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
                                      '((triggerBits&4)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
         else:
             # 2017 triggerBits
-            #triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
-            #              "names":[
-            #                   "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
-            #                   "HLT_PFHT1050_v*",
-            #                   "HLT_AK8PFJet400_TrimMass30_v*",
-            #                   "HLT_AK8PFHT800_TrimMass50_v*",
-            #                   "HLT_PFJet500_v*",
-            #                   "HLT_AK8PFJet360_TrimMass30_v*",
-            #                   "HLT_AK8PFJet380_TrimMass30_v*",
-            #                   "HLT_AK8PFJet500_v*"]
-            #          }
-            dataSample = sampleContainer('data_obs', tfiles['data_obs'], 1, dbtagmin, lumi, True, False,
+            triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
+                          "names":[
+                               "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
+                               "HLT_PFHT1050_v*",
+                               "HLT_AK8PFJet400_TrimMass30_v*",
+                               "HLT_AK8PFHT800_TrimMass50_v*",
+                               "HLT_PFJet500_v*",
+                               "HLT_AK8PFJet360_TrimMass30_v*",
+                               "HLT_AK8PFJet380_TrimMass30_v*",
+                               "HLT_AK8PFJet500_v*"]
+                      }
+            if is2017:
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
+                                       'passJson', True, iSplit = options.iSplit, maxSplit = options.maxSplit,triggerNames=triggerNames)
+            else:
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
                                        '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-                                       #'passJson', True, iSplit = options.iSplit, maxSplit = options.maxSplit,triggerNames=triggerNames)
 
     hall = {}
 
@@ -397,7 +401,8 @@ if __name__ == '__main__':
     parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
     parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
     parser.add_option("--i-split"  , dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
-    
+    parser.add_option("--is2017"  , dest="is2017", action='store_true', default=False, help="use 2017 files", metavar="is2017")
+    parser.add_option("--sfData" , dest="sfData", default=1, type="int", help="process 1/sf of data", metavar="sfData")
 
     (options, args) = parser.parse_args()
 
