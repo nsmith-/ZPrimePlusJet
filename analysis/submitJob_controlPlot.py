@@ -62,16 +62,16 @@ if __name__ == '__main__':
     hadd  = options.hadd
 
     maxJobs = 1000
-    dryRun = True 
+    dryRun = False 
 
-    outpath= 'controlPlotsGGH_muonCR'
+    outpath= 'controlPlotsGGH_newQCDpu'
     #gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
     gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
     #Small files used by the exe
     files = ['']
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData --muonCR '
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData  '
 
     plot_command = command.replace("-o ${MAINDIR}/ --i-split $1 --max-split $2","-o %s/"%outpath)
 
@@ -94,7 +94,7 @@ if __name__ == '__main__':
         nOutput = len(glob.glob("%s/Plots_1000pb_weighted_*.root"%outpath))
         if nOutput==maxJobs:
             print "Found %s subjob output files"%nOutput
-            exec_me("hadd %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted_*.root"%(outpath,outpath),dryRun)
+            exec_me("hadd -f %s/Plots_1000pb_weighted.root %s/Plots_1000pb_weighted_*.root"%(outpath,outpath),dryRun)
             print "DONE hadd. Removing subjob files"
             exec_me("rm %s/Plots_1000pb_weighted_*.root"%(outpath),dryRun)
             print "Plotting...."
