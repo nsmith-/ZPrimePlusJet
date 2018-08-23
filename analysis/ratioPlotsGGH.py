@@ -8,9 +8,10 @@ import sys
 import time
 import array
 import glob
-
+import os
 from plotHelpers import *
 from sampleContainer import *
+DBTMIN=-99
 #
 
 def makePlots(hb,style,odir,lumi,ofile,canvases):
@@ -47,7 +48,9 @@ def makePlots(hb,style,odir,lumi,ofile,canvases):
 def main(options,args,outputExists):
     #idir = "/eos/uscms/store/user/lpchbb/ggHsample_V11/sklim-v0-28Oct/"
     #odir = "plots_2016_10_31/"
-    idir = options.idir
+    #idir = options.idir
+    idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-HWW/norm/'
+    idir_hadd = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-HWW/hadd/'
     odir = options.odir
     lumi = options.lumi
     isData = options.isData
@@ -80,59 +83,26 @@ def main(options,args,outputExists):
     if isData and muonCR:
         legname['data'] = 'SingleMuon data'
         
-    tfiles = {'Hbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/VBFHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                      idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'ggHbb': [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              #'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
-              'VBFHbb': [idir+'/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root'],
-              'VHbb': [idir+'/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir+'/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                       idir+'/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'ttHbb':  [idir+'/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
-              'Diboson': [idir+'/WWTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
-                          idir+'/ZZTo4Q_13TeV_amcatnlo_1000pb_weighted.root',
-                          idir+'/WZ_13TeV_1000pb_weighted.root'],
-              'DY': [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
-		#ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
-              'SingleTop':  [idir+'/ST_t-channel_antitop_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
-		                     idir+'/ST_t-channel_top_4f_inclusiveDecays_13TeV_powheg_1000pb_weighted.root',
-		                     idir+'/ST_tW_antitop_5f_inclusiveDecays_13TeV_1000pb_weighted.root',
-		                     idir+'/ST_tW_top_5f_inclusiveDecays_13TeV_1000pb_weighted.root'],
-              #'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
-              'W':  [idir+'/WJetsToQQ_HT180_13TeV_1000pb_weighted.root'],
-              #'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default 
-              'TTbar':  [idir+'/TT_13TeV_powheg_pythia8_ext_1000pb_weighted.root'], #Powheg is the new default
-              'QCD': [idir+'/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                      idir+'/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
-                      idir+'/QCD_HT300to500_13TeV_all_1000pb_weighted.root',
-                      idir+'/QCD_HT500to700_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT700to1000_13TeV_ext_1000pb_weighted.root',
-                      idir+'/QCD_HT1000to1500_13TeV_all_1000pb_weighted.root',
-                      idir+'/QCD_HT1500to2000_13TeV_all_1000pb_weighted.root',
-                      idir+'/QCD_HT2000toInf_13TeV_1000pb_weighted.root'],                
-              'Phibb50': [idir+'/DMSpin0_ggPhibb1j_50_1000pb_weighted.root'],
-              'Phibb75': [idir+'/DMSpin0_ggPhibb1j_75_1000pb_weighted.root'],
-              'Phibb150': [idir+'/DMSpin0_ggPhibb1j_150_1000pb_weighted.root'],
-              'Phibb250': [idir+'/DMSpin0_ggPhibb1j_250_1000pb_weighted.root'],
-              'data': [idir+'/JetHTRun2016B_PromptReco_v2_resub.root',
-                       idir+'/JetHTRun2016C_PromptReco_v2.root',
-                       idir+'/JetHTRun2016D_PromptReco_v2.root',
-                       idir+'/JetHTRun2016E_PromptReco_v2.root',
-                       idir+'/JetHTRun2016F_PromptReco_v1.root',
-                       idir+'/JetHTRun2016G_PromptReco_v1.root',
-                       idir+'/JetHTRun2016H_PromptReco_v2.root'],
-              'muon': [idir+'/SingleMuonRun2016B_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016C_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016D_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016E_PromptReco_v2.root',
-                       idir+'/SingleMuonRun2016F_PromptReco_v1.root',
-                       idir+'/SingleMuonRun2016G_PromptReco_v1.root',
-                       idir+'/SingleMuonRun2016H_PromptReco_v2.root']
-            }
+    tfiles = {
+        'QCD_HT': [
+            #idir+'/QCD_HT100to200_13TeV_8X_1000pb_weighted.root',
+            #idir+'/QCD_HT200to300_13TeV_8X_1000pb_weighted.root',
+            idir+'/QCD_HT300to500_13TeV_8X_1000pb_weighted.root',
+            idir+'/QCD_HT500to700_13TeV_ext_8X_1000pb_weighted.root',
+            idir+'/QCD_HT1000to1500_13TeV_8X_1000pb_weighted.root',
+            idir+'/QCD_HT1500to2000_13TeV_ext_8X_1000pb_weighted.root',
+            idir+'/QCD_HT2000toInf_13TeV_ext_8X_1000pb_weighted.root'
+            ],
+        'QCD_HT700to1000': [
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_0.root',
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_1.root',
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_2.root',
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_3.root',
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_4.root',
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_5.root',
+            idir_hadd+'/QCD_HT700to1000_13TeV_8X_6.root'
+            ]
+        }
 
     color = {'ggHbb': ROOT.kAzure+1,
              'Hbb': ROOT.kRed,
@@ -182,25 +152,42 @@ def main(options,args,outputExists):
 
         
     canvases = []
-    plots = ['h_msd_ak8_topR6_N2_pass','h_msd_ak8_topR6_N2_fail','h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail']
+    plots = ['h_msd_ak8_topR6_N2_pass','h_msd_ak8_topR6_N2_fail','h_msd_v_pt_ak8_topR6_N2_pass','h_msd_v_pt_ak8_topR6_N2_fail',
+             'h_pt_ak8',
+             'h_msd_ak8',
+             'h_dbtag_ak8']
 
     if not outputExists: 
         print "Backgrounds..."
         bkgSamples = {}    
-        bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, lumi)
+        bkgSamples['QCD_HT'] = sampleContainer('QCD_HT',tfiles['QCD_HT'], sf=1, 
+                                               DBTAGCUTMIN=DBTMIN, lumi=lumi, isData=False,
+                                               fillCA15=False, cutFormula = '1', minBranches =False, 
+                                               iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'otree', 
+                                               doublebName = options.doublebName, doublebCut = options.doublebCut)
+        bkgSamples['QCD_HT700to1000'] = sampleContainer('QCD_HT700to1000',tfiles['QCD_HT700to1000'], sf=1, 
+                                                        DBTAGCUTMIN=DBTMIN, lumi=lumi*1000.*6831./1.55837e+07, isData=False,
+                                                        fillCA15=False, cutFormula = '1', minBranches=False, 
+                                                        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName = 'Events',
+                                                        doublebName = options.doublebName, doublebCut = options.doublebCut)
         #bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0')
         #bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0')
         #bkgSamples['TTbar1Tau']  = sampleContainer('TTbar1Tau',tfiles['TTbar'], 1, lumi, False, False, 'genTauFromW==1&&genEleFromW+genMuFromW==0')
         #bkgSamples['TTbar0Lep']  = sampleContainer('TTbar0Lep',tfiles['TTbar'], 1, lumi, False, False, 'genMuFromW+genEleFromW+genTauFromW==0')
         #bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, lumi)
 
-        ofile = ROOT.TFile.Open(odir+'/Ratios_1000pb_weighted.root','recreate')
+        ofile = ROOT.TFile.Open(odir+'/Ratios_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
         hb = {}
         for process, s in bkgSamples.iteritems():
             hb[process] = {}
             for plot in plots:
                 hb[process][plot] = getattr(s,plot)
+
+        hb['QCD'] = {}
+        for plot in plots:
+            hb['QCD'][plot] = hb['QCD_HT'][plot].Clone(hb['QCD_HT'][plot].GetName().replace('QCD_HT','QCD'))
+            hb['QCD'][plot].Add(hb['QCD_HT700to1000'][plot])
             
         makePlots(hb,style,odir,lumi,ofile,canvases)
         
@@ -216,10 +203,14 @@ def main(options,args,outputExists):
         
         
         hb = {}
-        for process in ['QCD']:
+        for process in ['QCD_HT','QCD_HT700to1000']:
             hb[process] = {}
             for plot in plots:
                 hb[process][plot] = ofile.Get(plot.replace('h_','h_%s_'%process))
+        hb['QCD'] = {}
+        for plot in plots:
+            hb['QCD'][plot] = hb['QCD_HT'][plot].Clone(hb['QCD_HT'][plot].GetName().replace('QCD_HT','QCD'))
+            hb['QCD'][plot].Add(hb['QCD_HT700to1000'][plot])
                 
         hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(23,1,0)
         hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(23,1,0)
@@ -239,10 +230,10 @@ def main(options,args,outputExists):
         hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].SetBinContent(21,2,0)
 
         # fix high bin
-        ave = (hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(12,4)+hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(14,4))/2.
-        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(13,4,ave)
-        ave = (hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(12,4)+hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(14,4))/2.
-        hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinError(13,4,ave)
+        #ave = (hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(12,4)+hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinContent(14,4))/2.
+        #hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinContent(13,4,ave)
+        #ave = (hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(12,4)+hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].GetBinError(14,4))/2.
+        #hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].SetBinError(13,4,ave)
                 
         hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_N2_pass'].Integral())
         hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].Scale(1./hb['QCD']['h_msd_v_pt_ak8_topR6_N2_fail'].Integral())
@@ -264,6 +255,10 @@ if __name__ == '__main__':
     parser.add_option('-o','--odir', dest='odir', default = 'plots/',help='directory to write plots', metavar='odir')
     parser.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
     parser.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
+    parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
+    parser.add_option("--i-split"  , dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
+    parser.add_option("--double-b-name"  , dest="doublebName", default="AK8Puppijet0_deepdoublecsv", help="double-b name", metavar="doublebName")
+    parser.add_option("--double-b-cut"  , dest="doublebCut", default=0.9, type="float", help="double-b cut", metavar="doublebCut")
 
     (options, args) = parser.parse_args()
 
