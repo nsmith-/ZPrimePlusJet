@@ -3,16 +3,17 @@ Instructions to run create cards and run limits, etc.
 Create templates:
 ```
 # create all templates, with passing region double b-tag > 0.9
-export SKLIMDIR=/eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier
-python Hbb_create.py -i root://cmseos.fnal.gov/$SKLIMDIR -o output-miniaod-pfmet140-hptckkw-hqq125ptShape --lumi 35.9
-
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/data     --is2017 --lumi 36.7 
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/p10_data --is2017 --lumi 36.7 --sfData 10   # for 10% data templates
 # create templates for muon CR
-python Hbb_create.py -i root://cmseos.fnal.gov/$SKLIMDIR -o output-miniaod-pfmet140-hptckkw-hqq125ptShape --lumi 35.9 -m
-
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/muonCR   --is2017 --lumi 36.7 -m 
 # create looser templates, with passing region double b-tag > 0.8 
-# (have to change hard-coded value DBTAGCUT = 0.8 in sampleContainer.py)
-python Hbb_create.py -i root://cmseos.fnal.gov/$SKLIMDIR -o output-miniaod-pfmet140-hptckkw-hqq125ptShape-looser --lumi 35.9 --skip-qcd --skip-data
-cp output-miniaod-pfmet140-hptckkw-hqq125ptShape-looser/hist_1DZbb_pt_scalesmear.root output-miniaod-pfmet140-hptckkw-hqq125ptShape/hist_1DZbb_pt_scalesmear_looserWZ.root
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/looserWZ --is2017 --lumi 36.7 --skip-qcd --skip-data -d 0.8 
+
+#Hadd and clean 
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/data     --hadd --clean
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/muonCR   --hadd --clean -m
+python submitJob_Hbb_create.py -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/looserWZ --hadd --clean --skip-qcd --skip-data -d 0.8
 ```
 
 Make workspaces and datacards:
