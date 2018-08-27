@@ -62,16 +62,16 @@ if __name__ == '__main__':
     hadd  = options.hadd
 
     maxJobs = 1000
-    dryRun = False
+    dryRun = True 
 
-    outpath= 'controlPlotsGGH_jobs'
-    gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
-    #gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
+    outpath= 'controlPlotsGGH_muonCR'
+    #gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
+    gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
     #Small files used by the exe
     files = ['']
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData'
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --isData --muonCR '
 
     plot_command = command.replace("-o ${MAINDIR}/ --i-split $1 --max-split $2","-o %s/"%outpath)
 
