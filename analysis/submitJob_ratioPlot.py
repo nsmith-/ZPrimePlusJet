@@ -62,15 +62,15 @@ if __name__ == '__main__':
     hadd  = options.hadd
 
     maxJobs = 100
-    dryRun = False
+    dryRun = True
 
-    outpath= 'ratioPlotsGGH_jobs'
+    outpath= 'ratioPlotsGGH_jobs_deepdoubleb_massdecor'
     gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
 
     #Small files used by the exe
     files = ['']
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/ratioPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --douhble-b-name AK8Puppijet0_deepdoubleb_nomasssculptpen --double-b-cut 0.94'
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/ratioPlotsGGH.py --lumi 36.7 -o ${MAINDIR}/ --i-split $1 --max-split $2 --double-b-name AK8Puppijet0_deepdoubleb --double-b-cut 0.86'
 
     plot_command = command.replace("-o ${MAINDIR}/ --i-split $1 --max-split $2","-o %s/"%outpath)
 
