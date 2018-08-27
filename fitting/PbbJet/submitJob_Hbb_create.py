@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
     hadd  = options.hadd
-    dryRun= True 
+    dryRun= False
 
     maxJobs = 500
 
