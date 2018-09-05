@@ -27,7 +27,9 @@ if __name__ == "__main__":
     parser.add_option('-i','--ifile', dest='ifile', default = 'hist_1DZbb.root',help='file with histogram inputs', metavar='ifile')
     parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)',
                       metavar='ifile_loose')
+    parser.add_option('--ifile-muon', dest='ifile_muon', default=None, help='path to muonCR templates ',metavar='ifile_muon')
     parser.add_option('-t','--toys'   ,action='store',type='int',dest='toys'   ,default=200, help='number of toys')
+    parser.add_option('-s','--seed'   ,action='store',type='int',dest='seed'   ,default=-1, help='random seed')
     parser.add_option('-r','--r',dest='r', default=0 ,type='float',help='default value of r')    
     parser.add_option('-n','--n' ,action='store',type='int',dest='n'   ,default=5*20, help='number of bins')
     parser.add_option('--just-plot', action='store_true', dest='justPlot', default=False, help='just plot')
@@ -61,8 +63,8 @@ if __name__ == "__main__":
     exec_me('mkdir -p %s'%cardsDir2,options.dryRun)
     exec_me('python buildRhalphabetHbb.py -i %s --ifile-loose %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd --addHptShape '%(options.ifile, options.ifile_loose, options.scale, cardsDir1, options.NR1, options.NP1, blindString, pseudoString),options.dryRun )
     exec_me('python buildRhalphabetHbb.py -i %s --ifile-loose %s --scale %f -o %s --nr %i --np %i %s %s --remove-unmatched --prefit --use-qcd --addHptShape '%(options.ifile, options.ifile_loose, options.scale, cardsDir2, options.NR2, options.NP2, blindString, pseudoString),options.dryRun )
-    exec_me('python writeMuonCRDatacard.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/ -o %s/'%(cardsDir1),options.dryRun)
-    exec_me('python writeMuonCRDatacard.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/ -o %s/'%(cardsDir2),options.dryRun)
+    exec_me('python writeMuonCRDatacard.py -i %s -o %s/'%(options.ifile_muon,cardsDir1),options.dryRun)
+    exec_me('python writeMuonCRDatacard.py -i %s -o %s/'%(options.ifile_muon,cardsDir2),options.dryRun)
     exec_me('python makeCardsHbb.py -i %s --ifile-loose %s -o %s --remove-unmatched --no-mcstat-shape'%(options.ifile,options.ifile_loose,cardsDir1),options.dryRun)
     exec_me('python makeCardsHbb.py -i %s --ifile-loose %s -o %s --remove-unmatched --no-mcstat-shape'%(options.ifile,options.ifile_loose,cardsDir2),options.dryRun)
     exec_me('combineCards.py cat1=%s/card_rhalphabet_cat1.txt cat2=%s/card_rhalphabet_cat2.txt cat3=%s/card_rhalphabet_cat3.txt cat4=%s/card_rhalphabet_cat4.txt cat5=%s/card_rhalphabet_cat5.txt cat6=%s/card_rhalphabet_cat6.txt %s/datacard_muonCR.txt > %s/card_rhalphabet_muonCR_r%ip%i.txt'%(cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,cardsDir1,options.NR1, options.NP1),options.dryRun)
@@ -82,7 +84,7 @@ if __name__ == "__main__":
     if not options.pseudo:
         dataString = '--data'
     
-    exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root --datacard-alt %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root -o %s/ftest_r%ip%i_r%ip%i_muonCR -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f'%(cardsDir1, options.NR1, options.NP1, cardsDir2, options.NR2, options.NP2, options.odir, options.NR1, options.NP1, options.NR2, options.NP2, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
+    exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root --datacard-alt %s/card_rhalphabet_muonCR_floatZ_r%ip%i.root -o %s/ftest_r%ip%i_r%ip%i_muonCR -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f --seed %s'%(cardsDir1, options.NR1, options.NP1, cardsDir2, options.NR2, options.NP2, options.odir, options.NR1, options.NP1, options.NR2, options.NP2, options.n, p1, p2, options.toys, options.lumi, dataString, options.r, options.seed),options.dryRun)
     #exec_me('python limit.py -M FTest --datacard %s/card_rhalphabet_floatZ_r%ip%i.root --datacard-alt %s/card_rhalphabet_floatZ_r%ip%i.root -o %s/ftest_r%ip%i_r%ip%i -n %i --p1 %i --p2 %i -t %i --lumi %f %s -r %f --freezeNuisances tqqeffSF,tqqnormSF'%(cardsDir1, options.NR1, options.NP1, cardsDir2, options.NR2, options.NP2, options.odir, options.NR1, options.NP1, options.NR2, options.NP2, options.n, p1, p2, options.toys, options.lumi, dataString, options.r),options.dryRun)
      
 
