@@ -191,7 +191,10 @@ def ftest(base,alt,ntoys,iLabel,options):
         exec_me('cp higgsCombine%s.GoodnessOfFit.mH120.%s.root %s/toys2_%s.root'%(altName,options.seed,options.odir,options.seed),options.dryRun)
     if options.dryRun: sys.exit()
     nllBase=fStat("%s/base1.root"%options.odir,"%s/base2.root"%options.odir,options.p1,options.p2,options.n)
-    nllToys=fStat("%s/toys1_%s.root"%(options.odir,options.seed),"%s/toys2_%s.root"%(options.odir,options.seed),options.p1,options.p2,options.n)
+    if not options.justPlot:
+        nllToys=fStat("%s/toys1_%s.root"%(options.odir,options.seed),"%s/toys2_%s.root"%(options.odir,options.seed),options.p1,options.p2,options.n)
+    else:
+        nllToys=fStat("%s/toys1.root"%(options.odir),"%s/toys2.root"%(options.odir),options.p1,options.p2,options.n)
     lPass=0
     for val in nllToys:
         #print val,nllBase[0]
