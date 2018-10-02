@@ -279,33 +279,35 @@ def main(options, args):
     
     if is2017:
         tfiles = get2017files(muonCR)
+        puOpt  = "2017"
     else:
         tfiles = get2016files(muonCR)
+        puOpt  = "2016"
 
 
     print "Signals... "
     sigSamples = {}
-    sigSamples['hqq125'] = sampleContainer('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    sigSamples['tthqq125'] = sampleContainer('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    sigSamples['vbfhqq125'] = sampleContainer('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    sigSamples['whqq125'] = sampleContainer('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    sigSamples['zhqq125'] = sampleContainer('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
+    sigSamples['hqq125'] = sampleContainer('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['tthqq125'] = sampleContainer('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['vbfhqq125'] = sampleContainer('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['whqq125'] = sampleContainer('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['zhqq125'] = sampleContainer('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
     print "Backgrounds..."
     bkgSamples = {}
-    bkgSamples['wqq'] = sampleContainer('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    bkgSamples['zqq'] = sampleContainer('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
+    bkgSamples['wqq'] = sampleContainer('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt="2016")
+    bkgSamples['zqq'] = sampleContainer('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt="2016")
     if not options.skipQCD:
-        bkgSamples['qcd'] = sampleContainer('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    bkgSamples['tqq'] = sampleContainer('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    bkgSamples['stqq'] = sampleContainer('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    bkgSamples['wlnu'] = sampleContainer('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    bkgSamples['zll'] = sampleContainer('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
-    bkgSamples['vvqq'] = sampleContainer('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
+        bkgSamples['qcd'] = sampleContainer('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    bkgSamples['tqq'] = sampleContainer('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    bkgSamples['stqq'] = sampleContainer('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    bkgSamples['wlnu'] = sampleContainer('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt="2016")
+    bkgSamples['zll'] = sampleContainer('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt="2016")
+    bkgSamples['vvqq'] = sampleContainer('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
     print "Data..."
     if not options.skipData:
         if muonCR:
             dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                     '((triggerBits&4)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
+                                     '((triggerBits&4)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
         else:
             # 2017 triggerBits
             triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
@@ -324,7 +326,7 @@ def main(options, args):
                                        'passJson', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,triggerNames=triggerNames)
             else:
                 dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                       '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut)
+                                       '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
 
     hall = {}
 
