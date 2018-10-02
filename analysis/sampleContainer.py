@@ -42,6 +42,7 @@ class sampleContainer:
         self._sf = sf
         self._lumi = lumi
         self._triggerNames = triggerNames 
+        self.puOpt  = puOpt
 
         with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerBitMap.json")) as triggerMapFile:
             self._triggerBitMaps = json.load(triggerMapFile)
@@ -815,13 +816,14 @@ class sampleContainer:
                 sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")
                 sys.stdout.flush()
             
-            if puOpt =='2017':
+            if self.puOpt =='2017':
                 puweight      = self.puWeight[0] #corrected
                 puweight_up   = self.puWeight_up[0]
                 puweight_down = self.puWeight_down[0]
-            elif puOpt=='2016':
-                nPuForWeight = min(self.npu[0], 49.5)
-                puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
+            elif self.puOpt=='2016':
+                nPuForWeight  = min(self.npu[0], 49.5)
+                puweight      = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
+                puweight_up   = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
                 puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             else:
                 print "Unknown PU options! Please check your input!"
