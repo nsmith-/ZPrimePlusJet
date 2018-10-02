@@ -29,7 +29,7 @@ NJETCUT = 100
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
                  minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', 
-                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9):
+                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016'):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self.DBTAGCUT = doublebCut
@@ -814,16 +814,18 @@ class sampleContainer:
             if (nent / 100 > 0 and i % (1 * nent / 100) == 0):
                 sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")
                 sys.stdout.flush()
+            
+            if puOpt =='2017':
+                puweight      = self.puWeight[0] #corrected
+                puweight_up   = self.puWeight_up[0]
+                puweight_down = self.puWeight_down[0]
+            elif puOpt=='2016':
+                nPuForWeight = min(self.npu[0], 49.5)
+                puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
+                puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
+            else:
+                print "Unknown PU options! Please check your input!"
 
-            puweight = self.puWeight[0] #corrected
-#	    puweight_up = self.puWeight_up[0]
-#            puweight_down= self.puWeight_down[0]
-            nPuForWeight = min(self.npu[0], 49.5)
-    	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
-            #puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
-            puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
-            puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
-            # print(self.puWeight[0],puweight,puweight_up,puweight_down)
             fbweight = self.scale1fb[0] * self._lumi
             # if self._name=='tqq' or 'TTbar' in self._name:
             #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
