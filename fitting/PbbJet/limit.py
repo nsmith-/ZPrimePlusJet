@@ -164,6 +164,7 @@ def fStat(iFName1,iFName2,p1,p2,n):
             F = (lTree1.limit-lTree2.limit)/(p2-p1)/(lTree2.limit/(n-p2))
             print i0, ":", lTree1.limit, "-", lTree2.limit, "=", lTree1.limit-lTree2.limit, "F =", F
             lDiffs.append(F)
+    print "number of toys with F>0: %s / %s"%(len(lDiffs),lTree1.GetEntries())
     return lDiffs
 
 def goodnessVals(iFName1):
