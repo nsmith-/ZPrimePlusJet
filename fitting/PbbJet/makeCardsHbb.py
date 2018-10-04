@@ -28,7 +28,11 @@ def main(options,args):
         
     boxes = ['pass', 'fail']
     sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','qcd','tqq']
+    bkgs = ['zqq','wqq','tqq']
+    if options.forcomb:
+        bkgs.append('qcd2017')
+    else:
+        bkgs.append('qcd')
     systs = ['JER','JES','Pu']
 
     removeUnmatched = options.removeUnmatched
@@ -43,6 +47,8 @@ def main(options,args):
 
     for proc in (sigs+bkgs):
         for box in boxes:
+            if options.forcomb and '2017' in proc:
+                proc = proc.replace("2017","")
             print 'getting histogram for process: %s_%s'%(proc,box)
             histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box))
             if tfile_loose is not None:
@@ -62,7 +68,10 @@ def main(options,args):
                 print 'getting histogram for process: %s_%s_%sDown'%(proc,box,syst)
                 histoDict['%s_%s_%sDown'%(proc,box,syst)] = tfile.Get('%s_%s_%sDown'%(proc,box,syst))
 
-    dctpl = open("datacard.tpl")
+    if options.forcomb:
+        dctpl = open("datacard_2017.tpl")
+    else:
+        dctpl = open("datacard.tpl")
     #dctpl = open("datacardZbb.tpl")
     #dctpl = open("datacardZonly.tpl")
 
@@ -82,6 +91,8 @@ def main(options,args):
         scaleptErrs = {}
         for box in boxes:
             for proc in (sigs+bkgs):
+                if options.forcomb and '2017' in proc:
+                    proc = proc.replace("2017","")
                 rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                 if rate>0:
                     rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
@@ -146,7 +157,10 @@ def main(options,args):
         scaleptString = 'scalept shape'
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group ='
-        qcdGroupString = 'qcd group = qcdeff'
+        if options.forcomb:
+            qcdGroupString = 'qcd2017 group = qcd2017eff'
+        else:
+            qcdGroupString = 'qcd group = qcdeff'
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
@@ -157,7 +171,7 @@ def main(options,args):
                     
         for box in boxes:
             for proc in sigs+bkgs:
-                if proc=='qcd':
+                if proc=='qcd' or proc=='qcd2017':
                     jesString += ' -'
                     jerString += ' -'
                     puString += ' -'
@@ -165,24 +179,24 @@ def main(options,args):
                     jesString += ' %.3f'%jesErrs['%s_%s'%(proc,box)]
                     jerString += ' %.3f'%jerErrs['%s_%s'%(proc,box)]
                     puString += ' %.3f'%puErrs['%s_%s'%(proc,box)]                        
-                if proc in ['qcd','tqq']:
+                if proc in ['qcd','tqq','qcd2017']:
                     if i > 1:
                         scaleptString += ' -'
                 else:
                     if i > 1:
                         scaleptString += ' %.3f'%scaleptErrs['%s_%s'%(proc,box)]
-                if proc in ['qcd','tqq','wqq']:
+                if proc in ['qcd','tqq','wqq','qcd2017']:
                     bbString += ' -'
                 else:
                     bbString += ' %.3f'%bbErrs['%s_%s'%(proc,box)]
-                if proc in ['qcd','tqq']:
+                if proc in ['qcd','tqq','qcd2017']:
                     vString += ' -'
                 else:
                     vString += ' %.3f'%vErrs['%s_%s'%(proc,box)]
                 for j in range(1,numberOfMassBins+1):
                     for box1 in boxes:                    
                         for proc1 in sigs+bkgs:                            
-                            if proc1==proc and box1==box:
+                            if proc1==proc and box1==box and proc!='qcd' and proc !='qcd2017':
                                 mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t%.3f'% mcstatErrs['%s_%s'%(proc,box),i,j]
                             else:                        
                                 mcStatStrings['%s_%s'%(proc1,box1),i,j] += '\t-'
@@ -233,7 +247,9 @@ def main(options,args):
             dctmp.write(newline + "\n")
         for box in boxes:
             for proc in sigs+bkgs:
-                if options.noMcStatShape and proc!='qcd':                        
+                if options.forcomb and '2017' in proc:
+                    proc = proc.replace("2017","")
+                if options.noMcStatShape and proc!='qcd' and proc!='qcd2017':                        
                     print 'include %s%scat%imcstat'%(proc,box,i)
                     dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
                     mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
@@ -247,7 +263,7 @@ def main(options,args):
                         histo = histoDictLoose['%s_%s%s'%(proc,box,matchString)]
                     else:
                         histo = histoDict['%s_%s%s'%(proc,box,matchString)]
-                    if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd':
+                    if abs(histo.GetBinContent(j,i)) > 0. and histo.GetBinError(j,i) > 0.5*histo.GetBinContent(j,i) and proc!='qcd' and proc!='qcd2017':
                         massVal = histo.GetXaxis().GetBinCenter(j)
                         ptVal = histo.GetYaxis().GetBinLowEdge(i) + 0.3*(histo.GetYaxis().GetBinWidth(i))
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
@@ -261,8 +277,13 @@ def main(options,args):
                         print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
                         
         for im in range(numberOfMassBins):
-            dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
-            qcdGroupString += ' qcd_fail_%s_Bin%i'%(tag,im+1)
+            if options.forcomb:
+                dctmp.write("qcd2017_fail_%s_Bin%i flatParam \n" % (tag,im+1))
+                qcdGroupString += ' qcd2017_fail_%s_Bin%i'%(tag,im+1)
+            else:
+                dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
+                qcdGroupString += ' qcd_fail_%s_Bin%i'%(tag,im+1)
+
         dctmp.write(mcStatGroupString + "\n")
         dctmp.write(qcdGroupString + "\n")
 
@@ -281,6 +302,7 @@ if __name__ == '__main__':
     parser.add_option('-o','--odir', dest='odir', default = 'cards/',help='directory to write cards', metavar='odir')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default =False,help='signal comparison', metavar='isData')
     parser.add_option('--blind', action='store_true', dest='blind', default =False,help='blind signal region', metavar='blind')
+    parser.add_option('--for-comb', action='store_true', dest='forcomb', default =False,help='use 2017 qcd', metavar='forcomb')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
 

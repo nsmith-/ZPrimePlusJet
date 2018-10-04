@@ -16,7 +16,6 @@ r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/l
 # sys.path.insert(0, '../.')
 from tools import *
 from hist import *
-from rhalphabet_builder import RhalphabetBuilder, LoadHistograms, GetSF
 
 MASS_BINS = 23
 MASS_LO = 40
@@ -31,6 +30,12 @@ def main(options, args):
     ifile = options.ifile
     odir = options.odir
 
+    if options.is2017:
+        print "loading 2017 rhalphabet_builder"
+        from rhalphabet_builder_2017 import RhalphabetBuilder, LoadHistograms, GetSF
+    else:
+        print "loading default rhalphabet_builder"
+        from rhalphabet_builder import RhalphabetBuilder, LoadHistograms, GetSF
     # Load the input histograms
     # 	- 2D histograms of pass and fail mass,pT distributions
     # 	- for each MC sample and the data
@@ -82,6 +87,7 @@ if __name__ == '__main__':
     parser.add_option('--prefit', action='store_true', dest='prefit', default =False,help='do prefit', metavar='prefit')
     parser.add_option('--addHptShape',action='store_true',dest='addHptShape',default =False,help='add H pt shape unc', metavar='addHptShape')
     parser.add_option('--loadfit', dest='loadfit', default=None, help='load qcd polynomial parameters from alternative rhalphabase.root',metavar='loadfit')
+    parser.add_option('--is2017', dest='is2017', action='store_true', default=False, help='specify 2017 SF and rename qcd eff.',metavar='is2017')
 
     (options, args) = parser.parse_args()
 
