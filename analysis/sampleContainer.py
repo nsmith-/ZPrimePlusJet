@@ -775,6 +775,7 @@ class sampleContainer:
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
         if not self.puOpt in ['2016','2017']:
+            print "Using this file to reweight MC pu:", self.puOpt
             h_puw,h_puw_up,h_puw_down = self.get2017puWeight(self.puOpt)
     
         self._tt.SetNotify(self._cutFormula)
@@ -830,11 +831,10 @@ class sampleContainer:
                 puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
             else:
                 nPuForWeight  = min(self.npu[0], 99.5)
-                print "Using this file to reweight MC pu:", self.puOpt
                 puweight      = h_puw.GetBinContent(     h_puw.FindBin(nPuForWeight))
                 puweight_up   = h_puw_up.GetBinContent(  h_puw_up.FindBin(nPuForWeight))
                 puweight_down = h_puw_down.GetBinContent(h_puw_down.FindBin(nPuForWeight))
-                print (nPuForWeight,puweight,puweight_up,puweight_down)
+                #print (nPuForWeight,puweight,puweight_up,puweight_down)
 
 
             fbweight = self.scale1fb[0] * self._lumi
