@@ -319,14 +319,16 @@ def main(options,args,outputExists):
         wqqplots={}
         wqq_sc = subwqqSamples[subwqqSamples.keys()[0]]  # first subsample
         for plot in plots:
-            wqqplots[plot] = getattr(wqq_sc,plot)
+            wqqplots[plot] = getattr(wqq_sc,plot).Clone()
+            wqqplots[plot].SetName(plot.replace("h_","h_W_"))
             for subS_key in subwqqSamples.keys()[1:]:
                 subS = subwqqSamples[subS_key]
                 wqqplots[plot].Add(getattr(subS,plot))
         zqqplots={}
         zqq_sc = subzqqSamples[subzqqSamples.keys()[0]]  # first subsample
         for plot in plots:
-            zqqplots[plot] = getattr(zqq_sc,plot)
+            zqqplots[plot] = getattr(zqq_sc,plot).Clone()
+            zqqplots[plot].SetName(plot.replace("h_","h_DY_"))
             for subS_key in subzqqSamples.keys()[1:]:
                 subS = subzqqSamples[subS_key]
                 zqqplots[plot].Add(getattr(subS,plot))
