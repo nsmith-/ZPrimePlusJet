@@ -462,7 +462,12 @@ def plotUpperLimits(options,args):
     h_limit.GetXaxis().SetLimits(options.massMin,options.massMax)
     h_limit.SetMinimum(options.xsecMin)
     h_limit.SetMaximum(options.xsecMax)
-    h_limit.GetXaxis().SetTitle('Resonance mass (GeV)')
+    if options.model=='DMSbb':
+        h_limit.GetXaxis().SetTitle('m_{#Phi} (GeV)')
+    elif options.model=='DMPSbb':
+        h_limit.GetXaxis().SetTitle('m_{A} (GeV)')
+    else:
+        h_limit.GetXaxis().SetTitle('Resonance mass (GeV)')
     if options.gq and options.model=='DMSbb':
         h_limit.GetYaxis().SetTitle("g_{q#Phi}")
     elif options.gq and options.model=='DMPSbb':
@@ -514,7 +519,7 @@ def plotUpperLimits(options,args):
         theory_inclusive_xsec[options.model].SetLineWidth(2)
         theory_inclusive_xsec[options.model].SetLineStyle(6)
         theory_inclusive_xsec[options.model].Draw('Csame')
-
+         
     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}"%options.lumi
     CMS_lumi.CMS_lumi(c,4,11)
 
