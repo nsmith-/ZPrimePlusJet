@@ -11,6 +11,8 @@ import time
 import array
 import re
 
+from plotLimits import setDict
+
 # including other directories
 # sys.path.insert(0, '../.')
 from tools import *
@@ -280,7 +282,10 @@ def main(options, args):
             rBestFit = rfr.floatParsFinal().find('r').getVal()
             #rBestFit = rfr.floatParsFinal().find('r_phi').getVal()
         else:
-            rBestFit = 0
+            rfr_s = r.RooFitResult(fml.Get('fit_s'))
+            rBestFit = rfr_s.floatParsFinal().find('r').getVal()
+            #rBestFit = 0
+        rScale = float(options.r)
 
         # Plot TF poly
         makeTF(pars, ratio_2d_data_subtract)
@@ -290,11 +295,11 @@ def main(options, args):
 
     [histograms_pass_summed_list] = makeMLFitCanvas(histograms_pass_summed_list[0:4], histograms_pass_summed_list[10],
                                                     histograms_pass_summed_list[4:9], histograms_pass_summed_list[9], shapes,
-                                                    "pass_allcats_" + options.fit, options.odir, rBestFit=rBestFit,
+                                                    "pass_allcats_" + options.fit, options.odir, rBestFit=rBestFit, rScale=rScale,
                                                     sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=options.fit)
     [histograms_fail_summed_list] = makeMLFitCanvas(histograms_fail_summed_list[0:4], histograms_fail_summed_list[10],
                                                     histograms_fail_summed_list[4:9], histograms_pass_summed_list[9], shapes,
-                                                    "fail_allcats_" + options.fit, options.odir, rBestFit=rBestFit,
+                                                    "fail_allcats_" + options.fit, options.odir, rBestFit=rBestFit, rScale=rScale,
                                                     sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=options.fit)
 
 
@@ -304,20 +309,24 @@ def plotCategory(fml, fd, index, fittype):
     histograms_pass = []
 
     rBestFit = 1
+    rScale = float(options.r)
     if fittype == "fit_b" or fittype == "fit_s":
         rfr = r.RooFitResult(fml.Get(options.fit))
         if options.fit == 'fit_s':
             rBestFit = rfr.floatParsFinal().find('r').getVal()
             #rBestFit = rfr.floatParsFinal().find('r_phi').getVal()
         else:
-            rBestFit = 0
+            rfr_s = r.RooFitResult(fml.Get('fit_s'))
+            rBestFit = rfr_s.floatParsFinal().find('r').getVal()
+            #rBestFit = 0
 
     for i, ish in enumerate(shapes):
-        print i, ish
-        if i < 4:
-            fitdir = fittype
+        if 'Sbb' in ish:
+            #fitdir = fittype
+            fitdir = "fit_s"
+            #fitdir = "prefit"
+            print i, ish, fitdir
         else:
-            # fitdir = "prefit"
             fitdir = fittype
 
         histograms_fail.append(fml.Get("shapes_" + fitdir + "/cat%i_fail_cat%i/%s" % (index, index, ish)))
@@ -355,11 +364,19 @@ def plotCategory(fml, fd, index, fittype):
     #    data_fail.SetBinContent(13,(data_fail.GetBinContent(12)+data_fail.GetBinContent(14))/2.)
     histograms_fail.append(data_fail)
     histograms_pass.append(data_pass)
+
+    print histograms_fail
+    print histograms_pass
+
+    # Scaling individual pass/fail Phibb histograms
+    histograms_fail[-2].Scale(rScale/rBestFit)
+    histograms_pass[-2].Scale(rScale/rBestFit)
+
     [histograms_fail] = makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-2], histograms_fail[-2],  shapes,
-                                        "fail_cat" + str(index) + "_" + fittype, options.odir, rBestFit=rBestFit,
+                                        "fail_cat" + str(index) + "_" + fittype, options.odir, rBestFit=rBestFit, rScale=rScale,
                                         sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=fittype)
     [histograms_pass] = makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-2], histograms_pass[-2], shapes,
-                                        "pass_cat" + str(index) + "_" + fittype, options.odir, rBestFit,
+                                        "pass_cat" + str(index) + "_" + fittype, options.odir, rBestFit=rBestFit, rScale=rScale,
                                         sOverSb=options.sOverSb, splitS=options.splitS, ratio=options.ratio, fittype=fittype)
 
     return (histograms_pass, histograms_fail)
@@ -385,7 +402,8 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
     return [bkgs, data, hsigs, weight]
 
 
-def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1, sOverSb=False, splitS=True, ratio=False, fittype='fit_s'):
+def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1, rScale=1, 
+                    sOverSb=False, splitS=True, ratio=False, fittype='fit_s'):
     weight = 1
     #print " Back : ",  bkgs, " Data : ", data, " Sig : ", hhigs 
     if sOverSb:
@@ -401,6 +419,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     p12.SetBottomMargin(0.02)
     p22.SetTopMargin(0.05)
     p22.SetBottomMargin(0.3)
+    
 
     c.cd()
     p12.Draw()
@@ -408,9 +427,9 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 
     h = r.TH1F("h", "AK8 m_{SD} (GeV);", 80, 40, 600)
     htot = bkgs[0].Clone("htot%s" % tag)
+    htot.GetYaxis().SetTitle('Events / 7 GeV')
     hqcd = bkgs[3].Clone("hqcd%s" % tag)
     hqcd.Add(bkgs[2])
-    htot.SetLineColor(r.kBlack)
     htot.SetLineStyle(1)
     htot.SetFillStyle(3001)
     htot.SetFillColor(r.kAzure - 5)
@@ -421,7 +440,7 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     htotsig = bkgs[0].Clone("htotsig%s" % tag)
     htotsig.SetLineColor(r.kBlack)
     htotsig.SetFillStyle(3001)
-    htotsig.SetFillColor(r.kPink + 3)
+    #htotsig.SetFillColor(r.kPink + 3)
     htotsig.SetLineColor(r.kPink + 3)
     # htotsig.Draw("")
     for ih in range(1, len(bkgs)):
@@ -434,6 +453,12 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     print hhigs
     print " Anter tag : ", tag, " ", len(hhigs), hhigs[0].GetName()
     print 
+    print hphi
+
+    print "rScale", rScale
+    print "rBestFit", rBestFit
+    print "hphi integral", hphi.Integral()
+    
     hsig = hhigs[0].Clone("hsig%s" % tag)
     for ih in range(1, len(hhigs)):
         hsig.Add(hhigs[ih])
@@ -444,45 +469,63 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     sigcolor = [r.kPink + 7, r.kPink + 1, r.kAzure + 1, r.kOrange + 1, r.kAzure + 3]
     sleg = ['GF H(b#bar{b})', 'Z(q#bar{q})H(b#bar{b})', 'W(q#bar{q})H(b#bar{b})', 'ttH(b#bar{b})', 'VBF H(b#bar{b})']
     style = [2, 3, 4, 2, 2]
+    fillstyle = [3002,3003,3007,3008,3009]
     for i, b in enumerate(bkgs):
-        #	b.SetFillColor(colors[i])
+        b.SetFillColor(r.kWhite)
+        #if 'qcd' in b.GetName():
+        #    b.SetFillColor(r.kWhite)
+        #else:
+        #    b.SetFillColor(colors[i])
         b.SetLineColor(colors[i])
+        #b.SetFillStyle(fillstyle[i])
         b.SetLineStyle(style[i])
         b.SetLineWidth(2)
 
     if splitS:
         l = r.TLegend(0.6, 0.4, 0.75, 0.85)
     else:
-        #l = r.TLegend(0.6, 0.5, 0.75, 0.85)
-        l = r.TLegend(0.6, 0.5, 0.85, 0.85)
+        # for b-only
+        #l = r.TLegend(0.6, 0.5, 0.85, 0.85)
+        # for s+b (or b-only with signal overlaid)
+        l = r.TLegend(0.57, 0.45, 0.81, 0.85)
     l.SetFillStyle(0)
     l.SetBorderSize(0)
     l.SetTextFont(42)
     l.SetTextSize(0.04)
     legnames = {'wqq': 'W', 'zqq': 'Z', 'qcd': 'Multijet', 'tqq': 't#bar{t}',
                 'DMSbb': '#Phi(b#bar{b})', 'DMPSbb': 'A(b#bar{b})'}
-    for i in range(len(bkgs)):
-        l.AddEntry(bkgs[i], legnames[leg[i]], "l")
+    symbol = {"DMPSbb" : "A",
+              "DMSbb" : "#Phi"}
+
+    l.AddEntry(data, "Data", "pe")
+
+    for i in range(len(bkgs)): # fix sorting here
+        #l.AddEntry(bkgs[i], legnames[leg[i]], "l")
+        l.AddEntry(bkgs[i], legnames[leg[i]], "lf")
     if splitS:
         for ih in range(0, len(hhigs)):
             hhigs[ih].SetLineColor(sigcolor[ih])
             l.AddEntry(hhigs[ih], sleg[ih], "lf")
     else:
+        #l.AddEntry(hsig, "H(b#bar{b})", "l")
         l.AddEntry(hsig, "H(b#bar{b})", "lf")
     l.AddEntry(htot, "Total background", "lf")
-    if fittype != 'fit_b':
-        l.AddEntry(hphi, "%s %s GeV"%(legnames[options.model],options.mass),"lf")
-    # l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
+    #if fittype != 'fit_b':
+    theory_xsec, theory_inclusive_xsec, sample_xsec, br, legend_entry = setDict()
+    fac = sample_xsec[options.model].Eval(int(options.mass),0,'S')
+    theory = theory_xsec[options.model].Eval(int(options.mass),0,'S')
+    gq = math.sqrt(rScale*fac/theory)
+    l.AddEntry(hphi, "%s, m_{%s} = %s GeV"%(legnames[options.model], symbol[options.model], options.mass),"lf")
+    l.AddEntry(None, "#color[0]{%s,} g_{q%s} = %.1f"%(legnames[options.model], symbol[options.model], gq),"")
 
-    l.AddEntry(data, "Data", "pe")
+    # l.AddEntry(htotsig,"Total Bkg. + Sig.","lf")
 
     htot.SetLineColor(r.kBlack)
     htot.SetFillStyle(3001)
     htot.SetFillColor(r.kAzure - 5)
     htot.SetLineColor(r.kAzure - 5)
-    htotsig.SetLineColor(r.kPink + 3)
-    # htotsig.SetFillStyle(3001)
-    htotsig.SetFillColor(r.kPink+3)
+    htotsig.SetFillStyle(3001)
+    #htotsig.SetFillColor(r.kPink + 3)
     htotsig.SetLineColor(r.kPink + 3)
     htotsig.SetLineWidth(2)
 
@@ -506,50 +549,89 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
             U = r.Math.gamma_quantile_c(alpha/2,N+1,1)
             g_data.SetPointEYlow(i, (N-L))
             g_data.SetPointEYhigh(i, (U-N))
+            g_data.SetPointEXlow(i, 0)
+            g_data.SetPointEXhigh(i, 0)
             g_data.SetPoint(i, g_data.GetX()[i], N)
         return g_data
             
     g_data = getDataGraphFromHist(data)
-    
 
-    data.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
-    data.Draw('pez')
+    maximum = data.GetMaximum()    
+    htot.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
+    htot.Draw('')
+    minimum = 1e5
     for cat_tag in ['cat1','cat2','cat3','cat4','cat5','cat6','allcats']:
         if cat_tag in tag:
-            data.GetXaxis().SetRangeUser(MIN_M[cat_tag],MAX_M[cat_tag])
-    htot.Draw('E2same')
-    #    htotsig.Draw('E2same')
-
+            htot.GetXaxis().SetRangeUser(MIN_M[cat_tag],MAX_M[cat_tag])
+            for i in range(1,data.GetNbinsX()+1):
+                if data.GetXaxis().GetBinCenter(i) > MIN_M[cat_tag] and data.GetXaxis().GetBinCenter(i) < MAX_M[cat_tag]:
+                    if data.GetBinContent(i) < minimum:
+                        minimum = data.GetBinContent(i)
+    
+    print tag, 'DATA MINIMUM', minimum
+    #htot.SetFillStyle(3001)
+    #htot.Draw('E2same')
         
     htot_line = htot.Clone('htot_line%s' % tag)
     htot_line.SetFillStyle(0)
-    htot_line.Draw('histsame')
+    #htot_line.Draw('histsame')
     htotsig_line = htotsig.Clone('htotsig_line%s' % tag)
     htotsig_line.SetFillStyle(0)
     # htotsig_line.Draw('histsame')
     hstackMC = r.THStack("hstackMC","hstackMC")
-    for b  in sorted(bkgs,key=lambda (v): v.Integral()):
+
+    def mysort(v):
+        name = v.GetName()
+        if 'tqq' in name:
+            return 0
+        elif 'qcd' in name:
+            return 1
+        elif 'wqq' in name: 
+            return 2
+        elif 'zqq' in name:
+            return 3
+        elif 'hqq125' in name:
+            return 4
+        elif 'Sbb' in name:
+            return 5
+        else:
+            return 6
+
+    for b in sorted(bkgs,key=mysort):
 	if 'qcd' in b.GetName():
-        	b.Draw('hist sames')
-	else : 
-	   hstackMC.Add(b)
+            hstackMC.Add(b)
+            #b.Draw('hist sames')
+        elif 'tqq' in b.GetName():
+            hstackMC.Add(b)
+            #b.Draw('hist sames')
+	else:
+            #hstackMC.Add(b)
+            continue
     hsig.SetLineColor(r.kPink + 7)
-    hsig.SetFillColor(r.kPink + 7)
+    #hsig.SetFillColor(r.kPink + 7)
+    hsig.SetLineStyle(6)
+    hsig.SetLineWidth(2)
     hphi.SetLineColor(r.kOrange+1)
     hphi.SetFillColor(r.kOrange+1)
-    # hsig.SetLineStyle(2)
-    #hsig.SetLineWidth(1)
-    if not splitS:
-	hstackMC.Add(hsig)
-        hstackMC.Add(hphi)
-        #hsig.Draw('hist sames')
-    else:
-        for ih in range(0, len(hsigs)):
-	    hstackMC.Add(hsigs[ih])	
-            #hsigs[ih].Draw('hist sames')
-    #hphi.Add(hsig)
+
+    #hstackMC.Add(hsig)
     hstackMC.Draw("hist sames")
+
+#    if not splitS:
+#	hstackMC.Add(hsig)
+#        hstackMC.Add(hphi)
+#    else:
+#        for ih in range(0, len(hsigs)):
+#	    hstackMC.Add(hsigs[ih])	
+#        hstackMC.add(hphi)
+
+
+    htot.Draw('E2same')
+    htot_line.Draw('histsame')
     g_data.Draw('pezsame')
+
+
+
     l.Draw()
     tag1 = r.TLatex(0.67, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
     tag1.SetNDC();
@@ -559,8 +641,8 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     tag2.SetNDC()
     tag2.SetTextFont(62)
     if options.isData:
-        #tag3 = r.TLatex(0.2, 0.77, "Preliminary")
         tag3 = r.TLatex(0.2, 0.77, "")
+        #tag3 = r.TLatex(0.2, 0.77, "Preliminary")
     else:
         tag3 = r.TLatex(0.2, 0.77, "Simulation Preliminary")
     ptRange = [options.ptMin, 1000]
@@ -580,18 +662,20 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
         ptRange = [800, 1000]
         
     #passTag = 'double-b tagger'
-    passTag2 = 'passing region'
-    passTag = 'passing region'
+    passTag2 = 'Passing region'
+    passTag = 'Passing region'
     if 'fail' in tag:
         #passTag = 'double-b tagger'
-        passTag2 = 'failing region'
-        passTag = 'failing region'
+        passTag2 = 'Failing region'
+        passTag = 'Failing region'
 
 
-    #tag4 = r.TLatex(0.37, 0.77, "#splitline{%i < p_{T} < %i GeV}{%s}"%(ptRange[0],ptRange[1],passTag))
-    tag4 = r.TLatex(0.34, 0.81, "%i < p_{T} < %i GeV"%(ptRange[0],ptRange[1]))
-    tag4b = r.TLatex(0.34, 0.75, "%s"%(passTag))
-    tag4c = r.TLatex(0.34, 0.69, "%s"%(passTag2))
+    tag4 = r.TLatex(0.25, 0.77, "%i < p_{T} (%s) < %i GeV"%(ptRange[0],options.box,ptRange[1]))
+    tag4b = r.TLatex(0.25, 0.72, "%s"%(passTag))
+    tag4c = r.TLatex(0.25, 0.67, "%s"%(passTag2))
+    #tag4 = r.TLatex(0.36, 0.81, "%i < p_{T} < %i GeV"%(ptRange[0],ptRange[1]))
+    #tag4b = r.TLatex(0.36, 0.75, "%s"%(passTag))
+    #tag4c = r.TLatex(0.36, 0.69, "%s"%(passTag2))
     tag4.SetNDC()
     tag4.SetTextFont(42)
     tag4b.SetNDC()
@@ -602,16 +686,16 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     tag3.SetTextFont(52)
     tag2.SetTextSize(0.065)
     tag3.SetTextSize(0.045)
-    tag4.SetTextSize(0.04)
-    tag4b.SetTextSize(0.04)
-    tag4c.SetTextSize(0.04)
+    tag4.SetTextSize(0.038)
+    tag4b.SetTextSize(0.038)
+    tag4c.SetTextSize(0.038)
     tag1.Draw()
     tag2.Draw()
     tag3.Draw()
     tag4.Draw()
     tag4b.Draw()
     #tag4c.Draw()
-    data.SetMaximum(data.GetMaximum() * 1.2)
+    htot.SetMaximum(maximum * 1.25)
 
     c.cd()
     p22.Draw()
@@ -635,9 +719,10 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
             U = r.Math.gamma_quantile_c(alpha / 2, N + 1, 1)
             iRatioGraph.SetPointEYlow(i, (N - L) / htot.GetBinContent(i + 1) * weight)
             iRatioGraph.SetPointEYhigh(i, (U - N) / htot.GetBinContent(i + 1) * weight)
+            iRatioGraph.SetPointEXlow(i, 0)
+            iRatioGraph.SetPointEXhigh(i, 0)
             iRatioGraph.SetPoint(i, iRatioGraph.GetX()[i], N / htot.GetBinContent(i + 1) * weight)
-    else:
-	
+    else:	
         for i in range(iRatio.GetNbinsX()):
             if hqcd.GetBinContent(i + 1) > 0:
                 value_data = data.GetBinContent(i + 1)
@@ -653,24 +738,29 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 		if (value_data - value_fit) / err_tot_data > maxdata : maxdata = (value_data - value_fit) / err_tot_data
 		
                 iRatio.SetBinError(i + 1, 1)  # data.GetBinError(i+1)+hqcd.GetBinError(i+1) )
-            iRatioGraph = r.TGraphAsymmErrors(iRatio)
+        iRatioGraph = r.TGraphAsymmErrors(iRatio)
+        for i in range(iRatio.GetNbinsX()):
+            iRatioGraph.SetPointEXlow(i, 0)
+            iRatioGraph.SetPointEXhigh(i, 0)
 
-    data.GetXaxis().SetTitleOffset(100)
-    data.GetXaxis().SetLabelOffset(100)
-    if ratio:
-        iRatio.SetTitle("; m_{SD} (GeV); Data/Prediction")
-    else:
-        iRatio.SetTitle("; m_{SD} (GeV); #frac{Data #minus (Multijet + t#bar{t})}{#sigma_{Data}}")
-    iRatio.SetMaximum(1.5)
-    iRatio.SetMinimum(0.)
-    iRatio.GetYaxis().SetTitleSize(0.1)
-    iRatio.GetYaxis().SetNdivisions(6)
-    iRatio.GetYaxis().SetLabelSize(0.12)
-    iRatio.GetYaxis().SetTitleOffset(0.7)
-    iRatio.GetXaxis().SetTitleSize(0.13)
-    iRatio.GetXaxis().SetLabelSize(0.12)
-    iRatio.GetXaxis().SetTitleOffset(0.9)
+
     iOneWithErrors = htot.Clone('iOneWithErrors%s' % tag)
+    htot.GetXaxis().SetTitleOffset(100)
+    htot.GetXaxis().SetLabelOffset(100)    
+    if ratio:
+        iOneWithErrors.SetTitle("; m_{SD} (GeV); Data/Prediction")
+    else:
+        iOneWithErrors.SetTitle("; m_{SD} (GeV); #frac{Data #minus (Multijet + t#bar{t})}{#sigma_{Data}}")
+    iOneWithErrors.SetMaximum(1.5)
+    iOneWithErrors.SetMinimum(0.)
+    iOneWithErrors.GetYaxis().SetTitleSize(0.1)
+    iOneWithErrors.GetYaxis().SetNdivisions(6)
+    iOneWithErrors.GetYaxis().SetLabelSize(0.12)
+    iOneWithErrors.GetYaxis().SetTitleOffset(0.7)
+    iOneWithErrors.GetXaxis().SetTitleSize(0.13)
+    iOneWithErrors.GetXaxis().SetLabelSize(0.12)
+    iOneWithErrors.GetXaxis().SetTitleOffset(0.9)
+
     if ratio:
         iOneWithErrors.Divide(htot.Clone())
         for i in range(iOneWithErrors.GetNbinsX()):
@@ -681,6 +771,8 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
                 iOneWithErrors.SetBinError(i + 1, 0)
     else:
         iOneWithErrors.Add((-1) * htot.Clone())
+        for i in range(iOneWithErrors.GetNbinsX()):
+            iOneWithErrors.SetBinError(i+1, 0)
     iOneWithErrors.SetFillStyle(3001)
     if ratio: 
 	iOneWithErrors.SetFillColor(r.kAzure - 5)
@@ -690,20 +782,20 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 	iOneWithErrors.SetFillColor(r.kGray+2)
     iOneWithErrors.SetMarkerSize(0)
     iOneWithErrors.SetLineWidth(2)
-    iRatio.Draw('pez')
+    iOneWithErrors.Draw('')
     
     for cat_tag in ['cat1','cat2','cat3','cat4','cat5','cat6','allcats']:
         if cat_tag in tag:
-            iRatio.GetXaxis().SetRangeUser(MIN_M[cat_tag],MAX_M[cat_tag])
+            iOneWithErrors.GetXaxis().SetRangeUser(MIN_M[cat_tag],MAX_M[cat_tag])
             
     iOneWithErrorsLine = iOneWithErrors.Clone('iOneWithErrorsLine%s' % tag)
     iOneWithErrorsLine.SetFillStyle(0)
 
     if ratio: 
 	iOneWithErrors.Draw("e2 sames")
-        iRatio.GetYaxis().SetRangeUser(0.51, 1.49)
+        iOneWithErrors.GetYaxis().SetRangeUser(0.51, 1.49)
     else:
-        iRatio.GetYaxis().SetRangeUser(-5, maxdata*1.5)
+        iOneWithErrors.GetYaxis().SetRangeUser(-5, maxdata*1.5)
     
     sigHistResiduals = []
     if splitS:
@@ -741,12 +833,19 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
 
     if sOverSb:
         tag += '_sOverSb'
+        
+    p12.RedrawAxis()
+    p22.RedrawAxis()
+    htot.SetMinimum(0)
     c.SaveAs(odir + "/mlfit/mlfit_" + tag + ".pdf")
     c.SaveAs(odir + "/mlfit/mlfit_" + tag + ".C")
-    data.SetMinimum(5e-1)
+    htot.SetMinimum(minimum*0.5)
+    #htot.SetMinimum(minimum*0.1)
     # r.gPad.SetLogy()
     p12.SetLogy()
-    data.SetMaximum(data.GetMaximum() * 2)
+    p12.RedrawAxis()
+    p22.RedrawAxis()
+    htot.SetMaximum(maximum*7.0)
     c.SaveAs(odir + "/mlfit/mlfit_" + tag + "-log.pdf")
     c.SaveAs(odir + "/mlfit/mlfit_" + tag + "-log.C")
 
@@ -853,7 +952,7 @@ def makeTF(pars, ratio):
 
     ratio.GetXaxis().SetTitleOffset(1.5)
     ratio.GetYaxis().SetTitleOffset(1.5)
-    ratio.GetZaxis().SetTitle('Pass-to-fail Ratio')
+    ratio.GetZaxis().SetTitle('Pass-fail ratio')
     ratio.GetXaxis().SetNdivisions(504)
     ratio.GetYaxis().SetNdivisions(504)
     ratio.GetZaxis().SetNdivisions(504)
@@ -919,7 +1018,7 @@ def makeTF(pars, ratio):
     r.gPad.Modified()
     r.gPad.Update()
 
-    tag1 = r.TLatex(0.67, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
+    tag1 = r.TLatex(0.55, 0.92, "%.1f fb^{-1} (13 TeV)" % options.lumi)
     tag1.SetNDC();
     tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
@@ -952,7 +1051,8 @@ def makeTF(pars, ratio):
 
     
     c.SetLogz(0)
-    Npoints = 100
+    Npoints = 100 # for paper
+    #Npoints = 10 # for testing
     f2graph = r.TGraph2D()
     N = -1
     for i in xrange(Npoints+1):
@@ -1056,7 +1156,7 @@ def makeTF(pars, ratio):
     f2rho.Draw("surf fb bb same")
     #f2rhograph.SetLineColor(r.kRed)
     #f2rhograph.Draw("surf fb bb same")
-    tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
+    tag1 = r.TLatex(0.55,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
     tag2 = r.TLatex(0.15,0.92,"CMS")
@@ -1098,10 +1198,10 @@ def makeTF(pars, ratio):
     f2graph.GetHistogram().GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())
     f2graph.GetHistogram().GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
     f2graph.GetHistogram().GetZaxis().SetTitleOffset(1.3)
-    tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
+    tag1 = r.TLatex(0.55,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
-    tag2 = r.TLatex(0.15,0.92,"CMS")
+    tag2 = r.TLatex(0.2,0.82,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
     #tag3 = r.TLatex(0.25,0.92,"Preliminary")
@@ -1152,6 +1252,9 @@ def makeTF(pars, ratio):
     f2rhograph.SetNpy(Npoints+1)
     f2rhograph.Draw("colz")
     f2rhograph.GetHistogram().GetYaxis().SetRangeUser(options.ptMin,1000.)
+    if options.box=='CA15':    
+        mcurv1.SetLineColor(r.kWhite)
+        mcurv1.SetFillColor(r.kWhite)
     mcurv1.Draw('same')
     mcurv2.Draw('same')
     f2rhograph.GetHistogram().GetXaxis().SetTitle('#rho')
@@ -1159,21 +1262,25 @@ def makeTF(pars, ratio):
     f2rhograph.GetHistogram().GetZaxis().SetTitle(ratio.GetZaxis().GetTitle())
     f2rhograph.GetHistogram().GetZaxis().SetTitleOffset(1.3)
     if options.box=='AK8':
-        f2rhograph.GetHistogram().SetMaximum(0.017)
+        #f2rhograph.GetHistogram().SetMaximum(0.017)
+        f2rhograph.GetHistogram().SetMaximum(0.025)
         f2rhograph.GetHistogram().SetMinimum(0.004)
     else:
-        f2rhograph.GetHistogram().SetMaximum(0.035)
+        #f2rhograph.GetHistogram().SetMaximum(0.035)
+        f2rhograph.GetHistogram().SetMaximum(0.025)
         f2rhograph.GetHistogram().SetMinimum(0.004)
-    Tag1 = r.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
+    Tag1 = r.TLatex(0.55,0.92,"%.1f fb^{-1} (13 TeV)"%options.lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
     tag1.SetTextSize(0.045)
-    tag2 = r.TLatex(0.15,0.92,"CMS")
+    tag2 = r.TLatex(0.2,0.82,"CMS")
     tag2.SetNDC()
     tag2.SetTextFont(62)
-    #tag3 = r.TLatex(0.25,0.92,"Preliminary")
-    tag3 = r.TLatex(0.25,0.92,"")
+    tag3 = r.TLatex(0.25,0.77,options.box)
+    if options.box=='CA15': 
+        tag2.SetTextColor(r.kWhite)
+        tag3.SetTextColor(r.kWhite)
     tag3.SetNDC()
-    tag3.SetTextFont(52)
+    tag3.SetTextFont(42)
     tag2.SetTextSize(0.055)
     tag3.SetTextSize(0.045)
     tag1.Draw()
@@ -1188,6 +1295,8 @@ def makeTF(pars, ratio):
     pave_param.SetFillStyle(0)
     pave_param.SetTextAlign(11)
     pave_param.SetTextSize(0.045)
+    if options.box=='CA15':
+        pave_param.SetTextColor(r.kWhite)
     text = pave_param.AddText("m_{SD} = %i GeV"%MIN_M['allcats'])
     text.SetTextAngle(-70)
     text.SetTextAlign(22)
@@ -1211,11 +1320,13 @@ def makeTF(pars, ratio):
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.C")
 
 
+
 ##-------------------------------------------------------------------------------------
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--model',dest="model", default="DMSbb",type="string", help="signal model name")
     parser.add_option('--mass',dest="mass", default='125',type="string", help="mass of resonance")
+    parser.add_option('-r',dest="r", default=0.21,type="string", help="signal strength for resonance (to be superimposed on b-only fit")
     parser.add_option('-b','--box',dest="box", default="AK8",type="string", help="box name")
     parser.add_option("--lumi", dest="lumi", type='float', default=35.9, help="luminosity", metavar="lumi")
     parser.add_option("--mass-min", dest="massMin", type='float', default=40, help="min mass", metavar="massMin")
@@ -1247,13 +1358,17 @@ if __name__ == '__main__':
     r.gStyle.SetPalette(1)
     r.gStyle.SetPaintTextFormat("1.1f")
     r.gStyle.SetOptFit(0000)
+    #r.gStyle.SetErrorX(0)
     r.gROOT.SetBatch()
     #r.gStyle.SetPalette(r.kBird)
     #r.gStyle.SetPalette(r.kBlackBody)
     stops = [ 0.0, 1.0]
-    red =   [ 1.0, 0.3]
-    green = [ 1.0, 0.3]
-    blue =  [ 1.0, 1.0]
+    #red =   [ 1.0, 0.3]
+    #green = [ 1.0, 0.3]
+    #blue =  [ 1.0, 1.0]
+    red =   [ 1.0, 0.0]
+    green = [ 1.0, 0.0]
+    blue =  [ 1.0, 0.6]
 
     s = array.array('d', stops)
     rs = array.array('d', red)
