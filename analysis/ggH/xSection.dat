@@ -1,11 +1,8 @@
+
+
 ######################################
 ## Cross section in pb for datasets
 ##
-
-
-#Test entries
-QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8                           6831
-QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8                         1207
 
 #13 TeV Spring 15 MC
 QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8                            2022100000.0
@@ -112,8 +109,10 @@ TT_TuneEE5C_13TeV_powheg_herwigpp						  730.0*1.139397
 TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                  110.0*1.65623
 TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                     110.0*1.65623
 TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                               52.72*1.65623
-TTToHadronic_TuneCP5_13TeV_powheg_pythia8 					   377.96
-TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8					   365.34
+TTToHadronic_TuneCP5_13TeV_powheg_pythia8 					  377.96
+TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8					  365.34
+TTTo2L2Nu_TuneCP5_13TeV_powheg_pythia8						   88.29
+TTToSemiLeptonic_WspTgt150_TuneCUETP8M2T4_13TeV_powheg_pythia8                     34.25*1.13
 ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1                    3.36
 ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1                   70.69
 ST_t-channel_4f_scaledown_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1         70.69
@@ -126,14 +125,20 @@ ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1 
 ST_tW_antitop_5f_DS_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1              35.6
 ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1                 35.6
 ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1                     35.6
-WJetsToQQ_HT400to600_TuneCP5_13TeV						   1477
-WJetsToQQ_HT600to800_TuneCP5_13TeV						   328.9
-WJetsToQQ_HT_800toInf_TuneCP5_13TeV						   161.3
+#WJetsToQQ_HT400to600_TuneCP5_13TeV						   1477
+#WJetsToQQ_HT600to800_TuneCP5_13TeV						   328.9
+#WJetsToQQ_HT_800toInf_TuneCP5_13TeV						   161.3
 WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                       95.14
 ZJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8  			   5.67
-ZJetsToQQ_HT400to600_TuneCP5_13TeV						   1347
-ZJetsToQQ_HT600to800_3j_TuneCP5_13TeV						   138.7
-ZJetsToQQ_HT_800toInf_TuneCP5_13TeV						   195.4
+#ZJetsToQQ_HT400to600_TuneCP5_13TeV						   1347
+#ZJetsToQQ_HT600to800_3j_TuneCP5_13TeV						   138.7
+#ZJetsToQQ_HT_800toInf_TuneCP5_13TeV						   195.4
+WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV 					   315.6
+WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV					   68.57
+WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV					   34.9
+ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV					   145.4
+ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV					   34.0
+ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV					   18.67
 WJetsToQQ_HT180_13TeV-madgraphMLM-pythia8					   2788 # from DAS
 WW_TuneCUETP8M1_13TeV-pythia8                                                      63.21*1.878
 WWTo4Q_13TeV_powheg                                                                51.723
@@ -388,3 +393,15 @@ BulkGravTohhTohVVhbb_narrow_M_650_13TeV_madgraph 1
 BulkGravTohhTohVVhbb_narrow_M_700_13TeV_madgraph 1
 BulkGravTohhTohVVhbb_narrow_M_800_13TeV_madgraph 1
 BulkGravTohhTohVVhbb_narrow_M_900_13TeV_madgraph 1
+
+BulkGravToWW_narrow_M_500_13TeV_madgraph 1
+BulkGravToWW_narrow_M_800_13TeV_madgraph 1
+BulkGravToWW_narrow_M_1000_13TeV_madgraph 1
+BulkGravToWW_narrow_M_1200_13TeV_madgraph 1
+BulkGravToWW_narrow_M_1400_13TeV_madgraph 1
+BulkGravToWW_narrow_M_1600_13TeV_madgraph 1
+BulkGravToWW_narrow_M_1800_13TeV_madgraph 1
+BulkGravToWW_narrow_M_2000_13TeV_madgraph 1
+BulkGravToWW_narrow_M_3000_13TeV_madgraph 1
+BulkGravToWW_narrow_M_3500_13TeV_madgraph 1
+BulkGravToWW_narrow_M_4500_13TeV_madgraph 1
