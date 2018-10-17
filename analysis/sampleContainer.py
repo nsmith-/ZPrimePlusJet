@@ -238,7 +238,8 @@ class sampleContainer:
         # define histograms
         histos1d = {            
             'h_fBosonPt': ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
-            'h_fbScale': ["h_" + self._name + "_fbScale", "; gen event weight;;", 200, -10, 10],
+            'h_fbweight': ["h_" + self._name + "_fbweight", "; xsection x Lumi /Ngen ;;", 300, -1.5, 1.5],
+            'h_puweight': ["h_" + self._name + "_puweight", ";  puweight ;;", 300, -1.5, 1.5],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
             'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                         40, 201],
@@ -1058,8 +1059,9 @@ class sampleContainer:
             vmuoLoose0_phi = self.vmuoLoose0_phi[0]
 
             self.h_npv.Fill(self.npv[0], weight)
-            self.h_fBosonPt.Fill(self.genVPt[0], fbweight)
-            self.h_fbScale.Fill(self.scale1fb[0])
+            self.h_fBosonPt.Fill(self.genVPt[0], fbweight) 
+            self.h_fbweight.Fill(fbweight)
+            self.h_puweight.Fill(puweight)
 
             # gen-matching for scale/smear systematic
             dphi = 9999
