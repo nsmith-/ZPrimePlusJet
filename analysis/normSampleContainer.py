@@ -72,7 +72,7 @@ class normSampleContainer:
         for plot in plots:
             firstName     = self.subSampleContainers.keys()[0]
             sc            = self.subSampleContainers[firstName]
-            allplots[plot] = getattr(sc, plot).Clone(self.sampleName+"_"+plot)      #Clone the histograms from first sample
+            allplots[plot] = getattr(sc, plot).Clone(plot.replace("h_","h_%s_"%self.sampleName))      #Clone the histograms from first sample
         for plot in plots:
             for subSample in self.subSampleContainers.keys()[1:] :   #Add the rest of the histos
                 sc             = self.subSampleContainers[subSample]
