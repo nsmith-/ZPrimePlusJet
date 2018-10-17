@@ -8,9 +8,10 @@ import sys
 import time
 import array
 import glob
-import os
+import os,json
 from plotHelpers import *
 from sampleContainer import *
+from normSampleContainer import *
 DBTMIN=-99
 #
 def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
@@ -202,6 +203,8 @@ def get2017files():
     idir_temp = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/'
     idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/'
     idir_1208 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08/norm'
+    #idir_1401 = '/eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/'
+    idir_1401 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/'
     idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/'
 
     tfiles = {'Hbb':        [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root',
@@ -227,7 +230,11 @@ def get2017files():
                              idir+'/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root',#ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8_1000pb_weighted.root',
                              idir+'/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root'],
               #'DY':         [idir_temp+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
-              'DY':         [idir+'/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
+              'DY':         {
+                            'ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV': [idir_1401 + 'ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV/*.root'],
+                            'ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV': [idir_1401 + 'ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV/*.root'],
+                            'ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV': [idir_1401 + 'ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV/*.root'],
+                            },
               'zqq400to600': [idir_1208 + '/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_1000pb_weighted.root'],
               'zqq600to800': [idir_1208 + '/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_1000pb_weighted.root'],
               'zqq800toInf': [idir_1208 + '/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_1000pb_weighted.root'],
@@ -239,6 +246,11 @@ def get2017files():
                              idir+'/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
                              idir+'/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root'],
               #'W':          [idir_temp+'/WJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
+              'W'         : {
+                              'WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV': [idir_1401 + 'WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV/*.root'],
+                              'WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV': [idir_1401 + 'WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV/*.root'],
+                              'WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV': [idir_1401 + 'WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV/*.root'],
+                             },
               'wqq400to600': [idir_1208 + '/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_1000pb_weighted.root'],
               'wqq600to800': [idir_1208 + '/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_1000pb_weighted.root'],
               'wqq800toInf': [idir_1208 + '/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_1000pb_weighted.root'],
@@ -340,7 +352,9 @@ def main(options,args,outputExists):
         legname['data'] = 'SingleMuon data'
 
     if is2017:
-        tfiles = get2017files()
+        #tfiles = get2017files()
+        samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"r")
+        tfiles  = json.load(samplefiles)['controlPlotsGGH_2017']
         puOpt  = "2017"
     else:
         tfiles = get2016files()
@@ -443,12 +457,14 @@ def main(options,args,outputExists):
             bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
         else:
             pudir="root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-Pu/hadd/"
-            subwqqSamples['wqq400to600'] = sampleContainer('wqq400to600', tfiles['wqq400to600'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root")
-            subwqqSamples['wqq600to800'] = sampleContainer('wqq600to800', tfiles['wqq600to800'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV.root")
-            subwqqSamples['wqq800toInf'] = sampleContainer('wqq800toInf', tfiles['wqq800toInf'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV.root")
-            subzqqSamples['zqq400to600'] = sampleContainer('zqq400to600', tfiles['zqq400to600'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV.root")
-            subzqqSamples['zqq600to800'] = sampleContainer('zqq600to800', tfiles['zqq600to800'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV.root")
-            subzqqSamples['zqq800toInf'] = sampleContainer('zqq800toInf', tfiles['zqq800toInf'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV.root")
+            bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root",treeName="Events").addPlots(plots)
+            bkgSamples['DY']  = normSampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV.root",treeName="Events").addPlots(plots)
+            #subwqqSamples['wqq400to600'] = sampleContainer('wqq400to600', tfiles['wqq400to600'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root")
+            #subwqqSamples['wqq600to800'] = sampleContainer('wqq600to800', tfiles['wqq600to800'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV.root")
+            #subwqqSamples['wqq800toInf'] = sampleContainer('wqq800toInf', tfiles['wqq800toInf'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV.root")
+            #subzqqSamples['zqq400to600'] = sampleContainer('zqq400to600', tfiles['zqq400to600'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV.root")
+            #subzqqSamples['zqq600to800'] = sampleContainer('zqq600to800', tfiles['zqq600to800'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV.root")
+            #subzqqSamples['zqq800toInf'] = sampleContainer('zqq800toInf', tfiles['zqq800toInf'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV.root")
 
             bkgSamples['wqq400to600'] = sampleContainer('wqq400to600', tfiles['wqq400to600'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root")
             bkgSamples['wqq600to800'] = sampleContainer('wqq600to800', tfiles['wqq600to800'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV.root")
@@ -504,23 +520,23 @@ def main(options,args,outputExists):
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
-        if options.is2017:
-            wqqplots={}
-            wqq_sc = subwqqSamples[subwqqSamples.keys()[0]]  # first subsample
-            for plot in plots:
-                wqqplots[plot] = getattr(wqq_sc,plot).Clone()
-                wqqplots[plot].SetName(plot.replace("h_","h_W_"))
-                for subS_key in subwqqSamples.keys()[1:]:
-                    subS = subwqqSamples[subS_key]
-                    wqqplots[plot].Add(getattr(subS,plot))
-            zqqplots={}
-            zqq_sc = subzqqSamples[subzqqSamples.keys()[0]]  # first subsample
-            for plot in plots:
-                zqqplots[plot] = getattr(zqq_sc,plot).Clone()
-                zqqplots[plot].SetName(plot.replace("h_","h_DY_"))
-                for subS_key in subzqqSamples.keys()[1:]:
-                    subS = subzqqSamples[subS_key]
-                    zqqplots[plot].Add(getattr(subS,plot))
+        #if options.is2017:
+        #    wqqplots={}
+        #    wqq_sc = subwqqSamples[subwqqSamples.keys()[0]]  # first subsample
+        #    for plot in plots:
+        #        wqqplots[plot] = getattr(wqq_sc,plot).Clone()
+        #        wqqplots[plot].SetName(plot.replace("h_","h_W_"))
+        #        for subS_key in subwqqSamples.keys()[1:]:
+        #            subS = subwqqSamples[subS_key]
+        #            wqqplots[plot].Add(getattr(subS,plot))
+        #    zqqplots={}
+        #    zqq_sc = subzqqSamples[subzqqSamples.keys()[0]]  # first subsample
+        #    for plot in plots:
+        #        zqqplots[plot] = getattr(zqq_sc,plot).Clone()
+        #        zqqplots[plot].SetName(plot.replace("h_","h_DY_"))
+        #        for subS_key in subzqqSamples.keys()[1:]:
+        #            subS = subzqqSamples[subS_key]
+        #            zqqplots[plot].Add(getattr(subS,plot))
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
@@ -534,8 +550,10 @@ def main(options,args,outputExists):
                 hall_byproc['data'] = {}
 
         if options.is2017:
-            hall_byproc['DY']= zqqplots  
-            hall_byproc['W'] = wqqplots   
+            hall_byproc['DY']= bkgSamples['DY']  
+            hall_byproc['W'] = bkgSamples['W']
+            del bkgSamples['DY']   #Do not get the plots from sampleContainer by getattr
+            del bkgSamples['W']    #Do not get the plots from sampleContainer by getattr
         for plot in plots:
             for process, s in sigSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
