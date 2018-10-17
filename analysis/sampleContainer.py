@@ -847,12 +847,12 @@ class sampleContainer:
 	    wscale=[1.0,1.0,1.0,1.20,1.25,1.25,1.0]
 	    ptscale=[0, 500, 600, 700, 800, 900, 1000,3000]
 	    ptKF=1.
-            if 'wqq' in self._name or self._name == 'W':
+            if 'wqq' in self._name or 'WJetsToQQ_' in self._name or self._name == 'W':
                 # print self._name
 		for i in range(0, len(ptscale)):
 			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
                 vjetsKF = self.kfactor[0] * 1.35 * ptKF  # ==1 for not V+jets events
-            elif 'zqq' in self._name or self._name == 'DY':
+            elif 'zqq' in self._name or 'ZJetsToQQ_' in self._name or self._name == 'DY':
                 # print self._name
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
             # trigger weight
