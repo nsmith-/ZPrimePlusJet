@@ -42,7 +42,7 @@ class normSampleContainer:
     def getNentries(self,oTreeFiles):
         n = 0
         for otf in oTreeFiles:
-            f  = TFile(otf)
+            f  = TFile.Open(otf)
             n += f.Get("NEvents").GetBinContent(1)
             f.Close()
         return n
