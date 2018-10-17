@@ -238,6 +238,7 @@ class sampleContainer:
         # define histograms
         histos1d = {            
             'h_fBosonPt': ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
+            'h_fbScale': ["h_" + self._name + "_fbScale", "; gen event weight;;", 200, -10, 10],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
             'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                         40, 201],
@@ -1058,6 +1059,7 @@ class sampleContainer:
 
             self.h_npv.Fill(self.npv[0], weight)
             self.h_fBosonPt.Fill(self.genVPt[0], fbweight)
+            self.h_fbScale.Fill(self.scale1fb[0])
 
             # gen-matching for scale/smear systematic
             dphi = 9999
