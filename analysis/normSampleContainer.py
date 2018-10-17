@@ -6,7 +6,7 @@ import glob
 class normSampleContainer:
     def __init__(self, sampleName, subSamples, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
                  minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', 
-                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9):
+                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016'):
 
         self.sampleName            = sampleName
         self.subSampleContainers    = {}
@@ -36,7 +36,7 @@ class normSampleContainer:
             #print datetime.datetime.now()
             lumiWeight         =  (xSection*1000*lumi) / Nentries
             print "normSampleContainer:: [sample %s, subsample %s] lumi = %s , xSection = %.3f, nEvent = %s, weight = %.3f" % (sampleName, subSampleName, lumi, xSection, Nentries, lumiWeight)
-            self.subSampleContainers[subSampleName] = sampleContainer(subSampleName, tfiles[subSampleName], sf, DBTAGCUTMIN, lumiWeight, isData, fillCA15, cutFormula, minBranches, iSplit ,maxSplit,triggerNames,treeName,doublebName,doublebCut)
+            self.subSampleContainers[subSampleName] = sampleContainer(subSampleName, tfiles[subSampleName], sf, DBTAGCUTMIN, lumiWeight, isData, fillCA15, cutFormula, minBranches, iSplit ,maxSplit,triggerNames,treeName,doublebName,doublebCut,puOpt)
 
     #Get the number of events from the NEvents histogram
     def getNentries(self,oTreeFiles):
@@ -63,6 +63,7 @@ class normSampleContainer:
                     break
         if not FoundXsection:
             print "NormSampleContainer:: Cannot find xsection for %s",fDataSet
+            sys.exit()
         return thisXsection
 
     ## Add all plots from subSamples,  Returns plots in { sampleName_plotName : sc.attr }
