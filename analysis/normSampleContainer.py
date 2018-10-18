@@ -23,13 +23,7 @@ class normSampleContainer:
         for subSampleName,paths in self.subSamples.iteritems():
             xSection = self.getXsection(subSampleName,self.xsectionFile)   # in pb
             tfiles = {}
-            # Allow "*" format
-            expandedPath = paths
-            for p in paths:
-                if "*" in p:
-                    expandedPath.extend(glob.glob(p))
-                    expandedPath.remove(p)
-            tfiles[subSampleName] = expandedPath 
+            tfiles[subSampleName] = paths 
             print "normSampleContainer:: subSample = %s , Nfiles = %s , basePath = %s"%(subSampleName, len(tfiles[subSampleName]), paths[0].replace(paths[0].split("/")[-1],""))
             #print datetime.datetime.now()
             Nentries           = self.getNentries(tfiles[subSampleName])
