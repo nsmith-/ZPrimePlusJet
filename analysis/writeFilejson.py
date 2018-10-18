@@ -22,6 +22,8 @@ def expandPath(fdict):
                                 globpaths[i] = redirector+glob_p
                             expandedPath.extend(globpaths)
                             expandedPath.remove(p)
+                if len(expandedPath)==0:
+                        print "ERROR: %s has no files"%(subSname)
                 d[subSname] = expandedPath 
             rdict[sample] =  d
     return rdict
@@ -29,7 +31,7 @@ def expandPath(fdict):
 def main(options,args):
     if not options.printOnly:
         outf = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"w")
-        print "Writing to ", os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json")
+        print "Writing to ", os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json")
     finaljson = {}
     finaljson['controlPlotsGGH_2017'] = expandPath(controlPlotsGGH.get2017files()) 
     if not options.printOnly:
