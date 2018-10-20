@@ -450,8 +450,7 @@ def main(options,args,outputExists):
         print "Signals... "
         sigSamples = {}
         sigSamples['ggHbb_powheg']  = sampleContainer('ggHbb_powheg',tfiles['ggHbb-powheg']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
-        #TODO update PU distribution
-        sigSamples['ggHbb']  = normSampleContainer('ggHbb',tfiles['ggHbb'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root",treeName="Events").addPlots(plots)
+        sigSamples['ggHbb']  = normSampleContainer('ggHbb',tfiles['ggHbb'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
         sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
         sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 	
         sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)    
@@ -463,9 +462,9 @@ def main(options,args,outputExists):
             bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
             bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
         else:
-            pudir="root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-Pu/hadd/"
-            bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root",treeName="Events").addPlots(plots)
-            bkgSamples['DY']  = normSampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV.root",treeName="Events").addPlots(plots)
+            #pudir="root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-Pu/hadd/"
+            bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,  puOpt="default").addPlots(plots)
+            bkgSamples['DY']  = normSampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
             subwqqSamples['wqq400to600'] = sampleContainer('wqq400to600', tfiles['wqq400to600'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV.root")
             subwqqSamples['wqq600to800'] = sampleContainer('wqq600to800', tfiles['wqq600to800'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV.root")
             subwqqSamples['wqq800toInf'] = sampleContainer('wqq800toInf', tfiles['wqq800toInf'], 1, DBTMIN, lumi, False, False, '1', False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=pudir+"WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV.root")
