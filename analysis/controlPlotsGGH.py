@@ -449,8 +449,11 @@ def main(options,args,outputExists):
                     sys.exit()
         print "Signals... "
         sigSamples = {}
-        sigSamples['ggHbb_powheg']  = sampleContainer('ggHbb_powheg',tfiles['ggHbb-powheg']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
-        sigSamples['ggHbb']  = normSampleContainer('ggHbb',tfiles['ggHbb'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
+        if  options.is2017:
+            sigSamples['ggHbb_powheg']  = sampleContainer('ggHbb_powheg',tfiles['ggHbb-powheg']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
+            sigSamples['ggHbb']  = normSampleContainer('ggHbb',tfiles['ggHbb'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
+        else:
+            sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
         sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
         sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 	
         sigSamples['ttHbb'] = sampleContainer('ttHbb',tfiles['ttHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)    
