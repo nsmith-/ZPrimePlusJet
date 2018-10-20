@@ -26,20 +26,27 @@ class normSampleContainer:
             tfiles[subSampleName] = paths 
             print "normSampleContainer:: subSample = %s , Nfiles = %s , basePath = %s"%(subSampleName, len(tfiles[subSampleName]), paths[0].replace(paths[0].split("/")[-1],""))
             #print datetime.datetime.now()
-            Nentries           = self.getNentries(tfiles[subSampleName])
+            Nentries,h_puMC           = self.getNentriesAndPu(tfiles[subSampleName])
+            print "PUhistogram type= ",type(h_puMC)
             #print datetime.datetime.now()
             lumiWeight         =  (xSection*1000*lumi) / Nentries
-            print "normSampleContainer:: [sample %s, subsample %s] lumi = %s , xSection = %.3f, nEvent = %s, weight = %.3f" % (sampleName, subSampleName, lumi, xSection, Nentries, lumiWeight)
-            self.subSampleContainers[subSampleName] = sampleContainer(subSampleName, tfiles[subSampleName], sf, DBTAGCUTMIN, lumiWeight, isData, fillCA15, cutFormula, minBranches, iSplit ,maxSplit,triggerNames,treeName,doublebName,doublebCut,puOpt)
+            print "normSampleContainer:: [sample %s, subsample %s] lumi = %s fb-1, xSection = %.3f pb, nEvent = %s, weight = %.5f" % (sampleName, subSampleName, lumi, xSection, Nentries, lumiWeight)
+            self.subSampleContainers[subSampleName] = sampleContainer(subSampleName, tfiles[subSampleName], sf, DBTAGCUTMIN, lumiWeight, isData, fillCA15, cutFormula, minBranches, iSplit ,maxSplit,triggerNames,treeName,doublebName,doublebCut,h_puMC)
 
     #Get the number of events from the NEvents histogram
-    def getNentries(self,oTreeFiles):
+    def getNentriesAndPu(self,oTreeFiles):
         n = 0
-        for otf in oTreeFiles:
+        f1 = TFile.Open(oTreeFiles[0])
+        h_puMC = f1.Get("Pu").Clone()
+        n     += f1.Get("NEvents").GetBinContent(1)
+        h_puMC.SetDirectory(0)
+        f1.Close()
+        for otf in oTreeFiles[1:]:
             f  = TFile.Open(otf)
             n += f.Get("NEvents").GetBinContent(1)
+            h_puMC.Add(f.Get("Pu"))
             f.Close()
-        return n
+        return n,h_puMC
 
     def getXsection(self,fDataSet,xSectionFile):
         thisXsection = 1.0

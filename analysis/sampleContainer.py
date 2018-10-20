@@ -778,7 +778,10 @@ class sampleContainer:
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
         if not self.puOpt in ['2016','2017']:
-            print "Using this file to reweight MC pu:", self.puOpt
+            if not type(self.puOpt)==type(ROOT.TH1F()):
+                print "Using this file to reweight MC pu:", self.puOpt
+            else:
+                print "Using input histogram reweight MC pu:", self.puOpt.GetName() 
             h_puw,h_puw_up,h_puw_down = self.get2017puWeight(self.puOpt)
     
         self._tt.SetNotify(self._cutFormula)
@@ -1589,11 +1592,14 @@ class sampleContainer:
         else:
             return "1"
     def get2017puWeight(self,MC_pu):
-        f_puMC = ROOT.TFile.Open(MC_pu)
-        lpuMC= f_puMC.Get("Pu")
+        if type(MC_pu)==type(ROOT.TH1F()):
+            lpuMC = MC_pu
+        else:
+            f_puMC = ROOT.TFile.Open(MC_pu)
+            lpuMC= f_puMC.Get("Pu")
+            lpuMC.SetDirectory(0)
+            f_puMC.Close()
         lpuMC.Scale(1/lpuMC.Integral())
-        lpuMC.SetDirectory(0)
-        f_puMC.Close()
         
         f_pu2017  = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/pileup_Cert_294927-306462_13TeV_PromptReco_Collisions17_withVar.root"))
 
@@ -1613,7 +1619,6 @@ class sampleContainer:
         lpuData_up.Divide(lpuMC)
         lpuData_down.Divide(lpuMC)
 
-        f_puMC.Close()
         return lpuData,lpuData_up,lpuData_down
 
 
