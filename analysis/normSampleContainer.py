@@ -26,11 +26,11 @@ class normSampleContainer:
             tfiles[subSampleName] = paths 
             print "normSampleContainer:: subSample = %s , Nfiles = %s , basePath = %s"%(subSampleName, len(tfiles[subSampleName]), paths[0].replace(paths[0].split("/")[-1],""))
             #print datetime.datetime.now()
-            Nentries,h_puMC           = self.getNentriesAndPu(tfiles[subSampleName])
+            Nentries,h_puMC,checksum           = self.getNentriesAndPu(tfiles[subSampleName])
             print "PUhistogram type= ",type(h_puMC)
             #print datetime.datetime.now()
             lumiWeight         =  (xSection*1000*lumi) / Nentries
-            print "normSampleContainer:: [sample %s, subsample %s] lumi = %s fb-1, xSection = %.3f pb, nEvent = %s, weight = %.5f" % (sampleName, subSampleName, lumi, xSection, Nentries, lumiWeight)
+            print "normSampleContainer:: [sample %s, subsample %s] lumi = %s fb-1, xSection = %.3f pb, nEvent = %s, weight = %.5f, Nfiles=%s,(chkSum=%s)" % (sampleName, subSampleName, lumi, xSection, Nentries, lumiWeight,len(tfiles[subSampleName]),checksum)
             self.subSampleContainers[subSampleName] = sampleContainer(subSampleName, tfiles[subSampleName], sf, DBTAGCUTMIN, lumiWeight, isData, fillCA15, cutFormula, minBranches, iSplit ,maxSplit,triggerNames,treeName,doublebName,doublebCut,h_puMC)
 
     #Get the number of events from the NEvents histogram
@@ -40,13 +40,15 @@ class normSampleContainer:
         h_puMC = f1.Get("Pu").Clone()
         n     += f1.Get("NEvents").GetBinContent(1)
         h_puMC.SetDirectory(0)
+        checksum = 1
         f1.Close()
         for otf in oTreeFiles[1:]:
             f  = TFile.Open(otf)
             n += f.Get("NEvents").GetBinContent(1)
+            checksum +=1
             h_puMC.Add(f.Get("Pu"))
             f.Close()
-        return n,h_puMC
+        return n,h_puMC,checksum
 
     def getXsection(self,fDataSet,xSectionFile):
         thisXsection = 1.0
