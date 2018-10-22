@@ -534,7 +534,7 @@ def main(options,args,outputExists):
             wqq_sc = subwqqSamples[subwqqSamples.keys()[0]]  # first subsample
             for plot in plots:
                 wqqplots[plot] = getattr(wqq_sc,plot).Clone()
-                wqqplots[plot].SetName(plot.replace("h_","h_W_"))
+                wqqplots[plot].SetName(plot.replace("h_","h_W1208_"))
                 for subS_key in subwqqSamples.keys()[1:]:
                     subS = subwqqSamples[subS_key]
                     wqqplots[plot].Add(getattr(subS,plot))
@@ -542,7 +542,7 @@ def main(options,args,outputExists):
             zqq_sc = subzqqSamples[subzqqSamples.keys()[0]]  # first subsample
             for plot in plots:
                 zqqplots[plot] = getattr(zqq_sc,plot).Clone()
-                zqqplots[plot].SetName(plot.replace("h_","h_DY_"))
+                zqqplots[plot].SetName(plot.replace("h_","h_DY1208_"))
                 for subS_key in subzqqSamples.keys()[1:]:
                     subS = subzqqSamples[subS_key]
                     zqqplots[plot].Add(getattr(subS,plot))
@@ -562,8 +562,8 @@ def main(options,args,outputExists):
             hall_byproc['DY']= bkgSamples['DY']  
             hall_byproc['W'] = bkgSamples['W']
             hall_byproc['ggHbb'] = sigSamples['ggHbb']
-            hall_byproc['DY_1207']= zqqplots  
-            hall_byproc['W_1207'] = wqqplots
+            hall_byproc['DY_1208']= zqqplots  
+            hall_byproc['W_1208'] = wqqplots
             del bkgSamples['DY']   #Do not get the plots from sampleContainer by getattr
             del bkgSamples['W']    #Do not get the plots from sampleContainer by getattr
             del sigSamples['ggHbb']    #Do not get the plots from sampleContainer by getattr
