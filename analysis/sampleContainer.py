@@ -237,7 +237,8 @@ class sampleContainer:
 
         # define histograms
         histos1d = {            
-            'h_fBosonPt': ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
+            'h_fBosonPt_fbweight': ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
+            'h_fBosonPt_weight':   ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
             'h_fbweight': ["h_" + self._name + "_fbweight", "; xsection x Lumi /Ngen ;;", 300, -1.5, 1.5],
             'h_puweight': ["h_" + self._name + "_puweight", ";  puweight ;;", 300, -1.5, 1.5],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
@@ -1062,9 +1063,6 @@ class sampleContainer:
             vmuoLoose0_phi = self.vmuoLoose0_phi[0]
 
             self.h_npv.Fill(self.npv[0], weight)
-            self.h_fBosonPt.Fill(self.genVPt[0], fbweight) 
-            self.h_fbweight.Fill(fbweight)
-            self.h_puweight.Fill(puweight)
 
             # gen-matching for scale/smear systematic
             dphi = 9999
@@ -1079,6 +1077,9 @@ class sampleContainer:
                     dphi = math.fabs(genVPhi - jphi_8)
                     dpt = math.fabs(genVPt - jpt_8) / genVPt
                     dmass = math.fabs(genVMass - jmsd_8) / genVMass
+                if jpt_8> PTCUT:
+                    self.h_fBosonPt_fbweight.Fill(self.genVPt[0], fbweight) 
+                    self.h_fBosonPt_weight.Fill(self.genVPt[0], weight) 
 
             # Single Muon Control Regions
             if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
