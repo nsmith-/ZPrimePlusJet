@@ -237,8 +237,8 @@ class sampleContainer:
 
         # define histograms
         histos1d = {            
-            'h_fBosonPt_fbweight': ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
-            'h_fBosonPt_weight':   ["h_" + self._name + "_fBosonPt", "; fBoson pT;;", 100, 0, 1000],
+            'h_fBosonPt_fbweight': ["h_" + self._name + "_fBosonPt_fbweight", "; fBoson pT;;", 100, 0, 1000],
+            'h_fBosonPt_weight':   ["h_" + self._name + "_fBosonPt_weight", "; fBoson pT;;", 100, 0, 1000],
             'h_fbweight': ["h_" + self._name + "_fbweight", "; xsection x Lumi /Ngen ;;", 300, -1.5, 1.5],
             'h_puweight': ["h_" + self._name + "_puweight", ";  puweight ;;", 300, -1.5, 1.5],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
