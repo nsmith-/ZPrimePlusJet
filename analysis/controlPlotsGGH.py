@@ -567,6 +567,7 @@ def main(options,args,outputExists):
             hall_byproc['DY']= bkgSamples['DY']  
             hall_byproc['W'] = bkgSamples['W']
             hall_byproc['ggHbb'] = sigSamples['ggHbb']
+            hall_byproc['ggHbb_pow1401'] = sigSamples['ggHbb_pow1401']
             hall_byproc['DY_1208']= zqqplots  
             hall_byproc['W_1208'] = wqqplots
             del bkgSamples['DY']   #Do not get the plots from sampleContainer by getattr
