@@ -1260,7 +1260,6 @@ class sampleContainer:
                     self.h_pt_ak8_sub1.Fill(jpt_8_sub1, weight)
                     self.h_pt_ak8_sub2.Fill(jpt_8_sub2, weight)
                     self.h_msd_ak8.Fill(jmsd_8, weight)
-		    self.h_rho_ak8.Fill(rh_8, weight)
                     self.h_msd_ak8_raw.Fill(jmsd_8_raw, weight)
                     self.h_dbtag_ak8.Fill(jdb_8, weight)
                     self.h_dbtag_ak8_sub1.Fill(jdb_8_sub1, weight)
