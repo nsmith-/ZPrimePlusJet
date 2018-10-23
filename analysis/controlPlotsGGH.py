@@ -217,6 +217,7 @@ def get2017files():
 			                idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root',
 			                idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
 			                idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],	
+	          'ggHbb_amc1207' :     [idir+'/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_1000pb_weighted.root'],
 	          'ggHbb_pow1207' :     [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	          'ggHbb_pow1401' :  {
                                 'GluGluHToBB_M125_13TeV_powheg_pythia8': [idir_1401+'/GluGluHToBB_M125_13TeV_powheg_pythia8/*.root']
@@ -455,6 +456,7 @@ def main(options,args,outputExists):
         sigSamples = {}
         if  options.is2017:
             sigSamples['ggHbb_pow1207']  = sampleContainer('ggHbb_pow1207',tfiles['ggHbb_pow1207']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
+            sigSamples['ggHbb_amc1207']  = sampleContainer('ggHbb_amc1207',tfiles['ggHbb_amc1207']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
             sigSamples['ggHbb_pow1401']  = normSampleContainer('ggHbb_pow1401',tfiles['ggHbb_pow1401']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,treeName='Events',puOpt='default').addPlots(plots) 
             sigSamples['ggHbb']         = normSampleContainer('ggHbb',tfiles['ggHbb'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,treeName='Events',puOpt="default").addPlots(plots)
         else:

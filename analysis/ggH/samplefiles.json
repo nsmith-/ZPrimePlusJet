@@ -455,6 +455,9 @@
         "wqq400to600": [
             "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08/norm/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_1000pb_weighted.root"
         ], 
+        "ggHbb_amc1207": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_1000pb_weighted.root"
+        ], 
         "wqq800toInf": [
             "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08/norm/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_1000pb_weighted.root"
         ], 
