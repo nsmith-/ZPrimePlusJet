@@ -205,7 +205,7 @@ def get2017files():
     idir_1208 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08/norm'
     #idir_1401 = '/eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/'
     idir_1401 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/'
-    #idir_1401 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/'
+    idir_1401skim = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/'
     idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/'
 
     tfiles = {'Hbb':        [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root',
@@ -288,20 +288,20 @@ def get2017files():
                             # idirData + 'JetHTRun2017D_17Nov2017_v1_noPF.root',
                             # idirData + 'JetHTRun2017E_17Nov2017_v1_noPF.root',
                             # idirData + 'JetHTRun2017F_17Nov2017_v1_noPF.root'
-                    	     idir_1401 + 'JetHTRun2017C_17Nov2017_v1/*.root',
-                             idir_1401 + 'JetHTRun2017D_17Nov2017_v1/*.root',
-                             idir_1401 + 'JetHTRun2017E_17Nov2017_v1/*.root',
-                             idir_1401 + 'JetHTRun2017F_17Nov2017_v1/*.root'
+                    	     idir_1401skim + 'JetHTRun2017C_17Nov2017_v1*.root',
+                             idir_1401skim + 'JetHTRun2017D_17Nov2017_v1*.root',
+                             idir_1401skim + 'JetHTRun2017E_17Nov2017_v1*.root',
+                             idir_1401skim + 'JetHTRun2017F_17Nov2017_v1*.root'
                       ],
               'muon': [
                        #idirData+'/SingleMuonRun2017C_17Nov2017_v1_noPF.root',
                        #idirData+'/SingleMuonRun2017D_17Nov2017_v1_noPF.root',
                        #idirData+'/SingleMuonRun2017E_17Nov2017_v1_noPF.root',
                        #idirData+'/SingleMuonRun2017F_17Nov2017_v1_noPF.root'
-                       idir_1401+'/SingleMuonRun2017C_17Nov2017_v1/*.root',
-                       idir_1401+'/SingleMuonRun2017D_17Nov2017_v1/*.root',
-                       idir_1401+'/SingleMuonRun2017E_17Nov2017_v1/*.root',
-                       idir_1401+'/SingleMuonRun2017F_17Nov2017_v1/*.root'
+                       idir_1401skim+'/SingleMuonRun2017C_17Nov2017_v1*.root',
+                       idir_1401skim+'/SingleMuonRun2017D_17Nov2017_v1*.root',
+                       idir_1401skim+'/SingleMuonRun2017E_17Nov2017_v1*.root',
+                       idir_1401skim+'/SingleMuonRun2017F_17Nov2017_v1*.root'
                     ]
             }
     return tfiles
