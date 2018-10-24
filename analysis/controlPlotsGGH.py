@@ -284,35 +284,25 @@ def get2017files():
               'Phibb150':   [idir+'/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'Phibb250':   [idir+'/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
               'data': [
-#                     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF_294927-299380.root',
-#                     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF_299381-300155.root',
-#                     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF_300156-300575.root',
-#                     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF_300576-301391.root',
-#                     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF_301392-302343.root',
-#                     idirData + 'JetHTRun2017D_17Nov2017_v1_noPF_294927-302392.root',
-#                     idirData + 'JetHTRun2017D_17Nov2017_v1_noPF_302393-302664.root',
-#                     idirData + 'JetHTRun2017E_17Nov2017_v1_noPF_303825-304119.root',
-#                     idirData + 'JetHTRun2017E_17Nov2017_v1_noPF_304120-304507.root',
-#                     idirData + 'JetHTRun2017E_17Nov2017_v1_noPF_304508-305185.root',
-#                     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF_304508-305185.root',
-#		     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF_305186-305248.root',
-#                     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF_305249-305364.root',
-#                     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF_305365-305636.root',
-#                     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF_305637-306029.root',
-#                     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF_306030-306126.root'],
-#                     idirData + 'JetHTRun2017B_PromptReco_v1_noPF.root',
-        		     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF.root',
-                     idirData + 'JetHTRun2017D_17Nov2017_v1_noPF.root',
-                     idirData + 'JetHTRun2017E_17Nov2017_v1_noPF.root',
-                     idirData + 'JetHTRun2017F_17Nov2017_v1_noPF.root'],
-
-
+        	        	    # idirData + 'JetHTRun2017C_17Nov2017_v1_noPF.root',
+                            # idirData + 'JetHTRun2017D_17Nov2017_v1_noPF.root',
+                            # idirData + 'JetHTRun2017E_17Nov2017_v1_noPF.root',
+                            # idirData + 'JetHTRun2017F_17Nov2017_v1_noPF.root'
+                    	     idir_1401 + 'JetHTRun2017C_17Nov2017_v1/*.root',
+                             idir_1401 + 'JetHTRun2017D_17Nov2017_v1/*.root',
+                             idir_1401 + 'JetHTRun2017E_17Nov2017_v1/*.root',
+                             idir_1401 + 'JetHTRun2017F_17Nov2017_v1/*.root'
+                      ],
               'muon': [
-                       #idirData+'/SingleMuonRun2017B_17Nov2017_v1_noPF.root',
-                       idirData+'/SingleMuonRun2017C_17Nov2017_v1_noPF.root',
-                       idirData+'/SingleMuonRun2017D_17Nov2017_v1_noPF.root',
-                       idirData+'/SingleMuonRun2017E_17Nov2017_v1_noPF.root',
-                       idirData+'/SingleMuonRun2017F_17Nov2017_v1_noPF.root']
+                       #idirData+'/SingleMuonRun2017C_17Nov2017_v1_noPF.root',
+                       #idirData+'/SingleMuonRun2017D_17Nov2017_v1_noPF.root',
+                       #idirData+'/SingleMuonRun2017E_17Nov2017_v1_noPF.root',
+                       #idirData+'/SingleMuonRun2017F_17Nov2017_v1_noPF.root'
+                       idir_1401+'/SingleMuonRun2017C_17Nov2017_v1/*.root',
+                       idir_1401+'/SingleMuonRun2017D_17Nov2017_v1/*.root',
+                       idir_1401+'/SingleMuonRun2017E_17Nov2017_v1/*.root',
+                       idir_1401+'/SingleMuonRun2017F_17Nov2017_v1/*.root'
+                    ]
             }
     return tfiles
 
