@@ -293,6 +293,13 @@ def get2017files():
                              idir_1401skim + 'JetHTRun2017E_17Nov2017_v1*.root',
                              idir_1401skim + 'JetHTRun2017F_17Nov2017_v1*.root'
                       ],
+              'data1207': [
+        	        	     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF.root',
+                             idirData + 'JetHTRun2017D_17Nov2017_v1_noPF.root',
+                             idirData + 'JetHTRun2017E_17Nov2017_v1_noPF.root',
+                             idirData + 'JetHTRun2017F_17Nov2017_v1_noPF.root'
+                      ],
+
               'muon': [
                        #idirData+'/SingleMuonRun2017C_17Nov2017_v1_noPF.root',
                        #idirData+'/SingleMuonRun2017D_17Nov2017_v1_noPF.root',
@@ -523,6 +530,7 @@ def main(options,args,outputExists):
                       }
             #selectTriggerBitsAndJson = "((triggerBits&32768 || triggerBits&134217728 || triggerBits&4096 || triggerBits&8192 || triggerBits&16384 || triggerBits&16 || triggerBits&16777216 || triggerBits&2097152)&&passJson)"
             dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
+            dataSample1207 = sampleContainer('data1207',tfiles['data1207'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
@@ -554,6 +562,7 @@ def main(options,args,outputExists):
                 hall_byproc['muon'] = {}
             else:
                 hall_byproc['data'] = {}
+                hall_byproc['data1207'] = {}
 
         if options.is2017:
             hall_byproc['DY']= bkgSamples['DY']  
@@ -576,6 +585,7 @@ def main(options,args,outputExists):
                     hall_byproc['muon'][plot] = getattr(dataSample,plot)
                 else:
                     hall_byproc['data'][plot] = getattr(dataSample,plot)
+                    hall_byproc['data1207'][plot] = getattr(dataSample1207,plot)
             
         ofile.cd()
         for proc, hDict in hall_byproc.iteritems():
