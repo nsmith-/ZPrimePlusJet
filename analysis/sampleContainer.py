@@ -389,7 +389,7 @@ class sampleContainer:
                                      1],
                 'h_n_unMatchedAK4'     : ["h_" + self._name + "_n_unMatchedAK4", "; Number of non matched jets ;;", 6, 0, 6],
                 'h_Mqq'     : ["h_" + self._name + "_Mqq", "; Dijet Mass (GeV);;", 50, 0, 3000],
-                'h_QGLR'    : ["h_" + self._name + "_QGLR", "; QGLR;", 50, 0,1],
+                'h_QGLR'    : ["h_" + self._name + "_QGLR", "; QGLR;", 10, 0,1],
                 'h_Deta_qq' : ["h_" + self._name + "_Deta_qq", "; max Deta qq;;", 30, 0, 10],
                 'h_t21_ak8': ["h_" + self._name + "_t21_ak8", "; AK8 #tau_{21};", 25, 0, 1.5],
                 'h_t21ddt_ak8': ["h_" + self._name + "_t21ddt_ak8", "; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
@@ -1383,6 +1383,7 @@ class sampleContainer:
                     # cut[9]=cut[9]+1
                     self.h_QGLR.Fill(QGLR, weight)
                     self.h_Mqq.Fill(Mqq, weight)
+                    self.h_Deta_qq.Fill(maxdEtaQQ, weight)
                     self.h_msd_ak8_topR6_pass.Fill(jmsd_8, weight)
                     self.h_msd_ak8_raw_SR_pass.Fill(jmsd_8_raw, weight)
                     self.h_msd_v_pt_ak8_topR6_pass.Fill(jmsd_8, jpt_8, weight)
