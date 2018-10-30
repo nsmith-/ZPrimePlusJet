@@ -28,8 +28,8 @@ def FindHighestDeta_qq(QuarkJets):
             i  = iPair[0]   #first jet
             j  = iPair[1]   #2nd jet 
             deltaEtaQQ.append( abs(QuarkJets[i].Eta()-QuarkJets[j].Eta()))
-        print deltaEtaQQ
-        print "max deltaEtaQQ = ", max(deltaEtaQQ), jetPairs[deltaEtaQQ.index(max(deltaEtaQQ))]
+        #print deltaEtaQQ
+        #print "max deltaEtaQQ = ", max(deltaEtaQQ), jetPairs[deltaEtaQQ.index(max(deltaEtaQQ))]
         return  max(deltaEtaQQ), jetPairs[deltaEtaQQ.index(max(deltaEtaQQ))]
     else:
         return  -1,(0,0) 
