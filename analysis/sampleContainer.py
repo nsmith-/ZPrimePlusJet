@@ -398,7 +398,7 @@ class sampleContainer:
                                      1],
                 'h_dbtag_ak8_sub2': ["h_" + self._name + "_dbtag_ak8_sub2", "; 3rd p_{T}-leading double b-tag;", 40, -1,
                                      1],
-                'h_n_unMatchedAK4'     : ["h_" + self._name + "_n_unMatchedAK4", "; Number of non matched jets ;;", 6, 0, 6],
+                'h_n_unMatchedAK4'     : ["h_" + self._name + "_n_unMatchedAK4", "; Number of non matched AK4 jets ;;", 7, 0, 7],
                 'h_Mqq'     : ["h_" + self._name + "_Mqq", "; Dijet Mass (GeV);;", 50, 0, 3000],
                 'h_QGLR'    : ["h_" + self._name + "_QGLR", "; QGLR;", 10, 0,1],
                 'h_Deta_qq' : ["h_" + self._name + "_Deta_qq", "; max Deta qq;;", 30, 0, 10],
@@ -891,15 +891,17 @@ class sampleContainer:
 		for i in range(0, len(ptscale)):
 			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
                 vjetsKF = self.kfactor[0] * 1.35 * ptKF  # ==1 for not V+jets events
-            elif 'zqq' in self._name or 'ZJetsToQQ_' in self._name or self._name == 'DY':
+            elif 'zqq' in self._name or  self._name == 'DY':
                 # print self._name
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
-            if 'ZJetsToQQ_' in self._name:
-                ptForNLO = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
+            
+            ### works only for 2017 HT binned sample, constructed with normSampleContainer
+            if 'ZJetsToQQ_' in self._name:    
+                ptForNLO = max(200., min(self.genVPt[0], 1200.))
                 vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
                 #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
             if 'WJetsToQQ_' in self._name:
-                ptForNLO = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
+                ptForNLO = max(200., min(self.genVPt[0], 1200.))
                 vjetsKF   = self.kfactor[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
                 #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
         
