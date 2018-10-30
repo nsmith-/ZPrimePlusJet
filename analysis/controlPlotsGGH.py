@@ -217,7 +217,9 @@ def get2017files():
 			                idir+'/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root',
 			                idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
 			                idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],	
-	          'ggHbb_amc1207' :     [idir+'/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8_1000pb_weighted.root'],
+	          'ggHbb_amc1401' :   {
+                                    'GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8':[idir_1401+'GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/*.root'],
+                                  },
 	          'ggHbb_pow1207' :     [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	          'ggHbb_pow1401' :  {
                                 'GluGluHToBB_M125_13TeV_powheg_pythia8': [idir_1401+'/GluGluHToBB_M125_13TeV_powheg_pythia8/*.root']
@@ -288,10 +290,10 @@ def get2017files():
                             # idirData + 'JetHTRun2017D_17Nov2017_v1_noPF.root',
                             # idirData + 'JetHTRun2017E_17Nov2017_v1_noPF.root',
                             # idirData + 'JetHTRun2017F_17Nov2017_v1_noPF.root'
-                    	     idir_1401skim + 'JetHTRun2017C_17Nov2017_v1*.root',
-                             idir_1401skim + 'JetHTRun2017D_17Nov2017_v1*.root',
-                             idir_1401skim + 'JetHTRun2017E_17Nov2017_v1*.root',
-                             idir_1401skim + 'JetHTRun2017F_17Nov2017_v1*.root'
+                    	     idir_1401skim + 'JetHTRun2017C_17Nov2017_v1_noPF*.root',
+                             idir_1401skim + 'JetHTRun2017D_17Nov2017_v1_noPF*.root',
+                             idir_1401skim + 'JetHTRun2017E_17Nov2017_v1_noPF*.root',
+                             idir_1401skim + 'JetHTRun2017F_17Nov2017_v1_noPF*.root'
                       ],
               'data1207': [
         	        	     idirData + 'JetHTRun2017C_17Nov2017_v1_noPF.root',
@@ -452,8 +454,7 @@ def main(options,args,outputExists):
         print "Signals... "
         sigSamples = {}
         if  options.is2017:
-            sigSamples['ggHbb_pow1207']  = sampleContainer('ggHbb_pow1207',tfiles['ggHbb_pow1207']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
-            sigSamples['ggHbb_amc1207']  = sampleContainer('ggHbb_amc1207',tfiles['ggHbb_amc1207']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
+            sigSamples['ggHbb_amc1401']  = normSampleContainer('ggHbb_amc1401',tfiles['ggHbb_amc1401']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
             sigSamples['ggHbb_pow1401']  = normSampleContainer('ggHbb_pow1401',tfiles['ggHbb_pow1401']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,treeName='Events',puOpt='default').addPlots(plots) 
             sigSamples['ggHbb']         = normSampleContainer('ggHbb',tfiles['ggHbb'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,treeName='Events',puOpt="default").addPlots(plots)
         else:
@@ -575,6 +576,7 @@ def main(options,args,outputExists):
             del bkgSamples['W']    #Do not get the plots from sampleContainer by getattr
             del sigSamples['ggHbb']    #Do not get the plots from sampleContainer by getattr
             del sigSamples['ggHbb_pow1401']    #Do not get the plots from sampleContainer by getattr
+            del sigSamples['ggHbb_amc1401']    #Do not get the plots from sampleContainer by getattr
         for plot in plots:
             for process, s in sigSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
