@@ -95,6 +95,17 @@ class sampleContainer:
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
 
+        f_ZNLO = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/ZJetsCorr.root"), "read")
+        self._znlo = f_ZNLO.Get("NLO")
+        self._znlo.SetDirectory(0)
+        f_ZNLO.Close()
+
+        f_WNLO = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/WJetsCorr.root"), "read")
+        self._wnlo = f_WNLO.Get("NLO")
+        self._wnlo.SetDirectory(0)
+        f_WNLO.Close()
+
+
         f_pu = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root"), "read")
         self._puw = f_pu.Get("puw")
         self._puw_up = f_pu.Get("puw_p")
@@ -216,24 +227,24 @@ class sampleContainer:
                                    #('AK4Puppijet0_pt', 'f', 0),
                                    #('AK4Puppijet3_eta', 'f', 0), ('AK4Puppijet2_eta', 'f', 0),
                                    #('AK4Puppijet1_eta', 'f', 0), ('AK4Puppijet0_eta', 'f', 0)
-                                   ('AK4Puppijet0_qgid', 'd', -999), ('AK4Puppijet2_qgid', 'd', -999),
-                                   ('AK4Puppijet1_qgid', 'd', -999), ('AK4Puppijet3_qgid', 'd', -999),
-                                   ('AK4Puppijet4_qgid', 'd', -999), ('AK4Puppijet5_qgid', 'd', -999),
-                                   ('AK4Puppijet4_csv', 'd', -999), ('AK4Puppijet5_csv', 'd', -999),
-                                   ('AK4Puppijet1_eta', 'd', -999), ('AK4Puppijet0_eta', 'd', -999),
-                                   ('AK4Puppijet1_phi', 'd', -999), ('AK4Puppijet0_phi', 'd', -999),
-                                   ('AK4Puppijet1_pt', 'd', -999), ('AK4Puppijet0_pt', 'd', -999),
-                                   ('AK4Puppijet1_mass', 'd', -999), ('AK4Puppijet0_mass', 'd', -999),
-                                   ('AK4Puppijet3_pt', 'd', -999), ('AK4Puppijet2_pt', 'd', -999),
-                                   ('AK4Puppijet3_mass', 'd', -999), ('AK4Puppijet2_mass', 'd', -999),
-                                   ('AK4Puppijet3_eta', 'd', -999), ('AK4Puppijet2_eta', 'd', -999),
-                                   ('AK4Puppijet3_phi', 'd', -999), ('AK4Puppijet2_phi', 'd', -999),
-                                   ('AK4Puppijet1_csv', 'd', -999), ('AK4Puppijet0_csv', 'd', -999),
-                                   ('AK4Puppijet3_csv', 'd', -999), ('AK4Puppijet2_csv', 'd', -999),
-                                   ('AK4Puppijet4_pt', 'd', -999), ('AK4Puppijet5_pt', 'd', -999),
-                                   ('AK4Puppijet4_mass', 'd', -999), ('AK4Puppijet5_mass', 'd', -999),
-                                   ('AK4Puppijet4_eta', 'd', -999), ('AK4Puppijet5_eta', 'd', -999),
-                                   ('AK4Puppijet4_phi', 'd', -999), ('AK4Puppijet5_phi', 'd', -999)
+                                   ('AK4Puppijet0_eta', 'd', -999) ,('AK4Puppijet1_eta', 'd', -999) ,
+                                   ('AK4Puppijet0_phi', 'd', -999) ,('AK4Puppijet1_phi', 'd', -999) ,
+                                   ('AK4Puppijet0_pt', 'd', -999)  ,('AK4Puppijet1_pt', 'd', -999)  ,
+                                   ('AK4Puppijet0_mass', 'd', -999),('AK4Puppijet1_mass', 'd', -999),
+                                   ('AK4Puppijet0_qgid', 'd', -999),('AK4Puppijet1_qgid', 'd', -999),  
+                                   ('AK4Puppijet0_csv', 'd', -999),('AK4Puppijet1_csv', 'd', -999),  
+                                   ('AK4Puppijet2_eta', 'd', -999) ,('AK4Puppijet3_eta', 'd', -999) ,
+                                   ('AK4Puppijet2_phi', 'd', -999) ,('AK4Puppijet3_phi', 'd', -999) ,
+                                   ('AK4Puppijet2_pt', 'd', -999)  ,('AK4Puppijet3_pt', 'd', -999)  ,
+                                   ('AK4Puppijet2_mass', 'd', -999),('AK4Puppijet3_mass', 'd', -999),
+                                   ('AK4Puppijet2_qgid', 'd', -999),('AK4Puppijet3_qgid', 'd', -999),  
+                                   ('AK4Puppijet2_csv', 'd', -999),('AK4Puppijet3_csv', 'd', -999),  
+                                   ('AK4Puppijet4_eta', 'd', -999) ,('AK4Puppijet5_eta', 'd', -999) ,
+                                   ('AK4Puppijet4_phi', 'd', -999) ,('AK4Puppijet5_phi', 'd', -999) ,
+                                   ('AK4Puppijet4_pt', 'd', -999)  ,('AK4Puppijet5_pt', 'd', -999)  ,
+                                   ('AK4Puppijet4_mass', 'd', -999),('AK4Puppijet5_mass', 'd', -999),
+                                   ('AK4Puppijet4_qgid', 'd', -999),('AK4Puppijet5_qgid', 'd', -999),  
+                                   ('AK4Puppijet4_csv', 'd', -999),('AK4Puppijet5_csv', 'd', -999),  
                                    ])
         if not self._isData:
             self._branches.extend([('genMuFromW', 'i', -999), ('genEleFromW', 'i', -999), ('genTauFromW', 'i', -999)])
@@ -875,7 +886,7 @@ class sampleContainer:
 	    wscale=[1.0,1.0,1.0,1.20,1.25,1.25,1.0]
 	    ptscale=[0, 500, 600, 700, 800, 900, 1000,3000]
 	    ptKF=1.
-            if 'wqq' in self._name or 'WJetsToQQ_' in self._name or self._name == 'W':
+            if 'wqq' in self._name or  self._name == 'W':
                 # print self._name
 		for i in range(0, len(ptscale)):
 			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
@@ -883,6 +894,16 @@ class sampleContainer:
             elif 'zqq' in self._name or 'ZJetsToQQ_' in self._name or self._name == 'DY':
                 # print self._name
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
+            if 'ZJetsToQQ_' in self._name:
+                ptForNLO = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
+                vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
+            if 'WJetsToQQ_' in self._name:
+                ptForNLO = max(200., min(self.AK8Puppijet0_pt[0], 1000.))
+                vjetsKF   = self.kfactor[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
+        
+                
             # trigger weight
             #massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
             massForTrig = min(max(self.AK8Puppijet0_msd[0],0), 300.)
@@ -1112,19 +1133,19 @@ class sampleContainer:
                 ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
                 ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
                 dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
-                print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
+                #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
                 if ak4pT> 30.0 and dR_ak8>0.3:
                     jet = ROOT.TLorentzVector()
                     jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
                     jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
                     jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
                     QuarkJets.append(jet)
-            print "N un-matched jet = ", len(QuarkJets)
-            for qj in QuarkJets:
-                print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
+            #print "N un-matched jet = ", len(QuarkJets)
+            #for qj in QuarkJets:
+            #    print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
             self.h_n_unMatchedAK4.Fill( len(QuarkJets), weight)
             maxdEtaQQ, pair = QGLRutil.FindHighestDeta_qq(QuarkJets)
-            print "highest dEta pair = ",pair, "mass = %.3f, QGLR = %.3f"%(QGLRutil.CalcMqq(QuarkJets,pair),QGLRutil.CalcQGLR(QuarkJets,pair))
+            #print "highest dEta pair = ",pair, "mass = %.3f, QGLR = %.3f"%(QGLRutil.CalcMqq(QuarkJets,pair),QGLRutil.CalcQGLR(QuarkJets,pair))
             Mqq  = QGLRutil.CalcMqq(QuarkJets,pair)
             QGLR = QGLRutil.CalcQGLR(QuarkJets,pair)
 
