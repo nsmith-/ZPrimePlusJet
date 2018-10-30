@@ -1127,7 +1127,7 @@ class sampleContainer:
                     self.h_fBosonPt_weight.Fill(self.genVPt[0], weight) 
             #Find non-matched AK4 jets
             QuarkJets = []
-            for iak4 in range(0,4):
+            for iak4 in range(0,6):
                 ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
                 ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
                 ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
