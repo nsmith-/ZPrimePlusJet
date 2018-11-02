@@ -897,11 +897,11 @@ class sampleContainer:
             
             ### works only for 2017 HT binned sample, constructed with normSampleContainer
             if 'ZJetsToQQ_' in self._name:    
-                ptForNLO = max(200., min(self.genVPt[0], 1200.))
+                ptForNLO = max(250., min(self.genVPt[0], 1200.))  
                 vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
                 #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
             if 'WJetsToQQ_' in self._name:
-                ptForNLO = max(200., min(self.genVPt[0], 1200.))
+                ptForNLO = max(250., min(self.genVPt[0], 1200.))
                 vjetsKF   = self.kfactor[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
                 #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
         
@@ -1136,7 +1136,7 @@ class sampleContainer:
                 ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
                 dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
                 #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
-                if ak4pT> 30.0 and dR_ak8>0.3:
+                if ak4pT> 30.0 and dR_ak8>0.8:
                     jet = ROOT.TLorentzVector()
                     jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
                     jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
