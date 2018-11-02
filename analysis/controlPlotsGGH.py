@@ -218,7 +218,7 @@ def get2017files():
 			                idir+'/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
 			                idir+'/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],	
 	          'ggHbb_amc1401' :   {
-                                    'GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8':[idir_1401+'GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/*.root'],
+                                    'GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8':[idir_1401+'GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/*.root'],
                                   },
 	          'ggHbb_pow1207' :     [idir+'/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
 	          'ggHbb_pow1401' :  {

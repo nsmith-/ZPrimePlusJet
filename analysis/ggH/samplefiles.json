@@ -397,17 +397,12 @@
             ]
         }, 
         "ggHbb_amc1401": {
-            "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8": [
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job0_job0_file0to4.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job1_job1_file5to9.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job2_job2_file10to14.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job3_job3_file15to19.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job4_job4_file20to24.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job5_job5_file25to29.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job6_job6_file30to34.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job7_job7_file35to39.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job8_job8_file40to44.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job9_job9_file45to49.root"
+            "GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job0_job0_file0to999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job1_job1_file1000to1999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job2_job2_file2000to2999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job3_job3_file3000to3999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job4_job4_file4000to4999.root"
             ]
         }, 
         "QCD": [
