@@ -64,7 +64,14 @@ GJets_DR-0p4_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                 
 GJets_DR-0p4_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                   125.9
 GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                    43.36
 WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8                              61526.7
-WJetsToLNu_TuneCP5_13TeV                                                        61526.7
+WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8                                    52940.0
+WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8                         1395.0
+WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8                          407.9
+WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8                           57.48
+WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8                           12.87
+WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8                           5.366
+WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8                          1.074
+WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8                           0.008001
 WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                    1345 # *1.21 remove k-factor from SUSY
 WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                     359.7 # *1.21 remove k-factor from SUSY
 WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8                      48.91 # *1.21 remove k-factor from SUSY

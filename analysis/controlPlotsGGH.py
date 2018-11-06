@@ -249,12 +249,13 @@ def get2017files():
                               'WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV':[idir_1401skim + 'WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV*.root'],
                              },
               'Wlnu':       {
-                             "WJetsToLNu_TuneCP5_13TeV"  :[ idir_1401skim+'WJetsToLNu_TuneCP5_13TeV*.root'],
-                             #"WJetsToLNu_HT_200To400_13TeV"  :[ idir_1401skim+'WJetsToLNu_HT_200To400_*.root'],
-                             #"WJetsToLNu_HT_400To600_13TeV"  :[ idir_1401skim+'WJetsToLNu_HT_400To600_*.root'],
-                             #"WJetsToLNu_HT_600To800_13TeV"  :[ idir_1401skim+'WJetsToLNu_HT_600To800_*.root'],
-                             #"WJetsToLNu_HT_800To1200_13TeV" :[ idir_1401skim+'WJetsToLNu_HT_800To1200_*.root'],
-                             #"WJetsToLNu_HT_1200To2500_13TeV":[ idir_1401skim+'WJetsToLNu_HT_1200To2500_*.root'],
+                              # "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"               :[ idir_1401skim+'WJetsToLNu_TuneCP5_13TeV*.root'],
+                               "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8"   :[ idir_1401skim+'WJetsToLNu_HT_200To400_*.root'],
+                               "WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8"   :[ idir_1401skim+'WJetsToLNu_HT_400To600_*.root'],
+                               "WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8"   :[ idir_1401skim+'WJetsToLNu_HT_600To800_*.root'],
+                               "WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8"  :[ idir_1401skim+'WJetsToLNu_HT_800To1200_*.root'],
+                               "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8" :[ idir_1401skim+'WJetsToLNu_HT_1200To2500_*.root'],
+                              # "WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8" :[ idir_1401skim+'WJetsToLNu_HT_2500ToInf*.root'],
                             },
               'TTbar':      [idir+'/TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root',
                 		     idir+'TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root'], #Powheg is the new default
@@ -451,8 +452,8 @@ def main(options,args,outputExists):
             bkgSamples['DY']  = sampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
         else:
             #pudir="root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-Pu/hadd/"
-            bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,  puOpt="default",treeName="Events").addPlots(plots)
-            bkgSamples['DY']  = normSampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default",treeName="Events").addPlots(plots)
+            bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,  puOpt="default").addPlots(plots)
+            bkgSamples['DY']  = normSampleContainer('DY',tfiles['DY'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
 
 
 
@@ -502,24 +503,6 @@ def main(options,args,outputExists):
             dataSample1207 = sampleContainer('data1207',tfiles['data1207'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
-
-        #if options.is2017:
-        #    wqqplots={}
-        #    wqq_sc = subwqqSamples[subwqqSamples.keys()[0]]  # first subsample
-        #    for plot in plots:
-        #        wqqplots[plot] = getattr(wqq_sc,plot).Clone()
-        #        wqqplots[plot].SetName(plot.replace("h_","h_W1208_"))
-        #        for subS_key in subwqqSamples.keys()[1:]:
-        #            subS = subwqqSamples[subS_key]
-        #            wqqplots[plot].Add(getattr(subS,plot))
-        #    zqqplots={}
-        #    zqq_sc = subzqqSamples[subzqqSamples.keys()[0]]  # first subsample
-        #    for plot in plots:
-        #        zqqplots[plot] = getattr(zqq_sc,plot).Clone()
-        #        zqqplots[plot].SetName(plot.replace("h_","h_DY1208_"))
-        #        for subS_key in subzqqSamples.keys()[1:]:
-        #            subS = subzqqSamples[subS_key]
-        #            zqqplots[plot].Add(getattr(subS,plot))
 
         hall_byproc = {}
         for process, s in sigSamples.iteritems():
