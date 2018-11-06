@@ -39,6 +39,7 @@ class sampleContainer:
         if len(fn) > 0:
             self._tf = ROOT.TFile.Open(self._fn[0])
         self._tt = ROOT.TChain(treeName)
+        print "constructing with tree name = ",treeName
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
         self._lumi = lumi
@@ -222,29 +223,30 @@ class sampleContainer:
                                    ('AK8Puppijet1_msd', 'd', -999), ('AK8Puppijet2_msd', 'd', -999),
                                    ('AK8Puppijet1_doublecsv', 'd', -999), ('AK8Puppijet2_doublecsv', 'i', -999),
                                    ('AK8Puppijet1_isTightVJet', 'i', 0),
-                                   ('AK8Puppijet2_isTightVJet', 'i', 0), ('AK4Puppijet3_pt', 'f', 0),
+                                   ('AK8Puppijet2_isTightVJet', 'i', 0),
+                                   #('AK4Puppijet3_pt', 'f', 0),
                                    #('AK4Puppijet2_pt', 'f', 0), ('AK4Puppijet1_pt', 'f', 0),
                                    #('AK4Puppijet0_pt', 'f', 0),
                                    #('AK4Puppijet3_eta', 'f', 0), ('AK4Puppijet2_eta', 'f', 0),
                                    #('AK4Puppijet1_eta', 'f', 0), ('AK4Puppijet0_eta', 'f', 0)
-                                   ('AK4Puppijet0_eta', 'd', -999) ,('AK4Puppijet1_eta', 'd', -999) ,
-                                   ('AK4Puppijet0_phi', 'd', -999) ,('AK4Puppijet1_phi', 'd', -999) ,
-                                   ('AK4Puppijet0_pt', 'd', -999)  ,('AK4Puppijet1_pt', 'd', -999)  ,
-                                   ('AK4Puppijet0_mass', 'd', -999),('AK4Puppijet1_mass', 'd', -999),
-                                   ('AK4Puppijet0_qgid', 'd', -999),('AK4Puppijet1_qgid', 'd', -999),  
-                                   ('AK4Puppijet0_csv', 'd', -999),('AK4Puppijet1_csv', 'd', -999),  
-                                   ('AK4Puppijet2_eta', 'd', -999) ,('AK4Puppijet3_eta', 'd', -999) ,
-                                   ('AK4Puppijet2_phi', 'd', -999) ,('AK4Puppijet3_phi', 'd', -999) ,
-                                   ('AK4Puppijet2_pt', 'd', -999)  ,('AK4Puppijet3_pt', 'd', -999)  ,
-                                   ('AK4Puppijet2_mass', 'd', -999),('AK4Puppijet3_mass', 'd', -999),
-                                   ('AK4Puppijet2_qgid', 'd', -999),('AK4Puppijet3_qgid', 'd', -999),  
-                                   ('AK4Puppijet2_csv', 'd', -999),('AK4Puppijet3_csv', 'd', -999),  
-                                   ('AK4Puppijet4_eta', 'd', -999) ,('AK4Puppijet5_eta', 'd', -999) ,
-                                   ('AK4Puppijet4_phi', 'd', -999) ,('AK4Puppijet5_phi', 'd', -999) ,
-                                   ('AK4Puppijet4_pt', 'd', -999)  ,('AK4Puppijet5_pt', 'd', -999)  ,
-                                   ('AK4Puppijet4_mass', 'd', -999),('AK4Puppijet5_mass', 'd', -999),
-                                   ('AK4Puppijet4_qgid', 'd', -999),('AK4Puppijet5_qgid', 'd', -999),  
-                                   ('AK4Puppijet4_csv', 'd', -999),('AK4Puppijet5_csv', 'd', -999),  
+                                   ('AK4Puppijet0_eta' , 'f', -999),('AK4Puppijet1_eta' , 'f', -999),
+                                   ('AK4Puppijet0_phi' , 'f', -999),('AK4Puppijet1_phi' , 'f', -999),
+                                   ('AK4Puppijet0_pt'  , 'f', -999),('AK4Puppijet1_pt'  , 'f', -999),
+                                   ('AK4Puppijet0_mass', 'f', -999),('AK4Puppijet1_mass', 'f', -999),
+                                   ('AK4Puppijet0_qgid', 'f', -999),('AK4Puppijet1_qgid', 'f', -999),  
+                                   ('AK4Puppijet0_csv' , 'f', -999),('AK4Puppijet1_csv' , 'f', -999),  
+                                   ('AK4Puppijet2_eta' , 'f', -999),('AK4Puppijet3_eta' , 'f', -999),
+                                   ('AK4Puppijet2_phi' , 'f', -999),('AK4Puppijet3_phi' , 'f', -999),
+                                   ('AK4Puppijet2_pt'  , 'f', -999),('AK4Puppijet3_pt'  , 'f', -999),
+                                   ('AK4Puppijet2_mass', 'f', -999),('AK4Puppijet3_mass', 'f', -999),
+                                   ('AK4Puppijet2_qgid', 'f', -999),('AK4Puppijet3_qgid', 'f', -999),  
+                                   ('AK4Puppijet2_csv' , 'f', -999),('AK4Puppijet3_csv' , 'f', -999),  
+                                   ('AK4Puppijet4_eta' , 'f', -999),('AK4Puppijet5_eta' , 'f', -999),
+                                   ('AK4Puppijet4_phi' , 'f', -999),('AK4Puppijet5_phi' , 'f', -999),
+                                   ('AK4Puppijet4_pt'  , 'f', -999),('AK4Puppijet5_pt'  , 'f', -999),
+                                   ('AK4Puppijet4_mass', 'f', -999),('AK4Puppijet5_mass', 'f', -999),
+                                   ('AK4Puppijet4_qgid', 'f', -999),('AK4Puppijet5_qgid', 'f', -999),  
+                                   ('AK4Puppijet4_csv' , 'f', -999),('AK4Puppijet5_csv' , 'f', -999),  
                                    ])
         if not self._isData:
             self._branches.extend([('genMuFromW', 'i', -999), ('genEleFromW', 'i', -999), ('genTauFromW', 'i', -999)])
@@ -1128,28 +1130,29 @@ class sampleContainer:
                     self.h_fBosonPt_fbweight.Fill(self.genVPt[0], fbweight) 
                     self.h_fBosonPt_weight.Fill(self.genVPt[0], weight) 
             #Find non-matched AK4 jets
-            QuarkJets = []
-            for iak4 in range(0,6):
-                ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
-                ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
-                ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
-                ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
-                dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
-                #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
-                if ak4pT> 30.0 and dR_ak8>0.8:
-                    jet = ROOT.TLorentzVector()
-                    jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
-                    jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
-                    jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
-                    QuarkJets.append(jet)
-            #print "N un-matched jet = ", len(QuarkJets)
-            #for qj in QuarkJets:
-            #    print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
-            self.h_n_unMatchedAK4.Fill( len(QuarkJets), weight)
-            maxdEtaQQ, pair = QGLRutil.FindHighestDeta_qq(QuarkJets)
-            #print "highest dEta pair = ",pair, "mass = %.3f, QGLR = %.3f"%(QGLRutil.CalcMqq(QuarkJets,pair),QGLRutil.CalcQGLR(QuarkJets,pair))
-            Mqq  = QGLRutil.CalcMqq(QuarkJets,pair)
-            QGLR = QGLRutil.CalcQGLR(QuarkJets,pair)
+            if not self._minBranches:
+                QuarkJets = []
+                for iak4 in range(0,6):
+                    ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
+                    ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
+                    ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
+                    ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
+                    dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
+                    #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
+                    if ak4pT> 30.0 and dR_ak8>0.8:
+                        jet = ROOT.TLorentzVector()
+                        jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
+                        jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
+                        jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
+                        QuarkJets.append(jet)
+                #print "N un-matched jet = ", len(QuarkJets)
+                #for qj in QuarkJets:
+                #    print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
+                self.h_n_unMatchedAK4.Fill( len(QuarkJets), weight)
+                maxdEtaQQ, pair = QGLRutil.FindHighestDeta_qq(QuarkJets)
+                #print "highest dEta pair = ",pair, "mass = %.3f, QGLR = %.3f"%(QGLRutil.CalcMqq(QuarkJets,pair),QGLRutil.CalcQGLR(QuarkJets,pair))
+                Mqq  = QGLRutil.CalcMqq(QuarkJets,pair)
+                QGLR = QGLRutil.CalcQGLR(QuarkJets,pair)
 
 
             # Single Muon Control Regions
