@@ -35,8 +35,7 @@
             "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_0.root", 
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_1.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_3.root"
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root" 
             ], 
             "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_0.root", 
@@ -159,8 +158,7 @@
             "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_0.root", 
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_1.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_3.root"
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root" 
             ], 
             "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_0.root", 
@@ -415,8 +413,7 @@
             "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_0.root", 
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_1.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root", 
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_3.root"
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root"
             ], 
             "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_0.root", 
