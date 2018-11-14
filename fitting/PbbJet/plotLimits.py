@@ -604,6 +604,18 @@ def plotUpperLimits(options,args):
         #   c.SetLogy()
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gq.pdf") 
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gq.C") 
+        outfile = rt.TFile.Open(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_gq.root","recreate")
+        outfile.cd()
+        for i, green in enumerate(greenList):
+            green.Write("green%i"%i)
+        for i, yellow in enumerate(yellowList):
+            yellow.Write("yellow%i"%i)
+        for i, median in enumerate(medianList):
+            median.Write("median%i"%i)
+        for i, obs in enumerate(obsList):
+            obs.Write("obs%i"%i)
+        h_limit.Write("h_limit")        
+        outfile.Close()
     elif options.gqZp: 
         #c.SetLogx()
         #c.SetLogy()
@@ -613,6 +625,19 @@ def plotUpperLimits(options,args):
         c.SetLogy()
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_xsec.pdf") 
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_xsec.C") 
+        outfile = rt.TFile.Open(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + "_xsec.root","recreate")
+        outfile.cd()
+        for i, green in enumerate(greenList):
+            green.Write("green%i"%i)
+        for i, yellow in enumerate(yellowList):
+            yellow.Write("yellow%i"%i)
+        for i, median in enumerate(medianList):
+            median.Write("median%i"%i)
+        for i, obs in enumerate(obsList):
+            obs.Write("obs%i"%i)
+        h_limit.Write("h_limit")        
+        theory_inclusive_xsec[options.model].Write("theory_inclusive_xsec")
+        outfile.Close()
     else: 
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + ".pdf")
         c.SaveAs(options.odir+"/Limit_" + options.model + "_" + options.box + "_" + options.cuts + ".C")

@@ -839,6 +839,20 @@ def makeMLFitCanvas(bkgs, data, hhigs, hphi, leg, tag, odir='cards', rBestFit=1,
     htot.SetMinimum(0)
     c.SaveAs(odir + "/mlfit/mlfit_" + tag + ".pdf")
     c.SaveAs(odir + "/mlfit/mlfit_" + tag + ".C")
+    outfile = r.TFile.Open(odir + "/mlfit/mlfit_" + tag + ".root","recreate")
+    outfile.cd()
+    htot.Write()
+    hphi.Write()
+    hsig.Write()
+    g_data.Write("g_data_%s"%tag)
+    for b in bkgs:
+        b.Write()
+    for sigHistResidual in sigHistResiduals:
+        sigHistResidual.Write()
+    iRatioGraph.Write("g_data_residual_%s"%tag)
+    hstack.Write()
+    hstackMC.Write()
+    outfile.Close()
     htot.SetMinimum(minimum*0.5)
     #htot.SetMinimum(minimum*0.1)
     # r.gPad.SetLogy()
@@ -1318,6 +1332,11 @@ def makeTF(pars, ratio):
     
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.pdf")
     c.SaveAs(options.odir + "/mlfit/tf_rhocolz.C")
+    outfile = r.TFile.Open(options.odir + "/mlfit/tf_rhocolz.root","recreate")
+    outfile.cd()
+    f2rhograph.Write("tf_rhocolz")
+    
+    outfile.Close()
 
 
 
