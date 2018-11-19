@@ -38,8 +38,9 @@ def main(options,args):
         outf = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"w")
         print "Writing to ", os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json")
     finaljson = {}
-    finaljson['controlPlotsGGH_2017'] = expandPath(controlPlotsGGH.get2017files()) 
-    #finaljson['Hbb_create_2017']      = expandPath(Hbb_create.get2017files(False)) 
+    finaljson['controlPlotsGGH_2017']      = expandPath(controlPlotsGGH.get2017files()) 
+    finaljson['Hbb_create_2017']           = expandPath(Hbb_create.get2017files(False)) 
+    finaljson['Hbb_create_2017_muCR']      = expandPath(Hbb_create.get2017files(True)) 
     if not options.printOnly:
         outf.write((json.dumps(finaljson,indent=4)))
     else:
