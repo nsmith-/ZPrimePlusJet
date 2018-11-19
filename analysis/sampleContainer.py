@@ -272,8 +272,6 @@ class sampleContainer:
         histos1d = {            
             'h_fBosonPt_fbweight': ["h_" + self._name + "_fBosonPt_fbweight", "; fBoson pT;;", 100, 0, 1000],
             'h_fBosonPt_weight':   ["h_" + self._name + "_fBosonPt_weight", "; fBoson pT;;", 100, 0, 1000],
-            'h_fbweight': ["h_" + self._name + "_fbweight", "; xsection x Lumi /Ngen ;;", 300, -1.5, 1.5],
-            'h_puweight': ["h_" + self._name + "_puweight", ";  puweight ;;", 300, -1.5, 1.5],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
             'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                         40, 201],
