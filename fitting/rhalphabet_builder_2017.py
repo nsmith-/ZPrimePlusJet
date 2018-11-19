@@ -20,7 +20,7 @@ import tools as tools
 from RootIterator import RootIterator
 from hist import *
 
-BB_SF = 0.72
+BB_SF = 0.91
 BB_SF_ERR = 0.06
 V_SF = 0.888
 V_SF_ERR = 0.025
