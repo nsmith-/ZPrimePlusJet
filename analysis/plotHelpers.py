@@ -1190,6 +1190,8 @@ def makeCanvasRatio(h_denom,h_numer,legname,color,style,outname,pdir="plots",lum
     ratio= getRatio(h_numer,h_denom)
     ksScore = h_numer.KolmogorovTest( h_denom )
     chiScore = h_numer.Chi2Test( h_denom , "WWCHI2/NDF")
+    if f2params is not None:
+	    chiScore = h_numer.Chi2Test( h_pred, "WWCHI2/NDF")
     print ksScore
     print chiScore
     ratio.SetStats(0)

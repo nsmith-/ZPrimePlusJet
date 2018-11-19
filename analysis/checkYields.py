@@ -8,17 +8,25 @@ if __name__ == '__main__':
         trans_h2ddt = f_h2ddt.Get("h2ddt")
         trans_h2ddt.SetDirectory(0)
         f_h2ddt.Close()
-
+	csvfile = open('events.csv','w')
+	csvfile.write('run,lumi,event,ak8_pt_0,ak8_ptraw_0,ak8_eta_0,ak8_phi_0,ak8_msd_0,ak8_n2sdb1_0,ak8_doubleb_0,pfmet,n_mu_loose,n_ele_loose,n_tau\n')
+	
 	#tfile = rt.TFile.Open('root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/JetHTRun2016C_23Sep2016_v1_v2.root')
 	tfile = rt.TFile.Open(sys.argv[1])
 	otree = tfile.Get('otree')
 	otree.SetBranchStatus('*',0)
 	otree.SetBranchStatus('triggerBits',1)
 	otree.SetBranchStatus('passJson',1)
+	otree.SetBranchStatus('runNum',1)
+	otree.SetBranchStatus('lumiSec',1)
+	otree.SetBranchStatus('evtNum',1)
 	otree.SetBranchStatus('AK8Puppijet0_N2sdb1',1)
 	otree.SetBranchStatus('AK8Puppijet0_pt',1)
+	otree.SetBranchStatus('AK8Puppijet0_eta',1)
+	otree.SetBranchStatus('AK8Puppijet0_phi',1)
+	otree.SetBranchStatus('AK8Puppijet0_ptraw',1)
 	otree.SetBranchStatus('AK8Puppijet0_msd',1)
-	otree.SetBranchStatus('puppet',1)
+	otree.SetBranchStatus('pfmet',1)
 	otree.SetBranchStatus('AK8Puppijet0_isTightVJet',1)
 	otree.SetBranchStatus('AK8Puppijet0_doublecsv',1)
 	otree.SetBranchStatus('neleLoose',1)
@@ -31,6 +39,8 @@ if __name__ == '__main__':
 	for i, event in enumerate(otree):
 		if i%10000==0: print i
 		if i>=100000: break
+		print ','.join([str(event.runNum),str(event.lumiSec),str(event.evtNum),str(event.AK8Puppijet0_pt),str(event.AK8Puppijet0_ptraw),str(event.AK8Puppijet0_eta),str(event.AK8Puppijet0_phi),str(event.AK8Puppijet0_msd),str(event.AK8Puppijet0_N2sdb1),str(event.AK8Puppijet0_doublecsv),str(event.pfmet),str(event.nmuLoose),str(event.neleLoose),str(event.ntau)])
+		csvfile.write(','.join([str(event.runNum),str(event.lumiSec),str(event.evtNum),str(event.AK8Puppijet0_pt),str(event.AK8Puppijet0_ptraw),str(event.AK8Puppijet0_eta),str(event.AK8Puppijet0_phi),str(event.AK8Puppijet0_msd),str(event.AK8Puppijet0_N2sdb1),str(event.AK8Puppijet0_doublecsv),str(event.pfmet),str(event.nmuLoose),str(event.neleLoose),str(event.ntau)])+'\n')
 		nEvents[0]+=1		
 		if (event.triggerBits&2) and event.passJson: 
 			nEvents[1]+=1
@@ -43,7 +53,7 @@ if __name__ == '__main__':
 						nEvents[4]+=1
 						if event.AK8Puppijet0_isTightVJet:
 							nEvents[5]+=1
-							if event.puppet< 180:
+							if event.pfmet< 140:
 								nEvents[6]+=1
 								rh_8 = math.log(event.AK8Puppijet0_msd * event.AK8Puppijet0_msd / event.AK8Puppijet0_pt / event.AK8Puppijet0_pt)  # tocheck here
 								# N2DDT transformation
@@ -58,8 +68,8 @@ if __name__ == '__main__':
 									nEvents[7]+=1
 									if event.AK8Puppijet0_doublecsv > 0.9:
 										nEvents[8]+=1
-
+	
 	print nEvents
 	print [1.*n/nEvents[0] for n in nEvents]
-		
+
 		
