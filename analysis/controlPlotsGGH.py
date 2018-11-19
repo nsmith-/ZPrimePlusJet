@@ -79,7 +79,7 @@ def get2016files():
         'Phibb75': [idir + '/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb150': [idir + '/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
         'Phibb250': [idir + '/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'data_obs': [idirData+'JetHTRun2016B_03Feb2017_ver2_v2_v3.root',
+        'data':     [idirData+'JetHTRun2016B_03Feb2017_ver2_v2_v3.root',
                      idirData + 'JetHTRun2016B_03Feb2017_ver1_v1_v3.root',
                      idirData + 'JetHTRun2016C_03Feb2017_v1_v3_0.root',
                      idirData + 'JetHTRun2016C_03Feb2017_v1_v3_1.root',
@@ -459,7 +459,10 @@ def main(options,args,outputExists):
 
         bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
         if isData and muonCR:
-            bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='default').addPlots(plots)
+            if options.is2017:
+                bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='default').addPlots(plots)
+            else:
+                bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
             bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
             #bkgSamples['TTbar1Mu']  = sampleContainer('TTbar1Mu',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genMuFromW==1&&genEleFromW+genTauFromW==0',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
             #bkgSamples['TTbar1Ele']  = sampleContainer('TTbar1Ele',tfiles['TTbar'], 1, DBTMIN,lumi, False, False, 'genEleFromW==1&&genMuFromW+genTauFromW==0',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
@@ -498,8 +501,10 @@ def main(options,args,outputExists):
                                "HLT_AK8PFJet380_TrimMass30_v*",
                                "HLT_AK8PFJet500_v*"]
                       }
-            dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
-            dataSample1207 = sampleContainer('data1401',tfiles['data1401'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
+            if options.is2017:
+                dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, "passJson", False, iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames)
+            else:
+                dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, isData, False, '((triggerBits&2)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
 
@@ -513,7 +518,6 @@ def main(options,args,outputExists):
                 hall_byproc['muon'] = {}
             else:
                 hall_byproc['data'] = {}
-                hall_byproc['data1401'] = {}
 
         if options.is2017:
             hall_byproc['DY']= bkgSamples['DY']  
@@ -541,7 +545,6 @@ def main(options,args,outputExists):
                     hall_byproc['muon'][plot] = getattr(dataSample,plot)
                 else:
                     hall_byproc['data'][plot] = getattr(dataSample,plot)
-                    hall_byproc['data1401'][plot] = getattr(dataSample1207,plot)
             
         ofile.cd()
         for proc, hDict in hall_byproc.iteritems():
