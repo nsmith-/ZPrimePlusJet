@@ -229,24 +229,24 @@ class sampleContainer:
                                    #('AK4Puppijet0_pt', 'f', 0),
                                    #('AK4Puppijet3_eta', 'f', 0), ('AK4Puppijet2_eta', 'f', 0),
                                    #('AK4Puppijet1_eta', 'f', 0), ('AK4Puppijet0_eta', 'f', 0)
-                                   ('AK4Puppijet0_eta' , 'f', -999),('AK4Puppijet1_eta' , 'f', -999),
-                                   ('AK4Puppijet0_phi' , 'f', -999),('AK4Puppijet1_phi' , 'f', -999),
-                                   ('AK4Puppijet0_pt'  , 'f', -999),('AK4Puppijet1_pt'  , 'f', -999),
-                                   ('AK4Puppijet0_mass', 'f', -999),('AK4Puppijet1_mass', 'f', -999),
-                                   ('AK4Puppijet0_qgid', 'f', -999),('AK4Puppijet1_qgid', 'f', -999),  
-                                   ('AK4Puppijet0_csv' , 'f', -999),('AK4Puppijet1_csv' , 'f', -999),  
-                                   ('AK4Puppijet2_eta' , 'f', -999),('AK4Puppijet3_eta' , 'f', -999),
-                                   ('AK4Puppijet2_phi' , 'f', -999),('AK4Puppijet3_phi' , 'f', -999),
-                                   ('AK4Puppijet2_pt'  , 'f', -999),('AK4Puppijet3_pt'  , 'f', -999),
-                                   ('AK4Puppijet2_mass', 'f', -999),('AK4Puppijet3_mass', 'f', -999),
-                                   ('AK4Puppijet2_qgid', 'f', -999),('AK4Puppijet3_qgid', 'f', -999),  
-                                   ('AK4Puppijet2_csv' , 'f', -999),('AK4Puppijet3_csv' , 'f', -999),  
-                                   ('AK4Puppijet4_eta' , 'f', -999),('AK4Puppijet5_eta' , 'f', -999),
-                                   ('AK4Puppijet4_phi' , 'f', -999),('AK4Puppijet5_phi' , 'f', -999),
-                                   ('AK4Puppijet4_pt'  , 'f', -999),('AK4Puppijet5_pt'  , 'f', -999),
-                                   ('AK4Puppijet4_mass', 'f', -999),('AK4Puppijet5_mass', 'f', -999),
-                                   ('AK4Puppijet4_qgid', 'f', -999),('AK4Puppijet5_qgid', 'f', -999),  
-                                   ('AK4Puppijet4_csv' , 'f', -999),('AK4Puppijet5_csv' , 'f', -999),  
+                                   ('AK4Puppijet0_eta' , 'f', 0),('AK4Puppijet1_eta' , 'f', 0),
+                                   ('AK4Puppijet0_phi' , 'f', 0),('AK4Puppijet1_phi' , 'f', 0),
+                                   ('AK4Puppijet0_pt'  , 'f', 0),('AK4Puppijet1_pt'  , 'f', 0),
+                                   ('AK4Puppijet0_mass', 'f', 0),('AK4Puppijet1_mass', 'f', 0),
+                                   ('AK4Puppijet0_qgid', 'f', 0),('AK4Puppijet1_qgid', 'f', 0),  
+                                   ('AK4Puppijet0_csv' , 'f', 0),('AK4Puppijet1_csv' , 'f', 0),  
+                                   ('AK4Puppijet2_eta' , 'f', 0),('AK4Puppijet3_eta' , 'f', 0),
+                                   ('AK4Puppijet2_phi' , 'f', 0),('AK4Puppijet3_phi' , 'f', 0),
+                                   ('AK4Puppijet2_pt'  , 'f', 0),('AK4Puppijet3_pt'  , 'f', 0),
+                                   ('AK4Puppijet2_mass', 'f', 0),('AK4Puppijet3_mass', 'f', 0),
+                                   ('AK4Puppijet2_qgid', 'f', 0),('AK4Puppijet3_qgid', 'f', 0),  
+                                   ('AK4Puppijet2_csv' , 'f', 0),('AK4Puppijet3_csv' , 'f', 0),  
+                                   ('AK4Puppijet4_eta' , 'f', 0),('AK4Puppijet5_eta' , 'f', 0),
+                                   ('AK4Puppijet4_phi' , 'f', 0),('AK4Puppijet5_phi' , 'f', 0),
+                                   ('AK4Puppijet4_pt'  , 'f', 0),('AK4Puppijet5_pt'  , 'f', 0),
+                                   ('AK4Puppijet4_mass', 'f', 0),('AK4Puppijet5_mass', 'f', 0),
+                                   ('AK4Puppijet4_qgid', 'f', 0),('AK4Puppijet5_qgid', 'f', 0),  
+                                   ('AK4Puppijet4_csv' , 'f', 0),('AK4Puppijet5_csv' , 'f', 0),  
                                    ])
         if not self._isData:
             self._branches.extend([('genMuFromW', 'i', -999), ('genEleFromW', 'i', -999), ('genTauFromW', 'i', -999)])
@@ -1130,19 +1130,19 @@ class sampleContainer:
             #Find non-matched AK4 jets
             if not self._minBranches:
                 QuarkJets = []
-                for iak4 in range(0,6):
-                    ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
-                    ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
-                    ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
-                    ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
-                    dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
-                    #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
-                    if ak4pT> 30.0 and dR_ak8>0.8:
-                        jet = ROOT.TLorentzVector()
-                        jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
-                        jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
-                        jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
-                        QuarkJets.append(jet)
+                #for iak4 in range(0,6):
+                #    ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
+                #    ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
+                #    ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
+                #    ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
+                #    dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
+                #    #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
+                #    if ak4pT> 30.0 and dR_ak8>0.8:
+                #        jet = ROOT.TLorentzVector()
+                #        jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
+                #        jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
+                #        jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
+                #        QuarkJets.append(jet)
                 #print "N un-matched jet = ", len(QuarkJets)
                 #for qj in QuarkJets:
                 #    print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
