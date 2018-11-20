@@ -614,60 +614,53 @@ class sampleContainer:
             'h_rhop_v_t21_ca15': ["h_" + self._name + "_rhop_v_t21_ca15", "; CA15 rho^{DDT}; CA15 <#tau_{21}>", 15, -5,
                                   10, 25, 0, 1.5]
         }
+        #Main analysis region
+        #10 systematics variations + 2 main templates = 22 histo / region
+        passfail    = ['pass','fail']
+        systematics = ['JESUp','JESDown','JERUp','JERDown','triggerUp','triggerDown','PuUp','PuDown','matched','unmatched']
+        regions     = ['topR6_N2']
+        histos2d={}
+        for r in regions:
+            for pf in passfail:
+                hkey  ="h_msd_v_pt_ak8_%s_%s"%(r,pf)
+                hname ="h_" + self._name + "_msd_v_pt_ak8_%s_%s"%(r,pf)
+                histos2d[hkey] = [hname,"; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
+                for sys in systematics:
+                    hkey_sys  = "h_msd_v_pt_ak8_%s_%s_%s"%(r,pf,sys)
+                    hname_sys ="h_" + self._name + "_msd_v_pt_ak8_%s_%s_%s"%(r,pf,sys)
+                    histos2d[hkey_sys] = [hname_sys,"; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
 
-        histos2d = {
-            'h_msd_v_pt_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass",
-                                             "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_JESUp",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_JESDown",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_JERUp",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_JERDown",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_triggerUp",
-                                                       "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_triggerDown",
-                                                         "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_PuUp",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_pass_PuDown",
-                                                    "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_N2_topR6_pass_matched",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_N2_topR6_pass_unmatched",
-                                                       "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail",
-                                             "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_JESUp",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_JESDown",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_JERUp",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_JERDown",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_triggerUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_triggerUp",
-                                                       "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_triggerDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_triggerDown",
-                                                         "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_PuUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_PuUp",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_PuDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_PuDown",
-                                                    "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_matched",
-                                                     "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-            'h_msd_v_pt_ak8_topR6_N2_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_N2_fail_unmatched",
-                                                       "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
+        histos2d.update({
             'h_msd_v_pt_ak8_muCR4_N2_pass': ["h_" + self._name + "_msd_v_pt_ak8_muCR4_N2_pass",
                                              "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
             'h_msd_v_pt_ak8_muCR4_N2_fail': ["h_" + self._name + "_msd_v_pt_ak8_muCR4_N2_fail",
                                              "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
-        }
-
+        })
         if not self._minBranches:
-            histos2d_ext = {
+            #Main analysis region with tau21 (old)
+            histos2d_ext = {}
+            passfail    = ['pass','fail']
+            systematics = ['JESUp','JESDown','JERUp','JERDown','matched','unmatched']
+            regions     = ['topR6']
+            for r in regions:
+                for pf in passfail:
+                    hkey  ="h_msd_v_pt_ak8_%s_%s"%(r,pf)
+                    hname ="h_" + self._name + "_msd_v_pt_ak8_%s_%s"%(r,pf)
+                    histos2d_ext[hkey] = [hname,"; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
+                    for sys in systematics:
+                        hkey_sys  = "h_msd_v_pt_ak8_%s_%s_%s"%(r,pf,sys)
+                        hname_sys ="h_" + self._name + "_msd_v_pt_ak8_%s_%s_%s"%(r,pf,sys)
+                        histos2d_ext[hkey_sys] = [hname_sys,"; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
+
+            #bb optimizations
+            regions     = ['topR6_0p4','topR6_0p45','topR6_0p5','topR6_0p6','topR6_0p65','topR6_0p7','topR6_0p75','topR6_0p91','topR6_0p92','topR6_0p93','topR6_0p94','topR6_0p95']
+            for r in regions:
+                for pf in passfail:
+                    hkey  ="h_msd_v_pt_ak8_%s_%s"%(r,pf)
+                    hname ="h_" + self._name + "_msd_v_pt_ak8_%s_%s"%(r,pf)
+                    histos2d_ext[hkey] = [hname,"; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
+                    
+            histos2d_ext.update({
                 'h_msd_v_pt_ak8_topR1': ["h_" + self._name + "_msd_v_pt_ak8_topR1",
                                          "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR2_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR2_pass",
@@ -678,24 +671,6 @@ class sampleContainer:
                                               "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR5_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR5_pass",
                                               "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass_JESUp",
-                                                    "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass_JESDown",
-                                                      "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass_JERUp",
-                                                    "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass_JERDown",
-                                                      "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass_matched",
-                                                      "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_pass_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_pass_unmatched",
-                                                        "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail_matched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail_matched",
-                                                      "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail_unmatched': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail_unmatched",
-                                                        "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR7_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR7_pass",
                                               "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR2_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR2_fail",
@@ -706,16 +681,6 @@ class sampleContainer:
                                               "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR5_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR5_fail",
                                               "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail",
-                                              "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail_JESUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail_JESUp",
-                                                    "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail_JESDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail_JESDown",
-                                                      "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail_JERUp': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail_JERUp",
-                                                    "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_fail_JERDown': ["h_" + self._name + "_msd_v_pt_ak8_topR6_fail_JERDown",
-                                                      "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_raw_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_raw_fail",
                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_topR6_raw_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_raw_pass",
@@ -734,55 +699,7 @@ class sampleContainer:
                                                         "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
                 'h_msd_v_pt_ak8_bbleading_muCR4_fail': ["h_" + self._name + "_msd_v_pt_ak8_bbleading_muCR4_fail",
                                                         "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p4_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p4_fail",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p4_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p4_pass",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p45_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p45_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p45_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p45_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p5_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p5_fail",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p5_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p5_pass",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p6_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p6_fail",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p6_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p6_pass",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p65_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p65_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p65_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p65_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p7_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p7_fail",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p7_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p7_pass",
-                                                  "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p75_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p75_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p75_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p75_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p91_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p91_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p91_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p91_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p92_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p92_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p92_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p92_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p93_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p93_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p93_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p93_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p94_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p94_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p94_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p94_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p95_fail': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p95_fail",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"],
-                'h_msd_v_pt_ak8_topR6_0p95_pass': ["h_" + self._name + "_msd_v_pt_ak8_topR6_0p95_pass",
-                                                   "; AK8 m_{SD}^{PUPPI} (GeV); AK8 p_{T} (GeV)"]
-            }
+            })
 
             histos2d = dict(histos2d.items() + histos2d_ext.items())
 
