@@ -618,7 +618,7 @@ class sampleContainer:
         #10 systematics variations + 2 main templates = 22 histo / region
         passfail    = ['pass','fail']
         systematics = ['JESUp','JESDown','JERUp','JERDown','triggerUp','triggerDown','PuUp','PuDown','matched','unmatched']
-        regions     = ['topR6_N2']
+        regions     = ['topR6_N2','QGquark','QGgluon']
         histos2d={}
         for r in regions:
             for pf in passfail:
@@ -1047,19 +1047,19 @@ class sampleContainer:
             #Find non-matched AK4 jets
             if not self._minBranches:
                 QuarkJets = []
-                #for iak4 in range(0,6):
-                #    ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
-                #    ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
-                #    ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
-                #    ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
-                #    dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
-                #    #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
-                #    if ak4pT> 30.0 and dR_ak8>0.8:
-                #        jet = ROOT.TLorentzVector()
-                #        jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
-                #        jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
-                #        jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
-                #        QuarkJets.append(jet)
+                for iak4 in range(0,4):
+                    ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
+                    ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
+                    ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
+                    ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
+                    dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
+                    #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
+                    if ak4pT> 30.0 and dR_ak8>0.8:
+                        jet = ROOT.TLorentzVector()
+                        jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
+                        jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
+                        jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
+                        QuarkJets.append(jet)
                 #print "N un-matched jet = ", len(QuarkJets)
                 #for qj in QuarkJets:
                 #    print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
@@ -1068,7 +1068,15 @@ class sampleContainer:
                 #print "highest dEta pair = ",pair, "mass = %.3f, QGLR = %.3f"%(QGLRutil.CalcMqq(QuarkJets,pair),QGLRutil.CalcQGLR(QuarkJets,pair))
                 Mqq  = QGLRutil.CalcMqq(QuarkJets,pair)
                 QGLR = QGLRutil.CalcQGLR(QuarkJets,pair)
-
+                if len(QuarkJets)>=2:
+                    deta_ak4pt1pt2 = abs(QuarkJets[0].Eta() - QuarkJets[1].Eta())
+                    Mqq_ak4pt1pt2  = (QuarkJets[0]+ QuarkJets[1]).M()
+                else:
+                    deta_ak4pt1pt2= -1
+                    Mqq_ak4pt1pt2 = -1
+                QGquark_pass = False
+                if (deta_ak4pt1pt2>3.25 and Mqq_ak4pt1pt2>975):
+                    QGquark_pass = True
 
             # Single Muon Control Regions
             if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
@@ -1359,12 +1367,32 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_topR6_N2_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
                     self.h_msd_v_pt_ak8_topR6_N2_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                     self.h_msd_v_pt_ak8_topR6_N2_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-
                     # for signal morphing
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_topR6_N2_pass_matched.Fill(jmsd_8, jpt_8, weight)
                     else:
                         self.h_msd_v_pt_ak8_topR6_N2_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
+                    if QGquark_pass:  
+                        self.h_msd_v_pt_ak8_QGquark_pass.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_pt_ak8_QGquark_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
+                        self.h_msd_v_pt_ak8_QGquark_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
+                        self.h_msd_v_pt_ak8_QGquark_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                        self.h_msd_v_pt_ak8_QGquark_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                        # for signal morphing
+                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                            self.h_msd_v_pt_ak8_QGquark_pass_matched.Fill(jmsd_8, jpt_8, weight)
+                        else:
+                            self.h_msd_v_pt_ak8_QGquark_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
+                    else:
+                        self.h_msd_v_pt_ak8_QGgluon_pass.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_pt_ak8_QGgluon_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
+                        self.h_msd_v_pt_ak8_QGgluon_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
+                        self.h_msd_v_pt_ak8_QGgluon_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                        self.h_msd_v_pt_ak8_QGgluon_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                            self.h_msd_v_pt_ak8_QGgluon_pass_matched.Fill(jmsd_8, jpt_8, weight)
+                        else:
+                            self.h_msd_v_pt_ak8_QGgluon_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                 elif jdb_8 > self.DBTAGCUTMIN:
                     self.h_msd_ak8_topR6_N2_fail.Fill(jmsd_8, weight)
                     self.h_msd_v_pt_ak8_topR6_N2_fail.Fill(jmsd_8, jpt_8, weight)
@@ -1378,28 +1406,53 @@ class sampleContainer:
                         self.h_msd_v_pt_ak8_topR6_N2_fail_matched.Fill(jmsd_8, jpt_8, weight)
                     else:
                         self.h_msd_v_pt_ak8_topR6_N2_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
+                    if QGquark_pass:  
+                        self.h_msd_v_pt_ak8_QGquark_fail.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_pt_ak8_QGquark_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
+                        self.h_msd_v_pt_ak8_QGquark_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
+                        self.h_msd_v_pt_ak8_QGquark_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                        self.h_msd_v_pt_ak8_QGquark_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                        # for signal morphing
+                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                            self.h_msd_v_pt_ak8_QGquark_fail_matched.Fill(jmsd_8, jpt_8, weight)
+                        else:
+                            self.h_msd_v_pt_ak8_QGquark_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
+                    else:
+                        self.h_msd_v_pt_ak8_QGgluon_fail.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_pt_ak8_QGgluon_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
+                        self.h_msd_v_pt_ak8_QGgluon_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
+                        self.h_msd_v_pt_ak8_QGgluon_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                        self.h_msd_v_pt_ak8_QGgluon_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                        if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                            self.h_msd_v_pt_ak8_QGgluon_fail_matched.Fill(jmsd_8, jpt_8, weight)
+                        else:
+                            self.h_msd_v_pt_ak8_QGgluon_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
 
             for syst in ['JESUp', 'JESDown', 'JERUp', 'JERDown']:
                 if (not self._minBranches) and eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval(
                                 'n_dR0p8_4_%s' % syst) < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
                     if jdb_8 > self.DBTAGCUT:
                         (getattr(self, 'h_msd_ak8_topR6_pass_%s' % syst)).Fill(jmsd_8, weight)
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
+                        (getattr(self, 'h_msd_v_pt_ak8_topR6_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
                     elif jdb_8 > self.DBTAGCUTMIN:
                         (getattr(self, 'h_msd_ak8_topR6_fail_%s' % syst)).Fill(jmsd_8, weight)
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                    weight)
+                        (getattr(self, 'h_msd_v_pt_ak8_topR6_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
                 if eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval(
                                 'n_dR0p8_4_%s' % syst) < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
                     if jdb_8 > self.DBTAGCUT:
                         (getattr(self, 'h_msd_ak8_topR6_N2_pass_%s' % syst)).Fill(jmsd_8, weight)
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_N2_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                       weight)
+                        (getattr(self, 'h_msd_v_pt_ak8_topR6_N2_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                        if QGquark_pass:
+                            (getattr(self, 'h_msd_v_pt_ak8_QGquark_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                        else:
+                            (getattr(self, 'h_msd_v_pt_ak8_QGgluon_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
                     elif jdb_8 > self.DBTAGCUTMIN:
                         (getattr(self, 'h_msd_ak8_topR6_N2_fail_%s' % syst)).Fill(jmsd_8, weight)
-                        (getattr(self, 'h_msd_v_pt_ak8_topR6_N2_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),
-                                                                                       weight)
+                        (getattr(self, 'h_msd_v_pt_ak8_topR6_N2_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                        if QGquark_pass:
+                            (getattr(self, 'h_msd_v_pt_ak8_QGquark_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
+                        else:
+                            (getattr(self, 'h_msd_v_pt_ak8_QGgluon_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
 
             ###Double-b optimization for ggH
             if not self._minBranches:
