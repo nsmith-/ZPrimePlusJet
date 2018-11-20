@@ -206,7 +206,7 @@ def main(options, args):
     systs = ['JER','JES','mutrigger','muid','muiso','Pu']
 
     
-    tfile = rt.TFile.Open(options.idir+'/hist_1DZbb_muonCR.root','read')
+    tfile = rt.TFile.Open(options.ifile,'read')
     
     histoDict = {}
     datahistDict = {}
@@ -255,7 +255,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
     parser.add_option('--lumi', dest='lumi', type=float, default = 20,help='lumi in 1/fb ', metavar='lumi')
-    parser.add_option('-i','--idir', dest='idir', default = './',help='directory with data', metavar='idir')
+    parser.add_option('-i','--ifile', dest='ifile', default = './',help='directory with data', metavar='ifile')
     parser.add_option('-o','--odir', dest='odir', default = './',help='directory to write cards', metavar='odir')
     
     (options, args) = parser.parse_args()

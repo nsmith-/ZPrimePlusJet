@@ -1,7 +1,17 @@
 # Repository for Z' + jet and ggH(bb) + jet
 
-add instructions here...
-
+## First time set-up:
+```
+cmsrel CMSSW_8_1_0    #CMSSW version used for combine/combineHavester
+cd src/
+git clone git@github.com:DAZSLE/ZPrimePlusJet.git
+cd ZPrimePlusJet/
+```
+## Do this everytime:
+```
+cmsenv
+source setup.sh
+```
 # Instructions for running GGH plotting code on FNAL LPC
 
 MC stack plots:

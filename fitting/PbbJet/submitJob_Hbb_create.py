@@ -41,6 +41,9 @@ def write_bash(temp = 'runjob.sh', command = '' ,gitClone=""):
     out += 'eval `scramv1 runtime -sh` # cmsenv\n'
     out += gitClone + '\n'
     out += 'cd ZPrimePlusJet\n'
+    out += 'echo "Execute with git status/log:"\n'
+    out += 'git status -uno \n'
+    out += 'git log -n 1 \n'
     out += 'source setup.sh\n'
     out += 'cd ${CWD}\n'
     out += command + '\n'
@@ -64,8 +67,10 @@ if __name__ == '__main__':
     script_group.add_option("--bb", action='store_true', dest="bb", default=False, help="sort by double b-tag")
     script_group.add_option('-m', '--muonCR', action='store_true', dest='muonCR', default=False, help='for muon CR',
                     metavar='muonCR')
-    script_group.add_option('-d', '--dbtagmin', dest='dbtagmin', default=-99., type="float",
-                    help='left bound to btag selection', metavar='dbtagmin')
+    script_group.add_option('--dbtagmin', dest='dbtagmin', default=-99., type="float",
+                      help='left bound to btag selection(fail region lower bound)', metavar='dbtagmin')
+    script_group.add_option('--dbtagcut', dest='dbtagcut', default=0.9, type="float",
+                      help='btag selection for cut value(pass region lower bound)', metavar='dbtagcut')
     script_group.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skip-qcd')
     script_group.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skip-data')
     script_group.add_option("--lumi", dest="lumi", default=41.3, type="float", help="luminosity", metavar="lumi")
@@ -75,13 +80,13 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
     hadd  = options.hadd
-    dryRun= False
+    dryRun= False 
 
     maxJobs = 500
 
     outpath= options.odir
-    gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
-    #gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
+    #gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
+    gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
     #Small files used by the exe
     files = ['']

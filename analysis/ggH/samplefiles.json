@@ -1,0 +1,498 @@
+{
+    "Hbb_create_2017": {
+        "tthqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ttHTobb_M125_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "zll": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root"
+        ], 
+        "qcd": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT500to700_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT1500to2000_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT2000toInf_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root"
+        ], 
+        "whqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "wlnu": {
+            "WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_3.root"
+            ], 
+            "WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_3.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_4.root"
+            ], 
+            "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root"
+            ], 
+            "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_3.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_4.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_5.root"
+            ], 
+            "WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_3.root"
+            ]
+        }, 
+        "hqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "zqq": {
+            "ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_1.root"
+            ], 
+            "ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_2.root"
+            ], 
+            "ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_3.root"
+            ]
+        }, 
+        "vvqq": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WW_TuneCP5_13TeV_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root"
+        ], 
+        "wqq": {
+            "WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_2.root"
+            ], 
+            "WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_3.root"
+            ], 
+            "WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_2.root"
+            ]
+        }, 
+        "stqq": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root"
+        ], 
+        "data_obs": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017C_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017D_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017E_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017F_17Nov2017_v1_noPF.root"
+        ], 
+        "zhqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "vbfhqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root"
+        ], 
+        "tqq": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root"
+        ]
+    }, 
+    "Hbb_create_2017_muCR": {
+        "tthqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ttHTobb_M125_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "zll": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root"
+        ], 
+        "qcd": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT500to700_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT1500to2000_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/QCD_HT2000toInf_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root"
+        ], 
+        "whqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "wlnu": {
+            "WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_3.root"
+            ], 
+            "WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_3.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_4.root"
+            ], 
+            "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root"
+            ], 
+            "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_3.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_4.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_5.root"
+            ], 
+            "WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_3.root"
+            ]
+        }, 
+        "hqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "zqq": {
+            "ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_1.root"
+            ], 
+            "ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_2.root"
+            ], 
+            "ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_3.root"
+            ]
+        }, 
+        "vvqq": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WW_TuneCP5_13TeV_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root"
+        ], 
+        "wqq": {
+            "WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_2.root"
+            ], 
+            "WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_3.root"
+            ], 
+            "WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_2.root"
+            ]
+        }, 
+        "stqq": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root"
+        ], 
+        "data_obs": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/SingleMuonRun2017C_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/SingleMuonRun2017D_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/SingleMuonRun2017E_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/SingleMuonRun2017F_17Nov2017_v1_noPF.root"
+        ], 
+        "zhqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "vbfhqq125": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root"
+        ], 
+        "tqq": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root"
+        ]
+    }, 
+    "controlPlotsGGH_2017": {
+        "VBFHbb": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root"
+        ], 
+        "muon": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim//SingleMuonRun2017C_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim//SingleMuonRun2017D_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim//SingleMuonRun2017E_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim//SingleMuonRun2017F_17Nov2017_v1_noPF.root"
+        ], 
+        "Diboson": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//WW_TuneCP5_13TeV_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root"
+        ], 
+        "ttHbb": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ttHTobb_M125_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "data": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017C_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017D_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017E_17Nov2017_v1_noPF.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim/JetHTRun2017F_17Nov2017_v1_noPF.root"
+        ], 
+        "ggHbb_amc": {
+            "GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job0_job0_file0to999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job1_job1_file1000to1999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job2_job2_file2000to2999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job3_job3_file3000to3999.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_13TeV_amcatnloFXFX_pythia8/Output_job4_job4_file4000to4999.root"
+            ]
+        }, 
+        "Wlnu": {
+            "WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_800To1200_TuneCP5_13TeV_3.root"
+            ], 
+            "WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_3.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_600To800_TuneCP5_13TeV_4.root"
+            ], 
+            "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_1200To2500_TuneCP5_13TeV_2.root"
+            ], 
+            "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_3.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_4.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_200To400_TuneCP5_13TeV_5.root"
+            ], 
+            "WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToLNu_HT_400To600_TuneCP5_13TeV_3.root"
+            ]
+        }, 
+        "Hbb": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_all_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ttHTobb_M125_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "DYll": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier//DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root"
+        ], 
+        "VHbb": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "DY": {
+            "ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV_1.root"
+            ], 
+            "ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV_2.root"
+            ], 
+            "ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV_3.root"
+            ]
+        }, 
+        "W": {
+            "WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV_2.root"
+            ], 
+            "WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_2.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV_3.root"
+            ], 
+            "WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_0.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_1.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV_2.root"
+            ]
+        }, 
+        "QCD": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT100to200_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT200to300_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT500to700_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT1500to2000_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//QCD_HT2000toInf_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root"
+        ], 
+        "ggHbb_amcHpT250": {
+            "GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job0_job0_file0to4.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job1_job1_file5to9.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job2_job2_file10to14.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job3_job3_file15to19.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job4_job4_file20to24.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job5_job5_file25to29.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job6_job6_file30to34.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job7_job7_file35to39.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job8_job8_file40to44.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/Output_job9_job9_file45to49.root"
+            ]
+        }, 
+        "TTbar": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root"
+        ], 
+        "ggHbb": {
+            "GluGluHToBB_M125_13TeV_powheg_pythia8": [
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job0_job0_file0to4.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job1_job1_file5to9.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job2_job2_file10to14.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job3_job3_file15to19.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job4_job4_file20to24.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job5_job5_file25to29.root", 
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01//GluGluHToBB_M125_13TeV_powheg_pythia8/Output_job6_job6_file30to34.root"
+            ]
+        }, 
+        "SingleTop": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm//ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root"
+        ], 
+        "data1401": [
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017C_17Nov2017_v1_noPF_0.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017C_17Nov2017_v1_noPF_1.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017C_17Nov2017_v1_noPF_2.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017C_17Nov2017_v1_noPF_3.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017C_17Nov2017_v1_noPF_4.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017C_17Nov2017_v1_noPF_5.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_0.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_1.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_10.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_11.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_12.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_13.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_14.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_15.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_16.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_17.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_18.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_2.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_3.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_4.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_5.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_6.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_7.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_8.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017D_17Nov2017_v1_noPF_9.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_0.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_1.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_10.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_11.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_12.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_13.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_14.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_15.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_16.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_17.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_18.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_19.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_2.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_20.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_21.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_3.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_4.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_5.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_6.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_7.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_8.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017E_17Nov2017_v1_noPF_9.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_0.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_1.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_10.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_11.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_12.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_13.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_14.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_15.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_16.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_17.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_18.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_19.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_2.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_20.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_21.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_22.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_23.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_24.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_25.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_26.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_27.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_28.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_29.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_3.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_4.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_5.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_6.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_7.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_8.root", 
+            "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/JetHTRun2017F_17Nov2017_v1_noPF_9.root"
+        ]
+    }
+}
