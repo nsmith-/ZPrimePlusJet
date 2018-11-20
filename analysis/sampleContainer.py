@@ -1046,7 +1046,7 @@ class sampleContainer:
                 ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
                 ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
                 dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
-                print "nAK4PuppijetsPt30 = %s iak4= %s   ak4pT = %.3f,  dR=%s"%(n_4, iak4,ak4pT, dR_ak8)
+                #print "nAK4PuppijetsPt30 = %s iak4= %s   ak4pT = %.3f,  dR=%s"%(n_4, iak4,ak4pT, dR_ak8)
                 if ak4pT> 30.0 and dR_ak8>0.8:
                     jet = ROOT.TLorentzVector()
                     jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
