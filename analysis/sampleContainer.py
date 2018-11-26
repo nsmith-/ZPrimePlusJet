@@ -12,6 +12,7 @@ import time
 import warnings
 import json
 import os
+import  QGLRutil 
 
 PTCUT = 450.
 PTCUTMUCR = 400.
@@ -29,7 +30,7 @@ NJETCUT = 100
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
                  minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', 
-                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9):
+                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016'):
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self.DBTAGCUT = doublebCut
@@ -38,10 +39,12 @@ class sampleContainer:
         if len(fn) > 0:
             self._tf = ROOT.TFile.Open(self._fn[0])
         self._tt = ROOT.TChain(treeName)
+        print "constructing with tree name = ",treeName
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
         self._lumi = lumi
         self._triggerNames = triggerNames 
+        self.puOpt  = puOpt
 
         with open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerBitMap.json")) as triggerMapFile:
             self._triggerBitMaps = json.load(triggerMapFile)
@@ -92,6 +95,17 @@ class sampleContainer:
         # self._puppisd_corrGEN      = f_puppi.Get("puppiJECcorr_gen")
         # self._puppisd_corrRECO_cen = f_puppi.Get("puppiJECcorr_reco_0eta1v3")
         # self._puppisd_corrRECO_for = f_puppi.Get("puppiJECcorr_reco_1v3eta2v5")
+
+        f_ZNLO = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/ZJetsCorr.root"), "read")
+        self._znlo = f_ZNLO.Get("NLO")
+        self._znlo.SetDirectory(0)
+        f_ZNLO.Close()
+
+        f_WNLO = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/WJetsCorr.root"), "read")
+        self._wnlo = f_WNLO.Get("NLO")
+        self._wnlo.SetDirectory(0)
+        f_WNLO.Close()
+
 
         f_pu = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/puWeights_All.root"), "read")
         self._puw = f_pu.Get("puw")
@@ -180,7 +194,8 @@ class sampleContainer:
                           ('triggerBits', 'i', 1), ('passJson', 'i', 1), ('vmuoLoose0_pt', 'd', -999),
                           ('vmuoLoose0_eta', 'd', -999), ('vmuoLoose0_phi', 'd', -999),
                           ('npv', 'i', 1), ('npu', 'i', 1),
-                          ('AK8Puppijet0_isTightVJet', 'i', 0)
+                          ('AK8Puppijet0_isTightVJet', 'i', 0),
+
                           ]
         if not self._minBranches:
             self._branches.extend([('nAK4PuppijetsfwdPt30', 'i', -999), ('nAK4PuppijetsLPt50dR08_0', 'i', -999),
@@ -208,11 +223,30 @@ class sampleContainer:
                                    ('AK8Puppijet1_msd', 'd', -999), ('AK8Puppijet2_msd', 'd', -999),
                                    ('AK8Puppijet1_doublecsv', 'd', -999), ('AK8Puppijet2_doublecsv', 'i', -999),
                                    ('AK8Puppijet1_isTightVJet', 'i', 0),
-                                   ('AK8Puppijet2_isTightVJet', 'i', 0), ('AK4Puppijet3_pt', 'f', 0),
-                                   ('AK4Puppijet2_pt', 'f', 0), ('AK4Puppijet1_pt', 'f', 0),
-                                   ('AK4Puppijet0_pt', 'f', 0),
-                                   ('AK4Puppijet3_eta', 'f', 0), ('AK4Puppijet2_eta', 'f', 0),
-                                   ('AK4Puppijet1_eta', 'f', 0), ('AK4Puppijet0_eta', 'f', 0)
+                                   ('AK8Puppijet2_isTightVJet', 'i', 0),
+                                   #('AK4Puppijet3_pt', 'f', 0),
+                                   #('AK4Puppijet2_pt', 'f', 0), ('AK4Puppijet1_pt', 'f', 0),
+                                   #('AK4Puppijet0_pt', 'f', 0),
+                                   #('AK4Puppijet3_eta', 'f', 0), ('AK4Puppijet2_eta', 'f', 0),
+                                   #('AK4Puppijet1_eta', 'f', 0), ('AK4Puppijet0_eta', 'f', 0)
+                                   ('AK4Puppijet0_eta' , 'f', 0),('AK4Puppijet1_eta' , 'f', 0),
+                                   ('AK4Puppijet0_phi' , 'f', 0),('AK4Puppijet1_phi' , 'f', 0),
+                                   ('AK4Puppijet0_pt'  , 'f', 0),('AK4Puppijet1_pt'  , 'f', 0),
+                                   ('AK4Puppijet0_mass', 'f', 0),('AK4Puppijet1_mass', 'f', 0),
+                                   ('AK4Puppijet0_qgid', 'f', 0),('AK4Puppijet1_qgid', 'f', 0),  
+                                   ('AK4Puppijet0_csv' , 'f', 0),('AK4Puppijet1_csv' , 'f', 0),  
+                                   ('AK4Puppijet2_eta' , 'f', 0),('AK4Puppijet3_eta' , 'f', 0),
+                                   ('AK4Puppijet2_phi' , 'f', 0),('AK4Puppijet3_phi' , 'f', 0),
+                                   ('AK4Puppijet2_pt'  , 'f', 0),('AK4Puppijet3_pt'  , 'f', 0),
+                                   ('AK4Puppijet2_mass', 'f', 0),('AK4Puppijet3_mass', 'f', 0),
+                                   ('AK4Puppijet2_qgid', 'f', 0),('AK4Puppijet3_qgid', 'f', 0),  
+                                   ('AK4Puppijet2_csv' , 'f', 0),('AK4Puppijet3_csv' , 'f', 0),  
+                                   ('AK4Puppijet4_eta' , 'f', 0),('AK4Puppijet5_eta' , 'f', 0),
+                                   ('AK4Puppijet4_phi' , 'f', 0),('AK4Puppijet5_phi' , 'f', 0),
+                                   ('AK4Puppijet4_pt'  , 'f', 0),('AK4Puppijet5_pt'  , 'f', 0),
+                                   ('AK4Puppijet4_mass', 'f', 0),('AK4Puppijet5_mass', 'f', 0),
+                                   ('AK4Puppijet4_qgid', 'f', 0),('AK4Puppijet5_qgid', 'f', 0),  
+                                   ('AK4Puppijet4_csv' , 'f', 0),('AK4Puppijet5_csv' , 'f', 0),  
                                    ])
         if not self._isData:
             self._branches.extend([('genMuFromW', 'i', -999), ('genEleFromW', 'i', -999), ('genTauFromW', 'i', -999)])
@@ -236,6 +270,8 @@ class sampleContainer:
 
         # define histograms
         histos1d = {            
+            'h_fBosonPt_fbweight': ["h_" + self._name + "_fBosonPt_fbweight", "; fBoson pT;;", 100, 0, 1000],
+            'h_fBosonPt_weight':   ["h_" + self._name + "_fBosonPt_weight", "; fBoson pT;;", 100, 0, 1000],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
             'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
                                         40, 201],
@@ -362,6 +398,10 @@ class sampleContainer:
                                      1],
                 'h_dbtag_ak8_sub2': ["h_" + self._name + "_dbtag_ak8_sub2", "; 3rd p_{T}-leading double b-tag;", 40, -1,
                                      1],
+                'h_n_unMatchedAK4'     : ["h_" + self._name + "_n_unMatchedAK4", "; Number of non matched AK4 jets ;;", 7, 0, 7],
+                'h_Mqq'     : ["h_" + self._name + "_Mqq", "; Dijet Mass (GeV);;", 50, 0, 3000],
+                'h_QGLR'    : ["h_" + self._name + "_QGLR", "; QGLR;", 10, 0,1],
+                'h_Deta_qq' : ["h_" + self._name + "_Deta_qq", "; max Deta qq;;", 30, 0, 10],
                 'h_t21_ak8': ["h_" + self._name + "_t21_ak8", "; AK8 #tau_{21};", 25, 0, 1.5],
                 'h_t21ddt_ak8': ["h_" + self._name + "_t21ddt_ak8", "; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
                 'h_t32_ak8': ["h_" + self._name + "_t32_ak8", "; AK8 #tau_{32};", 25, 0, 1.5],
@@ -773,6 +813,13 @@ class sampleContainer:
         cut = []
         cut = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
 
+        if not self.puOpt in ['2016','2017']:
+            if not type(self.puOpt)==type(ROOT.TH1F()):
+                print "Using this file to reweight MC pu:", self.puOpt
+            else:
+                print "Using input histogram reweight MC pu:", self.puOpt.GetName() 
+            h_puw,h_puw_up,h_puw_down = self.get2017puWeight(self.puOpt)
+    
         self._tt.SetNotify(self._cutFormula)
 
         minEventsPerJob = nent / self._maxSplit
@@ -814,16 +861,24 @@ class sampleContainer:
             if (nent / 100 > 0 and i % (1 * nent / 100) == 0):
                 sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")
                 sys.stdout.flush()
+            
+            if self.puOpt =='2017':
+                puweight      = self.puWeight[0] #corrected
+                puweight_up   = self.puWeight_up[0]
+                puweight_down = self.puWeight_down[0]
+            elif self.puOpt=='2016':
+                nPuForWeight  = min(self.npu[0], 49.5)
+                puweight      = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
+                puweight_up   = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
+                puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
+            else:
+                nPuForWeight  = min(self.npu[0], 99.5)
+                puweight      = h_puw.GetBinContent(     h_puw.FindBin(nPuForWeight))
+                puweight_up   = h_puw_up.GetBinContent(  h_puw_up.FindBin(nPuForWeight))
+                puweight_down = h_puw_down.GetBinContent(h_puw_down.FindBin(nPuForWeight))
+                #print (nPuForWeight,puweight,puweight_up,puweight_down)
 
-            puweight = self.puWeight[0] #corrected
-#	    puweight_up = self.puWeight_up[0]
-#            puweight_down= self.puWeight_down[0]
-            nPuForWeight = min(self.npu[0], 49.5)
-    	    #$print(puweight,self._puw.GetBinContent(self._puw.FindBin(nPuForWeight)))
-            #puweight = self._puw.GetBinContent(self._puw.FindBin(nPuForWeight))
-            puweight_up = self._puw_up.GetBinContent(self._puw_up.FindBin(nPuForWeight))
-            puweight_down = self._puw_down.GetBinContent(self._puw_down.FindBin(nPuForWeight))
-            # print(self.puWeight[0],puweight,puweight_up,puweight_down)
+
             fbweight = self.scale1fb[0] * self._lumi
             # if self._name=='tqq' or 'TTbar' in self._name:
             #    fbweight = fbweight/self.topPtWeight[0] # remove top pt reweighting (assuming average weight is ~ 1)
@@ -831,14 +886,26 @@ class sampleContainer:
 	    wscale=[1.0,1.0,1.0,1.20,1.25,1.25,1.0]
 	    ptscale=[0, 500, 600, 700, 800, 900, 1000,3000]
 	    ptKF=1.
-            if self._name == 'wqq' or self._name == 'W':
+            if 'wqq' in self._name or  self._name == 'W':
                 # print self._name
 		for i in range(0, len(ptscale)):
 			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
                 vjetsKF = self.kfactor[0] * 1.35 * ptKF  # ==1 for not V+jets events
-            elif self._name == 'zqq' or self._name == 'DY':
+            elif 'zqq' in self._name or  self._name == 'DY':
                 # print self._name
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
+            
+            ### works only for 2017 HT binned sample, constructed with normSampleContainer
+            if 'ZJetsToQQ_' in self._name:    
+                ptForNLO = max(250., min(self.genVPt[0], 1200.))  
+                vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
+            if 'WJetsToQQ_' in self._name:
+                ptForNLO = max(250., min(self.genVPt[0], 1200.))
+                vjetsKF   = self.kfactor[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
+        
+                
             # trigger weight
             #massForTrig = min(self.AK8Puppijet0_msd[0], 300.)
             massForTrig = min(max(self.AK8Puppijet0_msd[0],0), 300.)
@@ -1057,6 +1124,34 @@ class sampleContainer:
                     dphi = math.fabs(genVPhi - jphi_8)
                     dpt = math.fabs(genVPt - jpt_8) / genVPt
                     dmass = math.fabs(genVMass - jmsd_8) / genVMass
+                if jpt_8> PTCUT:
+                    self.h_fBosonPt_fbweight.Fill(self.genVPt[0], fbweight) 
+                    self.h_fBosonPt_weight.Fill(self.genVPt[0], weight) 
+            #Find non-matched AK4 jets
+            if not self._minBranches:
+                QuarkJets = []
+                #for iak4 in range(0,6):
+                #    ak4pT   = getattr(self,"AK4Puppijet"+str(iak4)+"_pt")[0]
+                #    ak4eta  = getattr(self,"AK4Puppijet"+str(iak4)+"_eta")[0]
+                #    ak4phi  = getattr(self,"AK4Puppijet"+str(iak4)+"_phi")[0]
+                #    ak4mass = getattr(self,"AK4Puppijet"+str(iak4)+"_mass")[0]
+                #    dR_ak8  = QGLRutil.deltaR( ak4eta,ak4phi, self.AK8Puppijet0_eta[0], self.AK8Puppijet0_phi[0])
+                #    #print "ak4pT = %s,  dR=%s"%(ak4pT, dR_ak8)
+                #    if ak4pT> 30.0 and dR_ak8>0.8:
+                #        jet = ROOT.TLorentzVector()
+                #        jet.SetPtEtaPhiM(ak4pT,ak4eta,ak4phi,ak4mass)
+                #        jet.qgid = getattr(self,"AK4Puppijet"+str(iak4)+"_qgid")[0]
+                #        jet.csv  = getattr(self,"AK4Puppijet"+str(iak4)+"_csv")[0]
+                #        QuarkJets.append(jet)
+                #print "N un-matched jet = ", len(QuarkJets)
+                #for qj in QuarkJets:
+                #    print "[QuarkJets cand: pt=%.3f , eta=%.3f"%( qj.Pt(),qj.Eta())
+                self.h_n_unMatchedAK4.Fill( len(QuarkJets), weight)
+                maxdEtaQQ, pair = QGLRutil.FindHighestDeta_qq(QuarkJets)
+                #print "highest dEta pair = ",pair, "mass = %.3f, QGLR = %.3f"%(QGLRutil.CalcMqq(QuarkJets,pair),QGLRutil.CalcQGLR(QuarkJets,pair))
+                Mqq  = QGLRutil.CalcMqq(QuarkJets,pair)
+                QGLR = QGLRutil.CalcQGLR(QuarkJets,pair)
+
 
             # Single Muon Control Regions
             if jpt_8 > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
@@ -1238,7 +1333,6 @@ class sampleContainer:
                     self.h_pt_ak8_sub1.Fill(jpt_8_sub1, weight)
                     self.h_pt_ak8_sub2.Fill(jpt_8_sub2, weight)
                     self.h_msd_ak8.Fill(jmsd_8, weight)
-		    self.h_rho_ak8.Fill(rh_8, weight)
                     self.h_msd_ak8_raw.Fill(jmsd_8_raw, weight)
                     self.h_dbtag_ak8.Fill(jdb_8, weight)
                     self.h_dbtag_ak8_sub1.Fill(jdb_8_sub1, weight)
@@ -1311,6 +1405,9 @@ class sampleContainer:
             if (not self._minBranches) and jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jt21P_8 < T21DDTCUT and isTightVJet:
                 if jdb_8 > self.DBTAGCUT:
                     # cut[9]=cut[9]+1
+                    self.h_QGLR.Fill(QGLR, weight)
+                    self.h_Mqq.Fill(Mqq, weight)
+                    self.h_Deta_qq.Fill(maxdEtaQQ, weight)
                     self.h_msd_ak8_topR6_pass.Fill(jmsd_8, weight)
                     self.h_msd_ak8_raw_SR_pass.Fill(jmsd_8_raw, weight)
                     self.h_msd_v_pt_ak8_topR6_pass.Fill(jmsd_8, jpt_8, weight)
@@ -1569,6 +1666,35 @@ class sampleContainer:
             return "||".join(tCuts) 
         else:
             return "1"
+    def get2017puWeight(self,MC_pu):
+        if type(MC_pu)==type(ROOT.TH1F()):
+            lpuMC = MC_pu
+        else:
+            f_puMC = ROOT.TFile.Open(MC_pu)
+            lpuMC= f_puMC.Get("Pu")
+            lpuMC.SetDirectory(0)
+            f_puMC.Close()
+        lpuMC.Scale(1/lpuMC.Integral())
+        
+        f_pu2017  = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/pileup_Cert_294927-306462_13TeV_PromptReco_Collisions17_withVar.root"))
+
+        lpuData     = f_pu2017.Get("pileup")
+        lpuData_up  = f_pu2017.Get("pileup_plus")
+        lpuData_down= f_pu2017.Get("pileup_minus")
+
+        lpuData.Scale(1/lpuData.Integral())
+        lpuData_up.Scale(1/lpuData_up.Integral())
+        lpuData_down.Scale(1/lpuData_down.Integral())
+
+        lpuData.SetDirectory(0)
+        lpuData_up.SetDirectory(0) 
+        lpuData_down.SetDirectory(0)
+
+        lpuData.Divide(lpuMC)
+        lpuData_up.Divide(lpuMC)
+        lpuData_down.Divide(lpuMC)
+
+        return lpuData,lpuData_up,lpuData_down
 
 
 ##########################################################################################

@@ -7,6 +7,7 @@ import sys
 sys.path.append(os.path.expandvars("$CMSSW_BASE/src/DAZSLE/ZPrimePlusJet/analysis"))
 
 from sampleContainer import *
+from normSampleContainer import *
 
 def get2016files(isMuonCR):
     #from  commit: ed54500
@@ -185,58 +186,68 @@ def get2016files(isMuonCR):
 
 def get2017files(isMuonCR):
     idir = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier'
-    idir_new = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm'
+    idir_temp = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpchbb/zprimebits-v12.04/cvernier/'
+    idir_1207 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07-puWeight/norm'
+    idir_1208 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08/norm'
     idirData = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.07/sklim'
+    idir_1401 = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/'
+    idir_1401skim = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/'
 
     tfiles = {
-        'hqq125': #[idir + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted_corrected.root'],
-                  #[idir + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
-                  [idir_new + '/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+        'hqq125': #[idir_temp + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted_corrected.root'],
+                  #[idir_temp + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
+                  [idir_1207 + '/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
                   #[idirData + '/GluGluHToBB_M125_13TeV_powheg_pythia8_YR4_1000pb_weighted.root'],
-        # 'VBFHbb': [idir+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
-        'vbfhqq125': [idir_new + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root'],
-        'zhqq125': [idir_new + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                    idir_new + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root',
-                    idir_new + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                    idir_new + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-        'whqq125': [idir_new + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
-                    idir_new + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
-        'tthqq125': [idir_new + '/ttHTobb_M125_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root'],
+        # 'VBFHbb': [idir_temp+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
+        'vbfhqq125': [idir_1207 + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root'],
+        'zhqq125': [idir_1207 + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                    idir_1207 + '/ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_herwigpp_1000pb_weighted.root',
+                    idir_1207 + '/ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                    idir_1207 + '/ggZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+        'whqq125': [idir_1207 + '/WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
+                    idir_1207 + '/WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+        'tthqq125': [idir_1207 + '/ttHTobb_M125_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root'],
         # ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV_powheg_pythia8_1000pb_weighted.root'],
-        'vvqq': [idir_new + '/WW_TuneCP5_13TeV_pythia8_1000pb_weighted.root',
-                 idir_new + '/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root',
-                 idir_new + '/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root'],
-        'zqq': [idir + '/DYJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
+        'vvqq': [idir_1207 + '/WW_TuneCP5_13TeV_pythia8_1000pb_weighted.root',
+                 idir_1207 + '/ZZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root',
+                 idir_1207 + '/WZ_TuneCP5_13TeV_pythia8_1000pb_weighted.root'],
+        'zqq':   {
+                            'ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV': [idir_1401skim + 'ZJetsToQQ_HT400to600_qc19_4j_TuneCP5_13TeV*.root'],
+                            'ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV': [idir_1401skim + 'ZJetsToQQ_HT600to800_qc19_4j_TuneCP5_13TeV*.root'],
+                            'ZJetsToQQ_HT-800toInf_qc19_4j_TuneCP5_13TeV':[idir_1401skim + 'ZJetsToQQ_HT_800toInf_qc19_4j_TuneCP5_13TeV*.root'],
+                  },
         'zll': [idir + '/DYJetsToLL_M_50_13TeV_ext_1000pb_weighted.root'],
         # ZJetsToQQ_HT600toInf_13TeV_madgraph_1000pb_weighted.root'],#DYJetsToQQ_HT180_13TeV_1000pb_weighted.root '],
-        'stqq': [idir_new + '/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root',
-                 idir_new + '/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
-                 idir_new + '/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
-                 idir_new + '/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root',
-                 idir_new + '/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root'],
-        # 'W':  [idir+'/WJetsToQQ_HT_600ToInf_13TeV_1000pb_weighted.root'],
-        'wqq': [idir + '/WJetsToQQ_HT180_13TeV_1000pb_weighted_v1204.root'],
-        'wlnu': [idir + '/WJetsToLNu_HT_100To200_13TeV_1000pb_weighted.root',
-                 idir + '/WJetsToLNu_HT_200To400_13TeV_1000pb_weighted.root',
-                 idir + '/WJetsToLNu_HT_400To600_13TeV_1000pb_weighted.root',
-                 idir + '/WJetsToLNu_HT_600To800_13TeV_1000pb_weighted.root',
-                 idir + '/WJetsToLNu_HT_800To1200_13TeV_1000pb_weighted.root',
-                 idir + '/WJetsToLNu_HT_1200To2500_13TeV_1000pb_weighted.root'],
+        'stqq': [idir_1207 + '/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8_noPF_1000pb_weighted.root',
+                 idir_1207 + '/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
+                 idir_1207 + '/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV_powheg_pythia8_1000pb_weighted.root',
+                 idir_1207 + '/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root',
+                 idir_1207 + '/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8_1000pb_weighted.root'],
+        'wqq'         : {
+                              'WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV': [idir_1401skim + 'WJetsToQQ_HT400to600_qc19_3j_TuneCP5_13TeV*.root'],
+                              'WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV': [idir_1401skim + 'WJetsToQQ_HT600to800_qc19_3j_TuneCP5_13TeV*.root'],
+                              'WJetsToQQ_HT-800toInf_qc19_3j_TuneCP5_13TeV':[idir_1401skim + 'WJetsToQQ_HT_800toInf_qc19_3j_TuneCP5_13TeV*.root'],
+                         },
+        'wlnu':         {
+                              # "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"               :[ idir_1401skim+'WJetsToLNu_TuneCP5_13TeV*.root'],
+                               "WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8"   :[ idir_1401skim+'WJetsToLNu_HT_200To400_*.root'],
+                               "WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8"   :[ idir_1401skim+'WJetsToLNu_HT_400To600_*.root'],
+                               "WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8"   :[ idir_1401skim+'WJetsToLNu_HT_600To800_*.root'],
+                               "WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8"  :[ idir_1401skim+'WJetsToLNu_HT_800To1200_*.root'],
+                               "WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8" :[ idir_1401skim+'WJetsToLNu_HT_1200To2500_*.root'],
+                              # "WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8" :[ idir_1401skim+'WJetsToLNu_HT_2500ToInf*.root'],
+                            },
         # 'TTbar':  [idir+'/TTJets_13TeV_1000pb_weighted.root'], #MadGraph is the old default
-        'tqq': [idir_new + '/TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root',
-		        idir_new + '/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root'],  # Powheg is the new default
-        'qcd': [#idir_new + '/QCD_HT100to200_13TeV_1000pb_weighted.root',
-                #idir_new + '/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
-                idir_new + '/QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
-                idir_new + '/QCD_HT500to700_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
-                idir_new + '/QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
-                idir_new + '/QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root',
-                idir_new + '/QCD_HT1500to2000_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root',
-                idir_new + '/QCD_HT2000toInf_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root'],
-        'Phibb50': [idir + '/Spin0_ggPhi12j_g1_50_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'Phibb75': [idir + '/Spin0_ggPhi12j_g1_75_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'Phibb150': [idir + '/Spin0_ggPhi12j_g1_150_Scalar_13TeV_madgraph_1000pb_weighted.root'],
-        'Phibb250': [idir + '/Spin0_ggPhi12j_g1_250_Scalar_13TeV_madgraph_1000pb_weighted.root'],
+        'tqq': [idir_1207 + '/TTToHadronic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root',
+		        idir_1207 + '/TTToSemiLeptonic_TuneCP5_13TeV_powheg_pythia8_byLumi_1000pb_weighted.root'],  # Powheg is the new default
+        'qcd': [#idir_1207 + '/QCD_HT100to200_13TeV_1000pb_weighted.root',
+                #idir_1207 + '/QCD_HT200to300_13TeV_all_1000pb_weighted.root',
+                idir_1207 + '/QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
+                idir_1207 + '/QCD_HT500to700_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
+                idir_1207 + '/QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8_noPF_byLumi_1000pb_weighted.root',
+                idir_1207 + '/QCD_HT1000to1500_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root',
+                idir_1207 + '/QCD_HT1500to2000_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root',
+                idir_1207 + '/QCD_HT2000toInf_TuneCP5_13TeV_madgraph_pythia8_1000pb_weighted.root'],
         'data_obs': [idirData + '/JetHTRun2017C_17Nov2017_v1_noPF.root',
                      idirData + '/JetHTRun2017D_17Nov2017_v1_noPF.root',
                      idirData + '/JetHTRun2017E_17Nov2017_v1_noPF.root',
@@ -263,6 +274,7 @@ def main(options, args):
     lumi = options.lumi
     muonCR = options.muonCR
     dbtagmin = options.dbtagmin
+    dbtagcut = options.dbtagcut
     is2017   = options.is2017
     sfData   = options.sfData
 
@@ -277,55 +289,16 @@ def main(options, args):
     outfile = ROOT.TFile(options.odir + "/" + fileName, "recreate")
     
     if is2017:
-        tfiles = get2017files(muonCR)
+        #tfiles = get2017files(muonCR)
+        samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"r")
+        if muonCR:
+            tfiles  = json.load(samplefiles)['Hbb_create_2017_muCR']
+        else:
+            tfiles  = json.load(samplefiles)['Hbb_create_2017']
+        puOpt  = "2017"
     else:
         tfiles = get2016files(muonCR)
-
-
-    print "Signals... "
-    sigSamples = {}
-    sigSamples['hqq125'] = sampleContainer('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    sigSamples['tthqq125'] = sampleContainer('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    sigSamples['vbfhqq125'] = sampleContainer('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1',True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    sigSamples['whqq125'] = sampleContainer('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    sigSamples['zhqq125'] = sampleContainer('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    print "Backgrounds..."
-    bkgSamples = {}
-    bkgSamples['wqq'] = sampleContainer('wqq', tfiles['wqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    bkgSamples['zqq'] = sampleContainer('zqq', tfiles['zqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    if not options.skipQCD:
-        bkgSamples['qcd'] = sampleContainer('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    bkgSamples['tqq'] = sampleContainer('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    bkgSamples['stqq'] = sampleContainer('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    bkgSamples['wlnu'] = sampleContainer('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    bkgSamples['zll'] = sampleContainer('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    bkgSamples['vvqq'] = sampleContainer('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-    print "Data..."
-    if not options.skipData:
-        if muonCR:
-            dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                     '((triggerBits&4)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-        else:
-            # 2017 triggerBits
-            triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
-                          "names":[
-                               "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
-                               "HLT_PFHT1050_v*",
-                               "HLT_AK8PFJet400_TrimMass30_v*",
-                               "HLT_AK8PFHT800_TrimMass50_v*",
-                               "HLT_PFJet500_v*",
-                               "HLT_AK8PFJet360_TrimMass30_v*",
-                               "HLT_AK8PFJet380_TrimMass30_v*",
-                               "HLT_AK8PFJet500_v*"]
-                      }
-            if is2017:
-                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                       'passJson', True, iSplit = options.iSplit, maxSplit = options.maxSplit,triggerNames=triggerNames)
-            else:
-                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                       '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit)
-
-    hall = {}
+        puOpt  = "2016"
 
     plots = ['h_msd_v_pt_ak8_topR6_N2_pass', 'h_msd_v_pt_ak8_topR6_N2_fail',
              # SR with N2DDT @ 26% && db > 0.9, msd corrected
@@ -361,17 +334,77 @@ def main(options, args):
                  'h_msd_ak8_muCR4_N2_fail_PuUp', 'h_msd_ak8_muCR4_N2_fail_PuDown',
                  ]
 
+    print "Signals... "
+    sigSamples = {}
+    sigSamples['hqq125'] = sampleContainer('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['tthqq125'] = sampleContainer('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['vbfhqq125'] = sampleContainer('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['whqq125'] = sampleContainer('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['zhqq125'] = sampleContainer('zhqq125', tfiles['zhqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    print "Backgrounds..."
+    bkgSamples = {}
+
+    if options.is2017:
+        bkgSamples['wqq']  = normSampleContainer('wqq',tfiles['wqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
+        bkgSamples['zqq']  = normSampleContainer('zqq',tfiles['zqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
+        bkgSamples['wlnu'] = normSampleContainer('wlnu',tfiles['wlnu'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="default").addPlots(plots)
+    else:
+        bkgSamples['wqq']  = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="2016")
+        bkgSamples['zqq']  = sampleContainer('zqq',tfiles['zqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="2016")
+        bkgSamples['wlnu'] = sampleContainer('wlnu', tfiles['wlnu'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt="2016")
+    if not options.skipQCD:
+        bkgSamples['qcd'] = sampleContainer('qcd', tfiles['qcd'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    bkgSamples['tqq'] = sampleContainer('tqq', tfiles['tqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    bkgSamples['stqq'] = sampleContainer('stqq', tfiles['stqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    bkgSamples['zll'] = sampleContainer('zll', tfiles['zll'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt="2016")
+    bkgSamples['vvqq'] = sampleContainer('vvqq', tfiles['vvqq'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    print "Data..."
+    if not options.skipData:
+        if muonCR:
+            dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
+                                     '((triggerBits&4)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+        else:
+            # 2017 triggerBits
+            triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
+                          "names":[
+                               "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
+                               "HLT_PFHT1050_v*",
+                               "HLT_AK8PFJet400_TrimMass30_v*",
+                               "HLT_AK8PFHT800_TrimMass50_v*",
+                               "HLT_PFJet500_v*",
+                               "HLT_AK8PFJet360_TrimMass30_v*",
+                               "HLT_AK8PFJet380_TrimMass30_v*",
+                               "HLT_AK8PFJet500_v*"]
+                      }
+            if is2017:
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
+                                       'passJson', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,triggerNames=triggerNames)
+            else:
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
+                                       '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+
+    hall = {}
+
+    normSamples =['wqq','zqq','wlnu']
     for plot in plots:
         tag = plot.split('_')[-1]  # 'pass' or 'fail' or systematicName
         if tag not in ['pass', 'fail']:
             tag = plot.split('_')[-2] + '_' + plot.split('_')[-1]  # 'pass_systematicName', 'pass_systmaticName', etc.
 
         for process, s in sigSamples.iteritems():
-            hall['%s_%s' % (process, tag)] = getattr(s, plot)
+            if options.is2017 and process in normSamples:
+                hall['%s_%s' % (process, tag)] = sigSamples[process][plot]   #get plot from normSampleContainer
+            else:
+                hall['%s_%s' % (process, tag)] = getattr(s, plot)           #get plot from SampleContainer
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
+
         for process, s in bkgSamples.iteritems():
-            hall['%s_%s' % (process, tag)] = getattr(s, plot)
+            if options.is2017 and process in normSamples:
+                hall['%s_%s' % (process, tag)] = bkgSamples[process][plot]     #get plot from normSampleContainer
+            else:
+                hall['%s_%s' % (process, tag)] = getattr(s, plot)           #get plot from SampleContainer
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
+
         if not options.skipData:
             hall['%s_%s' % ('data_obs', tag)] = getattr(dataSample, plot)
             hall['%s_%s' % ('data_obs', tag)].SetName('%s_%s' % ('data_obs', tag))
@@ -395,8 +428,10 @@ if __name__ == '__main__':
     parser.add_option('-o', '--odir', dest='odir', default='./', help='directory to write histograms', metavar='odir')
     parser.add_option('-m', '--muonCR', action='store_true', dest='muonCR', default=False, help='for muon CR',
                       metavar='muonCR')
-    parser.add_option('-d', '--dbtagmin', dest='dbtagmin', default=-99., type="float",
-                      help='left bound to btag selection', metavar='dbtagmin')
+    parser.add_option('--dbtagmin', dest='dbtagmin', default=-99., type="float",
+                      help='left bound to btag selection(fail region lower bound)', metavar='dbtagmin')
+    parser.add_option('--dbtagcut', dest='dbtagcut', default=0.9, type="float",
+                      help='btag selection for cut value(pass region lower bound)', metavar='dbtagcut')
     parser.add_option('--skip-qcd', action='store_true', dest='skipQCD', default=False, help='skip QCD', metavar='skipQCD')
     parser.add_option('--skip-data', action='store_true', dest='skipData', default=False, help='skip Data', metavar='skipData')
     parser.add_option("--max-split", dest="maxSplit", default=1, type="int", help="max number of jobs", metavar="maxSplit")
