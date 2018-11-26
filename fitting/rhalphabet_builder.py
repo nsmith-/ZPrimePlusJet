@@ -20,10 +20,16 @@ import tools as tools
 from RootIterator import RootIterator
 from hist import *
 
-BB_SF = 0.91
-BB_SF_ERR = 0.03
-V_SF = 0.993
-V_SF_ERR = 0.043
+#2016 SF
+#BB_SF     = 0.91
+#BB_SF_ERR = 0.03
+V_SF      = 0.993
+V_SF_ERR  = 0.043
+#2017 SF
+BB_SF     = 0.72
+BB_SF_ERR = 0.06
+#V_SF      = 0.888
+#V_SF_ERR  = 0.025
 
 
 ##############################################################################
@@ -468,7 +474,8 @@ class RhalphabetBuilder():
         self._lEffQCD.setConstant(False)
 
         polynomial_variables = []
-        self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", -30, 30)
+        #self.buildPolynomialArray(polynomial_variables, self._poly_degree_pt, self._poly_degree_rho, "p", "r", -30, 30)
+        self.buildPolynomialArray(polynomial_variables, self._poly_degree_rho, self._poly_degree_pt, "r", "p", -30, 30)
         print "polynomial_variables=",
         print polynomial_variables
 
