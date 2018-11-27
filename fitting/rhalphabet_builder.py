@@ -42,9 +42,9 @@ class RhalphabetBuilder():
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
         if suffix:
-            self._suffix = suffix 
+            if suffix[0]!='_': self._suffix = '_'+suffix 
         else:
-            self._suffix = ""
+            self._suffix = ''
         print "RhalphabetBuilder::init : suffix = ", self._suffix
 
         self._output_path = "{}/base.root".format(out_dir)
