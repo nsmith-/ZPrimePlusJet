@@ -76,6 +76,7 @@ if __name__ == '__main__':
     script_group.add_option("--lumi", dest="lumi", default=41.3, type="float", help="luminosity", metavar="lumi")
     script_group.add_option("--is2017"  , dest="is2017", action='store_true', default=False, help="use 2017 files", metavar="is2017")
     script_group.add_option("--sfData" , dest="sfData", default=1, type="int", help="process 1/sf of data", metavar="sfData")
+    script_group.add_option("--region" , dest="region", default='topR6_N2',choices=['topR6_N2','QGquark','QGgluon'], help="region for pass/fail doubleB tag", metavar="region")
     parser.add_option_group(script_group)
 
     (options, args) = parser.parse_args()
