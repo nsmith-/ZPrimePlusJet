@@ -173,8 +173,10 @@ class RhalphabetBuilder():
             rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
             rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
 
-            hist_up.Scale(rescaled_int_up/hist_up.Integral())
-            hist_down.Scale(rescaled_int_down/hist_down.Integral())
+            if hist_up.Integral()>0:
+                hist_up.Scale(rescaled_int_up/hist_up.Integral())
+            if hist_down.Integral()>0:
+                hist_down.Scale(rescaled_int_down/hist_down.Integral())
 
             # validation
             self._outfile_validation.cd()
