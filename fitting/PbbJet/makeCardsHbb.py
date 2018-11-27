@@ -165,9 +165,9 @@ def main(options,args):
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group ='
         if options.forcomb:
-            qcdGroupString = 'qcd2017 group = qcd2017eff'
+            qcdGroupString = 'qcd2017 group = qcd2017eff%s'%options.suffix
         else:
-            qcdGroupString = 'qcd group = qcdeff'
+            qcdGroupString = 'qcd group = qcdeff%s'%options.suffix
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
@@ -211,7 +211,11 @@ def main(options,args):
         tag = "cat"+str(i)
         dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
         for l in linel:
-            if 'JES' in l:
+            if 'shapes qcd' in l:
+                newline = l+options.suffix
+            elif 'shapes qcd2017' in l:
+                newline = l+options.suffix
+            elif 'JES' in l:
                 newline = jesString
             elif 'JER' in l:
                 newline = jerString
@@ -285,11 +289,17 @@ def main(options,args):
                         
         for im in range(numberOfMassBins):
             if options.forcomb:
-                dctmp.write("qcd2017_fail_%s_Bin%i flatParam \n" % (tag,im+1))
-                qcdGroupString += ' qcd2017_fail_%s_Bin%i'%(tag,im+1)
+                dctmp.write("qcd2017_fail_%s_Bin%i%s flatParam \n" % (tag,im+1,options.suffix))
+                qcdGroupString += ' qcd2017_fail_%s_Bin%i%s'%(tag,im+1,options.suffix)
             else:
-                dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
-                qcdGroupString += ' qcd_fail_%s_Bin%i'%(tag,im+1)
+                dctmp.write("qcd_fail_%s_Bin%i%s flatParam \n" % (tag,im+1,options.suffix))
+                qcdGroupString += ' qcd_fail_%s_Bin%i%s'%(tag,im+1,options.suffix)
+        if options.forcomb:
+            flatPars = ['r1p0', 'r2p0', 'r0p1', 'r1p1', 'r2p1', 'qcd2017eff']
+        else:
+            flatPars = ['r1p0', 'r2p0', 'r0p1', 'r1p1', 'r2p1', 'qcdeff']
+        for flatPar in flatPars:
+            dctmp.write('%s%s flatParam \n'%(flatPar,options.suffix))
 
         dctmp.write(mcStatGroupString + "\n")
         dctmp.write(qcdGroupString + "\n")
@@ -347,9 +357,12 @@ if __name__ == '__main__':
     parser.add_option('--for-comb', action='store_true', dest='forcomb', default =False,help='use 2017 qcd', metavar='forcomb')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
+    parser.add_option('--suffix', dest='suffix', default='', help='suffix for conflict variables',metavar='suffix')
 
     (options, args) = parser.parse_args()
 
+    if options.suffix!='':
+        options.suffix='_'+options.suffix
     import tdrstyle
     tdrstyle.setTDRStyle()
     r.gStyle.SetPadTopMargin(0.10)
