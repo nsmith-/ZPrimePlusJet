@@ -88,7 +88,7 @@ if __name__ == '__main__':
     parser.add_option('--addHptShape',action='store_true',dest='addHptShape',default =False,help='add H pt shape unc', metavar='addHptShape')
     parser.add_option('--loadfit', dest='loadfit', default=None, help='load qcd polynomial parameters from alternative rhalphabase.root',metavar='loadfit')
     parser.add_option('--is2017', dest='is2017', action='store_true', default=False, help='specify 2017 SF and rename qcd eff.',metavar='is2017')
-    parser.add_option('--suffix', dest='suffix', default=None, help='suffix for conflict variables',metavar='suffix')
+    parser.add_option('--suffix', dest='suffix', default='', help='suffix for conflict variables',metavar='suffix')
 
     (options, args) = parser.parse_args()
 

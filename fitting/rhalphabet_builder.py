@@ -7,8 +7,7 @@ import math
 import sys
 import time
 import array
-import re
-
+import re 
 #r.gSystem.Load("~/Dropbox/RazorAnalyzer/python/lib/libRazorRun2.so")
 r.gSystem.Load(os.getenv('CMSSW_BASE')+'/lib/'+os.getenv('SCRAM_ARCH')+'/libHiggsAnalysisCombinedLimit.so')
 # r.gInterpreter.GenerateDictionary("std::pair<std::string, RooDataHist*>", "map;string;RooDataHist.h")
@@ -42,7 +41,10 @@ class RhalphabetBuilder():
         self._freeze = freeze_poly
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
-        self._suffix = suffix 
+        if suffix:
+            self._suffix = suffix 
+        else:
+            self._suffix = ""
         print "RhalphabetBuilder::init : suffix = ", self._suffix
 
         self._output_path = "{}/base.root".format(out_dir)
@@ -252,18 +254,12 @@ class RhalphabetBuilder():
         for cat in categories:
             norms_b = r.RooArgList()
             norms_s = r.RooArgList()
+            norms_b.add(wralphabase[cat].function('qcd_%s%s_norm' % (cat, self._suffix)))
+            norms_s.add(wralphabase[cat].function('qcd_%s%s_norm' % (cat, self._suffix)))
             pdfs_b = r.RooArgList()
             pdfs_s = r.RooArgList()
-            if self._suffix:
-                norms_b.add(wralphabase[cat].function('qcd_%s_%s_norm' %( cat,self._suffix)))
-                norms_s.add(wralphabase[cat].function('qcd_%s_%s_norm' %( cat,self._suffix)))
-                pdfs_b.add(wralphabase[cat].pdf('qcd_%s_%s'            %( cat,self._suffix)))
-                pdfs_s.add(wralphabase[cat].pdf('qcd_%s_%s'            %( cat,self._suffix)))
-            else:
-                norms_b.add(wralphabase[cat].function('qcd_%s_norm' % cat))
-                norms_s.add(wralphabase[cat].function('qcd_%s_norm' % cat))
-                pdfs_b.add(wralphabase[cat].pdf('qcd_%s' % cat))
-                pdfs_s.add(wralphabase[cat].pdf('qcd_%s' % cat))
+            pdfs_b.add(wralphabase[cat].pdf('qcd_%s%s' % (cat, self._suffix)))
+            pdfs_s.add(wralphabase[cat].pdf('qcd_%s%s' % (cat, self._suffix)))
 
             data[cat] = wbase[cat].data('data_obs_%s' % cat)
             for proc in (bkgs + sigs):
@@ -524,14 +520,9 @@ class RhalphabetBuilder():
 
             # Now define the passing cateogry based on the failing (make sure it can't go negative)
             lArg = r.RooArgList(fail_bin_var, roopolyarray, self._lEffQCD)
-            if self._suffix:
-                pass_bin_var = r.RooFormulaVar(rhalph_bkgd_name + "_pass_" + category +"_"+self._suffix+ "_Bin" + str(mass_bin),
-                                               rhalph_bkgd_name + "_pass_" + category +"_"+self._suffix+ "_Bin" + str(mass_bin),
-                                               "@0*max(@1,0)*@2", lArg)
-            else:
-                pass_bin_var = r.RooFormulaVar(rhalph_bkgd_name + "_pass_" + category + "_Bin" + str(mass_bin),
-                                               rhalph_bkgd_name + "_pass_" + category + "_Bin" + str(mass_bin),
-                                               "@0*max(@1,0)*@2", lArg)
+            pass_bin_var = r.RooFormulaVar(rhalph_bkgd_name + "_pass_" + category + self._suffix + "_Bin" + str(mass_bin),
+                                           rhalph_bkgd_name + "_pass_" + category + self._suffix + "_Bin" + str(mass_bin),
+                                           "@0*max(@1,0)*@2", lArg)
             print "Pass=fail*poly*eff RooFormulaVar:"
             print pass_bin_var.Print()
 
@@ -556,31 +547,17 @@ class RhalphabetBuilder():
         # print "Printing pass_bins:"
         # for i in xrange(pass_bins.getSize()):
         #    pass_bins[i].Print()
-        if self._suffix:
-            pass_rparh = r.RooParametricHist(rhalph_bkgd_name + "_pass_" + category+"_"+self._suffix, 
-                                             rhalph_bkgd_name + "_pass_" + category+"_"+self._suffix,
-                                             self._lMSD, pass_bins, fail_histograms["data_obs"])
-            fail_rparh = r.RooParametricHist(rhalph_bkgd_name + "_fail_" + category+"_"+self._suffix,
-                                             rhalph_bkgd_name + "_fail_" + category+"_"+self._suffix,
-                                             self._lMSD, fail_bins, fail_histograms["data_obs"])
-        else:
-            pass_rparh = r.RooParametricHist(rhalph_bkgd_name + "_pass_" + category, rhalph_bkgd_name + "_pass_" + category,
-                                             self._lMSD, pass_bins, fail_histograms["data_obs"])
-            fail_rparh = r.RooParametricHist(rhalph_bkgd_name + "_fail_" + category, rhalph_bkgd_name + "_fail_" + category,
-                                             self._lMSD, fail_bins, fail_histograms["data_obs"])
+        pass_rparh = r.RooParametricHist(rhalph_bkgd_name + "_pass_" + category + self._suffix, rhalph_bkgd_name + "_pass_" + category + self._suffix,
+                                         self._lMSD, pass_bins, fail_histograms["data_obs"])
+        fail_rparh = r.RooParametricHist(rhalph_bkgd_name + "_fail_" + category + self._suffix, rhalph_bkgd_name + "_fail_" + category + self._suffix,
+                                         self._lMSD, fail_bins, fail_histograms["data_obs"])
         print "Print pass and fail RooParametricHists"
         pass_rparh.Print()
         fail_rparh.Print()
-        if self._suffix:
-            pass_norm = r.RooAddition(rhalph_bkgd_name + "_pass_" + category +"_"+self._suffix+ "_norm",
-                                      rhalph_bkgd_name + "_pass_" + category +"_"+self._suffix+ "_norm", pass_bins)
-            fail_norm = r.RooAddition(rhalph_bkgd_name + "_fail_" + category +"_"+self._suffix+ "_norm",
-                                      rhalph_bkgd_name + "_fail_" + category +"_"+self._suffix+ "_norm", fail_bins)
-        else:
-            pass_norm = r.RooAddition(rhalph_bkgd_name + "_pass_" + category + "_norm",
-                                      rhalph_bkgd_name + "_pass_" + category + "_norm", pass_bins)
-            fail_norm = r.RooAddition(rhalph_bkgd_name + "_fail_" + category + "_norm",
-                                      rhalph_bkgd_name + "_fail_" + category + "_norm", fail_bins)
+        pass_norm = r.RooAddition(rhalph_bkgd_name + "_pass_" + category + self._suffix + "_norm",
+                                  rhalph_bkgd_name + "_pass_" + category + self._suffix + "_norm", pass_bins)
+        fail_norm = r.RooAddition(rhalph_bkgd_name + "_fail_" + category + self._suffix + "_norm",
+                                  rhalph_bkgd_name + "_fail_" + category + self._suffix + "_norm", fail_bins)
         print "Printing NPass and NFail variables:"
         pass_norm.Print()
         fail_norm.Print()
@@ -589,17 +566,10 @@ class RhalphabetBuilder():
         # Now write the wrokspace with the rooparamhist
         pass_workspace = r.RooWorkspace("w_pass_" + str(category))
         fail_workspace = r.RooWorkspace("w_fail_" + str(category))
-        if self._suffix:
-            getattr(pass_workspace, 'import')(pass_rparh, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept(self._suffix,'x'))
-            getattr(pass_workspace, 'import')(pass_norm, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept( self._suffix,'x'))
-            getattr(fail_workspace, 'import')(fail_rparh, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept(self._suffix,'x'))
-            getattr(fail_workspace, 'import')(fail_norm, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept( self._suffix,'x'))
-        else:
-            getattr(pass_workspace, 'import')(pass_rparh, r.RooFit.RecycleConflictNodes())
-            getattr(pass_workspace, 'import')(pass_norm, r.RooFit.RecycleConflictNodes() )
-            getattr(fail_workspace, 'import')(fail_rparh, r.RooFit.RecycleConflictNodes())
-            getattr(fail_workspace, 'import')(fail_norm, r.RooFit.RecycleConflictNodes() )
-
+        getattr(pass_workspace, 'import')(pass_rparh, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept(self._suffix.replace('_',''),'x'))
+        getattr(pass_workspace, 'import')(pass_norm, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept(self._suffix.replace('_',''),'x'))
+        getattr(fail_workspace, 'import')(fail_rparh, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept(self._suffix.replace('_',''),'x'))
+        getattr(fail_workspace, 'import')(fail_norm, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept(self._suffix.replace('_',''),'x'))
         print "Printing rhalphabet workspace:"
         pass_workspace.Print()
         if category.find("1") > -1:
@@ -627,20 +597,12 @@ class RhalphabetBuilder():
                 else:
                     lTmpArray.add(iVars[lNCount])
                 lNCount = lNCount + 1
-            if self._suffix:
-                pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) + "_" + str(pRVar)+"_"+self._suffix
-            else:
-                pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) + "_" + str(pRVar) 
-
+            pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) + "_" + str(pRVar) + self._suffix
             pPol = r.RooPolyVar(pLabel , pLabel , lPt, lTmpArray)
             lMassArray.add(pPol)
             self._all_vars.append(pPol)
 
-        if self._suffix:
-            lLabel = "Var_MassPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) +"_"+self._suffix
-        else:
-            lLabel = "Var_MassPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3))
-
+        lLabel = "Var_MassPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) + self._suffix
         lMassPol = r.RooPolyVar(lLabel , lLabel , lMass, lMassArray)
         self._all_vars.extend([lPt, lMass, lMassPol])
         return lMassPol
@@ -662,21 +624,14 @@ class RhalphabetBuilder():
                     print "lNCount = " + str(lNCount)
                     lTmpArray.add(iVars[lNCount])
                 lNCount = lNCount + 1
-            if self._suffix:
-                pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_" + str(pRVar)+"_"+self._suffix
-            else:
-                pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_" + str(pRVar) 
-
+            pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_" + str(pRVar) + self._suffix
             pPol = r.RooPolyVar(pLabel, pLabel, lPt, lTmpArray)
             print "pPol:"
             print pPol.Print()
             lRhoArray.add(pPol);
             self._all_vars.append(pPol)
 
-        if self._suffix:
-            lLabel = "Var_RhoPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_"+self._suffix
-        else:
-            lLabel = "Var_RhoPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3))
+        lLabel = "Var_RhoPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + self._suffix
         lRhoPol = r.RooPolyVar(lLabel, lLabel, lRho, lRhoArray)
         self._all_vars.extend([lPt, lRho, lRhoPol])
         return lRhoPol
