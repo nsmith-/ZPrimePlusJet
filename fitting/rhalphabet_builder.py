@@ -41,13 +41,15 @@ BB_SF_ERR = 0.06
 class RhalphabetBuilder():
     def __init__(self, pass_hists, fail_hists, input_file, out_dir, nr=2, np=1, mass_nbins=23, mass_lo=40, mass_hi=201,
                  blind_lo=110, blind_hi=131, rho_lo=-6, rho_hi=-2.1, blind=False, mass_fit=False, freeze_poly=False,
-                 remove_unmatched=False, input_file_loose=None):
+                 remove_unmatched=False, input_file_loose=None,suffix=None):
         self._pass_hists = pass_hists
         self._fail_hists = fail_hists
         self._mass_fit = mass_fit
         self._freeze = freeze_poly
         self._inputfile = input_file
         self._inputfile_loose = input_file_loose
+        self._suffix = suffix 
+        print "RhalphabetBuilder::init : suffix = ", self._suffix
 
         self._output_path = "{}/base.root".format(out_dir)
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
@@ -179,8 +181,10 @@ class RhalphabetBuilder():
             rescaled_int_up = datahist['%s_%s' % (proc, cat)].sumEntries() * (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Up)
             rescaled_int_down = datahist['%s_%s' % (proc, cat)].sumEntries() / (1. + (ipt-iptlo) * (total_unc-1.) / (ipthi-iptlo)) * (all_int / all_int_rescale_Down)
 
-            hist_up.Scale(rescaled_int_up/hist_up.Integral())
-            hist_down.Scale(rescaled_int_down/hist_down.Integral())
+            if hist_up.Integral()>0:
+                hist_up.Scale(rescaled_int_up/hist_up.Integral())
+            if hist_down.Integral()>0:
+                hist_down.Scale(rescaled_int_down/hist_down.Integral())
 
             # validation
             self._outfile_validation.cd()
@@ -272,6 +276,8 @@ class RhalphabetBuilder():
                                                               datahist['%s_%s' % (proc, cat)])
                 getattr(w, 'import')(datahist['%s_%s' % (proc, cat)], r.RooFit.RecycleConflictNodes())
                 getattr(w, 'import')(histpdf['%s_%s' % (proc, cat)], r.RooFit.RecycleConflictNodes())
+                #getattr(w, 'import')(datahist['%s_%s' % (proc, cat)], r.RooFit.RenameConflictNodes(self._suffix))
+                #getattr(w, 'import')(histpdf['%s_%s' % (proc, cat)] , r.RooFit.RenameConflictNodes(self._suffix))
                 if 'hqq125' in proc:
                     # signal
                     signorm['%s_%s' % (proc, cat)] = r.RooRealVar('signorm_%s_%s' % (proc, cat),
@@ -302,8 +308,10 @@ class RhalphabetBuilder():
             epdf_b[cat] = r.RooAddPdf('epdf_b_' + cat, 'epdf_b_' + cat, pdfs_b, norms_b)
             epdf_s[cat] = r.RooAddPdf('epdf_s_' + cat, 'epdf_s_' + cat, pdfs_s, norms_s)
 
-            getattr(w, 'import')(epdf_b[cat], r.RooFit.RecycleConflictNodes())
-            getattr(w, 'import')(epdf_s[cat], r.RooFit.RecycleConflictNodes())
+            #getattr(w, 'import')(epdf_b[cat], r.RooFit.RecycleConflictNodes())
+            #getattr(w, 'import')(epdf_s[cat], r.RooFit.RecycleConflictNodes())
+            getattr(w, 'import')(epdf_b[cat], r.RooFit.RenameConflictNodes(self._suffix))
+            getattr(w, 'import')(epdf_s[cat], r.RooFit.RenameConflictNodes(self._suffix))
 
         ## arguments = ["data_obs","data_obs",r.RooArgList(x),rooCat]
 
