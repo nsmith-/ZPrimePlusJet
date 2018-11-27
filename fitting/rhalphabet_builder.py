@@ -499,8 +499,9 @@ class RhalphabetBuilder():
                                                       polynomial_variables)
             else:
                 print ("Pt/Rho poly")
-                roopolyarray = self.buildRooPolyRhoArray(self._lPt.getVal(), self._lRho.getVal(), lUnity, lZero,
-                                                         polynomial_variables)
+                #roopolyarray = self.buildRooPolyRhoArray(self._lPt.getVal(), self._lRho.getVal(), lUnity, lZero,
+                #                                         polynomial_variables)
+                roopolyarray = self.buildRooPolyRhoArrayBernstein(self._lPt.getVal(),self._lRho.getVal(),lUnity,lZero,polynomial_variables)
             print "RooPolyArray:"
             roopolyarray.Print()
             fail_bin_content = 0
@@ -643,6 +644,61 @@ class RhalphabetBuilder():
         lRhoPol = r.RooPolyVar(lLabel, lLabel, lRho, lRhoArray)
         self._all_vars.extend([lPt, lRho, lRhoPol])
         return lRhoPol
+
+    def generate_bernstein_string(self, n):
+        # x = @(n+1)
+        monomials = []
+        for v in xrange(0, n+1):
+                normalization = 1. * math.factorial(n) / (math.factorial(v) * math.factorial(n - v))
+                monomials.append("({} * @{} * (@{}**{}) * ((1.-@{})**{}))".format(normalization, v, n+1, v, n+1, n-v))
+        return " + ".join(monomials)
+
+    def buildRooPolyRhoArrayBernstein(self, iPt, iRho, iQCD, iZero, iVars):
+
+        print "---- [buildRooPolyArrayBernstein]"
+
+        lPt = r.RooConstVar("Var_Pt_" + str(iPt) + "_" + str(iRho), "Var_Pt_" + str(iPt) + "_" + str(iRho), (iPt))
+        lPt_rescaled = r.RooConstVar("Var_Pt_rescaled_" + str(iPt) + "_" + str(iRho),
+                                     "Var_Pt_rescaled_" + str(iPt) + "_" + str(iRho),
+                                     ((iPt - self._pt_lo) / (self._pt_hi - self._pt_lo)))
+        lRho = r.RooConstVar("Var_Rho_" + str(iPt) + "_" + str(iRho), "Var_Rho_" + str(iPt) + "_" + str(iRho), (iRho))
+        lRho_rescaled = r.RooConstVar("Var_Rho_rescaled_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)),
+                                      "Var_Rho_rescaled_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)),
+                                      ((iRho - self._rho_lo) / (self._rho_hi - self._rho_lo)))
+
+        ptPolyString = self.generate_bernstein_string(self._poly_degree_pt)
+        rhoPolyString = self.generate_bernstein_string(self._poly_degree_rho)
+
+        lRhoArray = r.RooArgList()
+        lNCount = 0
+        for pRVar in range(0, self._poly_degree_rho + 1):
+            lTmpArray = r.RooArgList()
+            for pVar in range(0, self._poly_degree_pt + 1):
+                if lNCount == 0:
+                    lTmpArray.add(iQCD)  # for the very first constant (e.g. p0r0), just set that to 1
+                else:
+                    print "lNCount = " + str(lNCount)
+                    lTmpArray.add(iVars[lNCount])
+                    print "iVars[lNCount]: ", iVars[lNCount]
+                    print "iVars[lNCount]"
+                    iVars[lNCount].Print()
+                lNCount = lNCount + 1
+            pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3)) + "_" + str(pRVar)
+            lTmpArray.add(lPt_rescaled)
+            print "lTmpArray: ", lTmpArray.Print()
+            pPol = r.RooFormulaVar(pLabel, pLabel, ptPolyString, lTmpArray)
+            print "pPol:"
+            print pPol.Print("V")
+            lRhoArray.add(pPol)
+            self._all_vars.append(pPol)
+
+        lLabel = "Var_RhoPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iRho, 3))
+        lRhoArray.add(lRho_rescaled)
+        print "lRhoArray: ", lRhoArray.Print()
+        lRhoPol = r.RooFormulaVar(lLabel, lLabel, rhoPolyString, lRhoArray)
+        self._all_vars.extend([lPt_rescaled, lRho_rescaled, lRhoPol])
+        return lRhoPol
+
 
     def buildPolynomialArray(self, iVars, iNVar0, iNVar1, iLabel0, iLabel1, iXMin0, iXMax0):
 
