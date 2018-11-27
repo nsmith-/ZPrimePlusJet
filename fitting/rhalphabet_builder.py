@@ -561,10 +561,10 @@ class RhalphabetBuilder():
         # Now write the wrokspace with the rooparamhist
         pass_workspace = r.RooWorkspace("w_pass_" + str(category))
         fail_workspace = r.RooWorkspace("w_fail_" + str(category))
-        getattr(pass_workspace, 'import')(pass_rparh, r.RooFit.RecycleConflictNodes())
-        getattr(pass_workspace, 'import')(pass_norm, r.RooFit.RecycleConflictNodes())
-        getattr(fail_workspace, 'import')(fail_rparh, r.RooFit.RecycleConflictNodes())
-        getattr(fail_workspace, 'import')(fail_norm, r.RooFit.RecycleConflictNodes())
+        getattr(pass_workspace, 'import')(pass_rparh, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept('QGgluon','x'))
+        getattr(pass_workspace, 'import')(pass_norm, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept('QGgluon','x'))
+        getattr(fail_workspace, 'import')(fail_rparh, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept('QGgluon','x'))
+        getattr(fail_workspace, 'import')(fail_norm, r.RooFit.RecycleConflictNodes(), r.RooFit.RenameAllVariablesExcept('QGgluon','x'))
         print "Printing rhalphabet workspace:"
         pass_workspace.Print()
         if category.find("1") > -1:
@@ -593,12 +593,12 @@ class RhalphabetBuilder():
                     lTmpArray.add(iVars[lNCount])
                 lNCount = lNCount + 1
             pLabel = "Var_Pol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3)) + "_" + str(pRVar)
-            pPol = r.RooPolyVar(pLabel, pLabel, lPt, lTmpArray)
+            pPol = r.RooPolyVar(pLabel + '_QGgluon', pLabel + '_QGgluon', lPt, lTmpArray)
             lMassArray.add(pPol)
             self._all_vars.append(pPol)
 
         lLabel = "Var_MassPol_Bin_" + str(round(iPt, 2)) + "_" + str(round(iMass, 3))
-        lMassPol = r.RooPolyVar(lLabel, lLabel, lMass, lMassArray)
+        lMassPol = r.RooPolyVar(lLabel + '_QGgluon', lLabel + '_QGgluon', lMass, lMassArray)
         self._all_vars.extend([lPt, lMass, lMassPol])
         return lMassPol
 
