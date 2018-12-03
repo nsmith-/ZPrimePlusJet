@@ -46,12 +46,6 @@ tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*TQQEFF)/(1.0-TQQEFF)) tqqnor
 #tqqfailCATXnorm rateParam fail_CATX tqq (@0*(1.0-@1*5.523909e-02)/(1.0-5.523909e-02)) tqqnormSF,tqqeffSF
 tqqnormSF extArg 1.0 [0.0,10.0]
 tqqeffSF extArg 1.0 [0.0,10.0]
-r1p0 flatParam
-r2p0 flatParam
-r0p1 flatParam
-r1p1 flatParam
-r2p1 flatParam
-qcdeff flatParam
 #hbb rateParam 	    * tthqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
 #hbb rateParam 	    * whqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
 #hbb rateParam 	    * hqq125 $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/sm_br_yr4.root:br
