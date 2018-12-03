@@ -194,10 +194,11 @@ def get2017files(isMuonCR):
     idir_1401skim = 'root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v14.01/skim/'
 
     tfiles = {
-        'hqq125': #[idir_temp + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted_corrected.root'],
+        #'hqq125': #[idir_temp + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted_corrected.root'],
                   #[idir_temp + '/GluGluHToBB_M125_13TeV_powheg_pythia8_all_1000pb_weighted.root'],
-                  [idir_1207 + '/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
+                  #[idir_1207 + '/GluGluHToBB_M125_13TeV_powheg_pythia8_1000pb_weighted.root'],
                   #[idirData + '/GluGluHToBB_M125_13TeV_powheg_pythia8_YR4_1000pb_weighted.root'],
+	    'hqq125' :    { 'GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8' :[idir_1401+'GluGluHToBB_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8/*.root']},
         # 'VBFHbb': [idir_temp+'/VBFHToBB_M125_13TeV_amcatnlo_pythia8_1000pb_weighted.root'],
         'vbfhqq125': [idir_1207 + '/VBFHToBB_M_125_13TeV_powheg_pythia8_weightfix_1000pb_weighted.root'],
         'zhqq125': [idir_1207 + '/ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_1000pb_weighted.root',
@@ -350,7 +351,8 @@ def main(options, args):
 
     print "Signals... "
     sigSamples = {}
-    sigSamples['hqq125'] = sampleContainer('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    #sigSamples['hqq125'] = sampleContainer('hqq125', tfiles['hqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+    sigSamples['hqq125'] = normSampleContainer('hqq125',tfiles['hqq125'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,treeName='Events',puOpt="default").addPlots(plots)
     sigSamples['tthqq125'] = sampleContainer('tthqq125', tfiles['tthqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
     sigSamples['vbfhqq125'] = sampleContainer('vbfhqq125', tfiles['vbfhqq125'], 1, dbtagmin, lumi, False, False, '1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
     sigSamples['whqq125'] = sampleContainer('whqq125', tfiles['whqq125'], 1, dbtagmin, lumi, False, False, '1', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
@@ -399,7 +401,7 @@ def main(options, args):
 
     hall = {}
 
-    normSamples =['wqq','zqq','wlnu']
+    normSamples =['wqq','zqq','wlnu','hqq125']
     for plot in plots:
         tag = plot.split('_')[-1]  # 'pass' or 'fail' or systematicName
         if tag not in ['pass', 'fail']:
