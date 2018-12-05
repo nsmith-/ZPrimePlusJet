@@ -13,7 +13,8 @@ import array
 r.gSystem.Load(os.getenv('CMSSW_BASE') + '/lib/' + os.getenv('SCRAM_ARCH') + '/libHiggsAnalysisCombinedLimit.so')
 
 # including other directories
-# sys.path.insert(0, '../.')
+sys.path.insert(0, '../')
+sys.path.insert(0, '../../analysis/')
 from tools import *
 from hist import *
 

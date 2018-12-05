@@ -47,6 +47,8 @@ class RhalphabetBuilder():
         self._rhalphabet_output_path = "{}/rhalphabase.root".format(out_dir)
 
         self._outfile_validation = r.TFile.Open("{}/validation.root".format(out_dir), "RECREATE");
+        if not self._outfile_validation:
+            raise Exception("Could not make validation.root")
 
         self._mass_nbins = mass_nbins
         self._mass_lo = mass_lo
