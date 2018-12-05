@@ -41,6 +41,7 @@ def main(options,args):
     nSig = len(sigs)
     numberOfMassBins = 23    
     numberOfPtBins = 6
+    procsToRemove = []
 
     histoDict = {}
     histoDictLoose = {}
@@ -75,7 +76,7 @@ def main(options,args):
     #dctpl = open("datacardZbb.tpl")
     #dctpl = open("datacardZonly.tpl")
 
-    linel = [];
+    linel = []
     for line in dctpl: 
         print line.strip().split()
         linel.append(line.strip())
@@ -107,7 +108,9 @@ def main(options,args):
                 else:
                     jesErrs['%s_%s'%(proc,box)] =  1.0
                     jerErrs['%s_%s'%(proc,box)] =  1.0
-
+                    puErrs['%s_%s'%(proc,box)] =  1.0
+                    print "to remove: proc, cat, box, rate =", proc, "cat%i"%i, box, rate
+                    procsToRemove.append((proc, "cat%i"%i, box))
                 if i == 2:
                     scaleptErrs['%s_%s'%(proc,box)] =  0.05
                 elif i == 3:
@@ -143,8 +146,12 @@ def main(options,args):
                             
                         error = array.array('d',[0.0])
                         rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
-                        #mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+histo.GetBinError(j,i)/histo.Integral()
-                        mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                        if rate>0:
+                            mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
+                        else:
+                            mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
+                            if (proc, "cat%i"%i, box) not in procsToRemove:
+                                procsToRemove.append((proc, "cat%i"%i, box))
                     else:
                         mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0
                         
@@ -158,9 +165,9 @@ def main(options,args):
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group ='
         if options.forcomb:
-            qcdGroupString = 'qcd2017 group = qcd2017eff'
+            qcdGroupString = 'qcd2017 group = qcd2017eff%s'%options.suffix
         else:
-            qcdGroupString = 'qcd group = qcdeff'
+            qcdGroupString = 'qcd group = qcdeff%s'%options.suffix
         for box in boxes:
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
@@ -204,7 +211,11 @@ def main(options,args):
         tag = "cat"+str(i)
         dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
         for l in linel:
-            if 'JES' in l:
+            if 'shapes qcd' in l:
+                newline = l+options.suffix
+            elif 'shapes qcd2017' in l:
+                newline = l+options.suffix
+            elif 'JES' in l:
                 newline = jesString
             elif 'JER' in l:
                 newline = jerString
@@ -249,7 +260,7 @@ def main(options,args):
             for proc in sigs+bkgs:
                 if options.forcomb and '2017' in proc:
                     proc = proc.replace("2017","")
-                if options.noMcStatShape and proc!='qcd' and proc!='qcd2017':                        
+                if options.noMcStatShape and proc!='qcd' and proc!='qcd2017' and (proc, 'cat%i'%i, box) not in procsToRemove:
                     print 'include %s%scat%imcstat'%(proc,box,i)
                     dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
                     mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
@@ -278,16 +289,57 @@ def main(options,args):
                         
         for im in range(numberOfMassBins):
             if options.forcomb:
-                dctmp.write("qcd2017_fail_%s_Bin%i flatParam \n" % (tag,im+1))
-                qcdGroupString += ' qcd2017_fail_%s_Bin%i'%(tag,im+1)
+                dctmp.write("qcd2017_fail_%s_Bin%i%s flatParam \n" % (tag,im+1,options.suffix))
+                qcdGroupString += ' qcd2017_fail_%s_Bin%i%s'%(tag,im+1,options.suffix)
             else:
-                dctmp.write("qcd_fail_%s_Bin%i flatParam \n" % (tag,im+1))
-                qcdGroupString += ' qcd_fail_%s_Bin%i'%(tag,im+1)
+                dctmp.write("qcd_fail_%s_Bin%i%s flatParam \n" % (tag,im+1,options.suffix))
+                qcdGroupString += ' qcd_fail_%s_Bin%i%s'%(tag,im+1,options.suffix)
+        if options.forcomb:
+            flatPars = ['r1p0', 'r2p0', 'r0p1', 'r1p1', 'r2p1', 'qcd2017eff']
+        else:
+            flatPars = ['r1p0', 'r2p0', 'r0p1', 'r1p1', 'r2p1', 'qcdeff']
+        for flatPar in flatPars:
+            dctmp.write('%s%s flatParam \n'%(flatPar,options.suffix))
 
         dctmp.write(mcStatGroupString + "\n")
         dctmp.write(qcdGroupString + "\n")
+        dctmp.close()
+    def removeProc(proc, tag, box):
+        dctmp = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'r')
+        linel = []
+        firstProcessLine = True
+        for iline, line in enumerate(dctmp):
+            l = line.strip().split()
+            linel.append(l)
+        for iline, l in enumerate(linel):
+            if l[0]=='process' and firstProcessLine: 
+                totalProcs = len(l)-1
+                #procIndex = l.index(proc)
+                procIndex = [il for il, nl in enumerate(l) if nl == proc][0] # first instance of process (pass category)
+                if linel[iline-1][procIndex]!='%s_%s'%(box,tag):
+                    procIndex = [il for il, nl in enumerate(l) if nl == proc][1] # second instance of process (fail category)
+                if linel[iline-1][procIndex]=='%s_%s'%(box,tag):
+                    print "REMOVING", proc, tag, box                    
+                else:
+                    print "NOT REMOVING; NO MATCH", proc, tag, box                    
+                l.pop(procIndex)
+                linel[iline] = l
+                linel[iline-1].pop(procIndex)
+                firstProcessLine = False
+            elif not firstProcessLine and len(l) > 1 and l[1]=='group':
+                continue
+            elif not firstProcessLine and len(l)==totalProcs+1:
+                l.pop(procIndex)
+                linel[iline] = l
+            elif not firstProcessLine and len(l)==totalProcs+2:
+                l.pop(procIndex+1)     
+                linel[iline]= l
+        dctmp.close()
+        dctmp_w = open(options.odir+"/card_rhalphabet_%s.txt" % tag, 'w')
+        for l in linel: dctmp_w.write(' '.join(l)+'\n')
 
-
+    for proc, tag, box in procsToRemove: 
+        removeProc(proc, tag, box)
 ###############################################################
 
 
@@ -305,9 +357,12 @@ if __name__ == '__main__':
     parser.add_option('--for-comb', action='store_true', dest='forcomb', default =False,help='use 2017 qcd', metavar='forcomb')
     parser.add_option('--remove-unmatched', action='store_true', dest='removeUnmatched', default =False,help='remove unmatched', metavar='removeUnmatched')
     parser.add_option('--no-mcstat-shape', action='store_true', dest='noMcStatShape', default =False,help='change mcstat uncertainties to lnN', metavar='noMcStatShape')
+    parser.add_option('--suffix', dest='suffix', default='', help='suffix for conflict variables',metavar='suffix')
 
     (options, args) = parser.parse_args()
 
+    if options.suffix!='':
+        options.suffix='_'+options.suffix
     import tdrstyle
     tdrstyle.setTDRStyle()
     r.gStyle.SetPadTopMargin(0.10)
