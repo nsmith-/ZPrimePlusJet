@@ -7,54 +7,55 @@ def exec_me(command, dryRun=False):
     if not dryRun:
         os.system(command)
 
-def write_condor(exe='runjob.sh', arguments = [], files = [],dryRun=True):
-    job_name = exe.replace('.sh','.jdl')
-    out = 'universe = vanilla\n'
-    out += 'Executable = %s\n'%exe
-    out += 'Should_Transfer_Files = YES\n'
-    out += 'WhenToTransferOutput = ON_EXIT_OR_EVICT\n'
-    out += 'Transfer_Input_Files = %s,%s\n'%(exe,','.join(files))
-    out += 'Output = %s.stdout\n'%job_name
-    out += 'Error  = %s.stderr\n'%job_name
-    out += 'Log    = %s.log\n'   %job_name
-    #out += 'notify_user = jduarte1@FNAL.GOV\n'
-    #out += 'x509userproxy = /tmp/x509up_u42518\n'
-    out += 'Arguments = %s\n'%(' '.join(arguments))
-    out += 'Queue 1\n'
-    with open(job_name, 'w') as f:
+def write_condor(njobs, exe='runjob', files = [], dryRun=True):
+    fname = '%s.jdl' % exe
+    out = """universe = vanilla
+Executable = {exe}.sh
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT_OR_EVICT
+Transfer_Input_Files = {exe}.sh,{files}
+Output = {exe}.$(Process).stdout
+Error  = {exe}.$(Process).stderr
+Log    = {exe}.$(Process).log
+Arguments = $(Process) {njobs}
+Queue {njobs}
+    """.format(exe=exe, files=','.join(files), njobs=njobs)
+    with open(fname, 'w') as f:
         f.write(out)
     if not dryRun:
-        os.system("condor_submit %s"%job_name)
+        os.system("condor_submit %s" % fname)
 
-def write_bash(temp = 'runjob.sh', command = '' ,gitClone=""):
-    out = '#!/bin/bash\n'
-    out += 'date\n'
-    out += 'MAINDIR=`pwd`\n'
-    out += 'ls\n'
-    out += '#CMSSW from scratch (only need for root)\n'
-    out += 'export CWD=${PWD}\n'
-    out += 'export PATH=${PATH}:/cvmfs/cms.cern.ch/common\n'
-    out += 'export CMS_PATH=/cvmfs/cms.cern.ch\n'
-    out += 'export SCRAM_ARCH=slc6_amd64_gcc530\n'
-    out += 'scramv1 project CMSSW CMSSW_8_1_0\n'
-    out += 'cd CMSSW_8_1_0/src\n'
-    out += 'eval `scramv1 runtime -sh` # cmsenv\n'
-    out += gitClone + '\n'
-    out += 'cd ZPrimePlusJet\n'
-    out += 'echo "Execute with git status/log:"\n'
-    out += 'git status -uno \n'
-    out += 'git log -n 1 \n'
-    out += 'source setup.sh\n'
-    out += 'cd ${CWD}\n'
-    out += command + '\n'
-    out += 'echo "Inside $MAINDIR:"\n'
-    out += 'ls\n'
-    out += 'echo "DELETING..."\n'
-    out += 'rm -rf CMSSW_8_1_0\n'
-    out += 'rm -rf *.pdf *.C\n'
-    out += 'ls\n'
-    out += 'date\n'
-    with open(temp, 'w') as f:
+def write_bash(exe='runjob', command='', gitClone=""):
+    fname = '%s.sh' % exe
+    out = """#!/bin/bash
+date
+MAINDIR=`pwd`
+ls
+#CMSSW from scratch (only need for root)
+export CWD=${{PWD}}
+export PATH=${{PATH}}:/cvmfs/cms.cern.ch/common
+export CMS_PATH=/cvmfs/cms.cern.ch
+export SCRAM_ARCH=slc6_amd64_gcc530
+scramv1 project CMSSW CMSSW_8_1_0
+cd CMSSW_8_1_0/src
+eval `scramv1 runtime -sh` # cmsenv
+{gitClone}
+cd ZPrimePlusJet
+echo "Execute with git status/log:"
+git status -uno 
+git log -n 1 
+source setup.sh
+cd ${{CWD}}
+{command}
+echo "Inside $MAINDIR:"
+ls
+echo "DELETING..."
+rm -rf CMSSW_8_1_0
+rm -rf *.pdf *.C
+ls
+date
+""".format(command=command, gitClone=gitClone)
+    with open(fname, 'w') as f:
         f.write(out)
 
 if __name__ == '__main__':
@@ -62,6 +63,7 @@ if __name__ == '__main__':
     parser.add_option('--hadd', dest='hadd', action='store_true',default = False, help='hadd roots from subjobs', metavar='hadd')
     parser.add_option('--clean', dest='clean', action='store_true',default = False, help='clean submission files', metavar='clean')
     parser.add_option('-o', '--odir', dest='odir', default='./', help='directory to write histograms/job output', metavar='odir')
+    parser.add_option('-n', '--njobs', dest='njobs', default=500, type="int", help='Number of jobs to split into', metavar='njobs')
 
     script_group  = OptionGroup(parser, "script options")
     script_group.add_option("--bb", action='store_true', dest="bb", default=False, help="sort by double b-tag")
@@ -83,14 +85,14 @@ if __name__ == '__main__':
     hadd  = options.hadd
     dryRun= False 
 
-    maxJobs = 500
+    maxJobs = options.njobs
 
     outpath= options.odir
     #gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
     gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
 
     #Small files used by the exe
-    files = ['']
+    files = []
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
     command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/fitting/PbbJet/Hbb_create.py -o ${MAINDIR}/ --i-split $1 --max-split $2'
     #Add script options to job command
@@ -121,12 +123,9 @@ if __name__ == '__main__':
         os.chdir(outpath)
         print "submitting jobs from : ",os.getcwd()
     
-        for iJob in range(0,maxJobs):
-            #if not iJob==0: continue
-            arguments = [ str(iJob), str(maxJobs)]
-            exe       = "runjob_%s.sh"%iJob
-            write_bash(exe, command,gitClone)
-            write_condor(exe, arguments, files,dryRun)
+        exe = "runjob"
+        write_bash(exe, command, gitClone)
+        write_condor(maxJobs, exe, files, dryRun)
     else:
         print "Trying to hadd subjob files from %s/%s"%(outpath,subFileName)
         nOutput = len(glob.glob("%s/%s"%(outpath,subFileName)))
@@ -137,8 +136,8 @@ if __name__ == '__main__':
             exec_me("rm %s/%s"%(outpath,subFileName),dryRun)
             if options.clean:
                 print "Cleaning submission files..." 
-                #remove all but _0 file
-                for i in range(1,10):
-                    exec_me("rm %s/runjob_%s*"%(outpath,i),dryRun)
+                exec_me("rm %s/runjob.*.stdout" % (outpath,), dryRun)
+                exec_me("rm %s/runjob.*.stderr" % (outpath,), dryRun)
+                exec_me("rm %s/runjob.*.log" % (outpath,), dryRun)
         else:
             print "%s/%s jobs done, not hadd-ing"%(nOutput,maxJobs)
