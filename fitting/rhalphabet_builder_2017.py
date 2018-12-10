@@ -79,7 +79,7 @@ class RhalphabetBuilder():
         self._lMSD.setRange('Low', self._mass_lo, self._mass_blind_lo)
         self._lMSD.setRange('Blind', self._mass_blind_lo, self._mass_blind_hi)
         self._lMSD.setRange('High', self._mass_blind_hi, self._mass_hi)
-        # self._lMSD.setBins(self._mass_nbins)
+        self._lMSD.setBins(self._mass_nbins)
         self._lPt = r.RooRealVar("pt", "pt", self._pt_lo, self._pt_hi)
         self._lPt.setBins(self._nptbins)
         self._lRho = r.RooFormulaVar("rho", "log(x*x/pt/pt)", r.RooArgList(self._lMSD, self._lPt))
