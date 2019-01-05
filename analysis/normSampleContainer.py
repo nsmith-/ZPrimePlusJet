@@ -20,13 +20,15 @@ class normSampleContainer:
         self.xsectionFile    = os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/xSections.dat")
 
         # subSamples = {subsampleName: [paths]}
+	print self.subSamples
         for subSampleName,paths in self.subSamples.iteritems():
-            xSection = self.getXsection(subSampleName,self.xsectionFile)   # in pb
+            xSection = self.getXsection(subSampleName,self.xsectionFile, isData)   # in pb
             tfiles = {}
             tfiles[subSampleName] = paths 
             print "normSampleContainer:: subSample = %s , Nfiles = %s , basePath = %s"%(subSampleName, len(tfiles[subSampleName]), paths[0].replace(paths[0].split("/")[-1],""))
             #print datetime.datetime.now()
             Nentries,h_puMC,checksum           = self.getNentriesAndPu(tfiles[subSampleName])
+	    if isData: h_puMC = puOpt
             print "PUhistogram type= ",type(h_puMC)
             #print datetime.datetime.now()
             lumiWeight         =  (xSection*1000*lumi) / Nentries
@@ -50,7 +52,8 @@ class normSampleContainer:
             f.Close()
         return n,h_puMC,checksum
 
-    def getXsection(self,fDataSet,xSectionFile):
+    def getXsection(self,fDataSet,xSectionFile, isData):
+	if isData: return 1.0
         thisXsection = 1.0
         FoundXsection = False
         print "NormSampleContainer:: using xsection files from : ",xSectionFile
