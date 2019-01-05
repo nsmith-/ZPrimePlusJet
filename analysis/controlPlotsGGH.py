@@ -343,16 +343,14 @@ def main(options,args,outputExists):
     if is2017:
         #tfiles = get2017files()
         samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"r")
-        sampledirs   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/sampledirs.json"),"r")
-        if True: 
-            tfiles  = json.load(samplefiles)['controlPlotsGGH_2017']
-	    fdirs  = json.load(sampledirs)['Hbb_create_2017']
-	    for key in fdirs.keys():
-		tfiles[key] = {} 
-		for subd in fdirs[key]:
-			subdfiles = [ "root://cmseos.fnal.gov/" + subd + f for f in os.listdir(subd)]
-			tfiles[key][ subd.strip('/').split('/')[-1] ] = subdfiles
-        puOpt  = "2017"
+        tfiles  = json.load(samplefiles)['controlPlotsGGH_2017']
+        newsamplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/newsamplefiles.json"),"r")
+        newtfiles  = json.load(newsamplefiles)['controlPlotsGGH_2017']
+	for key in newtfiles.keys():
+		if tfiles.get(key) == None: print 'Adding {} to tfiles from new'.format(key)
+		tfiles[key] = newtfiles[key]
+        
+	puOpt  = "2017"
     else:
         tfiles = get2016files()
         puOpt  = "2016"       
