@@ -6,6 +6,8 @@
 
 #13 TeV Spring 15 MC
 # test fake 2017 xsec (dec18/jan19)
+GluGluHToCC_M125_LHEHpT_250_Inf_13TeV_amcatnloFXFX_pythia8		48.58*2.28e-03*0.05 
+
 QCD_HT300to500_TuneCP5_13TeV_madgraph_pythia8                          347700
 QCD_HT500to700_TuneCP5_13TeV_madgraph_pythia8                           32100
 QCD_HT700to1000_TuneCP5_13TeV_madgraph_pythia8                           6831

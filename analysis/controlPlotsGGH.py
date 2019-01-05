@@ -570,7 +570,7 @@ def main(options,args,outputExists):
         ofile.cd()
         for proc, hDict in hall_byproc.iteritems():
             for plot, h in hDict.iteritems():
-                print proc, plot
+                print proc, plot, h.Integral()
                 h.Write()
         
         for plot in plots:

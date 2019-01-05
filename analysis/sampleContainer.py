@@ -807,11 +807,13 @@ class sampleContainer:
                 vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
             
             ### works only for 2017 HT binned sample, constructed with normSampleContainer
-            if 'ZJetsToQQ_' in self._name:    
-                ptForNLO = max(250., min(self.genVPt[0], 1200.))  
+            if 'ZJetsToQQ_' in self._name:   
+		self.kfactor[0] = 1 #Broken k-factor for the moment
+                ptForNLO = max(250., min(self.genVPt[0], 1200.)) 
                 vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
                 #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
             if 'WJetsToQQ_' in self._name:
+		self.kfactor[0] = 1 #Broken k-factor for the moment
                 ptForNLO = max(250., min(self.genVPt[0], 1200.))
                 vjetsKF   = self.kfactor[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
                 #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
@@ -833,7 +835,8 @@ class sampleContainer:
                 trigweightDown = 1
                 trigweightUp = 1
 
-            weight = puweight * fbweight * self._sf * vjetsKF * trigweight
+            print "weight", puweight, fbweight,  self._sf, vjetsKF, trigweight
+            weight= puweight * fbweight * self._sf * vjetsKF * trigweight
             weight_triggerUp = puweight * fbweight * self._sf * vjetsKF * trigweightUp
             weight_triggerDown = puweight * fbweight * self._sf * vjetsKF * trigweightDown
             weight_pu_up = puweight_up * fbweight * self._sf * vjetsKF * trigweight
@@ -1245,8 +1248,10 @@ class sampleContainer:
 
 		if jpt_8 > PTCUT and jmsd_8 > MASSCUT:
 			self.h_rho_ak8.Fill(rh_8, weight)
+		
 
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and rh_8<-2.1 and rh_8>-6.:
+		    if "WJets" in self._name: print "W", jpt_8, jmsd_8, rh_8, weight
                     self.h_pt_ak8.Fill(jpt_8, weight)
                     self.h_eta_ak8.Fill(jeta_8, weight)
                     self.h_pt_ak8_sub1.Fill(jpt_8_sub1, weight)

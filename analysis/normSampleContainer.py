@@ -20,7 +20,6 @@ class normSampleContainer:
         self.xsectionFile    = os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/xSections.dat")
 
         # subSamples = {subsampleName: [paths]}
-	print self.subSamples
         for subSampleName,paths in self.subSamples.iteritems():
             xSection = self.getXsection(subSampleName,self.xsectionFile, isData)   # in pb
             tfiles = {}
