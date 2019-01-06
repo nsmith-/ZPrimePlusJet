@@ -388,9 +388,9 @@ class sampleContainer:
                                             100, 0, 500],
                 'h_msd_ak8_N2Cut': ["h_" + self._name + "_msd_ak8_N2Cut", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_dbtag_ak8': ["h_" + self._name + "_dbtag_ak8", "; p_{T}-leading double b-tag;", 200, -1, 1],
-		'h_DDBvLtag_ak8': ["h_" + self._name + "_DDBvLtag_ak8", "; p_{T}-leading double BvL-tag;", 200, -1, 1],
-                'h_DDCvLtag_ak8': ["h_" + self._name + "_DDCvLtag_ak8", "; p_{T}-leading double CvL-tag;", 200, -1, 1],
-                'h_DDCvBtag_ak8': ["h_" + self._name + "_DDCvBtag_ak8", "; p_{T}-leading double CvB-tag;", 200, -1, 1],
+		'h_DDBvLtag_ak8': ["h_" + self._name + "_DDBvLtag_ak8", "; p_{T}-leading double BvL-tag;", 200, 0, 1],
+                'h_DDCvLtag_ak8': ["h_" + self._name + "_DDCvLtag_ak8", "; p_{T}-leading double CvL-tag;", 200, 0, 1],
+                'h_DDCvBtag_ak8': ["h_" + self._name + "_DDCvBtag_ak8", "; p_{T}-leading double CvB-tag;", 200, 0, 1],
                 'h_dbtag_ak8_sub1': ["h_" + self._name + "_dbtag_ak8_sub1", "; 2nd p_{T}-leading double b-tag;", 40, -1,
                                      1],
                 'h_dbtag_ak8_sub2': ["h_" + self._name + "_dbtag_ak8_sub2", "; 3rd p_{T}-leading double b-tag;", 40, -1,
@@ -962,6 +962,9 @@ class sampleContainer:
             #jdb_8 = self.AK8Puppijet0_deepdoubleb[0]
             #jdb_8 = self.AK8Puppijet0_deepdoubleb_nomasssculptpen[0]
             jdb_8 = getattr(self,self.doublebName)[0]
+            jDDBvL_8 = self.AK8Puppijet0_deepdoubleb[0]
+            jDDCvL_8 = self.AK8Puppijet0_deepdoublec[0]
+            jDDCvB_8 = self.AK8Puppijet0_deepdoublecvb[0]
             if not self._minBranches:
                 if self.AK8Puppijet1_doublecsv[0] > 1:
                     jdb_8_sub1 = -99
@@ -1261,9 +1264,9 @@ class sampleContainer:
                     self.h_msd_ak8.Fill(jmsd_8, weight)
                     self.h_msd_ak8_raw.Fill(jmsd_8_raw, weight)
                     self.h_dbtag_ak8.Fill(jdb_8, weight)
-                    self.h_DDBvLtag_ak8.Fill(jdb_8, weight)
-                    self.h_DDCvLtag_ak8.Fill(jdb_8, weight)
-                    self.h_DDCvBtag_ak8.Fill(jdb_8, weight)
+                    self.h_DBvLtag_ak8.Fill(jDDBvL_8, weight)
+                    self.h_DDCvLtag_ak8.Fill(jDDCvL_8, weight)
+                    self.h_DDCvBtag_ak8.Fill(jDDCvB_8, weight)
                     self.h_dbtag_ak8_sub1.Fill(jdb_8_sub1, weight)
                     self.h_dbtag_ak8_sub2.Fill(jdb_8_sub2, weight)
                     self.h_t21_ak8.Fill(jt21_8, weight)
