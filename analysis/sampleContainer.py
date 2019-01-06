@@ -176,7 +176,11 @@ class sampleContainer:
 			  ('puWeight_down', 'f', 0), ('puWeight_up', 'f', 0),
                           ('AK8Puppijet0_doublecsv', 'd', -999),
                           ('AK8Puppijet0_deepdoubleb', 'd', -999),
+                          ('AK8Puppijet0_deepdoublec', 'd', -999),
+                          ('AK8Puppijet0_deepdoublecvb', 'd', -999),
                           ('AK8Puppijet0_deepdoubleb_nomasssculptpen', 'd', -999),
+                          ('AK8Puppijet0_deepdoublec_nomasssculptpen', 'd', -999),
+                          ('AK8Puppijet0_deepdoublecvb_nomasssculptpen', 'd', -999),
                           ('kfactor', 'f', 0), ('kfactorNLO', 'f', 0), ('nAK4PuppijetsPt30', 'i', -999),
                           ('nAK4PuppijetsPt30dR08_0', 'i', -999),
                           ('nAK4PuppijetsPt30dR08jesUp_0', 'i', -999), ('nAK4PuppijetsPt30dR08jesDown_0', 'i', -999),
@@ -1264,7 +1268,7 @@ class sampleContainer:
                     self.h_msd_ak8.Fill(jmsd_8, weight)
                     self.h_msd_ak8_raw.Fill(jmsd_8_raw, weight)
                     self.h_dbtag_ak8.Fill(jdb_8, weight)
-                    self.h_DBvLtag_ak8.Fill(jDDBvL_8, weight)
+                    self.h_DDBvLtag_ak8.Fill(jDDBvL_8, weight)
                     self.h_DDCvLtag_ak8.Fill(jDDCvL_8, weight)
                     self.h_DDCvBtag_ak8.Fill(jDDCvB_8, weight)
                     self.h_dbtag_ak8_sub1.Fill(jdb_8_sub1, weight)

@@ -255,30 +255,6 @@ def main(options,args,outputExists):
 		if Sample in normSamples:
 		    hall_byproc[Sample] = sigSamples[Sample]
 		    del sigSamples[Sample]
-	#if options.is2017:
-	 #   pass
-            # if options.isData: hall_byproc['data']= dataSample
-            # hall_byproc['Z']= bkgSamples['Z']  
-            # hall_byproc['QCD']= bkgSamples['QCD']  
-            # hall_byproc['TTbar']= bkgSamples['TTbar']  
-            # hall_byproc['W'] = bkgSamples['W']
-            # if options.isData and muonCR:
-                # hall_byproc['Wlnu'] = bkgSamples['Wlnu']
-                # del bkgSamples['Wlnu']    #Do not get the plots from sampleContainer by getattr
-            # hall_byproc['ggHbb'] = sigSamples['ggHbb']
-            # hall_byproc['ggHcc'] = sigSamples['ggHcc']
-            # hall_byproc['ggHbb_amc'] = sigSamples['ggHbb_amc']
-            # hall_byproc['ggHbb_amcHpT250'] = sigSamples['ggHbb_amcHpT250']
-            # hall_byproc['ttHbb'] = sigSamples['ttHbb']
-            # del bkgSamples['QCD']   #Do not get the plots from sampleContainer by getattr
-            # del bkgSamples['TTbar']   #Do not get the plots from sampleContainer by getattr
-            # del bkgSamples['Z']   #Do not get the plots from sampleContainer by getattr
-            # del bkgSamples['W']    #Do not get the plots from sampleContainer by getattr
-            # del sigSamples['ggHbb']    #Do not get the plots from sampleContainer by getattr
-            # del sigSamples['ggHcc']    #Do not get the plots from sampleContainer by getattr
-            # del sigSamples['ggHbb_amc']    #Do not get the plots from sampleContainer by getattr
-            # del sigSamples['ggHbb_amcHpT250']    #Do not get the plots from sampleContainer by getattr
-            # del sigSamples['ttHbb']    #Do not get the plots from sampleContainer by getattr
         for plot in plots:
             for process, s in sigSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
