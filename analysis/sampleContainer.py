@@ -835,7 +835,6 @@ class sampleContainer:
                 trigweightDown = 1
                 trigweightUp = 1
 
-            print "weight", puweight, fbweight,  self._sf, vjetsKF, trigweight
             weight= puweight * fbweight * self._sf * vjetsKF * trigweight
             weight_triggerUp = puweight * fbweight * self._sf * vjetsKF * trigweightUp
             weight_triggerDown = puweight * fbweight * self._sf * vjetsKF * trigweightDown

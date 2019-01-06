@@ -972,7 +972,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     hstack2.Draw('hist')
     hstack2.SetMaximum(10*maxval)
     hstack2.SetMinimum(1.)
-    hstack2.GetYaxis().SetRangeUser(1.,10*maxval)
+    hstack2.GetYaxis().SetRangeUser(1.,1.3*maxval)
     hstack2.GetYaxis().SetTitle('Events')
     hstack2.GetYaxis().SetTitleOffset(1.0)	
     hstack2.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
@@ -1046,7 +1046,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     	print ksScore
     	print chiScore
     	ratio.SetStats(0)
-        ratio.GetYaxis().SetRangeUser(0,5)	
+        ratio.GetYaxis().SetRangeUser(0.4,1.6)	
         ratio.GetYaxis().SetNdivisions(504)
     	ratio.GetYaxis().SetTitle("Data/Simulation")
     	ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())    
@@ -1093,9 +1093,10 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         leg4.Draw()
 
     c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".root")
+    c.SaveAs(pdir+"/"+outname+".root"
+		    )
     oben.SetLogy()
-
+    hstack2.GetYaxis().SetRangeUser(1.,10*maxval)
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.root")

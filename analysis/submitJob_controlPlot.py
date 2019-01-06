@@ -87,7 +87,7 @@ if __name__ == '__main__':
     #Small files used by the exe
     files = ['']
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsGGH.py -o ${MAINDIR}/ --i-split $1 --max-split $2 '
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/analysis/controlPlotsHxx.py -o ${MAINDIR}/ --i-split $1 --max-split $2 '
 
     for opts in script_group.option_list:
         if not getattr(options, opts.dest)==opts.default:
