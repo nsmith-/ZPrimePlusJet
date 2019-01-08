@@ -970,7 +970,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     oben.cd()
  
     hstack2.Draw('hist')
-    hstack2.SetMaximum(10*maxval)
+    hstack2.SetMaximum(1.1*maxval)
     hstack2.SetMinimum(1.)
     hstack2.GetYaxis().SetRangeUser(1.,1.3*maxval)
     hstack2.GetYaxis().SetTitle('Events')
@@ -1093,9 +1093,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         leg4.Draw()
 
     c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".root"
-		    )
+    c.SaveAs(pdir+"/"+outname+".root")
     oben.SetLogy()
+    hstack2.SetMaximum(1.1*maxval)
     hstack2.GetYaxis().SetRangeUser(1.,10*maxval)
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
@@ -1590,6 +1590,7 @@ def makeROCFromHisto(hists,LtoR=True):
 
 	nbins = hsig.GetNbinsX();
 	binsize = hsig.GetBinWidth(1);
+    hsyPausetack2.SetMaximum(1.1*maxval)
 	lowedge = hsig.GetBinLowEdge(1);
 
 	#print "lowedge: ",lowedge
