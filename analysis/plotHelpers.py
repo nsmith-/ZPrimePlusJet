@@ -1590,7 +1590,6 @@ def makeROCFromHisto(hists,LtoR=True):
 
 	nbins = hsig.GetNbinsX();
 	binsize = hsig.GetBinWidth(1);
-    hsyPausetack2.SetMaximum(1.1*maxval)
 	lowedge = hsig.GetBinLowEdge(1);
 
 	#print "lowedge: ",lowedge
