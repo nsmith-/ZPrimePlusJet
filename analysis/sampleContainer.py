@@ -181,7 +181,7 @@ class sampleContainer:
                           ('AK8Puppijet0_deepdoubleb_nomasssculptpen', 'd', -999),
                           ('AK8Puppijet0_deepdoublec_nomasssculptpen', 'd', -999),
                           ('AK8Puppijet0_deepdoublecvb_nomasssculptpen', 'd', -999),
-                          ('kfactor', 'f', 0), ('kfactorNLO', 'f', 0), ('nAK4PuppijetsPt30', 'i', -999),
+                          ('kfactorEWK', 'f', 0), ('kfactorNLO', 'f', 0), ('nAK4PuppijetsPt30', 'i', -999),
                           ('nAK4PuppijetsPt30dR08_0', 'i', -999),
                           ('nAK4PuppijetsPt30dR08jesUp_0', 'i', -999), ('nAK4PuppijetsPt30dR08jesDown_0', 'i', -999),
                           ('nAK4PuppijetsPt30dR08jerUp_0', 'i', -999), ('nAK4PuppijetsPt30dR08jerDown_0', 'i', -999),
@@ -808,22 +808,22 @@ class sampleContainer:
                 # print self._name
 		for i in range(0, len(ptscale)):
 			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
-                vjetsKF = self.kfactor[0] * 1.35 * ptKF  # ==1 for not V+jets events
+                vjetsKF = self.kfactorEWK[0] * 1.35 * ptKF  # ==1 for not V+jets events
             elif 'zqq' in self._name or  self._name == 'DY':
                 # print self._name
-                vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
+                vjetsKF = self.kfactorEWK[0] * 1.45  # ==1 for not V+jets events
             
             ### works only for 2017 HT binned sample, constructed with normSampleContainer
             if 'ZJetsToQQ_' in self._name:   
-		self.kfactor[0] = 1 #Broken k-factor for the moment
+		#self.kfactorEWK[0] = 1 #Broken k-factor for the moment
                 ptForNLO = max(250., min(self.genVPt[0], 1200.)) 
-                vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
-                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
+                vjetsKF   = self.kfactorEWK[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactorEWK[0])
             if 'WJetsToQQ_' in self._name:
-		self.kfactor[0] = 1 #Broken k-factor for the moment
+		#self.kfactorEWK[0] = 1 #Broken k-factor for the moment
                 ptForNLO = max(250., min(self.genVPt[0], 1200.))
-                vjetsKF   = self.kfactor[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
-                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactor[0])
+                vjetsKF   = self.kfactorEWK[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactorEWK[0])
         
                 
             # trigger weight

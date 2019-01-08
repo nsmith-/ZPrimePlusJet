@@ -194,6 +194,10 @@ def main(options,args,outputExists):
 			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
             bkgSamples['TTbar']  = normSampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',False,
 			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+            bkgSamples['SingleTop']  = normSampleContainer('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi,False,False,'1',False,
+			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+            bkgSamples['Diboson']  = normSampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',False,
+			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
 
             if options.isData and muonCR:
                 bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False,
@@ -205,12 +209,11 @@ def main(options,args,outputExists):
             bkgSamples['Z'] = sampleContainer('Z',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
             bkgSamples['QCD'] = sampleContainer('QCD',tfiles['QCD'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
             bkgSamples['TTbar']  = sampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
+            bkgSamples['SingleTop']=sampleContainer('SingleTop',tfiles['SingleTop'],1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
+            bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
             if options.isData and muonCR:
                 bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
                 bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
-
-        bkgSamples['SingleTop'] = sampleContainer('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
-        bkgSamples['Diboson'] = sampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
 
         if options.isData: print "Data..."
         if options.isData and muonCR:
@@ -246,7 +249,7 @@ def main(options,args,outputExists):
             else:
                 hall_byproc['data'] = {}
 
-	normSamples =['QCD','Z','W', 'TTbar', 'Wlnu','ggHbb','ggHcc', 'ttHbb']
+	normSamples =['QCD','Z','W', 'TTbar', 'Wlnu','ggHbb','ggHcc', 'ttHbb', 'Diboson', 'SingleTop']
 	for Sample in bkgSamples.keys():
 		if Sample in normSamples:
          	    hall_byproc[Sample] = bkgSamples[Sample]
@@ -255,18 +258,20 @@ def main(options,args,outputExists):
 		if Sample in normSamples:
 		    hall_byproc[Sample] = sigSamples[Sample]
 		    del sigSamples[Sample]
+	hall_byproc['data'] = dataSample
         for plot in plots:
             for process, s in sigSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
             for process, s in bkgSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
-            
+        print 'halled all'
         ofile.cd()
         for proc, hDict in hall_byproc.iteritems():
             for plot, h in hDict.iteritems():
                 print proc, plot, h.Integral()
                 h.Write()
-        
+
+        print 'filewrote'
         for plot in plots:
             hs = {}
             hb = {}
