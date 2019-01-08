@@ -78,7 +78,7 @@ def main(options,args,outputExists):
         puOpt  = "2016"       
 
     color = {'ggHbb': ROOT.kAzure+1,
-             'ggHcc': ROOT.kAzure+4,
+             'ggHcc': ROOT.kRed+1,
              'Hbb': ROOT.kRed,
              'VHbb': ROOT.kTeal+1,
              'VBFHbb': ROOT.kBlue-10,
