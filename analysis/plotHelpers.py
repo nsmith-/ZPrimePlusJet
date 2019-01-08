@@ -1095,8 +1095,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     c.SaveAs(pdir+"/"+outname+".pdf")
     c.SaveAs(pdir+"/"+outname+".root")
     oben.SetLogy()
-    hstack2.SetMaximum(1.1*maxval)
-    hstack2.GetYaxis().SetRangeUser(1.,10*maxval)
+    hstack2.SetMaximum(10*maxval)
+    hstack2.GetYaxis().SetRangeUser(1., 10*maxval)
 
     c.SaveAs(pdir+"/"+outname+"_log.pdf")
     c.SaveAs(pdir+"/"+outname+"_log.root")
