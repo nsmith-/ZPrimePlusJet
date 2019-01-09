@@ -89,12 +89,13 @@ if __name__ == '__main__':
 
     outpath= options.odir
     #gitClone = "git clone -b Hbb git://github.com/DAZSLE/ZPrimePlusJet.git"
-    gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
+    #gitClone = "git clone -b Hbb_test git://github.com/kakwok/ZPrimePlusJet.git"
+    gitClone = "git clone -b Hbb git://github.com/andrzejnovak/ZPrimePlusJet.git"
 
     #Small files used by the exe
     files = []
     #ouput to ${MAINDIR}/ so that condor transfer the output to submission dir
-    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/fitting/PbbJet/Hbb_create.py -o ${MAINDIR}/ --i-split $1 --max-split $2'
+    command      = 'python ${CMSSW_BASE}/src/ZPrimePlusJet/fitting/PbbJet/Hxx_create.py -o ${MAINDIR}/ --i-split $1 --max-split $2'
     #Add script options to job command
     for opts in script_group.option_list:
         if not getattr(options, opts.dest)==opts.default:
