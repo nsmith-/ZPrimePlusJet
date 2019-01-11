@@ -37,12 +37,12 @@ def main(options, args):
         samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samples_v15.01.json"),"r")
         tfiles  = json.load(samplefiles)['Hxx_2017']
     # Load older when missing
-        backup_samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"r")
-        b_tfiles  = json.load(backup_samplefiles)['controlPlotsGGH_2017']
-        for key in b_tfiles.keys():
-            if key not in tfiles.keys():
-                tfiles[key] = b_tfiles[key]
-                print "Adding old/backup files:", key 
+        # backup_samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"r")
+        # b_tfiles  = json.load(backup_samplefiles)['controlPlotsGGH_2017']
+        # for key in b_tfiles.keys():
+        #     if key not in tfiles.keys():
+        #         tfiles[key] = b_tfiles[key]
+        #         print "Adding old/backup files:", key 
         puOpt  = "2017"
     else:
         tfiles = get2016files(muonCR)
@@ -113,6 +113,12 @@ def main(options, args):
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
         sigSamples['tthqq125'] = normSampleContainer('tthqq125',tfiles['ttHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+        sigSamples['whqq125'] = normSampleContainer('whqq125',tfiles['WHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+        sigSamples['zhqq125'] = normSampleContainer('zhqq125',tfiles['ZHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+        sigSamples['vbfhqq125'] = normSampleContainer('vbfhqq125',tfiles['VBFHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
     
         print "Backgrounds..." 
         bkgSamples['wqq']   = normSampleContainer('wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',True, 
@@ -123,12 +129,11 @@ def main(options, args):
             bkgSamples['qcd']  = normSampleContainer('qcd',tfiles['qcd'], 1, dbtagmin,lumi,False,False,'1',True, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)   
         bkgSamples['tqq']  = normSampleContainer('tqq',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',True,
-                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
         bkgSamples['stqq']  = normSampleContainer('stqq',tfiles['SingleTop'], 1, DBTMIN,lumi,False,False,'1',True,
-                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
         bkgSamples['vvqq']  = normSampleContainer('vvqq',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',True,
-                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
-
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
         
     else:
         bkgSamples['wqq']  = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="2016")
@@ -142,8 +147,8 @@ def main(options, args):
     print "Data..."
     if not options.skipData:
         if muonCR:
-            dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                     '((triggerBits&4)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+            dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
         else:
             # 2017 triggerBits
             triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
@@ -166,28 +171,31 @@ def main(options, args):
 
     hall = {}
 
-    normSamples =['wqq','zqq','wlnu','hqq125','hcc125', 'tthqq125', 'qcd','tqq', 'stqq', 'vvqq']
+    normSamples =['wqq','zqq','wlnu','hqq125','hcc125', 'tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125' 'qcd','tqq', 'stqq', 'vvqq']
     for plot in plots:
         tag = plot.split('_')[-1]  # 'pass' or 'fail' or systematicName
         if tag not in ['pass', 'fail']:
             tag = plot.split('_')[-2] + '_' + plot.split('_')[-1]  # 'pass_systematicName', 'pass_systmaticName', etc.
 
         for process, s in sigSamples.iteritems():
-            if options.is2017 and process in normSamples:
+            #if process in normSamples:
+            if type(s) == dict:
                 hall['%s_%s' % (process, tag)] = sigSamples[process][plot]   #get plot from normSampleContainer
             else:
                 hall['%s_%s' % (process, tag)] = getattr(s, plot)           #get plot from SampleContainer
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
 
         for process, s in bkgSamples.iteritems():
-            if options.is2017 and process in normSamples:
+            #if options.is2017 and process in normSamples:
+            if type(s) == dict:
                 hall['%s_%s' % (process, tag)] = bkgSamples[process][plot]     #get plot from normSampleContainer
             else:
                 hall['%s_%s' % (process, tag)] = getattr(s, plot)           #get plot from SampleContainer
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
 
         if not options.skipData:
-            if options.is2017:
+            #if options.is2017:
+            if type(s) == dict:
                 hall['%s_%s' % ('data_obs', tag)] = dataSample[plot]
             else:
                 hall['%s_%s' % ('data_obs', tag)] = getattr(dataSample, plot)
