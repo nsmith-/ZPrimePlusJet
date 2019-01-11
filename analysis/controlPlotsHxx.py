@@ -65,11 +65,11 @@ def main(options,args,outputExists):
     if options.is2017:
         samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samples_v15.01.json"),"r")
         tfiles  = json.load(samplefiles)['Hxx_2017']
-	# Load older when missing
+    # Load older when missing
         backup_samplefiles   = open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/samplefiles.json"),"r")
         b_tfiles  = json.load(backup_samplefiles)['controlPlotsGGH_2017']
         for key in b_tfiles.keys():
-	    if key not in tfiles.keys():
+            if key not in tfiles.keys():
                 tfiles[key] = b_tfiles[key]
                 print "Adding old/backup files:", key 
         puOpt  = "2017"
@@ -156,7 +156,7 @@ def main(options,args,outputExists):
     if not outputExists: # First step making files
         samples = ['ggHbb', 'ggHcc', 'ttHbb','QCD','SingleTop','Diboson','TTbar']                      
         pudir="root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-Pu/hadd/"
-	print tfiles.keys()
+        print tfiles.keys()
         for s in samples:
             if type(tfiles[s])==type({}): continue
             for tfile in tfiles[s]:
@@ -165,45 +165,48 @@ def main(options,args,outputExists):
                     sys.exit()
         print "Signals... "
         sigSamples = {}
-	# normSampleContainer(sampleName, subSamples, sf=1, DBTAGCUTMIN=-99., lumi=1, options.isData=False, fillCA15=False, cutFormula='1', minBranches=False, 
-	#                        iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016')
-	def_treeName = 'Events'
-	def_DDB = 'AK8Puppijet0_deepdoubleb'
+        # normSampleContainer(sampleName, subSamples, sf=1, DBTAGCUTMIN=-99., lumi=1, options.isData=False, fillCA15=False, cutFormula='1', minBranches=False, 
+        #                        iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016')
+        def_treeName = 'Events'
+        def_DDB = 'AK8Puppijet0_deepdoubleb'
         if  options.is2017:
             sigSamples['ggHbb'] = normSampleContainer('ggHbb', tfiles['ggHbb'], 1, DBTMIN, lumi, False, False, '1', False, 
-			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
             sigSamples['ggHcc'] = normSampleContainer('ggHcc',tfiles['ggHcc']  , 1, DBTMIN,lumi,False,False,'1',False, 
-			    iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
             sigSamples['ttHbb'] = normSampleContainer('ttHbb',tfiles['ttHbb']  , 1, DBTMIN,lumi,False,False,'1',False, 
-			    iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+            sigSamples['WHbb'] = normSampleContainer('WHbb',tfiles['WHbb']  , 1, DBTMIN,lumi,False,False,'1',False, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+            sigSamples['ZHbb'] = normSampleContainer('ZHbb',tfiles['ZHbb']  , 1, DBTMIN,lumi,False,False,'1',False,
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+            sigSamples['VBFHbb'] = normSampleContainer('VBFHbb',tfiles['VBFHbb']  , 1, DBTMIN,lumi,False,False,'1',False, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
         else:
             sigSamples['ggHbb']  = sampleContainer('ggHbb',tfiles['ggHbb']  , 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
-        
-        sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
-        sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)    
+            sigSamples['VBFHbb'] = sampleContainer('VBFHbb',tfiles['VBFHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt) 
+            sigSamples['VHbb'] = sampleContainer('VHbb',tfiles['VHbb'], 1, DBTMIN,lumi ,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)    
 
         print "Backgrounds..."
         bkgSamples = {}    
         if options.is2017:
             bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, 
-			    iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
             bkgSamples['Z']  = normSampleContainer('Z',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, 
-			    iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
-
-	    bkgSamples['QCD'] = normSampleContainer('QCD',tfiles['qcd'], 1, DBTMIN,lumi,False,False,'1',False, 
-			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
+            bkgSamples['QCD'] = normSampleContainer('QCD',tfiles['qcd'], 1, DBTMIN,lumi,False,False,'1',False, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
             bkgSamples['TTbar']  = normSampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',False,
-			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
             bkgSamples['SingleTop']  = normSampleContainer('SingleTop',tfiles['SingleTop'], 1, DBTMIN,lumi,False,False,'1',False,
-			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
             bkgSamples['Diboson']  = normSampleContainer('Diboson',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',False,
-			    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, puOpt="default").addPlots(plots)
 
             if options.isData and muonCR:
-                bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False,
-				iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='default').addPlots(plots)
-                bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
-	
+                pass
+                # no samples here
+
         else:
             bkgSamples['W']  = sampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
             bkgSamples['Z'] = sampleContainer('Z',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
@@ -215,25 +218,32 @@ def main(options,args,outputExists):
                 bkgSamples['Wlnu']  = sampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
                 bkgSamples['DYll']  = sampleContainer('DYll',tfiles['DYll'], 1, DBTMIN,lumi,False,False,'1',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt='2016')
 
-        if options.isData: print "Data..."
-        if options.isData and muonCR:
-            dataSample = sampleContainer('muon',tfiles['muon'], 1, DBTMIN,lumi, options.isData, False, '((triggerBits&4)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
-        elif options.isData:
+        if options.isData: 
+            print "Data..."
             triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
-                          "names":[
-                               "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
-                               "HLT_PFHT1050_v*",
-                               "HLT_AK8PFJet400_TrimMass30_v*",
-                               "HLT_AK8PFHT800_TrimMass50_v*",
-                               "HLT_PFJet500_v*",
-                               "HLT_AK8PFJet360_TrimMass30_v*",
-                               "HLT_AK8PFJet380_TrimMass30_v*",
-                               "HLT_AK8PFJet500_v*"]
-                      }
-            if options.is2017:
-                 dataSample = normSampleContainer('data', tfiles['data'], 1, DBTMIN,lumi, options.isData,False,"passJson",False,
-			    iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
-            else:
+                              "names":[
+                                   "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
+                                   "HLT_PFHT1050_v*",
+                                   "HLT_AK8PFJet400_TrimMass30_v*",
+                                   "HLT_AK8PFHT800_TrimMass50_v*",
+                                   "HLT_PFJet500_v*",
+                                   "HLT_AK8PFJet360_TrimMass30_v*",
+                                   "HLT_AK8PFJet380_TrimMass30_v*",
+                                   "HLT_AK8PFJet500_v*"]
+                          }
+
+        if options.is2017:
+            if options.isData and muonCR:
+                dataSample = normSampleContainer('muon', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
+            elif options.isData:      
+                dataSample = normSampleContainer('data', tfiles['data'], 1, DBTMIN,lumi, options.isData,False,"passJson",False,
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
+        else:
+            if options.isData and muonCR:
+                dataSample = normSampleContainer('muon', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
+            elif options.isData:
                 dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, options.isData, False, '((triggerBits&2)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
         
         ofile = ROOT.TFile.Open(odir+'/Plots_1000pb_weighted_%s.root '%options.iSplit,'recreate')
@@ -249,16 +259,23 @@ def main(options,args,outputExists):
             else:
                 hall_byproc['data'] = {}
 
-	normSamples =['QCD','Z','W', 'TTbar', 'Wlnu','ggHbb','ggHcc', 'ttHbb', 'Diboson', 'SingleTop']
-	for Sample in bkgSamples.keys():
-		if Sample in normSamples:
-         	    hall_byproc[Sample] = bkgSamples[Sample]
-  		    del bkgSamples[Sample]
-	for Sample in sigSamples.keys():
-		if Sample in normSamples:
-		    hall_byproc[Sample] = sigSamples[Sample]
-		    del sigSamples[Sample]
-	hall_byproc['data'] = dataSample
+        #normSamples =['QCD','Z','W', 'TTbar', 'Wlnu','ggHbb','ggHcc', 'ttHbb', 'Diboson', 'SingleTop']
+        for Sample in bkgSamples.keys():
+            #if Sample in normSamples:
+            if type(bkgSamples[Sample]) == dict:
+                hall_byproc[Sample] = bkgSamples[Sample]
+                del bkgSamples[Sample]
+        for Sample in sigSamples.keys():
+            #if Sample in normSamples:
+            if type(sigSamples[Sample]) == dict:
+                hall_byproc[Sample] = sigSamples[Sample]
+                del sigSamples[Sample]
+        if options.isData:
+            if not options.muonCR:
+                hall_byproc['data'] = dataSample
+            else: 
+                hall_byproc['muon'] = dataSample
+
         for plot in plots:
             for process, s in sigSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
@@ -270,26 +287,26 @@ def main(options,args,outputExists):
             for plot, h in hDict.iteritems():
                 print proc, plot, h.Integral()
                 h.Write()
-
         print 'filewrote'
-        for plot in plots:
-            hs = {}
-            hb = {}
-            hall={}
-            hd = None
-            for process, s in sigSamples.iteritems():
-                hs[process] = getattr(s,plot)
-                hall[process] = getattr(s,plot)
-            for process, s in bkgSamples.iteritems():
-                hb[process] = getattr(s,plot)
-                hall[process] = getattr(s,plot)
-            #if isData:
-            #    hd = getattr(dataSample,plot)
-            #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
-    
+
+            # for plot in plots:
+            #     hs = {}
+            #     hb = {}
+            #     hall={}
+            #     hd = None
+            #     for process, s in sigSamples.iteritems():
+            #         hs[process] = getattr(s,plot)
+            #         hall[process] = getattr(s,plot)
+            #     for process, s in bkgSamples.iteritems():
+            #         hb[process] = getattr(s,plot)
+            #         hall[process] = getattr(s,plot)
+                #if isData:
+                #    hd = getattr(dataSample,plot)
+                #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
+        
         ofile.Close()
     else:        
-        sigSamples = ['ggHbb', 'ggHcc', 'ttHbb']        
+        sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','Z']                      
         if options.isData and muonCR:
             bkgSamples.extend(['Wlnu','DYll','TTbar'])
