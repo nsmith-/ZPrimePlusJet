@@ -234,14 +234,14 @@ def main(options,args,outputExists):
 
         if options.is2017:
             if options.isData and muonCR:
-                dataSample = normSampleContainer('muon', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
+                dataSample = normSampleContainer('muon', tfiles['muon'], 1, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
             elif options.isData:      
                 dataSample = normSampleContainer('data', tfiles['data'], 1, DBTMIN,lumi, options.isData,False,"passJson",False,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
         else:
             if options.isData and muonCR:
-                dataSample = normSampleContainer('muon', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
+                dataSample = normSampleContainer('muon', tfiles['muon'], 1, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
             elif options.isData:
                 dataSample = sampleContainer('data',tfiles['data'], 1, DBTMIN,lumi, options.isData, False, '((triggerBits&2)&&passJson)',False, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt=options.puOpt)
