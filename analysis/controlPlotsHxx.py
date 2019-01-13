@@ -234,8 +234,8 @@ def main(options,args,outputExists):
 
         if options.is2017:
             if options.isData and muonCR:
-                dataSample = normSampleContainer('muon', tfiles['muon'], 1, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', False,
-                    iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
+                dataSample = normSampleContainer('muon', tfiles['muon'], 1, DBTMIN, lumi, True, False, '((triggerBits&1)&&passJson)', False,
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName).addPlots(plots)
             elif options.isData:      
                 dataSample = normSampleContainer('data', tfiles['data'], 1, DBTMIN,lumi, options.isData,False,"passJson",False,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
@@ -329,7 +329,10 @@ def main(options,args,outputExists):
                 hd = ofile.Get(plot.replace('h_','h_muon_'))
             elif options.isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
+	    try:
+	            makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
+	    except:
+		    print "can't plot", plot
         
 
 
