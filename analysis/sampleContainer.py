@@ -297,6 +297,10 @@ class sampleContainer:
             'h_pt_ak8_muCR4_N2': ["h_" + self._name + "_pt_ak8_muCR4_N2", "; AK8 leading p_{T} (GeV);", 50, 300, 2100],
             'h_eta_ak8_muCR4_N2': ["h_" + self._name + "_eta_ak8_muCR4_N2", "; AK8 leading #eta;", 50, -3, 3],
             'h_dbtag_ak8_muCR4_N2': ["h_" + self._name + "_dbtag_ak8_muCR4_N2", "; p_{T}-leading double b-tag;", 40, -1, 1],
+            'h_DDBvL_ak8_muCR4_N2': ["h_" + self._name + "_DDBvL_ak8_muCR4_N2", "; p_{T}-leading DeepDoubleBvL;", 40, 0, 1],
+            'h_DDCvL_ak8_muCR4_N2': ["h_" + self._name + "_DDCvL_ak8_muCR4_N2", "; p_{T}-leading DeepDoubleCvL;", 40, 0, 1],
+            'h_DDCvB_ak8_muCR4_N2': ["h_" + self._name + "_DDCvB_ak8_muCR4_N2", "; p_{T}-leading DeepDoubleCvB;", 40, 0, 1],
+
 #            'h_t21ddt_ak8_muCR4_N2': ["h_" + self._name + "_t21ddt_ak8_muCR4_N2", "; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
             'h_msd_ak8_muCR4_N2': ["h_" + self._name + "_msd_ak8_muCR4_N2", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_muCR4_N2_pass': ["h_" + self._name + "_msd_ak8_muCR4_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
@@ -353,12 +357,14 @@ class sampleContainer:
                                                "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
 
              #  cvb muon CR
-
             'h_pt_mu_muCR4_cvb': ["h_" + self._name + "_pt_mu_muCR4_cvb", "; leading muon p_{T} (GeV);", 50, 30, 500],
             'h_eta_mu_muCR4_cvb': ["h_" + self._name + "_eta_mu_muCR4_cvb", "; leading muon #eta;", 50, -2.5, 2.5],
             'h_pt_ak8_muCR4_cvb': ["h_" + self._name + "_pt_ak8_muCR4_cvb", "; AK8 leading p_{T} (GeV);", 50, 300, 2100],
             'h_eta_ak8_muCR4_cvb': ["h_" + self._name + "_eta_ak8_muCR4_cvb", "; AK8 leading #eta;", 50, -3, 3],
             'h_dbtag_ak8_muCR4_cvb': ["h_" + self._name + "_dbtag_ak8_muCR4_cvb", "; p_{T}-leading double b-tag;", 40, -1, 1],
+            'h_DDBvL_ak8_muCR4_cvb': ["h_" + self._name + "_DDBvL_ak8_muCR4_cvb", "; p_{T}-leading DeepDoubleBvL;", 40, 0, 1],
+            'h_DDCvL_ak8_muCR4_cvb': ["h_" + self._name + "_DDCvL_ak8_muCR4_cvb", "; p_{T}-leading DeepDoubleCvL;", 40, 0, 1],
+            'h_DDCvB_ak8_muCR4_cvb': ["h_" + self._name + "_DDCvB_ak8_muCR4_cvb", "; p_{T}-leading DeepDoubleCvB;", 40, 0, 1],
 
             'h_msd_ak8_muCR4_cvb': ["h_" + self._name + "_msd_ak8_muCR4_cvb", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_muCR4_cvb_pass': ["h_" + self._name + "_msd_ak8_muCR4_cvb_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
@@ -1198,6 +1204,9 @@ class sampleContainer:
 
                 if jtN2b1sdddt_8 < 0:
                     self.h_dbtag_ak8_muCR4_N2.Fill(jdb_8, weight_mu)
+                    self.h_DDBvL_ak8_muCR4_N2.Fill(jDDBvL_8, weight_mu)
+                    self.h_DDCvL_ak8_muCR4_N2.Fill(jDDCvL_8, weight_mu)
+                    self.h_DDCvB_ak8_muCR4_N2.Fill(jDDCvB_8, weight_mu)
                     self.h_msd_ak8_muCR4_N2.Fill(jmsd_8, weight_mu)
                     self.h_pt_ak8_muCR4_N2.Fill(jpt_8, weight_mu)
                     self.h_eta_ak8_muCR4_N2.Fill(jeta_8, weight_mu)
@@ -1228,6 +1237,9 @@ class sampleContainer:
 
                 if jDDCvB_8 > 0.9:
                     self.h_dbtag_ak8_muCR4_cvb.Fill(jdb_8, weight_mu)
+                    self.h_DDBvL_ak8_muCR4_cvb.Fill(jDDBvL_8, weight_mu)
+                    self.h_DDCvL_ak8_muCR4_cvb.Fill(jDDCvL_8, weight_mu)
+                    self.h_DDCvB_ak8_muCR4_cvb.Fill(jDDCvB_8, weight_mu)
                     self.h_msd_ak8_muCR4_cvb.Fill(jmsd_8, weight_mu)
                     self.h_pt_ak8_muCR4_cvb.Fill(jpt_8, weight_mu)
                     self.h_eta_ak8_muCR4_cvb.Fill(jeta_8, weight_mu)
