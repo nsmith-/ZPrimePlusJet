@@ -306,7 +306,8 @@ def main(options,args,outputExists):
         
         ofile.Close()
     else:        
-        sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
+        #sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
+        sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','Z']                      
         if options.isData and muonCR:
             bkgSamples.extend(['Wlnu','DYll','TTbar'])
@@ -329,10 +330,10 @@ def main(options,args,outputExists):
                 hd = ofile.Get(plot.replace('h_','h_muon_'))
             elif options.isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
-	    try:
-	            makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
-	    except:
-		    print "can't plot", plot
+	    
+	        makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
+	    #except:
+		#    print "can't plot", plot
         
 
 
