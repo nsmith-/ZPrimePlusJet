@@ -174,16 +174,17 @@ def main(options, args):
         if options.is2017:
             #dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
             #        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
-            if options.isData and muonCR:
+            print "using 2017 data"
+            if muonCR:
                 dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&1)&&passJson)', True,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName).addPlots(plots)
-            elif options.isData:      
+            else:      
                 dataSample = normSampleContainer('data_obs', tfiles['data'], sfData, DBTMIN, lumi, True, False, "passJson", True,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
         else: 
-            if options.isData and muonCR:
+            if muonCR:
                 pass
-            elif options.isData:      
+            else:      
                 dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,'((triggerBits&2)&&passJson)', True, 
                     iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
 
