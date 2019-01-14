@@ -153,6 +153,7 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
+    print plots
     if not outputExists: # First step making files
         samples = ['ggHbb', 'ggHcc', 'ttHbb','QCD','SingleTop','Diboson','TTbar']                      
         pudir="root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v12.08-Pu/hadd/"
@@ -305,12 +306,14 @@ def main(options,args,outputExists):
                 #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
         
         ofile.Close()
-    else:        
+    else:  
+        print "Plotting part"
         #sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
         sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','Z']                      
         if options.isData and muonCR:
-            bkgSamples.extend(['Wlnu','DYll','TTbar'])
+            #bkgSamples.extend(['Wlnu','DYll','TTbar'])
+            bkgSamples.extend(['TTbar'])
         else:        
             bkgSamples.extend(['TTbar'])
             
@@ -330,8 +333,14 @@ def main(options,args,outputExists):
                 hd = ofile.Get(plot.replace('h_','h_muon_'))
             elif options.isData:
                 hd = ofile.Get(plot.replace('h_','h_data_'))
-	    
-	        makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
+            else: pass
+            empty = False
+            for process, s in dict(hall.items()).iteritems():
+                if s == None: empty=True
+            if empty:
+                print "Plots for {} are empty".format(plot)
+                continue
+            makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
 	    #except:
 		#    print "can't plot", plot
         
@@ -369,6 +378,7 @@ if __name__ == '__main__':
     outputExists = False
     if glob.glob(options.odir+'/Plots_1000pb_weighted.root'):
         outputExists = True
+    print "outputExists:", outputExists
         
     main(options,args,outputExists)
 ##----##----##----##----##----##----##

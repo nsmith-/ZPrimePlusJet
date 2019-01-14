@@ -95,6 +95,20 @@ def main(options, args):
                  'h_msd_ak8_muCR4_N2_fail_muisoUp', 'h_msd_ak8_muCR4_N2_fail_muisoDown',
                  'h_msd_ak8_muCR4_N2_pass_PuUp', 'h_msd_ak8_muCR4_N2_pass_PuDown',
                  'h_msd_ak8_muCR4_N2_fail_PuUp', 'h_msd_ak8_muCR4_N2_fail_PuDown',
+                  # otyher CR
+                 'h_msd_ak8_muCR4_cvb_pass', 'h_msd_ak8_muCR4_cvb_fail',
+                 'h_msd_ak8_muCR4_cvb_pass_JESUp', 'h_msd_ak8_muCR4_cvb_pass_JESDown',
+                 'h_msd_ak8_muCR4_cvb_fail_JESUp', 'h_msd_ak8_muCR4_cvb_fail_JESDown',
+                 'h_msd_ak8_muCR4_cvb_pass_JERUp', 'h_msd_ak8_muCR4_cvb_pass_JERDown',
+                 'h_msd_ak8_muCR4_cvb_fail_JERUp', 'h_msd_ak8_muCR4_cvb_fail_JERDown',
+                 'h_msd_ak8_muCR4_cvb_pass_mutriggerUp', 'h_msd_ak8_muCR4_cvb_pass_mutriggerDown',
+                 'h_msd_ak8_muCR4_cvb_fail_mutriggerUp', 'h_msd_ak8_muCR4_cvb_fail_mutriggerDown',
+                 'h_msd_ak8_muCR4_cvb_pass_muidUp', 'h_msd_ak8_muCR4_cvb_pass_muidDown',
+                 'h_msd_ak8_muCR4_cvb_fail_muidUp', 'h_msd_ak8_muCR4_cvb_fail_muidDown',
+                 'h_msd_ak8_muCR4_cvb_pass_muisoUp', 'h_msd_ak8_muCR4_cvb_pass_muisoDown',
+                 'h_msd_ak8_muCR4_cvb_fail_muisoUp', 'h_msd_ak8_muCR4_cvb_fail_muisoDown',
+                 'h_msd_ak8_muCR4_cvb_pass_PuUp', 'h_msd_ak8_muCR4_cvb_pass_PuDown',
+                 'h_msd_ak8_muCR4_cvb_fail_PuUp', 'h_msd_ak8_muCR4_N2_fail_PuDown',
                  ]
 
    
@@ -146,12 +160,7 @@ def main(options, args):
 
     print "Data..."
     if not options.skipData:
-        if muonCR:
-            dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
-                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
-        else:
-            # 2017 triggerBits
-            triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
+        triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
                           "names":[
                                "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
                                "HLT_PFHT1050_v*",
@@ -161,13 +170,22 @@ def main(options, args):
                                "HLT_AK8PFJet360_TrimMass30_v*",
                                "HLT_AK8PFJet380_TrimMass30_v*",
                                "HLT_AK8PFJet500_v*"]
-                      }
-            if options.is2017:
+                               }
+        if options.is2017:
+            #dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
+            #        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
+            if options.isData and muonCR:
+                dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&1)&&passJson)', True,
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName).addPlots(plots)
+            elif options.isData:      
                 dataSample = normSampleContainer('data_obs', tfiles['data'], sfData, DBTMIN, lumi, True, False, "passJson", True,
                     iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
-            else:
-                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,
-                                       '((triggerBits&2)&&passJson)', True, iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
+        else: 
+            if options.isData and muonCR:
+                pass
+            elif options.isData:      
+                dataSample = sampleContainer('data_obs', tfiles['data_obs'], sfData, dbtagmin, lumi, True, False,'((triggerBits&2)&&passJson)', True, 
+                    iSplit = options.iSplit, maxSplit = options.maxSplit,doublebCut=dbtagcut,puOpt=puOpt)
 
     hall = {}
 

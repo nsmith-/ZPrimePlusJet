@@ -890,6 +890,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     fullmc = hstack.GetStack().Last();
 
     # normalize MC to data
+    if fullmc.Integral() < 1:
+    	print "Empty MC integrals"
+    	return 
     scalefactor = hd.Integral()/fullmc.Integral();
     print "data/mc scale factor = ", scalefactor
     if normalize:
@@ -906,13 +909,13 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetFillStyle(1001)
 
 	
-    
+    print hs
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
-	if 'ggH' in name:
-          h.SetLineColor(color[name])
-          h.SetLineStyle(style[name])
-          h.SetLineWidth(2)
-          h.SetFillStyle(0)
+        if 'ggH' in name:
+            h.SetLineColor(color[name])
+            h.SetLineStyle(style[name])
+            h.SetLineWidth(2)
+            h.SetFillStyle(0)
 	
 
     leg_y = 0.88 - (2+int(len(hb)/3))*0.03
