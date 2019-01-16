@@ -126,10 +126,13 @@ class sampleContainer:
 
         # get trigger efficiency object
 
-        f_trig = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root"), "read")
-#            "/uscms_data/d3/mkrohn/DAZSLE/ggH_2017/ZPrimePlusJet/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root", "read")
-        self._trig_denom = f_trig.Get("data_obs_muCR4_denominator")
-        self._trig_numer = f_trig.Get("data_obs_muCR4_numerator")
+        #f_trig = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_SingleMuon_Run2017_RunCtoF.root"), "read")
+        #self._trig_denom = f_trig.Get("data_obs_muCR4_denominator")
+        #self._trig_numer = f_trig.Get("data_obs_muCR4_numerator")
+        #f_trig = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_Run2017.root"), "read")
+        f_trig = ROOT.TFile.Open(os.path.expandvars("$ZPRIMEPLUSJET_BASE/analysis/ggH/TriggerEfficiencies_Run2017_noPS.root"), "read")
+        self._trig_denom = f_trig.Get("h_runBtoF_pass_Mu50")
+        self._trig_numer = f_trig.Get("h_runBtoF_pass_Main")
         self._trig_denom.SetDirectory(0)
         self._trig_numer.SetDirectory(0)
 #        self._trig_denom.RebinX(2)
@@ -181,7 +184,9 @@ class sampleContainer:
                           ('AK8Puppijet0_deepdoubleb_nomasssculptpen', 'd', -999),
                           ('AK8Puppijet0_deepdoublec_nomasssculptpen', 'd', -999),
                           ('AK8Puppijet0_deepdoublecvb_nomasssculptpen', 'd', -999),
-                          ('kfactorEWK', 'f', 0), ('kfactorNLO', 'f', 0), ('nAK4PuppijetsPt30', 'i', -999),
+                          ('kfactor', 'f', 0), ('kfactorNLO', 'f', 0), 
+                          ('kfactorEWK', 'f', 0), ('kfactorQCD', 'f', 0), 
+			  ('nAK4PuppijetsPt30', 'i', -999),
                           ('nAK4PuppijetsPt30dR08_0', 'i', -999),
                           ('nAK4PuppijetsPt30dR08jesUp_0', 'i', -999), ('nAK4PuppijetsPt30dR08jesDown_0', 'i', -999),
                           ('nAK4PuppijetsPt30dR08jerUp_0', 'i', -999), ('nAK4PuppijetsPt30dR08jerDown_0', 'i', -999),
@@ -239,6 +244,18 @@ class sampleContainer:
                                    ('AK8Puppijet1_doublecsv', 'd', -999), ('AK8Puppijet2_doublecsv', 'i', -999),
                                    ('AK8Puppijet1_isTightVJet', 'i', 0),
                                    ('AK8Puppijet2_isTightVJet', 'i', 0),
+                                   ('AK8Puppijet1_deepdoubleb', 'd', -999),
+                                   ('AK8Puppijet1_deepdoubleb_nomasssculptpen', 'd', -999),
+                                   ('AK8Puppijet2_deepdoubleb', 'd', -999),
+                                   ('AK8Puppijet2_deepdoubleb_nomasssculptpen', 'd', -999),
+                                   ('AK8Puppijet1_deepdoublec', 'd', -999),
+                                   ('AK8Puppijet1_deepdoublec_nomasssculptpen', 'd', -999),
+                                   ('AK8Puppijet2_deepdoublec', 'd', -999),
+                                   ('AK8Puppijet2_deepdoublec_nomasssculptpen', 'd', -999),
+                                   ('AK8Puppijet1_deepdoublecvb', 'd', -999),
+                                   ('AK8Puppijet1_deepdoublecvb_nomasssculptpen', 'd', -999),
+                                   ('AK8Puppijet2_deepdoublecvb', 'd', -999),
+                                   ('AK8Puppijet2_deepdoublecvb_nomasssculptpen', 'd', -999),
                                    ('AK4Puppijet4_eta' , 'd', -999),('AK4Puppijet5_eta' , 'd', -999),
                                    ('AK4Puppijet4_phi' , 'd', -999),('AK4Puppijet5_phi' , 'd', -999),
                                    ('AK4Puppijet4_pt'  , 'd', -999),('AK4Puppijet5_pt'  , 'd', -999),
@@ -524,8 +541,10 @@ class sampleContainer:
                 'h_eta_mu_muCR4': ["h_" + self._name + "_eta_mu_muCR4", "; leading muon #eta;", 50, -2.5, 2.5],
                 'h_pt_ak8_muCR4': ["h_" + self._name + "_pt_ak8_muCR4", "; AK8 leading p_{T} (GeV);", 50, 300, 2100],
                 'h_eta_ak8_muCR4': ["h_" + self._name + "_eta_ak8_muCR4", "; AK8 leading #eta;", 50, -3, 3],
-                'h_dbtag_ak8_muCR4': ["h_" + self._name + "_dbtag_ak8_muCR4", "; p_{T}-leading double b-tag;", 40, -1,
-                                      1],
+                'h_dbtag_ak8_muCR4': ["h_" + self._name + "_dbtag_ak8_muCR4", "; p_{T}-leading double b-tag;", 40, -1, 1],
+                'h_DDBvL_ak8_muCR4': ["h_" + self._name + "_DDBvL_ak8_muCR4", "; p_{T}-leading double BvL-tag;", 40, 0, 1],
+                'h_DDCvL_ak8_muCR4': ["h_" + self._name + "_DDCvL_ak8_muCR4", "; p_{T}-leading double CvL-tag;", 40, 0, 1],
+                'h_DDCvB_ak8_muCR4': ["h_" + self._name + "_DDCvB_ak8_muCR4", "; p_{T}-leading double CvB-tag;", 40, 0, 1],
                 'h_t21ddt_ak8_muCR4': ["h_" + self._name + "_t21ddt_ak8_muCR4", "; AK8 #tau_{21}^{DDT};", 25, 0, 1.5],
                 'h_msd_ak8_muCR4': ["h_" + self._name + "_msd_ak8_muCR4", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
                 'h_msd_ak8_muCR4_pass': ["h_" + self._name + "_msd_ak8_muCR4_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
@@ -880,22 +899,21 @@ class sampleContainer:
                 # print self._name
 		for i in range(0, len(ptscale)):
 			if self.genVPt[0] > ptscale[i] and self.genVPt[0]<ptscale[i+1]:  ptKF=wscale[i]
-                vjetsKF = self.kfactorEWK[0] * 1.35 * ptKF  # ==1 for not V+jets events
+                vjetsKF = self.kfactor[0] * 1.35 * ptKF  # ==1 for not V+jets events
             elif 'zqq' in self._name or  self._name == 'DY':
                 # print self._name
-                vjetsKF = self.kfactorEWK[0] * 1.45  # ==1 for not V+jets events
+                vjetsKF = self.kfactor[0] * 1.45  # ==1 for not V+jets events
             
             ### works only for 2017 HT binned sample, constructed with normSampleContainer
-            if 'ZJetsToQQ_' in self._name:   
-		#self.kfactorEWK[0] = 1 #Broken k-factor for the moment
-                ptForNLO = max(250., min(self.genVPt[0], 1200.)) 
-                vjetsKF   = self.kfactorEWK[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
-                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactorEWK[0])
+            if 'ZJetsToQQ_' in self._name:    
+                ptForNLO = max(250., min(self.genVPt[0], 1200.))  
+                #vjetsKF   = self.kfactor[0]  * self._znlo.GetBinContent(self._znlo.FindBin(ptForNLO))
+                vjetsKF   = self.kfactorEWK[0]  * self.kfactorQCD[0]
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factorEWK= %.3f , kfactorQCD=%.3f"%(self._name, ptForNLO, vjetsKF, self.kfactorEWK[0], self.kfactorQCD[0])
             if 'WJetsToQQ_' in self._name:
-		#self.kfactorEWK[0] = 1 #Broken k-factor for the moment
                 ptForNLO = max(250., min(self.genVPt[0], 1200.))
-                vjetsKF   = self.kfactorEWK[0]  * self._wnlo.GetBinContent(self._wnlo.FindBin(ptForNLO))
-                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factor= %.3f"%(self._name, ptForNLO, vjetsKF, self.kfactorEWK[0])
+                vjetsKF   = self.kfactorEWK[0]  * self.kfactorQCD[0] 
+                #print "sample: %s , pT = %.3f,  k-factor: %.3f  self k-factorEWK= %.3f , kfactorQCD=%.3f"%(self._name, ptForNLO, vjetsKF, self.kfactorEWK[0],self.kfactorQCD[0])
         
                 
             # trigger weight
@@ -907,14 +925,14 @@ class sampleContainer:
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
             trigweightDown = trigweight - self._trig_eff.GetEfficiencyErrorLow(
                 self._trig_eff.FindFixBin(massForTrig, ptForTrig))
-#	    print "trigweight: ", trigweight
+    	    #print "trigweight: %.3f, pt=%.3f, mass=%.3f"%( trigweight,ptForTrig,massForTrig)
             if trigweight <= 0 or trigweightDown <= 0 or trigweightUp <= 0:
                 print 'trigweights are %f, %f, %f, setting all to 1 for massForTrig=%f, ptForTrig=%f' % (trigweight, trigweightUp, trigweightDown,ptForTrig,massForTrig)
                 trigweight = 1
                 trigweightDown = 1
                 trigweightUp = 1
 
-            weight= puweight * fbweight * self._sf * vjetsKF * trigweight
+            weight = puweight * fbweight * self._sf * vjetsKF * trigweight
             weight_triggerUp = puweight * fbweight * self._sf * vjetsKF * trigweightUp
             weight_triggerDown = puweight * fbweight * self._sf * vjetsKF * trigweightDown
             weight_pu_up = puweight_up * fbweight * self._sf * vjetsKF * trigweight
@@ -1045,11 +1063,13 @@ class sampleContainer:
                 if self.AK8Puppijet1_doublecsv[0] > 1:
                     jdb_8_sub1 = -99
                 else:
-                    jdb_8_sub1 = self.AK8Puppijet1_doublecsv[0]
+                    #jdb_8_sub1 = self.AK8Puppijet1_doublecsv[0]
+                    jdb_8_sub1 = getattr(self,self.doublebName.replace("AK8Puppijet0","AK8Puppijet1"))[0]
                 if self.AK8Puppijet2_doublecsv[0] > 1:
                     jdb_8_sub2 = -99
                 else:
-                    jdb_8_sub2 = self.AK8Puppijet2_doublecsv[0]
+                    #jdb_8_sub2 = self.AK8Puppijet2_doublecsv[0]
+                    jdb_8_sub2 = getattr(self,self.doublebName.replace("AK8Puppijet0","AK8Puppijet2"))[0]
 
             n_4 = self.nAK4PuppijetsPt30[0]
             if not self._minBranches:
@@ -1374,7 +1394,6 @@ class sampleContainer:
 		
 
                 if jpt_8 > PTCUT and jmsd_8 > MASSCUT and rh_8<-2.1 and rh_8>-6.:
-		    if "WJets" in self._name: print "W", jpt_8, jmsd_8, rh_8, weight
                     self.h_pt_ak8.Fill(jpt_8, weight)
                     self.h_eta_ak8.Fill(jeta_8, weight)
                     self.h_pt_ak8_sub1.Fill(jpt_8_sub1, weight)
@@ -1488,6 +1507,10 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_Hcc1_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
                     self.h_msd_v_pt_ak8_Hcc1_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                     self.h_msd_v_pt_ak8_Hcc1_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                        self.h_msd_v_pt_ak8_Hcc1_pass_matched.Fill(jmsd_8, jpt_8, weight)
+                    else:
+                        self.h_msd_v_pt_ak8_topR6_N2_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                 elif jDDCvL_8 > self.DBTAGCUTMIN:
                     #self.h_msd_ak8_Hcc1_fail.Fill(jmsd_8, weight)
                     self.h_msd_v_pt_ak8_Hcc1_fail.Fill(jmsd_8, jpt_8, weight)
@@ -1495,6 +1518,10 @@ class sampleContainer:
                     self.h_msd_v_pt_ak8_Hcc1_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
                     self.h_msd_v_pt_ak8_Hcc1_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
                     self.h_msd_v_pt_ak8_Hcc1_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                        self.h_msd_v_pt_ak8_Hcc1_fail_matched.Fill(jmsd_8, jpt_8, weight)
+                    else:
+                        self.h_msd_v_pt_ak8_Hcc1_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
             if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
                 cut[8] = cut[8] + 1
                 if  rh_8<-2.1 and rh_8>-6.:
