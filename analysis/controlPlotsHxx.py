@@ -222,18 +222,16 @@ def main(options,args,outputExists):
 
         if options.isData: 
             print "Data..."
-            triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
-                              "names":[
-                                   "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
-                                   "HLT_PFHT1050_v*",
-                                   "HLT_AK8PFJet400_TrimMass30_v*",
-                                   "HLT_AK8PFHT800_TrimMass50_v*",
-                                   "HLT_PFJet500_v*",
-                                   "HLT_AK8PFJet360_TrimMass30_v*",
-                                   "HLT_AK8PFJet380_TrimMass30_v*",
-                                   "HLT_AK8PFJet500_v*"]
-                          }
-
+            triggerNames={"version":"zprimebit-15.01","branchName":"triggerBits",
+                          "names":[
+                               "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
+                               "HLT_PFHT1050_v*",
+                               "HLT_AK8PFJet400_TrimMass30_v*",
+                               "HLT_AK8PFJet420_TrimMass30_v*",
+                               "HLT_AK8PFHT800_TrimMass50_v*",
+                               "HLT_PFJet500_v*",
+                               "HLT_AK8PFJet500_v*"]
+            }
         if options.is2017:
             if options.isData and muonCR:
                 dataSample = normSampleContainer('muon', tfiles['muon'], 1, DBTMIN, lumi, True, False, '((triggerBits&1)&&passJson)', False,
