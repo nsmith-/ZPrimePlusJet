@@ -160,7 +160,7 @@ def main(options, args):
 
     print "Data..."
     if not options.skipData:
-            triggerNames={"version":"zprimebit-15.01","branchName":"triggerBits",
+        triggerNames={"version":"zprimebit-15.01","branchName":"triggerBits",
                           "names":[
                                "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
                                "HLT_PFHT1050_v*",
@@ -169,10 +169,10 @@ def main(options, args):
                                "HLT_AK8PFHT800_TrimMass50_v*",
                                "HLT_PFJet500_v*",
                                "HLT_AK8PFJet500_v*"]
-            }
+        }
         if options.is2017:
-            #dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
-            #  #      iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
+            # dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
+            #        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
             print "using 2017 data"
             if muonCR:
                 dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&1)&&passJson)', True,
