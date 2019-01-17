@@ -122,32 +122,32 @@ def main(options, args):
         pass 
         print "Signals... "
         sigSamples['hqq125'] = normSampleContainer('hqq125', tfiles['ggHbb'], 1, DBTMIN, lumi, False, False, '1', True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots) 
         sigSamples['hcc125'] = normSampleContainer('hcc125' ,tfiles['ggHcc']  , 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots) 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots) 
         sigSamples['tthqq125'] = normSampleContainer('tthqq125',tfiles['ttHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         sigSamples['whqq125'] = normSampleContainer('whqq125',tfiles['WHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         sigSamples['zhqq125'] = normSampleContainer('zhqq125',tfiles['ZHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         sigSamples['vbfhqq125'] = normSampleContainer('vbfhqq125',tfiles['VBFHbb']  , 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
     
         print "Backgrounds..." 
         bkgSamples['wqq']   = normSampleContainer('wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
         bkgSamples['zqq']  = normSampleContainer('zqq', tfiles['Z'], 1, DBTMIN,lumi,False,False,'1', True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots) 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots) 
         if not options.skipQCD:  
             bkgSamples['qcd']  = normSampleContainer('qcd',tfiles['qcd'], 1, dbtagmin,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt="default").addPlots(plots)   
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)   
         bkgSamples['tqq']  = normSampleContainer('tqq',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',True,
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         bkgSamples['stqq']  = normSampleContainer('stqq',tfiles['SingleTop'], 1, DBTMIN,lumi,False,False,'1',True,
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         bkgSamples['vvqq']  = normSampleContainer('vvqq',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',True,
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, puOpt='default').addPlots(plots)
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         
     else:
         bkgSamples['wqq']  = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="2016")
@@ -160,27 +160,26 @@ def main(options, args):
 
     print "Data..."
     if not options.skipData:
-        triggerNames={"version":"zprimebit-12.07-triggerBits","branchName":"triggerBits",
+            triggerNames={"version":"zprimebit-15.01","branchName":"triggerBits",
                           "names":[
                                "HLT_AK8PFJet330_PFAK8BTagCSV_p17_v*",
                                "HLT_PFHT1050_v*",
                                "HLT_AK8PFJet400_TrimMass30_v*",
+                               "HLT_AK8PFJet420_TrimMass30_v*",
                                "HLT_AK8PFHT800_TrimMass50_v*",
                                "HLT_PFJet500_v*",
-                               "HLT_AK8PFJet360_TrimMass30_v*",
-                               "HLT_AK8PFJet380_TrimMass30_v*",
                                "HLT_AK8PFJet500_v*"]
-                               }
+            }
         if options.is2017:
             #dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&4)&&passJson)', True,
             #        iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebCut=dbtagcut).addPlots(plots)
             print "using 2017 data"
             if muonCR:
                 dataSample = normSampleContainer('data_obs', tfiles['muon'], sfData, DBTMIN, lumi, True, False, '((triggerBits&1)&&passJson)', True,
-                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName).addPlots(plots)
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut).addPlots(plots)
             else:      
                 dataSample = normSampleContainer('data_obs', tfiles['data'], sfData, DBTMIN, lumi, True, False, "passJson", True,
-                    iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName).addPlots(plots)
+                    iSplit = options.iSplit, maxSplit = options.maxSplit, triggerNames=triggerNames, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut).addPlots(plots)
         else: 
             if muonCR:
                 pass
