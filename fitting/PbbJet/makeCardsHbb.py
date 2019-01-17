@@ -95,7 +95,12 @@ def main(options,args):
                 if options.forcomb and '2017' in proc:
                     proc = proc.replace("2017","")
                 rate = histoDict['%s_%s'%(proc,box)].Integral(1, numberOfMassBins, i, i)
-                if rate>0:
+                if proc in  ['whqq125', 'zhqq125', 'vbfhqq125', 'tthqq125']: 
+                    procsToRemove.append((proc, "cat%i"%i, box))    
+                    jesErrs['%s_%s'%(proc,box)] =  1.0
+                    jerErrs['%s_%s'%(proc,box)] =  1.0
+                    puErrs['%s_%s'%(proc,box)] =  1.0
+                elif rate>0:
                     rateJESUp = histoDict['%s_%s_JESUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                     rateJESDown = histoDict['%s_%s_JESDown'%(proc,box)].Integral(1, numberOfMassBins, i, i)
                     rateJERUp = histoDict['%s_%s_JERUp'%(proc,box)].Integral(1, numberOfMassBins, i, i)
@@ -111,6 +116,7 @@ def main(options,args):
                     puErrs['%s_%s'%(proc,box)] =  1.0
                     print "to remove: proc, cat, box, rate =", proc, "cat%i"%i, box, rate
                     procsToRemove.append((proc, "cat%i"%i, box))
+               
                 if i == 2:
                     scaleptErrs['%s_%s'%(proc,box)] =  0.05
                 elif i == 3:
@@ -145,7 +151,7 @@ def main(options,args):
                             histo = histoDict['%s_%s%s'%(proc,box,matchString)]
                             
                         error = array.array('d',[0.0])
-                        rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)                 
+                        rate = histo.IntegralAndError(1,histo.GetNbinsX(),i,i,error)            
                         if rate>0:
                             mcstatErrs['%s_%s'%(proc,box),i,j] = 1.0+(error[0]/rate)
                         else:
@@ -164,6 +170,7 @@ def main(options,args):
         scaleptString = 'scalept shape'
         mcStatStrings = {}
         mcStatGroupString = 'mcstat group ='
+        mcstatsuffix  = options.suffix.lower().strip("_")
         if options.forcomb:
             qcdGroupString = 'qcd2017 group = qcd2017eff%s'%options.suffix
         else:
@@ -172,9 +179,9 @@ def main(options,args):
             for proc in sigs+bkgs:
                 for j in range(1,numberOfMassBins+1):
                     if options.noMcStatShape:
-                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i lnN'%(proc,box,i,j)
+                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%i%smcstat%i lnN'%(proc,box,i,mcstatsuffix,j)
                     else:
-                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%imcstat%i shape'%(proc,box,i,j)
+                        mcStatStrings['%s_%s'%(proc,box),i,j] = '%s%scat%i%smcstat%i shape'%(proc,box,i,mcstatsuffix,j)
                     
         for box in boxes:
             for proc in sigs+bkgs:
@@ -261,9 +268,9 @@ def main(options,args):
                 if options.forcomb and '2017' in proc:
                     proc = proc.replace("2017","")
                 if options.noMcStatShape and proc!='qcd' and proc!='qcd2017' and (proc, 'cat%i'%i, box) not in procsToRemove:
-                    print 'include %s%scat%imcstat'%(proc,box,i)
+                    print 'include %s%scat%i%smcstat'%(proc,box,i,mcstatsuffix)
                     dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,1].replace('mcstat1','mcstat') + "\n")
-                    mcStatGroupString += ' %s%scat%imcstat'%(proc,box,i)
+                    mcStatGroupString += ' %s%scat%i%smcstat'%(proc,box,i,mcstatsuffix)
                     continue
                 for j in range(1,numberOfMassBins+1):                    
                     # if stat. unc. is greater than 50% 
@@ -280,12 +287,12 @@ def main(options,args):
                         rhoVal = r.TMath.Log(massVal*massVal/ptVal/ptVal)
                         if not( options.blind and massVal > BLIND_LO and massVal < BLIND_HI) and not (rhoVal < RHO_LO or rhoVal > RHO_HI):
                             dctmp.write(mcStatStrings['%s_%s'%(proc,box),i,j] + "\n")
-                            print 'include %s%scat%imcstat%i'%(proc,box,i,j)
-                            mcStatGroupString += ' %s%scat%imcstat%i'%(proc,box,i,j)
+                            print 'include %s%scat%i%smcstat%i'%(proc,box,i,mcstatsuffix,j)
+                            mcStatGroupString += ' %s%scat%i%smcstat%i'%(proc,box,i,mcstatsuffix,j)
                         else:
-                            print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
+                            print 'do not include %s%scat%i%smcstat%i'%(proc,box,i,mcstatsuffix,j)
                     else:
-                        print 'do not include %s%scat%imcstat%i'%(proc,box,i,j)
+                        print 'do not include %s%scat%i%smcstat%i'%(proc,box,i,mcstatsuffix,j)
                         
         for im in range(numberOfMassBins):
             if options.forcomb:
@@ -339,7 +346,10 @@ def main(options,args):
         for l in linel: dctmp_w.write(' '.join(l)+'\n')
 
     for proc, tag, box in procsToRemove: 
+        print "removed", proc, tag, box
         removeProc(proc, tag, box)
+
+    print procsToRemove
 ###############################################################
 
 

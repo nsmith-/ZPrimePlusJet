@@ -11,6 +11,7 @@ for key in fdirs.keys():
 		subdfiles = [ "root://cmseos.fnal.gov/" + subd + f for f in os.listdir(subd)]
 		tfiles[key][ subd.strip('/').split('/')[-1] ] = subdfiles
 
+tfiles = {"Hxx_2017" : tfiles}
 with open('ggH/tempsamplefiles.json', 'w') as fp:
 	json.dump(tfiles, fp, indent=4, separators=(',', ': '))                                                                                                                                     
 

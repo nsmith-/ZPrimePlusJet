@@ -30,7 +30,7 @@ def write_bash(exe='runjob', command='', gitClone=""):
     out = """#!/bin/bash
 date
 MAINDIR=`pwd`
-ls
+ls--dbtagcut 0.83
 #CMSSW from scratch (only need for root)
 export CWD=${{PWD}}
 export PATH=${{PATH}}:/cvmfs/cms.cern.ch/common

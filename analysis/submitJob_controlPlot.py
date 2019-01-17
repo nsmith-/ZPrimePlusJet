@@ -67,6 +67,8 @@ if __name__ == '__main__':
     script_group.add_option("--lumi", dest="lumi", default = 35.9,type=float,help="luminosity", metavar="lumi")
     script_group.add_option('-s','--isData', action='store_true', dest='isData', default =False,help='signal comparison', metavar='isData')
     script_group.add_option('-m','--muonCR', action='store_true', dest='muonCR', default =False,help='for muon CR', metavar='muonCR')
+    script_group.add_option('--dbtagcut', dest='dbtagcut', default=0.9, type="float",
+                      help='btag selection for cut value(pass region lower bound)', metavar='dbtagcut')
     script_group.add_option('--is2017', action='store_true', dest='is2017', default =False,help='for using 2017 files', metavar='is2017')
     script_group.add_option("--puOpt"  , dest="puOpt", default="2017", help="select pu weight source", metavar="puOpt")
 
