@@ -52,7 +52,6 @@ def main(options, args):
     systematics = ['JESUp','JESDown','JERUp','JERDown','triggerUp','triggerDown','PuUp','PuDown','matched','unmatched']
     plots = []
     region  = options.region
-    region = 'Hcc1'
     print "Selecting doubleB pass/fail plots for this region   =  %s"% region
     for pf in passfail:
         hname  ="h_msd_v_pt_ak8_%s_%s"%(region,pf)
@@ -246,7 +245,7 @@ if __name__ == '__main__':
     parser.add_option("--i-split"  , dest="iSplit", default=0, type="int", help="job number", metavar="iSplit")
     parser.add_option("--is2017"  , dest="is2017", action='store_true', default=False, help="use 2017 files", metavar="is2017")
     parser.add_option("--sfData" , dest="sfData", default=1, type="int", help="process 1/sf of data", metavar="sfData")
-    parser.add_option("--region" , dest="region", default='topR6_N2',choices=['topR6_N2','QGquark','QGgluon'], help="region for pass/fail doubleB tag", metavar="region")
+    parser.add_option("--region" , dest="region", default='topR6_N2',choices=['topR6_N2','QGquark','QGgluon','Hcc1'], help="region for pass/fail doubleB tag", metavar="region")
 
     (options, args) = parser.parse_args()
 
