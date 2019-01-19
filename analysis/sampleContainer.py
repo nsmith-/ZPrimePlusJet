@@ -288,8 +288,12 @@ class sampleContainer:
             'h_fBosonPt_fbweight': ["h_" + self._name + "_fBosonPt_fbweight", "; fBoson pT;;", 100, 0, 1000],
             'h_fBosonPt_weight':   ["h_" + self._name + "_fBosonPt_weight", "; fBoson pT;;", 100, 0, 1000],
             'h_npv': ["h_" + self._name + "_npv", "; number of PV;;", 100, 0, 100],
-            'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23,
-                                        40, 201],
+
+            'h_msd_ak8_Hcc1_incl': ["h_" + self._name + "_msd_ak8_Hcc1_incl", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+            'h_msd_ak8_Hcc1_pass': ["h_" + self._name + "_msd_ak8_Hcc1_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+            'h_msd_ak8_Hcc1_fail': ["h_" + self._name + "_msd_ak8_Hcc1_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+
+            'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_topR6_N2_pass_JESUp': ["h_" + self._name + "_msd_ak8_topR6_N2_pass_JESUp",
                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_topR6_N2_pass_JESDown': ["h_" + self._name + "_msd_ak8_topR6_N2_pass_JESDown",
@@ -1500,8 +1504,9 @@ class sampleContainer:
 		if (not self._minBranches): self.h_n2b1sdddt_ak8_aftercut.Fill(jtN2b1sdddt_8,weight)
             if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jDDCvB_8 > 0.2 and isTightVJet:
               if  rh_8<-2.1 and rh_8>-6.:
+                self.h_msd_ak8_Hcc1_incl.Fill(jmsd_8, weight)
                 if jDDCvL_8 > self.DBTAGCUT:
-                    #self.h_msd_ak8_Hcc1_pass.Fill(jmsd_8, weight)
+                    self.h_msd_ak8_Hcc1_pass.Fill(jmsd_8, weight)
                     self.h_msd_v_pt_ak8_Hcc1_pass.Fill(jmsd_8, jpt_8, weight)
                     self.h_msd_v_pt_ak8_Hcc1_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
                     self.h_msd_v_pt_ak8_Hcc1_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
@@ -1510,9 +1515,9 @@ class sampleContainer:
                     if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
                         self.h_msd_v_pt_ak8_Hcc1_pass_matched.Fill(jmsd_8, jpt_8, weight)
                     else:
-                        self.h_msd_v_pt_ak8_topR6_N2_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
+                        self.h_msd_v_pt_ak8_Hcc1_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
                 elif jDDCvL_8 > self.DBTAGCUTMIN:
-                    #self.h_msd_ak8_Hcc1_fail.Fill(jmsd_8, weight)
+                    self.h_msd_ak8_Hcc1_fail.Fill(jmsd_8, weight)
                     self.h_msd_v_pt_ak8_Hcc1_fail.Fill(jmsd_8, jpt_8, weight)
                     self.h_msd_v_pt_ak8_Hcc1_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
                     self.h_msd_v_pt_ak8_Hcc1_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
