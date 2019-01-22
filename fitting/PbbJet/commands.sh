@@ -5,13 +5,8 @@ wdir=output-Hbb
 # --dbtagcut also the value read for CvL
 # 0 local test
 if [[ $step == 0 ]]; then
-<<<<<<< HEAD
   mkdir $wdir
   python Hxx_create.py -b -o $wdir/p10_data/ --is2017 --lumi 2.8 --sfData 10 --max-split 10000 --dbtagcut 0.83
-=======
-  mkdir -p output-miniaod-pfmet140-hptckkw-hqq125ptShape/test/
-  python Hxx_create.py -b -o output-miniaod-pfmet140-hptckkw-hqq125ptShape/test/ --is2017 --lumi 2.8 --sfData 10 --max-split 10000 --dbtagcut 0.83
->>>>>>> aa49e8ca544e23107e718c30b9d3a15d4b79f03b
 fi
 
 if [[ $step == 1 ]]; then
@@ -27,12 +22,11 @@ if [[ $step == 2 ]]; then
 fi
 
 if [[ $step == 3 ]]; then
-<<<<<<< HEAD
   python buildRhalphabetHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
     \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
     -o $wdir/  \
     --remove-unmatched --addHptShape  \
-    --prefit --blind --is2017 --scale 10.0|tee build.log
+    --prefit --blind --is2017 --scale 10.0 |tee build.log
     #--prefit --pseudo --is2017 --scale 14.6 |tee build.log
   
    python makeCardsHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
