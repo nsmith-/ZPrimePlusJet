@@ -27,8 +27,8 @@ def main(options,args):
         tfile_loose = r.TFile.Open(options.ifile_loose)
         
     boxes = ['pass', 'fail']
-    sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','tqq']
+    sigs = ['hcc125']
+    bkgs = ['hqq125','zqq','wqq','tqq']
     if options.forcomb:
         bkgs.append('qcd2017')
     else:

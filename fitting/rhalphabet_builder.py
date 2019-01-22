@@ -91,7 +91,7 @@ class RhalphabetBuilder():
         self._lMSD.setRange('Low', self._mass_lo, self._mass_blind_lo)
         self._lMSD.setRange('Blind', self._mass_blind_lo, self._mass_blind_hi)
         self._lMSD.setRange('High', self._mass_blind_hi, self._mass_hi)
-        # self._lMSD.setBins(self._mass_nbins)
+        self._lMSD.setBins(self._mass_nbins)
         self._lPt = r.RooRealVar("pt", "pt", self._pt_lo, self._pt_hi)
         self._lPt.setBins(self._nptbins)
         self._lRho = r.RooFormulaVar("rho", "log(x*x/pt/pt)", r.RooArgList(self._lMSD, self._lPt))
@@ -126,7 +126,7 @@ class RhalphabetBuilder():
         #    self._signal_names.append("Pbb_" + str(mass))
         # for Hbb
         for mass in [125]:
-            for sig in ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]:
+            for sig in ["hcc", "hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]:
                 self._signal_names.append(sig + str(mass))
 
     def run(self):
@@ -282,7 +282,7 @@ class RhalphabetBuilder():
                 getattr(w, 'import')(histpdf['%s_%s' % (proc, cat)], r.RooFit.RecycleConflictNodes())
                 #getattr(w, 'import')(datahist['%s_%s' % (proc, cat)], r.RooFit.RenameConflictNodes(self._suffix))
                 #getattr(w, 'import')(histpdf['%s_%s' % (proc, cat)] , r.RooFit.RenameConflictNodes(self._suffix))
-                if 'hqq125' in proc:
+                if 'hqq125' in proc or 'hcc125' in proc:
                     # signal
                     signorm['%s_%s' % (proc, cat)] = r.RooRealVar('signorm_%s_%s' % (proc, cat),
                                                                   'signorm_%s_%s' % (proc, cat),
@@ -875,7 +875,7 @@ class RhalphabetBuilder():
             cat = import_object.GetName().split('_')[1]
             mass = 0
             systematics = ['JES', 'JER', 'trigger', 'mcstat', 'Pu']
-            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process):
+            if do_syst and ('tqq' in process or 'wqq' in process or 'zqq' in process or 'hqq' in process or 'hcc' in process):
                 # get systematic histograms
                 hout = []
                 histDict = {}
@@ -976,12 +976,12 @@ class RhalphabetBuilder():
                     self._outfile_validation.cd()
                     h.Write()
 
-            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process):
+            if do_shift and ('wqq' in process or 'zqq' in process or 'hqq' in process or 'hcc' in process):
                 if process == 'wqq':
                     mass = 80.
                 elif process == 'zqq':
                     mass = 91.
-                elif 'hqq' in process:
+                elif 'hqq' in process or 'hcc' in process:
                     mass = float(process[-3:])  # hqq125 -> 125
                 elif 'Pbb' in process:
                     mass = float(process.split('_')[-1])  # Pbb_75 -> 75
@@ -1181,7 +1181,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
     # signal_names = []
     # for Hbb
     masses = [125]  # 50,75,125,100,150,200,250,300]
-    sigs = ["hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
+    sigs = ["hcc", "hqq", "zhqq", "whqq", "vbfhqq", "tthqq"]
     signal_names = []
 
     for mass in masses:
@@ -1250,7 +1250,7 @@ def LoadHistograms(f, pseudo, blind, useQCD, scale, r_signal, mass_range, blind_
 def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
     SF = 1
     print process, cat
-    if 'hqq' in process or 'zqq' in process or 'Pbb' in process:
+    if 'hqq' in process or 'zqq' in process or 'Pbb' in process or 'hcc' in process:
         if 'pass' in cat:
             SF *= BB_SF
             if 'zqq' in process:
@@ -1262,7 +1262,7 @@ def GetSF(process, cat, f, fLoose=None, removeUnmatched=False, iPt=-1):
                 SF *= (1. + (1. - BB_SF) * passInt / failInt)
                 if 'zqq' in process:
                     print (1. + (1. - BB_SF) * passInt / failInt)
-    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process:
+    if 'wqq' in process or 'zqq' in process or 'hqq' in process or 'Pbb' in process or 'hcc' in process:
         SF *= V_SF
         if 'zqq' in process:
             print V_SF
