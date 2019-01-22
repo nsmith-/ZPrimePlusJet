@@ -14,9 +14,9 @@ from sampleContainer import *
 from normSampleContainer import *
 DBTMIN=-99
 #
-def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases):
+def makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases, blind=False):
     if isData:
-        c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile)
+        c = makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,plot.replace('h_','stack_'),odir,lumi,ofile, blind=blind)
         canvases.append(c)  
     else:
         c = makeCanvasComparisonStack(hs,hb,legname,color,style,'ggHbb',plot.replace('h_','stack_'),odir,lumi,False,ofile)
@@ -148,6 +148,7 @@ def main(options,args,outputExists):
         'h_DDBvLtag_ak8', 'h_DDCvLtag_ak8', 'h_DDCvBtag_ak8', 
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
         'h_Cuts'] 
+        blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl']
     else:
         plots = []
         testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
@@ -210,6 +211,8 @@ def main(options,args,outputExists):
                 iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
 
             if options.isData and muonCR:
+            	bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',False,
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
                 pass
                 # no samples here
 
@@ -343,7 +346,9 @@ def main(options,args,outputExists):
             if empty:
                 print "Plots for {} are empty".format(plot)
                 continue
-            makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases)
+            if plot in blind_data: blind_this = True
+            else: blind_this = False
+            makePlots(plot,hs,hb,hd,hall,legname,color,style,options.isData,odir,lumi,ofile,canvases, blind_this)
 	    #except:
 		#    print "can't plot", plot
         
