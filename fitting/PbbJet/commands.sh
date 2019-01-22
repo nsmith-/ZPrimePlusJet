@@ -10,28 +10,29 @@ if [[ $step == 0 ]]; then
 fi
 
 if [[ $step == 1 ]]; then
-  python submitJob_Hbb_create.py -o $wdir/p10_data --is2017 --lumi 2.8 --sfData 10 -n 100  --dbtagcut 0.89  # for 10% data templates
-  python submitJob_Hbb_create.py -o $wdir/muonCR   --is2017 --lumi 41.1 -m -n 100   --dbtagcut 0.89
-  python submitJob_Hbb_create.py -o $wdir/looserWZ --is2017 --lumi 2.8 --skip-qcd --skip-data -n 100 --dbtagcut 0.8
+  python submitJob_Hbb_create.py -o $wdir/p10_data --is2017 --lumi 2.8 --sfData 10 -n 100  --dbtagcut 0.83  --region 'Hcc1' # for 10% data templates
+  python submitJob_Hbb_create.py -o $wdir/muonCR   --is2017 --lumi 41.1 -m -n 100   --dbtagcut 0.83 --region 'Hcc1'
+  python submitJob_Hbb_create.py -o $wdir/looserWZ --is2017 --lumi 2.8 --skip-qcd --skip-data -n 100 --dbtagcut 0.83 --region 'Hcc1'
 fi
 
 if [[ $step == 2 ]]; then
-  python submitJob_Hbb_create.py -o $wdir/p10_data --hadd --clean -n 100  --dbtagcut 0.89
-  python submitJob_Hbb_create.py -o $wdir/muonCR   --hadd --clean -m -n 100 --dbtagcut 0.89 
-  python submitJob_Hbb_create.py -o $wdir/looserWZ --hadd --clean --skip-qcd --skip-data -n 100 --dbtagcut 0.8 
+  python submitJob_Hbb_create.py -o $wdir/p10_data --hadd --clean -n 100  --dbtagcut 0.83 --region 'Hcc1'
+  python submitJob_Hbb_create.py -o $wdir/muonCR   --hadd --clean -m -n 100 --dbtagcut 0.83 --region 'Hcc1'
+  python submitJob_Hbb_create.py -o $wdir/looserWZ --hadd --clean --skip-qcd --skip-data -n 100 --dbtagcut 0.83 --region 'Hcc1'
 fi
 
 if [[ $step == 3 ]]; then
   python buildRhalphabetHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
     \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
     -o $wdir/  \
-    --remove-unmatched --addHptShape \
-    --prefit --pseudo --is2017 |tee build.log
+    --remove-unmatched --addHptShape  \
+    --prefit --blind --is2017 --scale 10.0|tee build.log
+    #--prefit --pseudo --is2017 --scale 14.6 |tee build.log
   
    python makeCardsHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
      \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
      -o $wdir/ \
-     --remove-unmatched --no-mcstat-shape --pseudo --is2017
+     --remove-unmatched --no-mcstat-shape 
 
    #python writeMuonCRDatacard.py -i $wdir/muonCR/hist_1DZbb_muonCR.root -o $wdir/
 fi
@@ -44,7 +45,7 @@ if [[ $step == 4 ]]; then
   combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt > card_rhalphabet_all.txt
   #text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' card_rhalphabet_all.txt -o card_rhalphabet_all_floatZ.root
   #combine -M FitDiagnostics card_rhalphabet_all_floatZ.root --setParameterRanges r=-5,5:r_z=-2,2 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad --saveNormalizations --plot --saveShapes --saveWithUncertainties --saveWorkspace
-  text2workspace.py card_rhalphabet_nomuonCR.txt
+  text2workspace.py card_rhalphabet_all.txt
   combine -M FitDiagnostics card_rhalphabet_all.root --setParameterRanges r=-5,5 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad # --saveNormalizations --saveShapes --saveWithUncertainties --saveWorkspace --freezeParameters tqqnormSF,tqqeffSF
   combine -M Asymptotic card_rhalphabet_all.root --freezeParameters tqqnormSF,tqqeffSF -t -1
   # python rhalphabin.py 
@@ -56,28 +57,3 @@ fi
 if [[ $step == 5 ]]; then
   python validateMLFit.py -i $wdir/ -o $wdir/ --fit fit_s
 fi
-=======
-
-if [[ $step == 3 ]]; then
-  python buildRhalphabetHbb.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/p10_data/hist_1DZbb_pt_scalesmear.root \
-    --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
-    -o output-miniaod-pfmet140-hqq125ptShape/ \
-    --remove-unmatched --prefit --addHptShape --blind |tee build.log
-  
-  python makeCardsHbb.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/p10_data/hist_1DZbb_pt_scalesmear.root \
-    --ifile-loose output-miniaod-pfmet140-hptckkw-hqq125ptShape/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
-    -o output-miniaod-pfmet140-hqq125ptShape/ \
-    --remove-unmatched --no-mcstat-shape
-
-  python writeMuonCRDatacard.py -i output-miniaod-pfmet140-hptckkw-hqq125ptShape/muonCR/hist_1DZbb_muonCR.root -o output-miniaod-pfmet140-hqq125ptShape/
-fi
-
-if [[ $step == 4 ]]; then
-  pushd output-miniaod-pfmet140-hqq125ptShape/
-  combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt
-  text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' card_rhalphabet_muonCR.txt -o card_rhalphabet_muonCR_floatZ.root
-  combine -M FitDiagnostics card_rhalphabet_muonCR_floatZ.root --setParameterRanges r=-5,5:r_z=-2,2 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad --saveNormalizations --plot --saveShapes --saveWithUncertainties --saveWorkspace
-  # python rhalphabin.py 
-  popd
-fi
->>>>>>> d7a6d9ae03eb76dd9f68f5bfa2e14abeb1bb0639
