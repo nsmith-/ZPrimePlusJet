@@ -47,7 +47,7 @@ if [[ $step == 4 ]]; then
   #text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hcc125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' card_rhalphabet_nomuonCR.txt -o card_rhalphabet_nomuonCR_floatZ.root
   # TH1::Add shows up again, not sure where its from
   combine -M FitDiagnostics card_rhalphabet_nomuonCR.root --setParameterRanges r=-5,5 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad # --saveNormalizations --saveShapes --saveWithUncertainties --saveWorkspace --freezeParameters tqqnormSF,tqqeffSF
-  combine -M Asymptotic card_rhalphabet_nomuonCR.root --freezeParameters tqqnormSF,tqqeffSF
+  combine -M Asymptotic card_rhalphabet_nomuonCR.root --freezeParameters tqqnormSF,tqqeffSF -t -1
   # python rhalphabin.py 
   #mkdir mlfit
   popd
