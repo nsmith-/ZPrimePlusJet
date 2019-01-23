@@ -142,6 +142,7 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
+	blind_data = []
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8',
         'h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8', 
@@ -158,6 +159,7 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
+	blind_data = []
     print plots
     if not outputExists: # First step making files
         samples = ['ggHbb', 'ggHcc', 'ttHbb','QCD','SingleTop','Diboson','TTbar']                      
