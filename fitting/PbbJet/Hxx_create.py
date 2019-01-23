@@ -147,8 +147,8 @@ def main(options, args):
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         bkgSamples['vvqq']  = normSampleContainer('vvqq',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',True,
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
-        if muonCR:
-            bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',True,
+        if options.isData and muonCR:
+            bkgSamples['wlnu']  = normSampleContainer('wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',True,
                 iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
         
     else:
