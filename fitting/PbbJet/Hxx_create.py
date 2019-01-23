@@ -147,6 +147,9 @@ def main(options, args):
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
         bkgSamples['vvqq']  = normSampleContainer('vvqq',tfiles['Diboson'], 1, DBTMIN,lumi,False,False,'1',True,
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
+        if muonCR:
+            bkgSamples['Wlnu']  = normSampleContainer('Wlnu',tfiles['Wlnu'], 1, DBTMIN,lumi,False,False,'1',True,
+                iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
         
     else:
         bkgSamples['wqq']  = sampleContainer('wqq',tfiles['wqq'], 1, dbtagmin,lumi,False,False,'1',True, iSplit = options.iSplit, maxSplit = options.maxSplit,puOpt="2016")
@@ -186,14 +189,12 @@ def main(options, args):
 
     hall = {}
 
-    normSamples =['wqq','zqq','wlnu','hqq125','hcc125', 'tthqq125', 'vbfhqq125', 'whqq125', 'zhqq125' 'qcd','tqq', 'stqq', 'vvqq']
     for plot in plots:
         tag = plot.split('_')[-1]  # 'pass' or 'fail' or systematicName
         if tag not in ['pass', 'fail']:
             tag = plot.split('_')[-2] + '_' + plot.split('_')[-1]  # 'pass_systematicName', 'pass_systmaticName', etc.
 
         for process, s in sigSamples.iteritems():
-            #if process in normSamples:
             if type(s) == dict:
                 hall['%s_%s' % (process, tag)] = sigSamples[process][plot]   #get plot from normSampleContainer
             else:
@@ -201,7 +202,6 @@ def main(options, args):
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
 
         for process, s in bkgSamples.iteritems():
-            #if options.is2017 and process in normSamples:
             if type(s) == dict:
                 hall['%s_%s' % (process, tag)] = bkgSamples[process][plot]     #get plot from normSampleContainer
             else:
@@ -209,7 +209,6 @@ def main(options, args):
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
 
         if not options.skipData:
-            #if options.is2017:
             if type(s) == dict:
                 hall['%s_%s' % ('data_obs', tag)] = dataSample[plot]
             else:
