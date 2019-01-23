@@ -1277,17 +1277,17 @@
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_t_channel_top_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8/Output_job9_job9_file540to599.root"
             ],
             "ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8": [
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job0_job0_file0to49.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job10_job10_file500to549.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job1_job1_file50to99.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job2_job2_file100to149.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job3_job3_file150to199.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job4_job4_file200to249.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job5_job5_file250to299.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job6_job6_file300to349.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job7_job7_file350to399.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job8_job8_file400to449.root",
-                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8Output_job9_job9_file450to499.root"
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job0_job0_file0to49.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job10_job10_file500to549.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job1_job1_file50to99.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job2_job2_file100to149.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job3_job3_file150to199.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job4_job4_file200to249.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job5_job5_file250to299.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job6_job6_file300to349.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job7_job7_file350to399.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job8_job8_file400to449.root",
+                "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_s_channel_4f_leptonDecays_TuneCP5_13TeV_amcatnlo_pythia8/Output_job9_job9_file450to499.root"
             ],
             "ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8": [
                 "root://cmseos.fnal.gov//eos/uscms/store/user/lpcbacon/dazsle/zprimebits-v15.01/ST_t_channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV_powhegV2_madspin_pythia8/Output_job0_job0_file0to59.root",
