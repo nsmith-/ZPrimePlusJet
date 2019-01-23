@@ -318,7 +318,7 @@ def main(options,args,outputExists):
         sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','ttHbb']        
         bkgSamples = ['QCD','SingleTop','Diboson','W','Z']                      
         if options.isData and muonCR:
-            #bkgSamples.extend(['Wlnu','DYll','TTbar'])
+            bkgSamples.extend(['Wlnu'])#,'DYll'])
             bkgSamples.extend(['TTbar'])
         else:        
             bkgSamples.extend(['TTbar'])

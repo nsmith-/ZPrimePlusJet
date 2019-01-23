@@ -830,7 +830,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     return c
 
 
-def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=True,ratio=True):
+def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="plots",lumi=30,ofile=None,normalize=True,ratio=True, blind=False):
     ttbarInt = 0
     ttbarErr = 0
     ttbarErr2 = 0
@@ -838,6 +838,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     otherErr = 0
     otherErr2 = 0
     print "========== Background composition ==========="
+    print "Blinding set to {}".format(blind)
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):            
         error = array.array('d',[0.0])
         integral = h.IntegralAndError(1,h.GetNbinsX(),error)
@@ -909,14 +910,12 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetFillStyle(1001)
 
 	
-    print hs
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
         if 'ggH' in name:
             h.SetLineColor(color[name])
             h.SetLineStyle(style[name])
             h.SetLineWidth(2)
             h.SetFillStyle(0)
-	
 
     leg_y = 0.88 - (2+int(len(hb)/3))*0.03
     leg = ROOT.TLegend(0.2,leg_y,0.5,0.88)#,"data/mc scale factor %.2f"%(scalefactor),"NDC")
@@ -945,8 +944,10 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 	elif count >6 : leg3.AddEntry(h,legname[name],"f")
         count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
-      if 'ggH' in name:
-        leg3.AddEntry(h,legname[name],"l")
+      if 'cc' in name:
+        leg3.AddEntry(h,legname[name]+" x10","l")
+      elif 'ggH' in name:
+        leg3.AddEntry(h,legname[name],"l")      
     leg3.AddEntry(hd,'Data',"pe");
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
     c.SetFillStyle(4000)
@@ -973,9 +974,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     oben.cd()
  
     hstack2.Draw('hist')
-    hstack2.SetMaximum(1.1*maxval)
+    hstack2.SetMaximum(maxval*0.7)
     hstack2.SetMinimum(1.)
-    hstack2.GetYaxis().SetRangeUser(1.,1.3*maxval)
+    hstack2.GetYaxis().SetRangeUser(1.,maxval*0.7)
     hstack2.GetYaxis().SetTitle('Events')
     hstack2.GetYaxis().SetTitleOffset(1.0)	
     hstack2.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
@@ -984,8 +985,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     hstack2.GetXaxis().SetTitleSize(0.045)
     hstack2.Draw('hist')
     for name, h in hs.iteritems(): 
-	  if 'ggH' in name:
-		h.Draw("histsame")
+        if 'cc' in name:
+        	h.Scale(10)
+        if 'ggH' in name:
+		    h.Draw("histsame")
+		    print name, h.Integral()
     leg.Draw()
     leg2.Draw()
     leg3.Draw() 
@@ -1020,6 +1024,13 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     herr.SetFillStyle(3002)
     herr.SetMarkerColor(1111);	
     leg3.AddEntry(herr,"MC uncert. (stat.)","fl")
+
+    if blind:
+    	_window = [110, 140]
+    	for ibin in range(1,hd.GetNbinsX()+1):
+    		_bin_center = hd.GetXaxis().GetBinCenter(ibin)
+    		if _bin_center > _window[0] and _bin_center < _window[1]:
+    			hd.SetBinContent(ibin, 0.)
 
     hd.Draw('pesames');
     theErrorGraph.Draw('SAME2')	
@@ -1095,14 +1106,14 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         leg4.AddEntry(toterree,"MC uncert. (stat.)","fl")
         leg4.Draw()
 
-    c.SaveAs(pdir+"/"+outname+".pdf")
-    c.SaveAs(pdir+"/"+outname+".root")
+    c.SaveAs(pdir+"/"+outname+".png")
+    #c.SaveAs(pdir+"/"+outname+".root")
     oben.SetLogy()
     hstack2.SetMaximum(10*maxval)
     hstack2.GetYaxis().SetRangeUser(1., 10*maxval)
 
-    c.SaveAs(pdir+"/"+outname+"_log.pdf")
-    c.SaveAs(pdir+"/"+outname+"_log.root")
+    c.SaveAs(pdir+"/"+outname+"_log.png")
+    #c.SaveAs(pdir+"/"+outname+"_log.root")
 
     if ofile is not None:
         ofile.cd()
