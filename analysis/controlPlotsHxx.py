@@ -152,8 +152,9 @@ def main(options,args,outputExists):
         'h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8', 
         'h_DDBvLtag_ak8', 'h_DDCvLtag_ak8', 'h_DDCvBtag_ak8', 
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
-        'h_Cuts'] 
-        blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl']
+        'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
+	'h_Cuts'] 
+        blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl',  'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail']
     else:
         plots = []
         testSample = sampleContainer('test',[], 1, DBTMIN,lumi)

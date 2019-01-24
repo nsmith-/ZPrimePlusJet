@@ -297,6 +297,8 @@ class sampleContainer:
             'h_msd_ak8_Hcc1_pass': ["h_" + self._name + "_msd_ak8_Hcc1_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_Hcc1_fail': ["h_" + self._name + "_msd_ak8_Hcc1_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
 
+            'h_msd_ak8_topR6_N2_incl': ["h_" + self._name + "_msd_ak8_topR6_N2_incl", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+
             'h_msd_ak8_topR6_N2_pass': ["h_" + self._name + "_msd_ak8_topR6_N2_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_topR6_N2_pass_JESUp': ["h_" + self._name + "_msd_ak8_topR6_N2_pass_JESUp",
                                               "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
@@ -1539,6 +1541,7 @@ class sampleContainer:
                 if  rh_8<-2.1 and rh_8>-6.:
 		    cut[7] = cut[7] + 1
 		    if (not self._minBranches): self.h_dbtag_ak8_aftercut.Fill(jdb_8,weight)
+                self.h_msd_ak8_topR6_N2_incl.Fill(jmsd_8, weight)
                 if jdb_8 > self.DBTAGCUT:
                     cut[9] = cut[9] + 1
                     self.h_msd_ak8_topR6_N2_pass.Fill(jmsd_8, weight)
