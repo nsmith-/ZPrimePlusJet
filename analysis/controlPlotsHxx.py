@@ -216,6 +216,10 @@ def main(options,args,outputExists):
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
             bkgSamples['Zbb']  = normSampleContainer('Zbb',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=3, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
+            bkgSamples['Zqq']  = normSampleContainer('Zqq',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=1, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
+            bkgSamples['Zuu']  = normSampleContainer('Zuu',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=0, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
             bkgSamples['QCD'] = normSampleContainer('QCD',tfiles['qcd'], 1, DBTMIN,lumi,False,False,'1',False, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
             bkgSamples['TTbar']  = normSampleContainer('TTbar',tfiles['TTbar'], 1, DBTMIN,lumi,False,False,'1',False,
@@ -331,7 +335,7 @@ def main(options,args,outputExists):
         print "Plotting part"
         #sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
         sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','ttHbb']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','Zbb', 'Zcc']                      
+        bkgSamples = ['QCD','SingleTop','Diboson','W','Zbb', 'Zcc', 'Zqq', 'Zuu']                      
         if options.isData and muonCR:
             bkgSamples.extend(['Wlnu'])#,'DYll'])
             bkgSamples.extend(['TTbar'])
