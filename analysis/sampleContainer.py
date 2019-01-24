@@ -30,7 +30,8 @@ NJETCUT = 100
 class sampleContainer:
     def __init__(self, name, fn, sf=1, DBTAGCUTMIN=-99., lumi=1, isData=False, fillCA15=False, cutFormula='1',
                  minBranches=False, iSplit = 0, maxSplit = 1, triggerNames={}, treeName='otree', 
-                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016'):
+                 doublebName='AK8Puppijet0_doublecsv', doublebCut = 0.9, puOpt='2016', selectFlav=None):
+        # selectFlav: 3=b, 2=c, 1=light, 0=not matched
         self._name = name
         self.DBTAGCUTMIN = DBTAGCUTMIN
         self.DBTAGCUT = doublebCut
@@ -42,6 +43,7 @@ class sampleContainer:
         print "constructing with tree name = ",treeName
         for fn in self._fn: self._tt.Add(fn)
         self._sf = sf
+        self._selectFlav = selectFlav
         self._lumi = lumi
         self._triggerNames = triggerNames 
         self.puOpt  = puOpt
@@ -216,6 +218,8 @@ class sampleContainer:
                           ('AK4Puppijet2_mass', 'd', -999),('AK4Puppijet3_mass', 'd', -999),
                           ('AK4Puppijet2_qgid', 'd', -999),('AK4Puppijet3_qgid', 'd', -999),  
                           ('AK4Puppijet2_csv' , 'd', -999),('AK4Puppijet3_csv' , 'd', -999),  
+                          ('AK8Puppijet0_isHadronicV' , 'i', -999),  
+
                           ]
         if not self._minBranches:
             self._branches.extend([('nAK4PuppijetsfwdPt30', 'i', -999), ('nAK4PuppijetsLPt50dR08_0', 'i', -999),
@@ -870,6 +874,12 @@ class sampleContainer:
             if not selected: continue
 
             self._tt.GetEntry(i)
+            if self._selectFlav != None:
+              if self.AK8Puppijet0_isHadronicV[0] != int(self._selectFlav):
+                print "not recording ", self.AK8Puppijet0_isHadronicV[0]
+                continue
+              else:
+                print 'is', self._selectFlav
 
             if (nent / 100 > 0 and i % (1 * nent / 100) == 0):
                 sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")

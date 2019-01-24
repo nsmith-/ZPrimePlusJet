@@ -201,7 +201,9 @@ def main(options,args,outputExists):
         if options.is2017:
             bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
-            bkgSamples['Z']  = normSampleContainer('Z',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, 
+            bkgSamples['Zcc']  = normSampleContainer('Zcc',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
+            bkgSamples['Zbb']  = normSampleContainer('Zbb',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=3, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
             bkgSamples['QCD'] = normSampleContainer('QCD',tfiles['qcd'], 1, DBTMIN,lumi,False,False,'1',False, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit, treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
