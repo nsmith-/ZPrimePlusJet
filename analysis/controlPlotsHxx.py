@@ -41,6 +41,8 @@ def main(options,args,outputExists):
             'Diboson': 'VV(4q)',
             'SingleTop': 'single-t',
             'Z': 'Z(qq)+jets',
+            'Zcc': 'Z(cc)+jets',
+            'Zbb': 'Z(bb)+jets',
             'W': 'W(qq)+jets',
             'DYll': 'Z(ll)+jets',
             'Wlnu': 'W(l#nu)+jets',
@@ -88,8 +90,10 @@ def main(options,args,outputExists):
              'Phibb250': ROOT.kMagenta+1,
              'ttHbb': ROOT.kBlue-1,
              'Diboson': ROOT.kOrange,
-             'SingleTop': ROOT.kRed-2,
-             'Z':  ROOT.kRed,
+             'SingleTop': ROOT.kBlue-10,
+             'Z':  ROOT.kRed+1,
+             'Zbb':  ROOT.kRed+1,
+             'Zcc':  ROOT.kRed-2,
              'DYll':  ROOT.kRed-3,
              'W':  ROOT.kGreen+3,
              'Wlnu':  ROOT.kGreen+2,
@@ -320,7 +324,7 @@ def main(options,args,outputExists):
         print "Plotting part"
         #sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
         sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','ttHbb']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','Z']                      
+        bkgSamples = ['QCD','SingleTop','Diboson','W','Zbb', 'Zcc']                      
         if options.isData and muonCR:
             bkgSamples.extend(['Wlnu'])#,'DYll'])
             bkgSamples.extend(['TTbar'])

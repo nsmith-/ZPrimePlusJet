@@ -937,11 +937,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 
     count=1
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        if count <4: 
+        if count <5: 
 		if name in 'QCD': leg.AddEntry(h,legname[name]+" (k-factor %.2f)"%scalefactor,"f")
 		else : leg.AddEntry(h,legname[name],"f")
-	elif count >3 and count<7 : leg2.AddEntry(h,legname[name],"f")
-	elif count >6 : leg3.AddEntry(h,legname[name],"f")
+	elif count >4 and count<8 : leg2.AddEntry(h,legname[name],"f")
+	elif count >7 : leg3.AddEntry(h,legname[name],"f")
         count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
       if 'cc' in name:

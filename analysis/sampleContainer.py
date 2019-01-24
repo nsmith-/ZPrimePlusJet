@@ -875,11 +875,8 @@ class sampleContainer:
 
             self._tt.GetEntry(i)
             if self._selectFlav != None:
-              if self.AK8Puppijet0_isHadronicV[0] != int(self._selectFlav):
-                print "not recording ", self.AK8Puppijet0_isHadronicV[0]
-                continue
-              else:
-                print 'is', self._selectFlav
+              # If select flavour, skip not matching
+              if self.AK8Puppijet0_isHadronicV[0] != int(self._selectFlav): continue
 
             if (nent / 100 > 0 and i % (1 * nent / 100) == 0):
                 sys.stdout.write("\r[" + "=" * int(20 * i / nent) + " " + str(round(100. * i / nent, 0)) + "% done")

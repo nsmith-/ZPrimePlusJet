@@ -136,7 +136,9 @@ def main(options, args):
         print "Backgrounds..." 
         bkgSamples['wqq']   = normSampleContainer('wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',True, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
-        bkgSamples['zqq']  = normSampleContainer('zqq', tfiles['Z'], 1, DBTMIN,lumi,False,False,'1', True, 
+        bkgSamples['zqq']  = normSampleContainer('zqq', tfiles['Z'], 1, DBTMIN,lumi,False,False,'1', True, selectFlav=3, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots) 
+        bkgSamples['zcc']  = normSampleContainer('zcc', tfiles['Z'], 1, DBTMIN,lumi,False,False,'1', True, selectFlav=2, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots) 
         if not options.skipQCD:  
             bkgSamples['qcd']  = normSampleContainer('qcd',tfiles['qcd'], 1, dbtagmin,lumi,False,False,'1',True, 
