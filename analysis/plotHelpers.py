@@ -908,6 +908,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineStyle(1)
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
+    if name in ['Zqq', 'Zuu']:
+    	h.SetFillStyle(3004)
 
 	
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): v.Integral()):
