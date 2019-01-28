@@ -43,6 +43,8 @@ def main(options,args,outputExists):
             'Z': 'Z(qq)+jets',
             'Zcc': 'Z(cc)+jets',
             'Zbb': 'Z(bb)+jets',
+            'Zqq': 'Z(qq)+jets',
+            'Zuu': 'Z unmatched',
             'W': 'W(qq)+jets',
             'DYll': 'Z(ll)+jets',
             'Wlnu': 'W(l#nu)+jets',
@@ -94,8 +96,8 @@ def main(options,args,outputExists):
              'Z':  ROOT.kRed+1,
              'Zbb':  ROOT.kRed+1,
              'Zcc':  ROOT.kRed-2,
-             'Zqq':  30,
-             'Zuu':  33,
+             'Zqq':  45,
+             'Zuu':  42,
              'DYll':  ROOT.kRed-3,
              'W':  ROOT.kGreen+3,
              'Wlnu':  ROOT.kGreen+2,
@@ -160,7 +162,8 @@ def main(options,args,outputExists):
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
         'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
 	'h_Cuts'] 
-        blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl',  'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail']
+        blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl',
+          'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail']
     else:
         plots = []
         testSample = sampleContainer('test',[], 1, DBTMIN,lumi)
@@ -170,6 +173,10 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
+        plots = [
+        'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
+        'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
+        'h_Cuts'] 
 	blind_data = []
     print plots
     if not outputExists: # First step making files
