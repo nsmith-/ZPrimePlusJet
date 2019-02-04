@@ -10,6 +10,7 @@ import sys
 import time
 import array
 import re
+from  bernstein import *
 
 # including other directories
 # sys.path.insert(0, '../.')
@@ -18,6 +19,7 @@ from tools import *
 msd_binBoundaries = []
 for i in range(0, 24): msd_binBoundaries.append(40 + i * 7)
 pt_binBoundaries = [450, 500, 550, 600, 675, 800, 1000]
+#pt_binBoundaries = [450, 500, 550, 600, 1000]
 
 from buildRhalphabetHbb import BLIND_LO, BLIND_HI, RHO_LO, RHO_HI
 
@@ -37,6 +39,7 @@ def main(options, args):
     shapes = ['wqq', 'zqq', 'tqq', 'qcd', 'hqq125', 'zhqq125', 'whqq125', 'tthqq125', 'vbfhqq125', 'data']
 
     for i in range(len(pt_binBoundaries) - 1):
+        print i
         (tmppass, tmpfail) = plotCategory(fml, fd, i + 1, options.fit)
         histograms_pass_all[i] = {}
         histograms_fail_all[i] = {}
@@ -97,24 +100,12 @@ def main(options, args):
         rfr = r.RooFitResult(fml.Get(options.fit))
         lParams = []
         lParams.append("qcdeff")
-        # for r2p2 polynomial
-        # lParams.append("r0p1") # -> r1p0
-        # lParams.append("r0p2") # -> r2p0
-        # lParams.append("r1p0") # -> r1p0
-        # lParams.append("r1p1") # -> r1p1
-        # lParams.append("r1p2")
-        # lParams.append("r2p0")
-        # lParams.append("r2p1")
-        # lParams.append("r2p2")
         # for r2p1 polynomial
-        lParams.append("r2p0")  # -> r1p0
-        lParams.append("r1p1")  # -> r2p0
-        lParams.append("r1p0")  # -> r0p1
-        lParams.append("r0p1")  # -> r1p1
-        lParams.append("r2p1")  # -> r2p1
-        lParams.append("r0p2")
-        lParams.append("r1p2")
-        lParams.append("r2p2")
+        lParams.append("p0r1")  
+        lParams.append("p0r2")  
+        lParams.append("p1r0")  
+        lParams.append("p1r1")  
+        lParams.append("p1r2")
 
         pars = []
         for p in lParams:
@@ -130,7 +121,7 @@ def main(options, args):
             rBestFit = 0
 
         # Plot TF poly
-        makeTF(pars, ratio_2d_data_subtract)
+        makeTF(pars, ratio_2d_data_subtract,options.NR,options.NP)
 
     #print "sum ",histograms_pass_summed_list[0:4], histograms_pass_summed_list[9], histograms_pass_summed_list[4:9]
 
@@ -202,10 +193,10 @@ def plotCategory(fml, fd, index, fittype):
 
     [histograms_fail] = makeMLFitCanvas(histograms_fail[:4], data_fail, histograms_fail[4:-1], shapes,
                                         "fail_cat" + str(index) + "_" + fittype, options.odir, rBestFit,
-                                        options.sOverSb, options.splitS, options.ratio)
+                                        options.sOverSb, options.splitS, options.ratio,options.noSort)
     [histograms_pass] = makeMLFitCanvas(histograms_pass[:4], data_pass, histograms_pass[4:-1], shapes,
                                         "pass_cat" + str(index) + "_" + fittype, options.odir, rBestFit,
-                                        options.sOverSb, options.splitS, options.ratio)
+                                        options.sOverSb, options.splitS, options.ratio,options.noSort)
 
     return (histograms_pass, histograms_fail)
 
@@ -230,7 +221,7 @@ def weightBySOverSpB(bkgs, data, hsigs, tag):
     return [bkgs, data, hsigs, weight]
 
 
-def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOverSb=False, splitS=True, ratio=False):
+def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOverSb=False, splitS=True, ratio=False,noSort=False):
     weight = 1
     if sOverSb:
         [bkgs, data, hsigs, weight] = weightBySOverSpB(bkgs, data, hsigs, tag)
@@ -363,7 +354,12 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     htotsig_line.SetFillStyle(0)
     # htotsig_line.Draw('histsame')
     hstackMC = r.THStack("hstackMC","hstackMC")
-    for b  in sorted(bkgs,key=lambda (v): v.Integral()):
+    if noSort:
+        bkgStacked = sorted(bkgs,key=lambda (v): v.GetName())
+    else:
+        bkgStacked = sorted(bkgs,key=lambda (v): v.Integral())
+    print "stacking bkg in this order",bkgStacked
+    for b  in bkgStacked:
 	if 'qcd' in b.GetName():
         	b.Draw('hist sames')
 	else : 
@@ -547,7 +543,11 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
             sigHistResidual.SetBinContent(bin+1,sig_residual)
         sigHistResiduals.append(sigHistResidual)
     hstack = r.THStack("hstack","hstack")
-    for sigHistResidual in sorted(sigHistResiduals,key=lambda (v): v.Integral()):
+    if noSort:
+        sigStacked = sorted(sigHistResiduals,key=lambda (v): v.GetName())
+    else:
+        sigStacked = sorted(sigHistResiduals,key=lambda (v): v.Integral())
+    for sigHistResidual in sigStacked:
 	hstack.Add(sigHistResidual) 	
     #    sigHistResidual.Draw("hist sames")
     hstack.Draw("hist sames")	
@@ -568,22 +568,7 @@ def makeMLFitCanvas(bkgs, data, hsigs, leg, tag, odir='cards', rBestFit=1, sOver
     return [bkgs + hsigs + [data]]
 
 
-def fun2(x, par):
-    rho = r.TMath.Log((x[0] * x[0]) / (x[1] * x[1]))
-    poly0 = par[0] * (1.0 + par[1] * rho + par[2] * rho * rho)
-    poly1 = par[0] * (par[3] + par[4] * rho + par[5] * rho * rho) * x[1]
-    poly2 = par[0] * (par[6] + par[7] * rho + par[8] * rho * rho) * x[1] * x[1]
-    return poly0 + poly1 + poly2
-
-
-def fun2rho(x, par):
-    rho = x[0]
-    poly0 = par[0]*(1.0 + par[1]*rho + par[2]*rho*rho)
-    poly1 = par[0]*(par[3] + par[4]*rho + par[5]*rho*rho)*x[1]
-    poly2 = par[0]*(par[6] + par[7]*rho + par[8]*rho*rho)*x[1]*x[1]
-    return poly0+poly1+poly2
-
-def makeTF(pars, ratio):
+def makeTF(pars, ratio,n_rho,n_pT):
     ratio.GetXaxis().SetTitle('m_{SD}^{PUPPI} (GeV)')
     ratio.GetYaxis().SetTitle('p_{T} (GeV)')
 
@@ -597,8 +582,16 @@ def makeTF(pars, ratio):
     f2params = array.array('d', pars)
     npar = len(f2params)
 
-    f2 = r.TF2("f2", fun2, ratio.GetXaxis().GetXmin() + 3.5, ratio.GetXaxis().GetXmax() - 3.5,
-               ratio.GetYaxis().GetXmin() + 25., ratio.GetYaxis().GetXmax() - 100., npar)
+    PT_LO =  ratio.GetYaxis().GetXmin() 
+    PT_HI =  ratio.GetYaxis().GetXmax() 
+    boundaries={'RHO_LO':RHO_LO,'RHO_HI':RHO_HI,'PT_LO':PT_LO,'PT_HI':PT_HI}
+    print boundaries
+  
+    msd_pT = True 
+    Include_qcdeff =True 
+    fun_mass_pT =  genBernsteinTF(n_rho,n_pT,boundaries,msd_pT,Include_qcdeff) 
+    f2 = r.TF2("f2", fun_mass_pT,  ratio.GetXaxis().GetXmin(),ratio.GetXaxis().GetXmax(),
+                                   ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
     f2.SetParameters(f2params)
 
     c = r.TCanvas("cTF", "cTF", 1000, 800)
@@ -618,7 +611,7 @@ def makeTF(pars, ratio):
     # f2.FixParameter(8,0)
     # ratio.Fit('f2','RN')
     f2.Draw("surf fb bb same")
-    # f2.Draw("surf fb bb")
+    #f2.Draw("surf1")
 
     r.gPad.SetTheta(30)
     r.gPad.SetPhi(30 + 270)
@@ -726,7 +719,11 @@ def makeTF(pars, ratio):
             z = ratio.GetBinContent(i,j)
             #print N, x, y, z
             ratiorhograph.SetPoint(N,x,y,z)
-    f2rho = r.TF2("f2",fun2rho,-6,-2.1,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
+
+    msd_pT = False  #switch to use msd-pT /rho-pT
+    Include_qcdeff = True 
+    fun_rho_pT =  genBernsteinTF(n_rho,n_pT,boundaries,msd_pT,Include_qcdeff) 
+    f2rho = r.TF2("f2",fun_rho_pT,-6,-2.1,ratio.GetYaxis().GetXmin(),ratio.GetYaxis().GetXmax(),npar)
     f2rho.SetParameters(f2params)
     f2rhograph = r.TGraph2D()
     N = -1
@@ -903,6 +900,9 @@ if __name__ == '__main__':
                       metavar='splitS')
     parser.add_option('--ratio', action='store_true', dest='ratio', default=False, help='ratio or data-mc',
                       metavar='ratio')
+    parser.add_option('--noSort', action='store_true', dest='noSort', default=False, help='Do not sort process by integral')
+    parser.add_option('--nr','--NR' ,action='store',type='int',dest='NR'   ,default=2, help='order of rho polynomial')
+    parser.add_option('--np','--NP' ,action='store',type='int',dest='NP'   ,default=1, help='order of pt polynomial')
 
     (options, args) = parser.parse_args()
 

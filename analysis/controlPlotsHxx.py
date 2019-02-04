@@ -46,6 +46,9 @@ def main(options,args,outputExists):
             'Zqq': 'Z(qq)+jets',
             'Zuu': 'Z unmatched',
             'W': 'W(qq)+jets',
+            'Wcq': 'W(cq)+jets',
+            'Wqq': 'W(qq)+jets',
+            'Wuu': 'W unmatched',
             'DYll': 'Z(ll)+jets',
             'Wlnu': 'W(l#nu)+jets',
             'TTbar': 't#bar{t}+jets',        
@@ -100,6 +103,9 @@ def main(options,args,outputExists):
              'Zuu':  42,
              'DYll':  ROOT.kRed-3,
              'W':  ROOT.kGreen+3,
+             'Wcq':  ROOT.kGreen+3,
+             'Wqq':  ROOT.kGreen+3,
+             'Wuu':  ROOT.kGreen+3,
              'Wlnu':  ROOT.kGreen+2,
              'TTbar':  ROOT.kGray,
              'TTbar1Mu':  ROOT.kViolet,
@@ -131,6 +137,9 @@ def main(options,args,outputExists):
              'Zuu': 1,
              'DYll': 1,
              'W': 1,
+             'Wcq': 1,
+             'Wqq': 1,
+             'Wuu': 1,
              'Wlnu': 1,
              'TTbar': 1,
              'TTbar1Mu': 1,
@@ -217,7 +226,13 @@ def main(options,args,outputExists):
         print "Backgrounds..."
         bkgSamples = {}    
         if options.is2017:
-            bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, 
+            # bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, 
+            #     iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
+            bkgSamples['Wcq']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
+            bkgSamples['Wqq']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=1, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
+            bkgSamples['Wuu']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=0, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
             bkgSamples['Zcc']  = normSampleContainer('Zcc',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
@@ -292,14 +307,11 @@ def main(options,args,outputExists):
             else:
                 hall_byproc['data'] = {}
 
-        #normSamples =['QCD','Z','W', 'TTbar', 'Wlnu','ggHbb','ggHcc', 'ttHbb', 'Diboson', 'SingleTop']
         for Sample in bkgSamples.keys():
-            #if Sample in normSamples:
             if type(bkgSamples[Sample]) == dict:
                 hall_byproc[Sample] = bkgSamples[Sample]
                 del bkgSamples[Sample]
         for Sample in sigSamples.keys():
-            #if Sample in normSamples:
             if type(sigSamples[Sample]) == dict:
                 hall_byproc[Sample] = sigSamples[Sample]
                 del sigSamples[Sample]
@@ -314,35 +326,19 @@ def main(options,args,outputExists):
                 hall_byproc[process][plot] = getattr(s,plot)
             for process, s in bkgSamples.iteritems():
                 hall_byproc[process][plot] = getattr(s,plot)
-        print 'halled all'
+        
         ofile.cd()
         for proc, hDict in hall_byproc.iteritems():
             for plot, h in hDict.iteritems():
                 print proc, plot, h.Integral()
                 h.Write()
-        print 'filewrote'
-
-            # for plot in plots:
-            #     hs = {}
-            #     hb = {}
-            #     hall={}
-            #     hd = None
-            #     for process, s in sigSamples.iteritems():
-            #         hs[process] = getattr(s,plot)
-            #         hall[process] = getattr(s,plot)
-            #     for process, s in bkgSamples.iteritems():
-            #         hb[process] = getattr(s,plot)
-            #         hall[process] = getattr(s,plot)
-                #if isData:
-                #    hd = getattr(dataSample,plot)
-                #makePlots(plot,hs,hb,hd,hall,legname,color,style,isData,odir,lumi,ofile,canvases)
-        
+        print 'File written successfully'
         ofile.Close()
     else:  
         print "Plotting part"
         #sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','VHbb','ttHbb']        
-        sigSamples = ['ggHbb', 'ggHcc', 'ttHbb', 'VBFHbb','ttHbb']        
-        bkgSamples = ['QCD','SingleTop','Diboson','W','Zbb', 'Zcc', 'Zqq', 'Zuu']                      
+        sigSamples = ['ggHbb', 'ggHcc'] 
+        bkgSamples = ['QCD','SingleTop','Diboson','Wcq','Wqq','Wuu','Zbb', 'Zcc', 'Zqq', 'Zuu']                      
         if options.isData and muonCR:
             bkgSamples.extend(['Wlnu'])#,'DYll'])
             bkgSamples.extend(['TTbar'])
