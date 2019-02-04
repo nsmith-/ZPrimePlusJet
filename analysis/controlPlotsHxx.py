@@ -228,11 +228,11 @@ def main(options,args,outputExists):
         if options.is2017:
             # bkgSamples['W']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, 
             #     iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
-            bkgSamples['Wcq']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
+            bkgSamples['Wcq']   = normSampleContainer('Wcq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
-            bkgSamples['Wqq']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=1, 
+            bkgSamples['Wqq']   = normSampleContainer('Wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=1, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
-            bkgSamples['Wuu']   = normSampleContainer('W',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=0, 
+            bkgSamples['Wuu']   = normSampleContainer('Wuu',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=0, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
             bkgSamples['Zcc']  = normSampleContainer('Zcc',tfiles['Z'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
