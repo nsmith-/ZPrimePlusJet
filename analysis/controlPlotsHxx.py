@@ -163,7 +163,7 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
-        plots = [plot for plot in plots if "muonCR" in plot]
+        plots = [plot for plot in plots if "muCR" in plot]
         blind_data = []
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8',
