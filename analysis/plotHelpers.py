@@ -688,9 +688,9 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
     maxval = -99
     nevt=[]
     hstack = ROOT.THStack("hstack","hstack")
-    for name, h in (sorted(hb.iteritems(),key=customSort)):
-    	print name
-    #for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
+    #for name, h in (sorted(hb.iteritems(),key=customSort)):
+    #	print name
+    for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()):
         hstack.Add(h)
         h.SetFillColor(color[name])
         h.SetLineColor(1)
@@ -698,9 +698,10 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
 	nevt.append(h.Integral())
-        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
+        #if h.GetMaximum() > maxval: maxval = h.GetMaximum()
 
     allMC=hstack.GetStack().Last().Clone()
+    maxval = allMC.GetMaximum()
     ntotal=allMC.Integral()
     nsig=hs[nameS].Integral()
 
@@ -718,13 +719,50 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
         h.SetLineStyle(style[name])
         h.SetLineWidth(2)
         h.SetFillStyle(0)
+        if 'cc' in name:
+        	h.Scale(10)
 	#h.Scale(100)
     
         
+    # for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
+    #     leg.AddEntry(h,legname[name],"f")
+    # for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
+    #     leg.AddEntry(h,legname[name],"l")
+
+    leg_y = 0.85 - (2+int(len(hb)/3))*0.03
+    leg = ROOT.TLegend(0.2,leg_y,0.42,0.88)#,"data/mc scale factor %.2f"%(scalefactor),"NDC")
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(0.035)
+    leg.SetTextFont(42)
+    leg2 = ROOT.TLegend(0.42,leg_y,0.64,0.88,)
+    leg2.SetFillStyle(0)
+    leg2.SetBorderSize(0)
+    leg2.SetTextSize(0.035)
+    leg2.SetTextFont(42)
+    leg3 = ROOT.TLegend(0.64,leg_y,0.9,0.88,)
+    leg3.SetFillStyle(0)
+    leg3.SetBorderSize(0)
+    leg3.SetTextSize(0.035)
+    leg3.SetTextFont(42)
+
+    count=1
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"f")
+        if name in 'QCD': 
+                leg.AddEntry(h,legname[name])
+                continue
+        if count <5:             
+            leg.AddEntry(h,legname[name],"f")
+        elif count >= 5 and count<9:
+            leg2.AddEntry(h,legname[name],"f")
+        elif count >= 9: 
+            leg3.AddEntry(h,legname[name],"f")
+        count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
-        leg.AddEntry(h,legname[name],"l")
+      if 'cc' in name:
+        leg3.AddEntry(h,legname[name]+" x10","l")
+      elif 'ggH' in name:
+        leg3.AddEntry(h,legname[name],"l")      
 
 
     c = ROOT.TCanvas("c"+outname,"c"+outname,1000,800)
@@ -752,12 +790,14 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
      c.cd()
 
     hstack.Draw('hist')
-    hstack.SetMaximum(1.5*maxval)
+    hstack.SetMaximum(1.3*maxval)
     hstack.GetYaxis().SetTitle('Events')
     hstack.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
     hstack.Draw('hist')
     for name, h in hs.iteritems(): h.Draw("histsame")
     leg.Draw()
+    leg2.Draw()
+    leg3.Draw() 
     
     tag1 = ROOT.TLatex(0.67,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
     tag1.SetNDC(); tag1.SetTextFont(42)
@@ -797,7 +837,7 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
      line.Draw("same")
 
 
-    c.SaveAs(pdir+"/"+outname+".pdf")
+    c.SaveAs(pdir+"/"+outname+".png")
     c.SaveAs(pdir+"/"+outname+".C")
 		
 	
@@ -806,9 +846,10 @@ def makeCanvasComparisonStack(hs,hb,legname,color,style,nameS,outname,pdir="plot
 	oben.SetLogy()	
     else:
       c.SetLogy()
+    hstack.SetMaximum(hstack.GetMaximum()*200)	
     hstack.SetMinimum(1e-1)	
 
-    c.SaveAs(pdir+"/"+outname+"_log.pdf")
+    c.SaveAs(pdir+"/"+outname+"_log.png")
     c.SaveAs(pdir+"/"+outname+"_log.C")
 
     
@@ -884,9 +925,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
 	
-        if h.GetMaximum() > maxval: maxval = h.GetMaximum()
     allMC=hstack.GetStack().Last().Clone()
-    maxval = max(hd.GetMaximum(),maxval)
+    
     
     fullmc = hstack.GetStack().Last();
 
@@ -895,6 +935,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     	print "Empty MC integrals"
     	return 
     scalefactor = hd.Integral()/fullmc.Integral();
+    maxval = max(hd.GetMaximum(),fullmc.GetMaximum())
     print "data/mc scale factor = ", scalefactor
     if normalize:
     	for name, h in sorted(hb.iteritems(),key=lambda (k,v): v.Integral()): 
@@ -908,7 +949,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         h.SetLineStyle(1)
         h.SetLineWidth(1)
         h.SetFillStyle(1001)
+
     if name in ['Zqq', 'Zuu']:
+    	print 'fillstyle weird'
     	h.SetFillStyle(3004)
 
 	
@@ -919,7 +962,7 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
             h.SetLineWidth(2)
             h.SetFillStyle(0)
 
-    leg_y = 0.88 - (2+int(len(hb)/3))*0.03
+    leg_y = 0.85 - (2+int(len(hb)/3))*0.03
     leg = ROOT.TLegend(0.2,leg_y,0.5,0.88)#,"data/mc scale factor %.2f"%(scalefactor),"NDC")
     leg.SetFillStyle(0)
     leg.SetBorderSize(0)
@@ -939,11 +982,15 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
 
     count=1
     for name, h in sorted(hb.iteritems(),key=lambda (k,v): -v.Integral()):
-        if count <5: 
-		if name in 'QCD': leg.AddEntry(h,legname[name]+" (k-factor %.2f)"%scalefactor,"f")
-		else : leg.AddEntry(h,legname[name],"f")
-	elif count >4 and count<8 : leg2.AddEntry(h,legname[name],"f")
-	elif count >7 : leg3.AddEntry(h,legname[name],"f")
+        if name in 'QCD': 
+                leg.AddEntry(h,legname[name]+" (k-factor %.2f)"%scalefactor,"f")
+                continue
+        if count <4:             
+            leg.AddEntry(h,legname[name],"f")
+        elif count >= 4 and count<9:
+            leg2.AddEntry(h,legname[name],"f")
+        elif count >= 9: 
+            leg3.AddEntry(h,legname[name],"f")
         count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
       if 'cc' in name:
@@ -976,9 +1023,9 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     oben.cd()
  
     hstack2.Draw('hist')
-    hstack2.SetMaximum(maxval*0.7)
+    hstack2.SetMaximum(maxval*1.1)
     hstack2.SetMinimum(1.)
-    hstack2.GetYaxis().SetRangeUser(1.,maxval*0.7)
+    hstack2.GetYaxis().SetRangeUser(1.,maxval*1.1)
     hstack2.GetYaxis().SetTitle('Events')
     hstack2.GetYaxis().SetTitleOffset(1.0)	
     hstack2.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
@@ -1111,8 +1158,8 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
     c.SaveAs(pdir+"/"+outname+".png")
     #c.SaveAs(pdir+"/"+outname+".root")
     oben.SetLogy()
-    hstack2.SetMaximum(10*maxval)
-    hstack2.GetYaxis().SetRangeUser(1., 10*maxval)
+    hstack2.SetMaximum(50*maxval)
+    hstack2.GetYaxis().SetRangeUser(1., 50*maxval)
 
     c.SaveAs(pdir+"/"+outname+"_log.png")
     #c.SaveAs(pdir+"/"+outname+"_log.root")

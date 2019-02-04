@@ -104,8 +104,8 @@ def main(options,args,outputExists):
              'DYll':  ROOT.kRed-3,
              'W':  ROOT.kGreen+3,
              'Wcq':  ROOT.kGreen+3,
-             'Wqq':  ROOT.kGreen+3,
-             'Wuu':  ROOT.kGreen+3,
+             'Wqq':  ROOT.kGreen-6,
+             'Wuu':  ROOT.kGreen-9,
              'Wlnu':  ROOT.kGreen+2,
              'TTbar':  ROOT.kGray,
              'TTbar1Mu':  ROOT.kViolet,
@@ -170,6 +170,7 @@ def main(options,args,outputExists):
         'h_DDBvLtag_ak8', 'h_DDCvLtag_ak8', 'h_DDCvBtag_ak8', 
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
         'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
+        'h_DDCvLtag_ak8_Hcc1', 'h_DDCvBtag_ak8_aftercut', 
 	'h_Cuts'] 
         blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl',
           'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail']

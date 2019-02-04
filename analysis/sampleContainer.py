@@ -490,6 +490,8 @@ class sampleContainer:
 		            'h_DDBvLtag_ak8': ["h_" + self._name + "_DDBvLtag_ak8", "; p_{T}-leading double BvL-tag;", 40, 0, 1],
                 'h_DDCvLtag_ak8': ["h_" + self._name + "_DDCvLtag_ak8", "; p_{T}-leading double CvL-tag;", 40, 0, 1],
                 'h_DDCvBtag_ak8': ["h_" + self._name + "_DDCvBtag_ak8", "; p_{T}-leading double CvB-tag;", 40, 0, 1],
+                'h_DDCvLtag_ak8_Hcc1': ["h_" + self._name + "_DDCvLtag_ak8_Hcc1", "; p_{T}-leading double CvL-tag;", 40, 0, 1],
+                'h_DDCvBtag_ak8_aftercut': ["h_" + self._name + "_DDCvBtag_ak8_aftercut", "; p_{T}-leading double CvB-tag;", 40, 0, 1],
                 'h_dbtag_ak8_sub1': ["h_" + self._name + "_dbtag_ak8_sub1", "; 2nd p_{T}-leading double b-tag;", 40, -1,
                                      1],
                 'h_dbtag_ak8_sub2': ["h_" + self._name + "_dbtag_ak8_sub2", "; 3rd p_{T}-leading double b-tag;", 40, -1,
@@ -1511,31 +1513,34 @@ class sampleContainer:
                         self.h_msd_v_pt_ak8_topR6_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
 	    if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and isTightVJet and jdb_8 > self.DBTAGCUT and rh_8<-2.1 and rh_8>-6.: 	
 		if (not self._minBranches): self.h_n2b1sdddt_ak8_aftercut.Fill(jtN2b1sdddt_8,weight)
-            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jDDCvB_8 > 0.2 and jtN2b1sdddt_8 < 0 and isTightVJet:
-              if  rh_8<-2.1 and rh_8>-6.:
-                self.h_msd_ak8_Hcc1_incl.Fill(jmsd_8, weight)
-                if jDDCvL_8 > self.DBTAGCUT:
-                    self.h_msd_ak8_Hcc1_pass.Fill(jmsd_8, weight)
-                    self.h_msd_v_pt_ak8_Hcc1_pass.Fill(jmsd_8, jpt_8, weight)
-                    self.h_msd_v_pt_ak8_Hcc1_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                    self.h_msd_v_pt_ak8_Hcc1_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                    self.h_msd_v_pt_ak8_Hcc1_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                    self.h_msd_v_pt_ak8_Hcc1_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                        self.h_msd_v_pt_ak8_Hcc1_pass_matched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_v_pt_ak8_Hcc1_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
-                elif jDDCvL_8 > self.DBTAGCUTMIN:
-                    self.h_msd_ak8_Hcc1_fail.Fill(jmsd_8, weight)
-                    self.h_msd_v_pt_ak8_Hcc1_fail.Fill(jmsd_8, jpt_8, weight)
-                    self.h_msd_v_pt_ak8_Hcc1_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
-                    self.h_msd_v_pt_ak8_Hcc1_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
-                    self.h_msd_v_pt_ak8_Hcc1_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
-                    self.h_msd_v_pt_ak8_Hcc1_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
-                    if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
-                        self.h_msd_v_pt_ak8_Hcc1_fail_matched.Fill(jmsd_8, jpt_8, weight)
-                    else:
-                        self.h_msd_v_pt_ak8_Hcc1_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
+            if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
+              self.h_DDCvBtag_ak8_aftercut.Fill(jDDCvB_8, weight)
+              if jDDCvB_8 > 0.2:
+              	if  rh_8<-2.1 and rh_8>-6.:
+                  self.h_DDCvLtag_ak8_Hcc1.Fill(jDDCvL_8, weight)
+                  self.h_msd_ak8_Hcc1_incl.Fill(jmsd_8, weight)
+                  if jDDCvL_8 > self.DBTAGCUT:
+                      self.h_msd_ak8_Hcc1_pass.Fill(jmsd_8, weight)
+                      self.h_msd_v_pt_ak8_Hcc1_pass.Fill(jmsd_8, jpt_8, weight)
+                      self.h_msd_v_pt_ak8_Hcc1_pass_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
+                      self.h_msd_v_pt_ak8_Hcc1_pass_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
+                      self.h_msd_v_pt_ak8_Hcc1_pass_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                      self.h_msd_v_pt_ak8_Hcc1_pass_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                      if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                          self.h_msd_v_pt_ak8_Hcc1_pass_matched.Fill(jmsd_8, jpt_8, weight)
+                      else:
+                          self.h_msd_v_pt_ak8_Hcc1_pass_unmatched.Fill(jmsd_8, jpt_8, weight)
+                  elif jDDCvL_8 > self.DBTAGCUTMIN:
+                      self.h_msd_ak8_Hcc1_fail.Fill(jmsd_8, weight)
+                      self.h_msd_v_pt_ak8_Hcc1_fail.Fill(jmsd_8, jpt_8, weight)
+                      self.h_msd_v_pt_ak8_Hcc1_fail_triggerUp.Fill(jmsd_8, jpt_8, weight_triggerUp)
+                      self.h_msd_v_pt_ak8_Hcc1_fail_triggerDown.Fill(jmsd_8, jpt_8, weight_triggerDown)
+                      self.h_msd_v_pt_ak8_Hcc1_fail_PuUp.Fill(jmsd_8, jpt_8, weight_pu_up)
+                      self.h_msd_v_pt_ak8_Hcc1_fail_PuDown.Fill(jmsd_8, jpt_8, weight_pu_down)
+                      if dphi < 0.8 and dpt < 0.5 and dmass < 0.3:
+                          self.h_msd_v_pt_ak8_Hcc1_fail_matched.Fill(jmsd_8, jpt_8, weight)
+                      else:
+                          self.h_msd_v_pt_ak8_Hcc1_fail_unmatched.Fill(jmsd_8, jpt_8, weight)
             if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
                 cut[8] = cut[8] + 1
                 if  rh_8<-2.1 and rh_8>-6.:
