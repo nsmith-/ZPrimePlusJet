@@ -77,24 +77,27 @@ def main(options, args):
     #         ]
     print "N plots = %s "%(len(plots))
     print "plots =  ",plots
+    print 'muonCR', muonCR
 
     if options.bb:
         plots = ['h_msd_v_pt_ak8_bbleading_topR6_pass', 'h_msd_v_pt_ak8_bbleading_topR6_fail']
     elif muonCR:
-        plots = ['h_msd_ak8_muCR4_N2_pass', 'h_msd_ak8_muCR4_N2_fail',
-                 'h_msd_ak8_muCR4_N2_pass_JESUp', 'h_msd_ak8_muCR4_N2_pass_JESDown',
-                 'h_msd_ak8_muCR4_N2_fail_JESUp', 'h_msd_ak8_muCR4_N2_fail_JESDown',
-                 'h_msd_ak8_muCR4_N2_pass_JERUp', 'h_msd_ak8_muCR4_N2_pass_JERDown',
-                 'h_msd_ak8_muCR4_N2_fail_JERUp', 'h_msd_ak8_muCR4_N2_fail_JERDown',
-                 'h_msd_ak8_muCR4_N2_pass_mutriggerUp', 'h_msd_ak8_muCR4_N2_pass_mutriggerDown',
-                 'h_msd_ak8_muCR4_N2_fail_mutriggerUp', 'h_msd_ak8_muCR4_N2_fail_mutriggerDown',
-                 'h_msd_ak8_muCR4_N2_pass_muidUp', 'h_msd_ak8_muCR4_N2_pass_muidDown',
-                 'h_msd_ak8_muCR4_N2_fail_muidUp', 'h_msd_ak8_muCR4_N2_fail_muidDown',
-                 'h_msd_ak8_muCR4_N2_pass_muisoUp', 'h_msd_ak8_muCR4_N2_pass_muisoDown',
-                 'h_msd_ak8_muCR4_N2_fail_muisoUp', 'h_msd_ak8_muCR4_N2_fail_muisoDown',
-                 'h_msd_ak8_muCR4_N2_pass_PuUp', 'h_msd_ak8_muCR4_N2_pass_PuDown',
-                 'h_msd_ak8_muCR4_N2_fail_PuUp', 'h_msd_ak8_muCR4_N2_fail_PuDown',
-                  # otyher CR
+        print "DOING MUONS"
+        plots = [
+                 # 'h_msd_ak8_muCR4_N2_pass', 'h_msd_ak8_muCR4_N2_fail',
+                 # 'h_msd_ak8_muCR4_N2_pass_JESUp', 'h_msd_ak8_muCR4_N2_pass_JESDown',
+                 # 'h_msd_ak8_muCR4_N2_fail_JESUp', 'h_msd_ak8_muCR4_N2_fail_JESDown',
+                 # 'h_msd_ak8_muCR4_N2_pass_JERUp', 'h_msd_ak8_muCR4_N2_pass_JERDown',
+                 # 'h_msd_ak8_muCR4_N2_fail_JERUp', 'h_msd_ak8_muCR4_N2_fail_JERDown',
+                 # 'h_msd_ak8_muCR4_N2_pass_mutriggerUp', 'h_msd_ak8_muCR4_N2_pass_mutriggerDown',
+                 # 'h_msd_ak8_muCR4_N2_fail_mutriggerUp', 'h_msd_ak8_muCR4_N2_fail_mutriggerDown',
+                 # 'h_msd_ak8_muCR4_N2_pass_muidUp', 'h_msd_ak8_muCR4_N2_pass_muidDown',
+                 # 'h_msd_ak8_muCR4_N2_fail_muidUp', 'h_msd_ak8_muCR4_N2_fail_muidDown',
+                 # 'h_msd_ak8_muCR4_N2_pass_muisoUp', 'h_msd_ak8_muCR4_N2_pass_muisoDown',
+                 # 'h_msd_ak8_muCR4_N2_fail_muisoUp', 'h_msd_ak8_muCR4_N2_fail_muisoDown',
+                 # 'h_msd_ak8_muCR4_N2_pass_PuUp', 'h_msd_ak8_muCR4_N2_pass_PuDown',
+                 # 'h_msd_ak8_muCR4_N2_fail_PuUp', 'h_msd_ak8_muCR4_N2_fail_PuDown',
+                 # other CR
                  'h_msd_ak8_muCR4_cvb_pass', 'h_msd_ak8_muCR4_cvb_fail',
                  'h_msd_ak8_muCR4_cvb_pass_JESUp', 'h_msd_ak8_muCR4_cvb_pass_JESDown',
                  'h_msd_ak8_muCR4_cvb_fail_JESUp', 'h_msd_ak8_muCR4_cvb_fail_JESDown',
@@ -107,7 +110,7 @@ def main(options, args):
                  'h_msd_ak8_muCR4_cvb_pass_muisoUp', 'h_msd_ak8_muCR4_cvb_pass_muisoDown',
                  'h_msd_ak8_muCR4_cvb_fail_muisoUp', 'h_msd_ak8_muCR4_cvb_fail_muisoDown',
                  'h_msd_ak8_muCR4_cvb_pass_PuUp', 'h_msd_ak8_muCR4_cvb_pass_PuDown',
-                 'h_msd_ak8_muCR4_cvb_fail_PuUp', 'h_msd_ak8_muCR4_N2_fail_PuDown',
+                 'h_msd_ak8_muCR4_cvb_fail_PuUp', 'h_msd_ak8_muCR4_cvb_fail_PuDown'
                  ]
 
    
@@ -134,8 +137,14 @@ def main(options, args):
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt='default').addPlots(plots)
     
         print "Backgrounds..." 
-        bkgSamples['wqq']   = normSampleContainer('wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',True, 
-                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
+        # bkgSamples['wqq']   = normSampleContainer('wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',True, 
+        #         iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots)
+        bkgSamples['wcq']   = normSampleContainer('wcq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=2, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
+        bkgSamples['wqq']   = normSampleContainer('wqq',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=1, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
+        bkgSamples['wuu']   = normSampleContainer('wuu',tfiles['W'], 1, DBTMIN,lumi,False,False,'1',False, selectFlav=0, 
+                iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut,  puOpt="default").addPlots(plots)
         bkgSamples['zbb']  = normSampleContainer('zbb', tfiles['Z'], 1, DBTMIN,lumi,False,False,'1', True, selectFlav=3, 
                 iSplit = options.iSplit, maxSplit = options.maxSplit,treeName=def_treeName, doublebName=def_DDB, doublebCut=dbtagcut, puOpt="default").addPlots(plots) 
         bkgSamples['zcc']  = normSampleContainer('zcc', tfiles['Z'], 1, DBTMIN,lumi,False,False,'1', True, selectFlav=2, 
@@ -194,6 +203,7 @@ def main(options, args):
     hall = {}
 
     for plot in plots:
+        print plot
         tag = plot.split('_')[-1]  # 'pass' or 'fail' or systematicName
         if tag not in ['pass', 'fail']:
             tag = plot.split('_')[-2] + '_' + plot.split('_')[-1]  # 'pass_systematicName', 'pass_systmaticName', etc.
@@ -202,14 +212,14 @@ def main(options, args):
             if type(s) == dict:
                 hall['%s_%s' % (process, tag)] = sigSamples[process][plot]   #get plot from normSampleContainer
             else:
-                hall['%s_%s' % (process, tag)] = getattr(s, plot)           #get plot from SampleContainer
+                hall['%s_%s' % (process, tag)] = getattr(s, plot)            #get plot from SampleContainer
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
 
         for process, s in bkgSamples.iteritems():
             if type(s) == dict:
                 hall['%s_%s' % (process, tag)] = bkgSamples[process][plot]     #get plot from normSampleContainer
             else:
-                hall['%s_%s' % (process, tag)] = getattr(s, plot)           #get plot from SampleContainer
+                hall['%s_%s' % (process, tag)] = getattr(s, plot)              #get plot from SampleContainer
             hall['%s_%s' % (process, tag)].SetName('%s_%s' % (process, tag))
 
         if not options.skipData:
