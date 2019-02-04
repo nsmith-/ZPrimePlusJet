@@ -163,7 +163,8 @@ def main(options,args,outputExists):
                     plots.append(attr)
             except:
                 pass
-	blind_data = []
+        plots = [plot for plot in plots if "muonCR" in plot]
+        blind_data = []
     elif isData:
         plots = ['h_pt_ak8','h_msd_ak8','h_dbtag_ak8','h_n_ak4','h_n_ak4_dR0p8','h_t21_ak8','h_t32_ak8','h_n2b1sdddt_ak8','h_t21ddt_ak8',
         'h_met','h_npv','h_eta_ak8','h_ht','h_dbtag_ak8_aftercut','h_n2b1sdddt_ak8_aftercut','h_rho_ak8', 
@@ -171,7 +172,7 @@ def main(options,args,outputExists):
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
         'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
         'h_DDCvLtag_ak8_Hcc1', 'h_DDCvBtag_ak8_aftercut', 
-	'h_Cuts'] 
+	    'h_Cuts'] 
         blind_data = ['h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail', 'h_msd_ak8_Hcc1_incl',
           'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail']
     else:
@@ -186,8 +187,8 @@ def main(options,args,outputExists):
         plots = [
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
         'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
-        'h_Cuts'] 
-	blind_data = []
+        'h_Cuts']
+        blind_data = []
     print plots
     if not outputExists: # First step making files
         samples = ['ggHbb', 'ggHcc', 'ttHbb','QCD','SingleTop','Diboson','TTbar']                      

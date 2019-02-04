@@ -663,12 +663,14 @@ def makeCanvasComparison(hs,legname,color,style,name,pdir="plots",lumi=30,ofile=
         tag5.SetTextSize(0.025)
         tag5.Draw()
     
-    c.SaveAs(pdir+"/"+name+".pdf")
-    c.SaveAs(pdir+"/"+name+".C")
+    #c.SaveAs(pdir+"/"+name+".pdf")
+    c.SaveAs(pdir+"/"+name+".png")
+    #c.SaveAs(pdir+"/"+name+".C")
     ROOT.gPad.SetLogy()
 
-    c.SaveAs(pdir+"/"+name+"_log.pdf")
-    c.SaveAs(pdir+"/"+name+"_log.C")
+    #c.SaveAs(pdir+"/"+name+"_log.pdf")
+    c.SaveAs(pdir+"/"+name+"_log.png")
+    #c.SaveAs(pdir+"/"+name+"_log.C")
     if ofile is not None:
         ofile.cd()
         c.Write('c'+name)
@@ -985,11 +987,11 @@ def makeCanvasComparisonStackWData(hd,hs,hb,legname,color,style,outname,pdir="pl
         if name in 'QCD': 
                 leg.AddEntry(h,legname[name]+" (k-factor %.2f)"%scalefactor,"f")
                 continue
-        if count <4:             
+        if count <5:             
             leg.AddEntry(h,legname[name],"f")
-        elif count >= 4 and count<9:
+        elif count >= 5 and count<10:
             leg2.AddEntry(h,legname[name],"f")
-        elif count >= 9: 
+        elif count >= 10: 
             leg3.AddEntry(h,legname[name],"f")
         count = count+1
     for name, h in sorted(hs.iteritems(),key=lambda (k,v): -v.Integral()):
