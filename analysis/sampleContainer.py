@@ -296,6 +296,8 @@ class sampleContainer:
             'h_msd_ak8_Hcc1_incl': ["h_" + self._name + "_msd_ak8_Hcc1_incl", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_Hcc1_pass': ["h_" + self._name + "_msd_ak8_Hcc1_pass", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
             'h_msd_ak8_Hcc1_fail': ["h_" + self._name + "_msd_ak8_Hcc1_fail", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
+            'h_DDCvLtag_ak8_Hcc1': ["h_" + self._name + "_DDCvLtag_ak8_Hcc1", "; p_{T}-leading double CvL-tag;", 40, 0, 1],
+            'h_DDCvBtag_ak8_aftercut': ["h_" + self._name + "_DDCvBtag_ak8_aftercut", "; p_{T}-leading double CvB-tag;", 40, 0, 1],
 
             'h_msd_ak8_topR6_N2_incl': ["h_" + self._name + "_msd_ak8_topR6_N2_incl", "; AK8 m_{SD}^{PUPPI} (GeV);", 23, 40, 201],
 
@@ -490,8 +492,6 @@ class sampleContainer:
 		            'h_DDBvLtag_ak8': ["h_" + self._name + "_DDBvLtag_ak8", "; p_{T}-leading double BvL-tag;", 40, 0, 1],
                 'h_DDCvLtag_ak8': ["h_" + self._name + "_DDCvLtag_ak8", "; p_{T}-leading double CvL-tag;", 40, 0, 1],
                 'h_DDCvBtag_ak8': ["h_" + self._name + "_DDCvBtag_ak8", "; p_{T}-leading double CvB-tag;", 40, 0, 1],
-                'h_DDCvLtag_ak8_Hcc1': ["h_" + self._name + "_DDCvLtag_ak8_Hcc1", "; p_{T}-leading double CvL-tag;", 40, 0, 1],
-                'h_DDCvBtag_ak8_aftercut': ["h_" + self._name + "_DDCvBtag_ak8_aftercut", "; p_{T}-leading double CvB-tag;", 40, 0, 1],
                 'h_dbtag_ak8_sub1': ["h_" + self._name + "_dbtag_ak8_sub1", "; 2nd p_{T}-leading double b-tag;", 40, -1,
                                      1],
                 'h_dbtag_ak8_sub2': ["h_" + self._name + "_dbtag_ak8_sub2", "; 3rd p_{T}-leading double b-tag;", 40, -1,
