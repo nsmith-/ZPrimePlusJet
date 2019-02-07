@@ -186,7 +186,8 @@ def main(options,args,outputExists):
                 pass
         plots = [
         'h_msd_ak8_Hcc1_incl', 'h_msd_ak8_Hcc1_pass', 'h_msd_ak8_Hcc1_fail',
-        'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail',
+        'h_msd_ak8_topR6_N2_incl', 'h_msd_ak8_topR6_N2_pass', 'h_msd_ak8_topR6_N2_fail', 
+        'h_DDCvLtag_ak8_Hcc1', 'h_DDCvBtag_ak8_aftercut', 'h_dbtag_ak8_aftercut',
         'h_Cuts']
         blind_data = []
     print plots
