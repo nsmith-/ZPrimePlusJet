@@ -1,12 +1,12 @@
 
 step=$1
 
-wdir=output-Hbb
+wdir=output-Hcc1
 # --dbtagcut also the value read for CvL
 # 0 local test
 if [[ $step == 0 ]]; then
-  mkdir $wdir
-  python Hxx_create.py -b -o $wdir/p10_data/ --is2017 --lumi 2.8 --sfData 10 --max-split 10000 --dbtagcut 0.83
+  mkdir $wdir/test
+  python Hxx_create.py -b -o $wdir/test --is2017 --lumi 2.8 --sfData 10 --max-split 10000 --dbtagcut 0.83
 fi
 
 if [[ $step == 1 ]]; then
@@ -26,15 +26,15 @@ if [[ $step == 3 ]]; then
     \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
     -o $wdir/  \
     --remove-unmatched --addHptShape  \
-    --prefit --blind --is2017 --scale 10.0 |tee build.log
-    #--prefit --pseudo --is2017 --scale 14.6 |tee build.log
+    --prefit --pseudo --scale 10.0 |tee build.log
+    # --prefit --blind --is2017 --scale 10.0 |tee build.log
   
-   python makeCardsHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
-     \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
-     -o $wdir/ \
-     --remove-unmatched --no-mcstat-shape 
+  # python makeCardsHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
+  #   \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
+  #   -o $wdir/ \
+  #   --remove-unmatched --no-mcstat-shape 
 
-   #python writeMuonCRDatacard.py -i $wdir/muonCR/hist_1DZbb_muonCR.root -o $wdir/
+   # python writeMuonCRDatacard.py -i $wdir/muonCR/hist_1DZbb_muonCR.root -o $wdir/
 fi
 
 if [[ $step == 4 ]]; then
@@ -46,7 +46,7 @@ if [[ $step == 4 ]]; then
   #text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/*hqq125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' card_rhalphabet_all.txt -o card_rhalphabet_all_floatZ.root
   #combine -M FitDiagnostics card_rhalphabet_all_floatZ.root --setParameterRanges r=-5,5:r_z=-2,2 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad --saveNormalizations --plot --saveShapes --saveWithUncertainties --saveWorkspace
   text2workspace.py card_rhalphabet_all.txt
-  combine -M FitDiagnostics card_rhalphabet_all.root --setParameterRanges r=-5,5 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad # --saveNormalizations --saveShapes --saveWithUncertainties --saveWorkspace --freezeParameters tqqnormSF,tqqeffSF
+  combine -M FitDiagnostics card_rhalphabet_all.root --saveWorkspace --freezeParameters tqqnormSF,tqqeffSF -t -1 --toysFreq
   combine -M Asymptotic card_rhalphabet_all.root --freezeParameters tqqnormSF,tqqeffSF -t -1
   # python rhalphabin.py 
 

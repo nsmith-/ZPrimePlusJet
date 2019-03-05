@@ -471,7 +471,7 @@ class RhalphabetBuilder():
 
         for pt_bin in range(1, self._nptbins + 1):
             for mass_bin in range(1, self._mass_nbins + 1):
-                print "qcd_fail_cat%i_Bin%i flatParam" % (pt_bin, mass_bin)
+                print "qcd_fail_cat%i_Bin%i_lnU flatParam" % (pt_bin, mass_bin)
 
     # iHs = dict of fail histograms
     def MakeRhalphabet(self, samples, fail_histograms, pt, category):
@@ -522,12 +522,17 @@ class RhalphabetBuilder():
 
             print rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin), fail_bin_content
 
-            # 50 sigma range + 10 events
-            fail_bin_unc = math.sqrt(fail_bin_content) * 50. + 10.
+            # Fail floating parameter (log-uniform)
+            fail_bin_par = r.RooRealVar(rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin) + "_lnU", 
+                                        rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin) + "_lnU", 
+                                        0, -50, 50)
+            fail_bin_lnU_factor = 1+1./math.sqrt(fail_bin_content) if fail_bin_content > 0. else 1.
             # Define the failing category
-            fail_bin_var = r.RooRealVar(rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin),
+            lArg = r.RooArgList(fail_bin_par)
+            fail_bin_var = r.RooFormulaVar(rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin),
                                         rhalph_bkgd_name + "_fail_" + category + "_Bin" + str(mass_bin),
-                                        fail_bin_content, 0., max(fail_bin_content + fail_bin_unc, 0.))
+                                        "{0}*({1})**@0".format(fail_bin_content, fail_bin_lnU_factor), lArg)
+
 
             print "[david debug] fail_bin_var:"
             fail_bin_var.Print()
@@ -545,7 +550,7 @@ class RhalphabetBuilder():
             # If the number of events in the failing is small remove the bin from being free in the fit
             if fail_bin_content < 4:
                 print "too small number of events", fail_bin_content, "Bin", str(mass_bin)
-                fail_bin_var.setConstant(True)
+                fail_bin_par.setConstant(True)
                 pass_bin_var = r.RooRealVar(rhalph_bkgd_name + "_pass_" + category + "_Bin" + str(mass_bin),
                                             rhalph_bkgd_name + "_pass_" + category + "_Bin" + str(mass_bin), 0, 0, 0)
 
@@ -554,8 +559,8 @@ class RhalphabetBuilder():
             # Add bins to the array
             pass_bins.add(pass_bin_var)
             fail_bins.add(fail_bin_var)
-            self._all_vars.extend([pass_bin_var, fail_bin_var])
-            self._all_pars.extend([pass_bin_var, fail_bin_var])
+            self._all_vars.extend([pass_bin_var, fail_bin_par, fail_bin_var])
+            self._all_pars.extend([pass_bin_var, fail_bin_par, fail_bin_var])
             # print  fail_bin_var.GetName(),"flatParam",lPass#,lPass+"/("+lFail+")*@0"
 
         # print "Printing pass_bins:"

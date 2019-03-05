@@ -299,8 +299,8 @@ def main(options,args):
                 dctmp.write("qcd2017_fail_%s_Bin%i%s flatParam \n" % (tag,im+1,options.suffix))
                 qcdGroupString += ' qcd2017_fail_%s_Bin%i%s'%(tag,im+1,options.suffix)
             else:
-                dctmp.write("qcd_fail_%s_Bin%i%s flatParam \n" % (tag,im+1,options.suffix))
-                qcdGroupString += ' qcd_fail_%s_Bin%i%s'%(tag,im+1,options.suffix)
+                dctmp.write("qcd_fail_%s_Bin%i%s_lnU flatParam \n" % (tag,im+1,options.suffix))
+                qcdGroupString += ' qcd_fail_%s_Bin%i%s_lnU'%(tag,im+1,options.suffix)
         if options.forcomb:
             flatPars = ['r1p0', 'r2p0', 'r0p1', 'r1p1', 'r2p1', 'qcd2017eff']
         else:
