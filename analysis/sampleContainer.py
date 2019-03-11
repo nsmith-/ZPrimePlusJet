@@ -24,6 +24,8 @@ MUONPTCUT = 55
 METCUT = 140
 MASSCUT = 40
 NJETCUT = 100
+#CVBTAGCUT = 0.2
+CVBTAGCUT = 0.
 
 
 #########################################################################################################
@@ -1270,7 +1272,7 @@ class sampleContainer:
                         self.h_msd_ak8_muCR4_N2_fail_PuUp.Fill(jmsd_8, weight_mu_pu_up)
                         self.h_msd_ak8_muCR4_N2_fail_PuDown.Fill(jmsd_8, weight_mu_pu_down)
 
-                    if jDDCvB_8 > 0.2:
+                    if jDDCvB_8 > CVBTAGCUT:
                         self.h_dbtag_ak8_muCR4_cvb.Fill(jdb_8, weight_mu)
                         self.h_DDBvL_ak8_muCR4_cvb.Fill(jDDBvL_8, weight_mu)
                         self.h_DDCvL_ak8_muCR4_cvb.Fill(jDDCvL_8, weight_mu)
@@ -1312,7 +1314,7 @@ class sampleContainer:
                     elif jdb_8 > self.DBTAGCUTMIN:
                         (getattr(self, 'h_msd_ak8_muCR4_N2_fail_%s' % syst)).Fill(jmsd_8, weight)
                 if eval('jpt_8_%s' % syst) > PTCUTMUCR and jmsd_8 > MASSCUT and nmuLoose == 1 and neleLoose == 0 and ntau == 0 and vmuoLoose0_pt > MUONPTCUT and abs(
-                        vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and jDDCvB_8 > 0.2 and abs(
+                        vmuoLoose0_eta) < 2.1 and isTightVJet and jtN2b1sdddt_8 < 0 and jDDCvB_8 > CVBTAGCUT and abs(
                                 vmuoLoose0_phi - jphi_8) > 2. * ROOT.TMath.Pi() / 3. and n_MdR0p8_4 >= 1:
                     if jDDCvL_8 > self.DBTAGCUT:
                         (getattr(self, 'h_msd_ak8_muCR4_cvb_pass_%s' % syst)).Fill(jmsd_8, weight)
@@ -1515,7 +1517,7 @@ class sampleContainer:
 		if (not self._minBranches): self.h_n2b1sdddt_ak8_aftercut.Fill(jtN2b1sdddt_8,weight)
             if jpt_8 > PTCUT and jmsd_8 > MASSCUT and met < METCUT and n_dR0p8_4 < NJETCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
               self.h_DDCvBtag_ak8_aftercut.Fill(jDDCvB_8, weight)
-              if jDDCvB_8 > 0.2:
+              if jDDCvB_8 > CVBTAGCUT:
               	if  rh_8<-2.1 and rh_8>-6.:
                   self.h_DDCvLtag_ak8_Hcc1.Fill(jDDCvL_8, weight)
                   self.h_msd_ak8_Hcc1_incl.Fill(jmsd_8, weight)
@@ -1642,7 +1644,7 @@ class sampleContainer:
                         else:
                             (getattr(self, 'h_msd_v_pt_ak8_QGgluon_fail_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)
                 if eval('jpt_8_%s' % syst) > PTCUT and jmsd_8 > MASSCUT and eval('met_%s' % syst) < METCUT and eval(
-                                'n_dR0p8_4_%s' % syst) < NJETCUT and jDDCvB_8 > 0.2 and jtN2b1sdddt_8 < 0 and isTightVJet:
+                                'n_dR0p8_4_%s' % syst) < NJETCUT and jDDCvB_8 > CVBTAGCUT and jtN2b1sdddt_8 < 0 and isTightVJet:
                     if jDDCvL_8 > self.DBTAGCUT:
                         #(getattr(self, 'h_msd_ak8_Hcc1_pass_%s' % syst)).Fill(jmsd_8, weight)
                         (getattr(self, 'h_msd_v_pt_ak8_Hcc1_pass_%s' % syst)).Fill(jmsd_8, eval('jpt_8_%s' % syst),weight)

@@ -1,7 +1,7 @@
 
 step=$1
 
-wdir=output-Hcc1
+wdir=output-Hcc1-cvb0
 # --dbtagcut also the value read for CvL
 # 0 local test
 if [[ $step == 0 ]]; then
@@ -26,31 +26,31 @@ if [[ $step == 3 ]]; then
     \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
     -o $wdir/  \
     --remove-unmatched --addHptShape  \
-    --prefit --pseudo --scale 10.0 |tee build.log
+    --prefit --pseudo --use-qcd --scale 10.0 |tee build.rhalphabet.log
     # --prefit --blind --is2017 --scale 10.0 |tee build.log
   
   python makeCardsHbb.py -i $wdir/p10_data/hist_1DZbb_pt_scalesmear.root \
     \ #--ifile-loose $wdir/looserWZ/hist_1DZbb_pt_scalesmear_looserWZ.root \
-    -o $wdir/ --remove-unmatched --no-mcstat-shape 
+    -o $wdir/ --remove-unmatched --no-mcstat-shape  | tee build.cards.log
 
-   python writeMuonCRDatacard.py -i $wdir/muonCR/hist_1DZbb_muonCR.root -o $wdir/
+   python writeMuonCRDatacard.py -i $wdir/muonCR/hist_1DZbb_muonCR.root -o $wdir/ | tee build.muonCR.log
 fi
 
 if [[ $step == 4 ]]; then
   pushd $wdir/
-  combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt
+  # combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt muonCR=datacard_muonCR.txt > card_rhalphabet_muonCR.txt
+  combineCards.py cat1=card_rhalphabet_cat1.txt cat2=card_rhalphabet_cat2.txt  cat3=card_rhalphabet_cat3.txt cat4=card_rhalphabet_cat4.txt  cat5=card_rhalphabet_cat5.txt cat6=card_rhalphabet_cat6.txt > card_rhalphabet_all.txt
 
-  text2workspace.py card_rhalphabet_muonCR.txt -o card_rhalphabet_all_floatZ.root -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/hcc125:r[1,0,20]' --PO 'map=.*/zcc:r_z[1,0,20]' 
+  text2workspace.py card_rhalphabet_all.txt -o card_rhalphabet_all_floatZ.root -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/hcc125:r[1,0,20]' --PO 'map=.*/zqq:r_z[1,0,20]' 
+
   combine -M FitDiagnostics card_rhalphabet_all_floatZ.root --setParameterRanges r=-5,5:r_z=-2,2 --robustFit 1 --setRobustFitAlgo Minuit2,Migrad --saveWorkspace \
-    --setParameters r=1,r_z=1 -t -1 --toysFreq # --saveNormalizations --plot --saveShapes --saveWithUncertainties
-  
-  text2workspace.py card_rhalphabet_all.txt -o card_rhalphabet_all_floatZ.root -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel -m 125  --PO verbose --PO 'map=.*/hcc125:r[1,0,20]' --PO 'map=.*/zcc:r_z[1,0,20]' 
+    --setParameters r=1,r_z=1 --freezeParameters tqqnormSF,tqqeffSF -t -1 --toysFreq # --saveNormalizations --plot --saveShapes --saveWithUncertainties
 
-  combine -M Significance --signif card_rhalphabet_all_floatZ.root  --redefineSignalPOIs r_z --setParameterRanges r=-10,10:r_z=-2,2 --setParameters r=1,r_z=1 \
-    -t -1 --toysFreq --freezeParameters r # scale # tqqnormSF,tqqeffSF
+  combine -M Significance --signif card_rhalphabet_all_floatZ.root --redefineSignalPOIs r_z --setParameterRanges r=-10,10:r_z=-2,2 --setParameters r=1,r_z=1 \
+    -t -1 --toysFreq --freezeParameters r,tqqnormSF,tqqeffSF
 
   combine -M Asymptotic card_rhalphabet_all_floatZ.root --redefineSignalPOIs r --setParameterRanges r=-10,10:r_z=-2,2 --setParameters r=0,r_z=1 \
-    -t -1 --toysFreq  --freezeParameters r_z #,tqqnormSF,tqqeffSF 
+    -t -1 --toysFreq --freezeParameters r_z,tqqnormSF,tqqeffSF 
 
   # python rhalphabin.py 
 

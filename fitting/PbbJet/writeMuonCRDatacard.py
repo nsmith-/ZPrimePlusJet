@@ -195,8 +195,8 @@ def main(options, args):
     
     boxes = ['pass', 'fail']
     #for Hbb extraction:
-    sigs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
-    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu','zll']
+    sigs = [] #['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125']
+    bkgs = ['zqq','wqq','qcd','tqq','vvqq','stqq','wlnu'] #,'zll']
     #for Wqq/Zbb extraction:
     #sigs = ['zqq','wqq']
     #bkgs = ['tthqq125','whqq125','hqq125','zhqq125','vbfhqq125','qcd','tqq','vvqq','stqq','wlnu','zll']
@@ -214,7 +214,10 @@ def main(options, args):
     for proc in (bkgs+sigs+['data_obs']):
         for box in boxes:
             print 'getting histogram for process: %s_%s'%(proc,box)
-            histoDict['%s_%s'%(proc,box)] = tfile.Get('%s_%s'%(proc,box)).Clone()
+            htmp = tfile.Get('%s_%s'%(proc,box))
+            if htmp == None:
+                raise Exception("Missing %s_%s from %s" % (proc, box, options.ifile))
+            histoDict['%s_%s'%(proc,box)] = htmp.Clone()
             histoDict['%s_%s'%(proc,box)].Scale(GetSF(proc,box,tfile))
             for syst in systs:
                 if proc!='data_obs':
