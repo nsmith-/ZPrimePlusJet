@@ -68,6 +68,7 @@ def dump_templates(args):
                 for norm, shape in zip(shape_pdf.coefList(), shape_pdf.pdfList()):
                     if args.filter is None or args.filter.match(shape.GetName()):
                         hist = shape.createHistogram("hist_"+shape.GetName(), observable)
+                        hist.Scale(norm.getVal())
                         c = ROOT.TCanvas(shape.GetName())
                         hist.Draw("hist")
                         c.Print("%s/%s.pdf" % (args.output, shape.GetName()))
