@@ -72,7 +72,9 @@ def dump_templates(args):
                         c = ROOT.TCanvas(shape.GetName())
                         hist.Draw("hist")
                         c.Print("%s/%s.pdf" % (args.output, shape.GetName()))
-                        c.Print("%s/%s.root" % (args.output, shape.GetName()))
+                        fout = ROOT.TFile.Open("%s/%s.root" % (args.output, shape.GetName()), "recreate")
+                        hist.Write()
+                        fout.Close()
             elif shape_pdf.dependsOn(observable) and isinstance(shape_pdf, ROOT.RooRealSumPdf):
                 raise NotImplementedError
 
